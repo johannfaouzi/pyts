@@ -109,7 +109,7 @@ from pyts.visualization import plot_standardscaler
 plot_standardscaler(X[0])
 ```
 <p align="center">
-![](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts.png)
+![ts](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts.png)
 
 ### 3. Piecewise Aggregation Approximation (PAA)
 
@@ -134,7 +134,7 @@ paa = PAA(window_size=None, output_size=8, overlapping=True)
 X_paa = paa.transform(X_standardized)
 ```
 <p align="center">
-![](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_ss.png)
+![ts_ss](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_ss.png)
 	
 The function `plot_paa` from the module `visualization` allows you to see the time series before and after the transformation.
 
@@ -144,7 +144,7 @@ from pyts.visualization import plot_paa
 plot_paa(X_standardized[0], window_size=None, output_size=8, overlapping=True, marker='o')
 ```
 <p align="center">
-![](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_paa.png)
+![ts_paa](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_paa.png)
 
 ### 4. Symbolic Aggregation approXimation (SAX)
 
@@ -167,7 +167,7 @@ from pyts.visualization import plot_sax
 plot_sax(X_paa[0], n_bins=5, quantiles='gaussian')
 ```
 <p align="center">
-![](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_sax.png)
+![ts_sax](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_sax.png)
 
 The function `plot_paa_sax` from the module `visualization` allows you to see both PAA and SAX transformations on the same figure.
 
@@ -177,7 +177,7 @@ from pyts.visualization import plot_paa_sax
 plot_paa_sax(X_standardized[0], window_size=None, output_size=8, overlapping=True, n_bins=5, quantiles='gaussian')
 ```
 <p align="center">
-![](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_paa_sax.png)
+![ts_paa_sax](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_paa_sax.png)
 
 
 ### 5. Vector Space Model (VSM)
@@ -218,9 +218,9 @@ plot_gasf(X_standardized[0], image_size=48, overlapping=False, scale='-1')
 plot_gadf(X_standardized[0], image_size=48, overlapping=False, scale='-1')
 ```
 <p align="center">
-![](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_gasf.png)
+![ts_gasf](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_gasf.png)
 <p align="center">
-![](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_gadf.png)
+![ts_gadf](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_gadf.png)
 
 ### 7. Markov Transition Field (MTF)
 Markov Transition Field also transforms a time series into an image. First the time series is transformed into a string using SAX. This string is interpreted as a sequence of observations from a Markov Chain. Then, the matrix transition probability is computed. The issue is that temporal dependices are lost. To avoid this issue, the transition matrix is turned into a transition field. Here again, if the size of the time series is $n$, then the size of the matrix is $n \times n$. To avoid this issue, the size of the image is reduced by averaging pixels with a blurring kernel (PAA for 2D arrays).
@@ -242,7 +242,7 @@ from pyts.visualization import plot_mtf
 plot_mtf(X_standardized[0], image_size=48, n_bins=4, quantiles='empirical', overlapping=False)
 ```
 <p align="center">
-![](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_mtf.png)
+![ts_mtf](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_mtf.png)
 
 ### 8. SAX-VSM Classification
 SAX-VSM is a classification method based on the SAX-VSM representation of the time series. Once this transformation is done, tf-idf statistics are computed, where a document is a time series and each corpus corresponds to a class. To predict the class with an unlabeled time series, tf is computed for this time series and the predicted label corresponds to the class that gives the highest cosine similarity between tf and its tf-idf.
@@ -312,7 +312,7 @@ from pyts.visualization import plot_dtw
 plot_dtw(X[0], X[1])
 ```
 <p align="center">
-![](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/dtw.png)
+![dtw](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/dtw.png)
 
 DTW$(X,T)$ can be computed with dynnamic programming. However, the computation cost is $O(N^2)$. To reduce the computation cost, one possible approximation is to add a global constraint region. One possible constraint region can be computed as follows:
 
@@ -328,7 +328,7 @@ from pyts.visualization import plot_fastdtw
 plot_fastdtw(X[0], X[1], window_size=12)
 ```
 <p align="center">
-![](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/fastdtw.png)
+![fastdtw](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/fastdtw.png)
 
 ### 10. Working with Pipeline and GridSearchCV
 All the classes implemented in the modules `` and `` can be used with Pipeline and GridSearchCV from scikit-learn package.
