@@ -139,7 +139,7 @@ plot_paa(X_standardized[0], window_size=None, output_size=8, overlapping=True, m
 
 ### 4. Symbolic Aggregation approXimation (SAX)
 
-Symbolic Aggregation approXimation transforms a time series into a string. More precisely, given a number of bins, it transforms each datapoint (real number) into a letter (from an alphabet) depending on the bin the datapoint belongs to. For instance, If your alphabet is "abcde", then the state space changes from $\mathbb R$ to {a,b,c,d,e}. It is a dimension reduction technique for the output space.
+Symbolic Aggregation approXimation transforms a time series into a string. More precisely, given a number of bins, it transforms each datapoint (real number) into a letter (from an alphabet) depending on the bin the datapoint belongs to. For instance, If your alphabet is "abcde", then the state space changes from R to {a,b,c,d,e}. It is a dimension reduction technique for the output space.
 
 Here is the code to perform the transformation:
 
