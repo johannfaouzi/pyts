@@ -78,7 +78,9 @@ from pyts.visualization import plot_ts
 plot_ts(X[0])
 ```
 
-![ts](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts.png)
+<p align="center">
+<img src="https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts.png">
+</p>
 
 
 ### 2. StandardScaler
@@ -102,7 +104,9 @@ from pyts.visualization import plot_standardscaler
 plot_standardscaler(X[0])
 ```
 
-![ts_ss](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_ss.png)
+<p align="center">
+<img src="https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_ss.png">
+</p>
 
 
 ### 3. Piecewise Aggregation Approximation (PAA)
@@ -128,11 +132,9 @@ from pyts.visualization import plot_paa
 plot_paa(X_standardized[0], window_size=None, output_size=8, overlapping=True, marker='o')
 ```
 
-
-
-![ts_paa](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_paa.png)
-
-
+<p align="center">
+<img src="https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_paa.png">
+</p>
 
 
 ### 4. Symbolic Aggregation approXimation (SAX)
@@ -156,7 +158,9 @@ from pyts.visualization import plot_sax
 plot_sax(X_paa[0], n_bins=5, quantiles='gaussian')
 ```
 
-![ts_sax](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_sax.png)
+<p align="center">
+<img src="https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_sax.png">
+</p>
 
 The function `plot_paa_sax` from the module `visualization` allows you to see both PAA and SAX transformations on the same figure.
 
@@ -167,7 +171,9 @@ plot_paa_sax(X_standardized[0], window_size=None, output_size=8, overlapping=Tru
 ```
 
 
-![ts_paa_sax](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_paa_sax.png)
+<p align="center">
+<img src="https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_paa_sax.png">
+</p>
 
 
 ### 5. Vector Space Model (VSM)
@@ -207,7 +213,9 @@ from pyts.visualization import plot_gasf
 plot_gasf(X_standardized[0], image_size=48, overlapping=False, scale='-1')
 ```
 
-![ts_gasf](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_gasf.png)
+<p align="center">
+<img src="https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_gasf.png">
+</p>
 
 
 ```python
@@ -216,7 +224,9 @@ from pyts.visualization import plot_gadf
 plot_gadf(X_standardized[0], image_size=48, overlapping=False, scale='-1')
 ```
 
-![ts_gadf](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_gadf.png)
+<p align="center">
+<img src="https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_gadf.png">
+</p>
 
 
 ### 7. Markov Transition Field (MTF)
@@ -239,7 +249,9 @@ from pyts.visualization import plot_mtf
 plot_mtf(X_standardized[0], image_size=48, n_bins=4, quantiles='empirical', overlapping=False)
 ```
 
-![ts_mtf](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_mtf.png)
+<p align="center">
+<img src="https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_mtf.png">
+</p>
 
 ### 8. SAX-VSM Classification
 SAX-VSM is a classification method based on the SAX-VSM representation of the time series. Once this transformation is done, tf-idf statistics are computed, where a document is a time series and each corpus corresponds to a class. To predict the class with an unlabeled time series, tf is computed for this time series and the predicted label corresponds to the class that gives the highest cosine similarity between tf and its tf-idf.
