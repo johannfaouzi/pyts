@@ -82,6 +82,8 @@ from pyts.visualization import plot_ts
 plot_ts(X[0])
 ```
 
+![ts](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts.png)
+
 ### 2. StandardScaler
 
 Standard normalization (also known as z-normalization) is a common preprocessing step : it applies an affine transformation to a time series such that the new time series has zero mean and (almost) unit variance :
