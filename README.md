@@ -110,7 +110,7 @@ from pyts.visualization import plot_standardscaler
 plot_standardscaler(X[0])
 ```
 
-![ts](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_ss.png)
+![ts_ss](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_ss.png)
 
 
 ### 3. Piecewise Aggregation Approximation (PAA)
@@ -145,6 +145,7 @@ plot_paa(X_standardized[0], window_size=None, output_size=8, overlapping=True, m
 ```
 
 ![ts_paa](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_paa.png)
+
 
 ### 4. Symbolic Aggregation approXimation (SAX)
 
