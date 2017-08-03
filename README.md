@@ -135,7 +135,7 @@ from pyts.transformation import PAA
 paa = PAA(window_size=None, output_size=8, overlapping=True)
 X_paa = paa.transform(X_standardized)
 ```
-<p align="center">
+
 ![ts_ss](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_ss.png)
 	
 The function `plot_paa` from the module `visualization` allows you to see the time series before and after the transformation.
@@ -145,7 +145,7 @@ from pyts.visualization import plot_paa
 
 plot_paa(X_standardized[0], window_size=None, output_size=8, overlapping=True, marker='o')
 ```
-<p align="center">
+
 ![ts_paa](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_paa.png)
 
 ### 4. Symbolic Aggregation approXimation (SAX)
@@ -168,7 +168,7 @@ from pyts.visualization import plot_sax
 
 plot_sax(X_paa[0], n_bins=5, quantiles='gaussian')
 ```
-<p align="center">
+
 ![ts_sax](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_sax.png)
 
 The function `plot_paa_sax` from the module `visualization` allows you to see both PAA and SAX transformations on the same figure.
@@ -178,7 +178,7 @@ from pyts.visualization import plot_paa_sax
 
 plot_paa_sax(X_standardized[0], window_size=None, output_size=8, overlapping=True, n_bins=5, quantiles='gaussian')
 ```
-<p align="center">
+
 ![ts_paa_sax](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_paa_sax.png)
 
 
@@ -219,9 +219,9 @@ from pyts.visualization import plot_gasf, plot_gadf
 plot_gasf(X_standardized[0], image_size=48, overlapping=False, scale='-1')
 plot_gadf(X_standardized[0], image_size=48, overlapping=False, scale='-1')
 ```
-<p align="center">
+
 ![ts_gasf](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_gasf.png)
-<p align="center">
+
 ![ts_gadf](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_gadf.png)
 
 ### 7. Markov Transition Field (MTF)
@@ -243,7 +243,7 @@ from pyts.visualization import plot_mtf
 
 plot_mtf(X_standardized[0], image_size=48, n_bins=4, quantiles='empirical', overlapping=False)
 ```
-<p align="center">
+
 ![ts_mtf](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_mtf.png)
 
 ### 8. SAX-VSM Classification
@@ -313,7 +313,7 @@ from pyts.visualization import plot_dtw
 
 plot_dtw(X[0], X[1])
 ```
-<p align="center">
+
 ![dtw](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/dtw.png)
 
 DTW$(X,T)$ can be computed with dynnamic programming. However, the computation cost is $O(N^2)$. To reduce the computation cost, one possible approximation is to add a global constraint region. One possible constraint region can be computed as follows:
@@ -329,7 +329,7 @@ from pyts.visualization import plot_fastdtw
 
 plot_fastdtw(X[0], X[1], window_size=12)
 ```
-<p align="center">
+
 ![fastdtw](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/fastdtw.png)
 
 ### 10. Working with Pipeline and GridSearchCV
