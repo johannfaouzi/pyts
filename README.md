@@ -85,7 +85,7 @@ plot_ts(X[0])
 
 ### 2. StandardScaler
 
-Standard normalization (also known as z-normalization) is a common preprocessing step : it applies an affine transformation to a time series such that the new time series has zero mean and (almost) unit variance: we had a small term *epsilon* to the standard deviation before dividing (in order to prevent a division by zero and to avoid over-amplification of an eventual background noise).
+Standard normalization (also known as z-normalization) is a common preprocessing step : it applies an affine transformation to a time series such that the new time series has zero mean and (almost) unit variance: we add a small term *epsilon* to the standard deviation before dividing (in order to prevent a division by zero and to avoid over-amplification of an eventual background noise).
 
 It is implemented as a class named `StandardScaler(epsilon)` from the module `transformation`.
 
@@ -189,9 +189,9 @@ X_vsm = vsm.transform(X_sax)
 ```
 
 ### 6. Gramian Angular Field (GAF)
-Gramian Angular Field transforms a time series into an image. First the time series is represented in a polar coordinate system. Then two matrices can be computed : the cosine of the summation of angles (Gramian Angular Summation Field - GASF) or the sine of the difference of angles (Gramian Angular Difference Field - GADF). One possible issue is the size of these matrices: if the size of the time series is $n$, then the size of the matrix is $n \times n$. To avoid this issue, PAA can be applied to reduce the size of the time series first.
+Gramian Angular Field transforms a time series into an image. First the time series is represented in a polar coordinate system. Then two matrices can be computed : the cosine of the summation of angles (Gramian Angular Summation Field - GASF) or the sine of the difference of angles (Gramian Angular Difference Field - GADF). One possible issue is the size of these matrices: if the size of the time series is n, then the size of the matrix is (n, n). To avoid this issue, PAA can be applied to reduce the size of the time series first.
 
-Both methods are implemented in two classes : `GASF(image_size=32, overlapping=False, scale='-1')` and `GADF(image_size=32, overlapping=False, scale='-1')` from the module `transformation`. `image_size` is an integer (since the output will be a square matrix, only one dimension needs to be specified) and corresponds to `output_size` for PAA. `overlapping` is the parameter for PAA too. In order to use the polar coordinate system, the time series should be normalized. If `scale='-1'`, the time series is normalized into $[-1,1]$. If `scale='0'`, the time series is normalized into $[0,1]$.
+Both methods are implemented in two classes : `GASF(image_size=32, overlapping=False, scale='-1')` and `GADF(image_size=32, overlapping=False, scale='-1')` from the module `transformation`. `image_size` is an integer (since the output will be a square matrix, only one dimension needs to be specified) and corresponds to `output_size` for PAA. `overlapping` is the parameter for PAA too. In order to use the polar coordinate system, the time series should be normalized. If `scale='-1'`, the time series is normalized into [-1,1]. If `scale='0'`, the time series is normalized into [0,1].
 
 Here is the code to perform the transformation:
 
@@ -230,7 +230,7 @@ plot_gadf(X_standardized[0], image_size=48, overlapping=False, scale='-1')
 
 
 ### 7. Markov Transition Field (MTF)
-Markov Transition Field also transforms a time series into an image. First the time series is transformed into a string using SAX. This string is interpreted as a sequence of observations from a Markov Chain. Then, the matrix transition probability is computed. The issue is that temporal dependices are lost. To avoid this issue, the transition matrix is turned into a transition field. Here again, if the size of the time series is $n$, then the size of the matrix is $n \times n$. To avoid this issue, the size of the image is reduced by averaging pixels with a blurring kernel (PAA for 2D arrays).
+Markov Transition Field also transforms a time series into an image. First the time series is transformed into a string using SAX. This string is interpreted as a sequence of observations from a Markov Chain. Then, the matrix transition probability is computed. The issue is that temporal dependices are lost. To avoid this issue, the transition matrix is turned into a transition field. Here again, if the size of the time series is n, then the size of the matrix is (n, n). To avoid this issue, the size of the image is reduced by averaging pixels with a blurring kernel (PAA for 2D arrays).
 
 This method is implemented as a class named `MTF(image_size=32, n_bins=8, quantiles='empirical', overlapping=False)` from the module `transformation`. `image_size` and `overlapping` are the parameters for the dimension reduction of the image (see PAA), while `n_bins` and `quantiles` are the parameters for SAX.
 
