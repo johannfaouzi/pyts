@@ -178,6 +178,7 @@ from pyts.visualization import plot_paa_sax
 plot_paa_sax(X_standardized[0], window_size=None, output_size=8, overlapping=True, n_bins=5, quantiles='gaussian')
 ```
 
+
 ![ts_paa_sax](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_paa_sax.png)
 
 
