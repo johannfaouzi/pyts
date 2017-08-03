@@ -372,7 +372,11 @@ clf.score(X[80:], y[80:])
 
 #### References :
 [1] Eamonn Keogh, Kaushik Chakrabarti, Michael Pazzani, and Sharad Mehrotra. Dimensionality reduction for fast similarity search in large time series databases. *Knowledge and information Systems, 3(3), 263-286*, 2001.
+
 [2] Jessica Lin, Eamonn Keogh, Li Wei, and Stefano Lonardi. Experiencing SAX: a Novel Symbolic Representation of Time Series. *Data Mining and Knowledge Discovery*, 2007.
+
 [3] Senin Pavel, and Malinchik Sergey. SAX-VSM: Interpretable Time Series Classification Using SAX and Vector Space Model. *Data Mining (ICDM), 2013 IEEE 13th International Conference on, pp.1175,1180*, 2013.
+
 [4] Dynamic Time Warping (DTW). *SpringerReference*.
+
 [5] Zhiguang Wang, and Tim Oates. Imaging time-series to improve classification and imputation. *Proceedings of the 24th International Conference on Artificial Intelligence*, 2015.
