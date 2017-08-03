@@ -81,8 +81,9 @@ from pyts.visualization import plot_ts
 
 plot_ts(X[0])
 ```
-
+<p align="center">
 ![ts](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts.png)
+</p>
 
 ### 2. StandardScaler
 
@@ -109,7 +110,8 @@ from pyts.visualization import plot_standardscaler
 plot_standardscaler(X[0])
 ```
 <p align="center">
-![ts](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts.png)
+![ts](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_ss.png)
+</p>
 
 ### 3. Piecewise Aggregation Approximation (PAA)
 
