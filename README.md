@@ -135,8 +135,6 @@ from pyts.transformation import PAA
 paa = PAA(window_size=None, output_size=8, overlapping=True)
 X_paa = paa.transform(X_standardized)
 ```
-
-![ts_ss](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_ss.png)
 	
 The function `plot_paa` from the module `visualization` allows you to see the time series before and after the transformation.
 
