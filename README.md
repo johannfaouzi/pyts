@@ -202,15 +202,22 @@ X_gadf = gadf.transform(X_standardized)
 The functions `plot_gasf` and `plot_gadf` from the module `visualization` allows you to see the image.
 
 ```python
-from pyts.visualization import plot_gasf, plot_gadf
+from pyts.visualization import plot_gasf
 
 plot_gasf(X_standardized[0], image_size=48, overlapping=False, scale='-1')
-plot_gadf(X_standardized[0], image_size=48, overlapping=False, scale='-1')
 ```
 
 ![ts_gasf](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_gasf.png)
 
+
+```python
+from pyts.visualization import plot_gadf
+
+plot_gadf(X_standardized[0], image_size=48, overlapping=False, scale='-1')
+```
+
 ![ts_gadf](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_gadf.png)
+
 
 ### 7. Markov Transition Field (MTF)
 Markov Transition Field also transforms a time series into an image. First the time series is transformed into a string using SAX. This string is interpreted as a sequence of observations from a Markov Chain. Then, the matrix transition probability is computed. The issue is that temporal dependices are lost. To avoid this issue, the transition matrix is turned into a transition field. Here again, if the size of the time series is $n$, then the size of the matrix is $n \times n$. To avoid this issue, the size of the image is reduced by averaging pixels with a blurring kernel (PAA for 2D arrays).
@@ -282,6 +289,7 @@ from pyts.visualization import plot_dtw
 plot_dtw(X[0], X[1])
 ```
 
+
 ![dtw](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/dtw.png)
 
 
@@ -294,6 +302,7 @@ plot_fastdtw(X[0], X[1], window_size=12)
 ```
 
 ![fastdtw](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/fastdtw.png)
+
 
 ### 10. Working with Pipeline and GridSearchCV
 All the classes implemented in the modules `` and `` can be used with Pipeline and GridSearchCV from scikit-learn package.
