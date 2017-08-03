@@ -39,10 +39,6 @@ Welcome to **pyts**, a Python package for time series transformation and classif
 
 ### 1. Notations
 
-#### 1.1 Mathematical notations
-We consider a time series $X = (X_1, \ldots, X_n) \in \mathbb R^n$ of length $n$.
-
-#### 1.2 Python notations
 We consider our dataset to have the following requirements:
 
 - `X` is a `numpy.ndarray` with shape `(n_samples, n_features)`.
@@ -87,12 +83,8 @@ plot_ts(X[0])
 
 ### 2. StandardScaler
 
-Standard normalization (also known as z-normalization) is a common preprocessing step : it applies an affine transformation to a time series such that the new time series has zero mean and (almost) unit variance :
+Standard normalization (also known as z-normalization) is a common preprocessing step : it applies an affine transformation to a time series such that the new time series has zero mean and (almost) unit variance: we had a small term *epsilon* to the standard deviation before dividing (in order to prevent a division by zero and to avoid over-amplification of an eventual background noise).
 
-$$
-\forall i \in \mathbb \{1,\ldots,n\}, \; X_i \leftarrow \frac{X_i - \bar{X}_n}{\sum_{j=1}^n \left(  X_j - \bar{X}_n\right)^2 + \epsilon }
-$$
-where $\epsilon$ is a threshold that prevents from diving by zero. It also avoids over-amplification of an eventual background noise.
 It is implemented as a class named `StandardScaler(epsilon)` from the module `transformation`.
 
 ```python
@@ -118,14 +110,6 @@ plot_standardscaler(X[0])
 Piecewise Aggregation Approximation is a dimension reduction technique. It splits the time series into bins and computes the mean inside each bin. It returns the sample of means. It is implemented as a class named `PAA(window_size=None, output_size=None, overlapping=True)`, from the module `transformation`. 
 
 You can specify either `window_size` or `output_size`. If you specify `output_size`, the returned time series will be of length `output_size`. You can also specify `overlapping`, which will determine if each bin has the same number of elements `(overlapping=True)` or if each datapoint belong to only one bin `(overlapping=False)`. If you specify `window_size`, the size of each bin will be equal to `window_size` and `overlapping` will be ignored.
-
-Let's consider the easiest case where `window_size` divides the length of the input time series. Let $w$ be equal to `window_size`. Then the output time series is $ \tilde{X} = (\tilde{X}_1,\ldots,\tilde{X}_m) $ where :
-$$
-m = \frac{n}{w}
-$$
-$$
-\forall i \in \{1,\ldots,m\},\; \tilde{X}_i = \frac{1}{w} \sum_{j=(i-1) w + 1}^{i w} X_{j}
-$$
 
 Here is the code to perform the transformation:
 
@@ -283,29 +267,9 @@ clf.score(X_standardized[80:], y[80:])
 ```
 
 #### More about DTW and FastDTW
-Let's consider two time series $X = (X_1,\ldots,X_n)$ and $Y = (Y_1,\ldots,Y_m)$. Let $c$ be a distance between real numbers (also known as *cost*). The *cost matrix* $C$ is defined as:
-$$
-C = 
-\begin{pmatrix}  
-c(X_1,Y_1) & \ldots & c(X_1, Y_n) \\ 
-\vdots & \ddots & \vdots \\ 
-c(X_n,Y_1) & \ldots & c(X_n, Y_n)
-\end{pmatrix}
-$$
-The goal is to find a path between $X$ and $Y$ with minimal overall cost among all warping paths. A warping path $p$ is a sequence  $(p_1,\ldots,p_L)$ with $p_l=(n_l, m_l) \in \{1,\ldots,N\}^2$ for $l \in \{1,\ldots,L\}$ such that:
 
-- *boudary condition*: $p_1 = (1,1)$ and $p_L = (N,N)$
-- *step size condition*: $p_{l+1} - p_l \in \{ (1,0), (0,1), (1,1) \}$
+We refer to [4] for more information about DTW and FastDTW.
 
-Given a path $p=(p_1,\ldots,p_L)$, the *total cost* $c_p(X,Y)$ is defined as:
-$$
-c_p(X,Y) = \sum_{l=1}^L c_(X_{n_l},Y_{m_l})
-$$
-
-Finally, the *DTW distance* between $X$ and $Y$ is defined as:
-$$
-\text{DTW}(X,Y) = \min \left\{ c_p(X,Y) | p \text{ is an optimal warping path} \right\}
-$$
 The function `plot_dtw(X, Y)` from the module `visualization` allows you to see the optimal warping path between two time series with same length.
 
 ```python
@@ -316,11 +280,6 @@ plot_dtw(X[0], X[1])
 
 ![dtw](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/dtw.png)
 
-DTW$(X,T)$ can be computed with dynnamic programming. However, the computation cost is $O(N^2)$. To reduce the computation cost, one possible approximation is to add a global constraint region. One possible constraint region can be computed as follows:
-
-- reduce the size of each time series using PAA,
-- compute the optimal warping path between both reduced time series,
-- project this optimal warping path on the grid with original time series size/
 
 The function `plot_fastdtw(X, Y, window_size)` from the module `visualization` allows you to see the optimal warping path between two time series with same length, as well as the region constraint.
 
