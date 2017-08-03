@@ -289,9 +289,9 @@ from pyts.visualization import plot_dtw
 plot_dtw(X[0], X[1])
 ```
 
-
-![dtw](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/dtw.png)
-
+<p align="center">
+<img src="https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/dtw.png">
+</p>
 
 The function `plot_fastdtw(X, Y, window_size)` from the module `visualization` allows you to see the optimal warping path between two time series with same length, as well as the region constraint.
 
@@ -301,8 +301,9 @@ from pyts.visualization import plot_fastdtw
 plot_fastdtw(X[0], X[1], window_size=12)
 ```
 
-![fastdtw](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/fastdtw.png)
-
+<p align="center">
+<img src="https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/fastdtw.png">
+</p>
 
 ### 10. Working with Pipeline and GridSearchCV
 All the classes implemented in the modules `` and `` can be used with Pipeline and GridSearchCV from scikit-learn package.
