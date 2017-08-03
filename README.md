@@ -128,7 +128,11 @@ from pyts.visualization import plot_paa
 plot_paa(X_standardized[0], window_size=None, output_size=8, overlapping=True, marker='o')
 ```
 
+
+
 ![ts_paa](https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_paa.png)
+
+
 
 
 ### 4. Symbolic Aggregation approXimation (SAX)
