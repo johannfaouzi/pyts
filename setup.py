@@ -1,4 +1,6 @@
 from setuptools import setup, find_packages
+from distutils.core import setup
+
 
 setup(name='pyts',
     version='0.4',
@@ -6,7 +8,6 @@ setup(name='pyts',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Topic :: Scientific/Engineering',
       ],

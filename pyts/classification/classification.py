@@ -1,3 +1,10 @@
+from __future__ import division
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import range
+from future import standard_library
+standard_library.install_aliases()
 from pyts.utils import idf_func, idf_smooth_func, dtw, fast_dtw
 from sklearn.base import BaseEstimator
 from sklearn.metrics.pairwise import cosine_similarity
