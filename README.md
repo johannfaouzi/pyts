@@ -26,7 +26,7 @@ Welcome to **pyts**, a Python package for time series transformation and classif
 #### 0.1 Installation with pip
 **pyts** is available on PyPI and can be easily installed with the command **pip**:
 
-	pip install pyts
+	$ pip install pyts
 
 #### 0.2 Package dependencies
 **pyts** requires the following packages to be installed:
