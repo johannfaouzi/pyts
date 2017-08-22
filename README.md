@@ -253,10 +253,31 @@ plot_mtf(X_standardized[0], image_size=48, n_bins=4, quantiles='empirical', over
 <img src="https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_mtf.png">
 </p>
 
-### 8. SAX-VSM Classification
+### 8. Recurrence Plots
+Recurrence plots have been introduced to visualize recurrent behaviors. The main idea is to find trajectories that are close to eachother and to observe the results as images.
+
+Here is the code to perform the transformation:
+```python
+from pyts.transformation import RecurrencePlots
+
+rp = RecurrencePlots(dimension=3, epsilon='percentage_points', percentage=10)
+X_rp = rp.transform(X_standardized)```
+
+The function `plot_recurrence_plots` from the module `visualization` allows you to see the image.
+```python
+from pyts.visualization import plot_recurrence_plots
+
+plot_recurrence_plots(X_standardized[0], dimension=3, epsilon='percentage_points', percentage=10)```
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_rp.png">
+</p>
+
+
+### 9. SAX-VSM Classification
 SAX-VSM is a classification method based on the SAX-VSM representation of the time series. Once this transformation is done, tf-idf statistics are computed, where a document is a time series and each corpus corresponds to a class. To predict the class with an unlabeled time series, tf is computed for this time series and the predicted label corresponds to the class that gives the highest cosine similarity between tf and its tf-idf.
 
-Here is to code to perform a classification:
+Here is the code to perform a classification:
 
 ```python
 from pyts.classification import SAXVSMClassifier
@@ -267,7 +288,7 @@ y_pred = clf.predict(X_vsm[80:])
 clf.score(X_vsm[80:], y[80:])
 ```
 
-### 9. kNN with DTW or FastDTW
+### 10. kNN with DTW or FastDTW
 k nearest neighbors is an often used classifier when dealing with time series. Typical metrics are Minkowski distance and dynamic time warping. Unfortunately, dynamic time warping is not available with scikit-learn implementation of kNN. The class `KNNClassifier` from the module `classification` uses scikit-learn implementation of kNN but allows you to use this metric.
 
 Here is the code to perform a classification:
@@ -317,7 +338,7 @@ plot_fastdtw(X[0], X[1], window_size=12)
 <img src="https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/fastdtw.png">
 </p>
 
-### 10. Working with Pipeline and GridSearchCV
+### 11. Working with Pipeline and GridSearchCV
 All the classes implemented in the modules `` and `` can be used with Pipeline and GridSearchCV from scikit-learn package.
 
 ```python

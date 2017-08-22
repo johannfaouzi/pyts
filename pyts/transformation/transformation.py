@@ -4,11 +4,13 @@ from __future__ import print_function
 from __future__ import absolute_import
 from builtins import range
 from future import standard_library
-standard_library.install_aliases()
 import numpy as np
 import scipy.stats
 from sklearn.base import BaseEstimator
-from pyts.utils import paa, sax, vsm, gaf, mtf
+from pyts.utils import paa, sax, vsm, gaf, mtf, recurrence_plot
+
+
+standard_library.install_aliases()
 
 
 class StandardScaler(BaseEstimator):
@@ -571,3 +573,85 @@ class MTF(BaseEstimator):
 
         return np.apply_along_axis(mtf, 1, X, n_features, self.image_size,
                                    self.n_bins, quantiles, self.overlapping)
+
+
+class RecurrencePlots(BaseEstimator):
+    """
+    Recurrence plots.
+
+    Parameters
+    ----------
+    dimension : int (default = 1)
+        dimension of the trajectory.
+
+    epsilon : None or 'percentage_points' or 'percentage_distance'
+    or float (default = None)
+        threshold for the minimum distance
+
+    percentage : float (default = 10)
+        percentage of black points if epsilon == 'percentage_points'
+        or percentage of maximum distance for threshold if
+        epsilon == 'percentage_distance'.
+
+    """
+
+    def __init__(self, dimension=1, epsilon=None, percentage=10):
+        self.dimension = dimension
+        self.epsilon = epsilon
+        self.percentage = percentage
+
+    def fit(self, X, y=None):
+        pass
+
+    def fit_transform(self, X, y=None):
+        """Trasnform the provided data.
+
+        Parameters
+        ----------
+        X : np.ndarray, shape = [n_samples, n_features]
+
+        Returns
+        -------
+        X_new : np.ndarray, shape = [n_samples, n_features - dimension + 1, n_features - dimension + 1]
+            Transformed data.
+        """
+
+        return self.transform(X)
+
+    def transform(self, X):
+        """Trasnform the provided data.
+
+        Parameters
+        ----------
+        X : np.ndarray, shape = [n_samples, n_features]
+
+        Returns
+        -------
+        X_new : np.ndarray, shape = [n_samples, n_features - dimension + 1, n_features - dimension + 1]
+            Transformed data.
+        """
+
+        # Check input data
+        if not (isinstance(X, np.ndarray) and X.ndim == 2):
+            raise ValueError("'X' must be a 2-dimensional np.ndarray.")
+
+        # Check parameters
+        if not isinstance(self.dimension, int):
+            raise TypeError("'dimension' must be an integer.")
+        if self.dimension <= 0:
+            raise ValueError("'dimension' must be greater than or equal to 1.")
+        if (self.epsilon is not None) and \
+           (self.epsilon not in ['percentage_points', 'percentage_distance']) and \
+           (not isinstance(self.epsilon, (int, float))):
+            raise TypeError("'epsilon' must be either None, 'percentage_points', "
+                            "'percentage_distance', a float or an integer.")
+        if (isinstance(self.epsilon, (int, float))) and (self.epsilon < 0):
+            raise ValueError("if 'epsilon' is a float or an integer,"
+                             "'epsilon' must be greater than or equal to 0.")
+        if not isinstance(self.percentage, (int, float)):
+            raise TypeError("'percentage' must be a float or an integer.")
+        if (self.percentage < 0) or (self.percentage > 100):
+            raise ValueError("'percentage' must be between 0 and 100.")
+
+        return np.apply_along_axis(recurrence_plot, 1, X, self.dimension,
+                                   self.epsilon, self.percentage)

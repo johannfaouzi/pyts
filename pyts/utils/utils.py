@@ -4,9 +4,11 @@ from __future__ import print_function
 from __future__ import absolute_import
 from builtins import range
 from future import standard_library
-standard_library.install_aliases()
 import numpy as np
 from math import log
+
+
+standard_library.install_aliases()
 
 
 def bin_allocation_integers(x, n_bins, quantiles):
@@ -359,3 +361,24 @@ def fast_dtw(x, y, window_size, approximation=True,
                         path.append((i, j - 1))
 
         return region, D, path[::-1]
+
+
+def recurrence_plot(x, dimension=1, epsilon=None, percentage=10):
+
+    x_size = x.size
+
+    array = np.asarray([x[i: min(x_size, i + dimension)] for i in range(x_size - dimension + 1)])
+
+    M = np.array([np.linalg.norm(array[i] - array, axis=1) for i in range(x_size - dimension + 1)])
+
+    if epsilon is None:
+        return M
+
+    elif epsilon == 'percentage_points':
+        return M < np.percentile(M, percentage)
+
+    elif epsilon == 'percentage_distance':
+        return M < percentage / 100 * np.max(M)
+
+    else:
+        return M < epsilon

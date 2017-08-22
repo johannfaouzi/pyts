@@ -4,11 +4,13 @@ from __future__ import print_function
 from __future__ import absolute_import
 from builtins import range
 from future import standard_library
-standard_library.install_aliases()
 import numpy as np
 import scipy.stats
 import matplotlib.pyplot as plt
-from pyts.utils import paa, sax, gaf, mtf, dtw, fast_dtw
+from pyts.utils import paa, sax, gaf, mtf, dtw, fast_dtw, recurrence_plot
+
+
+standard_library.install_aliases()
 
 
 def plot_ts(ts, output_file=None, **kwargs):
@@ -637,6 +639,35 @@ def plot_mtf(ts, image_size=32, n_bins=8, quantiles='empirical',
     image_mtf = mtf(ts, ts_size, image_size, n_bins, quantiles, overlapping)
 
     plt.imshow(image_mtf, cmap=cmap)
+    plt.axis('off')
+
+    if output_file is not None:
+        plt.savefig(output_file)
+
+
+def plot_recurrence_plots(x, dimension=1, epsilon=None, percentage=10,
+                          cmap='Greys', output_file=None):
+
+    # Check parameters
+    if not isinstance(dimension, int):
+        raise TypeError("'dimension' must be an integer.")
+    if dimension <= 0:
+        raise ValueError("'dimension' must be greater than or equal to 1.")
+    if (epsilon is not None) and \
+       (epsilon not in ['percentage_points', 'percentage_distance']) and \
+       (not isinstance(epsilon, (int, float))):
+        raise TypeError("'epsilon' must be either None, 'percentage_points', "
+                        "'percentage_distance', a float or an integer.")
+    if (isinstance(epsilon, (int, float))) and (epsilon < 0):
+        raise ValueError("if 'epsilon' is a float or an integer,"
+                         "'epsilon' must be greater than or equal to 0.")
+    if not isinstance(percentage, (int, float)):
+        raise TypeError("'percentage' must be a float or an integer.")
+    if (percentage < 0) or (percentage > 100):
+        raise ValueError("'percentage' must be between 0 and 100.")
+
+    rp = recurrence_plot(x, dimension, epsilon, percentage)
+    plt.imshow(rp, origin='lower', cmap=cmap)
     plt.axis('off')
 
     if output_file is not None:
