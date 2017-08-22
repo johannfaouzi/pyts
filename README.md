@@ -261,13 +261,15 @@ Here is the code to perform the transformation:
 from pyts.transformation import RecurrencePlots
 
 rp = RecurrencePlots(dimension=3, epsilon='percentage_points', percentage=10)
-X_rp = rp.transform(X_standardized)```
+X_rp = rp.transform(X_standardized)
+```
 
 The function `plot_recurrence_plots` from the module `visualization` allows you to see the image.
 ```python
 from pyts.visualization import plot_recurrence_plots
 
-plot_recurrence_plots(X_standardized[0], dimension=3, epsilon='percentage_points', percentage=10)```
+plot_recurrence_plots(X_standardized[0], dimension=3, epsilon='percentage_points', percentage=10)
+```
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/johannfaouzi/pyts/master/pictures/ts_rp.png">
