@@ -36,6 +36,9 @@ def plot_ts(ts, output_file=None, **kwargs):
     if output_file is not None:
         plt.savefig(output_file)
 
+    # Show plot
+    plt.show()
+
 
 def plot_standardscaler(ts, epsilon=1e-3, output_file=None, **kwargs):
     """Plot the original and standardized time series.
@@ -73,6 +76,9 @@ def plot_standardscaler(ts, epsilon=1e-3, output_file=None, **kwargs):
 
     if output_file is not None:
         plt.savefig(output_file)
+
+    # Show plot
+    plt.show()
 
 
 def plot_paa(ts, window_size=None, output_size=None, overlapping=True, output_file=None, **kwargs):
@@ -148,6 +154,9 @@ def plot_paa(ts, window_size=None, output_size=None, overlapping=True, output_fi
 
     if output_file is not None:
         plt.savefig(output_file)
+
+    # Show plot
+    plt.show()
 
 
 def plot_paa_sax(
@@ -272,6 +281,9 @@ def plot_paa_sax(
     if output_file is not None:
         plt.savefig(output_file)
 
+    # Show plot
+    plt.show()
+
 
 def plot_sax(ts, n_bins, quantiles='gaussian', output_file=None, **kwargs):
     """Plot the time series before and after SAX transformation.
@@ -342,6 +354,9 @@ def plot_sax(ts, n_bins, quantiles='gaussian', output_file=None, **kwargs):
     if output_file is not None:
         plt.savefig(output_file)
 
+    # Show plot
+    plt.show()
+
 
 def plot_dtw(x, y, dist='absolute', output_file=None):
     """Plot the optimal warping path between two time series.
@@ -394,6 +409,9 @@ def plot_dtw(x, y, dist='absolute', output_file=None):
 
     if output_file is not None:
         plt.savefig(output_file)
+
+    # Show plot
+    plt.show()
 
 
 def plot_fastdtw(x, y, window_size, dist='absolute', output_file=None):
@@ -464,6 +482,9 @@ def plot_fastdtw(x, y, window_size, dist='absolute', output_file=None):
     if output_file is not None:
         plt.savefig(output_file)
 
+    # Show plot
+    plt.show()
+
 
 def plot_gasf(ts, image_size=32, overlapping=False, scale='-1',
               cmap='rainbow', output_file=None):
@@ -519,6 +540,9 @@ def plot_gasf(ts, image_size=32, overlapping=False, scale='-1',
     if output_file is not None:
         plt.savefig(output_file)
 
+    # Show plot
+    plt.show()
+
 
 def plot_gadf(ts, image_size, overlapping=False, scale='-1',
               cmap='rainbow', output_file=None):
@@ -573,6 +597,9 @@ def plot_gadf(ts, image_size, overlapping=False, scale='-1',
 
     if output_file is not None:
         plt.savefig(output_file)
+
+    # Show plot
+    plt.show()
 
 
 def plot_mtf(ts, image_size=32, n_bins=8, quantiles='empirical',
@@ -644,6 +671,9 @@ def plot_mtf(ts, image_size=32, n_bins=8, quantiles='empirical',
     if output_file is not None:
         plt.savefig(output_file)
 
+    # Show plot
+    plt.show()
+
 
 def plot_recurrence_plots(x, dimension=1, epsilon=None, percentage=10,
                           cmap='Greys', output_file=None):
@@ -672,3 +702,6 @@ def plot_recurrence_plots(x, dimension=1, epsilon=None, percentage=10,
 
     if output_file is not None:
         plt.savefig(output_file)
+
+    # Show plot
+    plt.show()
