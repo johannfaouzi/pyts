@@ -119,7 +119,7 @@ def num_red(array):
 
 def vsm(ts_sax, ts_sax_size, window_size, numerosity_reduction=True):
 
-    ts_vsm = [ts_sax[i:i + window_size] for i in range(ts_sax_size - window_size)]
+    ts_vsm = [ts_sax[i:i + window_size] for i in range(ts_sax_size - window_size + 1)]
 
     if numerosity_reduction:
         return num_red(ts_vsm)
