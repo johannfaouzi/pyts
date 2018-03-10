@@ -511,6 +511,9 @@ def plot_gasf(ts, image_size=32, overlapping=False, scale='-1',
 
     output_file : str or None (default = None)
         if str, save the figure.
+
+    interpolation : str or None (default = None)
+        'interpolation' parameter for matplotlib.pyplot.imshow
     """
 
     # Check input data
@@ -569,6 +572,9 @@ def plot_gadf(ts, image_size, overlapping=False, scale='-1',
 
     output_file : str or None (default = None)
         if str, save the figure.
+
+    interpolation : str or None (default = None)
+        'interpolation' parameter for matplotlib.pyplot.imshow
     """
 
     # Check input data
@@ -603,7 +609,8 @@ def plot_gadf(ts, image_size, overlapping=False, scale='-1',
 
 
 def plot_mtf(ts, image_size=32, n_bins=8, quantiles='empirical',
-             overlapping=False, cmap='rainbow', output_file=None, interpolation=None):
+             overlapping=False, cmap='rainbow', output_file=None,
+             interpolation=None):
     """Plot the image obtained after MTF transformation.
 
     Parameters
@@ -634,6 +641,9 @@ def plot_mtf(ts, image_size=32, n_bins=8, quantiles='empirical',
 
     output_file : str or None (default = None)
         if str, save the figure.
+
+    interpolation : str or None (default = None)
+        'interpolation' parameter for matplotlib.pyplot.imshow
     """
 
     # Check input data
@@ -675,8 +685,37 @@ def plot_mtf(ts, image_size=32, n_bins=8, quantiles='empirical',
     plt.show()
 
 
-def plot_recurrence_plots(x, dimension=1, epsilon=None, percentage=10,
+def plot_recurrence_plots(ts, dimension=1, epsilon=None, percentage=10,
                           cmap='Greys', output_file=None, interpolation=None):
+    
+    """Plot the image obtained after Recurrence plots transformation.
+
+    Parameters
+    ----------
+    ts : np.array, shape = [n_features]
+        time series to plot
+
+     dimension : int (default = 1)
+        dimension of the trajectory.
+
+    epsilon : None or 'percentage_points' or 'percentage_distance'
+    or float (default = None)
+        threshold for the minimum distance
+
+    percentage : float (default = 10)
+        percentage of black points if epsilon == 'percentage_points'
+        or percentage of maximum distance for threshold if
+        epsilon == 'percentage_distance'.
+
+    cmap : str (default = 'Greys')
+        color map from matplotlib.pyplot
+
+    output_file : str or None (default = None)
+        if str, save the figure.
+
+    interpolation : str or None (default = None)
+        'interpolation' parameter for matplotlib.pyplot.imshow
+    """
 
     # Check parameters
     if not isinstance(dimension, int):
@@ -696,7 +735,7 @@ def plot_recurrence_plots(x, dimension=1, epsilon=None, percentage=10,
     if (percentage < 0) or (percentage > 100):
         raise ValueError("'percentage' must be between 0 and 100.")
 
-    rp = recurrence_plot(x, dimension, epsilon, percentage)
+    rp = recurrence_plot(ts, dimension, epsilon, percentage)
     plt.imshow(rp, origin='lower', cmap=cmap, interpolation=interpolation)
     plt.axis('off')
 
