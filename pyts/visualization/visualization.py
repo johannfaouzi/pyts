@@ -487,7 +487,7 @@ def plot_fastdtw(x, y, window_size, dist='absolute', output_file=None):
 
 
 def plot_gasf(ts, image_size=32, overlapping=False, scale='-1',
-              cmap='rainbow', output_file=None):
+              cmap='rainbow', output_file=None, interpolation=None):
     """Plot the image obtained after GASF transformation.
 
     Parameters
@@ -534,7 +534,7 @@ def plot_gasf(ts, image_size=32, overlapping=False, scale='-1',
 
     image_gasf = gaf(ts, ts_size, image_size, overlapping, 's', scale)
 
-    plt.imshow(image_gasf, cmap=cmap)
+    plt.imshow(image_gasf, cmap=cmap, interpolation=interpolation)
     plt.axis('off')
 
     if output_file is not None:
@@ -545,7 +545,7 @@ def plot_gasf(ts, image_size=32, overlapping=False, scale='-1',
 
 
 def plot_gadf(ts, image_size, overlapping=False, scale='-1',
-              cmap='rainbow', output_file=None):
+              cmap='rainbow', output_file=None, interpolation=None):
     """Plot the image obtained after GADF transformation.
 
     Parameters
@@ -592,7 +592,7 @@ def plot_gadf(ts, image_size, overlapping=False, scale='-1',
 
     image_gadf = gaf(ts, ts_size, image_size, overlapping, 'd', scale)
 
-    plt.imshow(image_gadf, cmap=cmap)
+    plt.imshow(image_gadf, cmap=cmap, interpolation=interpolation)
     plt.axis('off')
 
     if output_file is not None:
@@ -603,7 +603,7 @@ def plot_gadf(ts, image_size, overlapping=False, scale='-1',
 
 
 def plot_mtf(ts, image_size=32, n_bins=8, quantiles='empirical',
-             overlapping=False, cmap='rainbow', output_file=None):
+             overlapping=False, cmap='rainbow', output_file=None, interpolation=None):
     """Plot the image obtained after MTF transformation.
 
     Parameters
@@ -665,7 +665,7 @@ def plot_mtf(ts, image_size=32, n_bins=8, quantiles='empirical',
 
     image_mtf = mtf(ts, ts_size, image_size, n_bins, quantiles, overlapping)
 
-    plt.imshow(image_mtf, cmap=cmap)
+    plt.imshow(image_mtf, cmap=cmap, interpolation=interpolation)
     plt.axis('off')
 
     if output_file is not None:
@@ -676,7 +676,7 @@ def plot_mtf(ts, image_size=32, n_bins=8, quantiles='empirical',
 
 
 def plot_recurrence_plots(x, dimension=1, epsilon=None, percentage=10,
-                          cmap='Greys', output_file=None):
+                          cmap='Greys', output_file=None, interpolation=None):
 
     # Check parameters
     if not isinstance(dimension, int):
@@ -697,7 +697,7 @@ def plot_recurrence_plots(x, dimension=1, epsilon=None, percentage=10,
         raise ValueError("'percentage' must be between 0 and 100.")
 
     rp = recurrence_plot(x, dimension, epsilon, percentage)
-    plt.imshow(rp, origin='lower', cmap=cmap)
+    plt.imshow(rp, origin='lower', cmap=cmap, interpolation=interpolation)
     plt.axis('off')
 
     if output_file is not None:
