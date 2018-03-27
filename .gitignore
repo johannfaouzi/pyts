@@ -1,12 +1,27 @@
-# Compiled python modules.
-*.pyc
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
 
-# Setuptools distribution folder.
-/dist/
+# C extensions
+*.so
 
-# Python egg metadata, regenerated from source files by setuptools.
-/*.egg-info
-/*.egg
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
 
 # Mac OS files
 *.DS_Store

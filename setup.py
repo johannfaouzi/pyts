@@ -3,7 +3,7 @@ from distutils.core import setup
 
 
 setup(name='pyts',
-    version='0.6',
+    version='0.6.1',
     description='A package for transformation and classification of time series',
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -17,8 +17,7 @@ setup(name='pyts',
     author_email='johann.faouzi@gmail.com',
     license='MIT',
     packages=find_packages(),
-    test_suite='nose.collector',
-    tests_require=['nose'],
+    tests_require=['pytest'],
     install_requires=[
         'numpy',
         'scipy',
