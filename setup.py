@@ -20,7 +20,8 @@ setup(name='pyts',
     install_requires=[
         'numpy',
         'scipy',
-        'sklearn',
-        'matplotlib'
+        'scikit-learn',
+        'matplotlib',
+        'future'
     ],
     zip_safe=False)
