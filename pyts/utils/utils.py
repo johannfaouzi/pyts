@@ -60,7 +60,7 @@ def mean(ts, indices, overlapping):
 
 def arange(array):
 
-    return np.arange(array[0], array[1])
+    return np.arange(*array)
 
 
 def paa(ts, ts_size, window_size, overlapping, n_segments=None, plot=False):
@@ -191,20 +191,6 @@ def mtf(ts, ts_size, image_size, n_bins, quantiles, overlapping):
                 AMTF[i, j] = MTF[indices[i]][:, indices[j]].mean()
 
         return AMTF
-
-
-def idf_func(x, num_classes):
-    if x > 0:
-        return log(num_classes / x)
-    else:
-        return 0
-
-
-def idf_smooth_func(x, num_classes):
-    if x > 0:
-        return log(1 + num_classes / x)
-    else:
-        return 0
 
 
 def dtw(x, y, dist='absolute', return_path=False, **kwargs):

@@ -3,173 +3,110 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import absolute_import
 from builtins import range
+from itertools import chain
 from future import standard_library
-standard_library.install_aliases()
-from pyts.utils import idf_func, idf_smooth_func, dtw, fast_dtw
-from sklearn.base import BaseEstimator
+from sklearn.utils.validation import check_array, check_X_y, check_is_fitted
+from sklearn.utils.multiclass import check_classification_targets
+from pyts.utils import dtw, fast_dtw
+from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.preprocessing import LabelEncoder
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.exceptions import NotFittedError
 import numpy as np
 
 
-class SAXVSMClassifier(BaseEstimator):
-    """
-    Classifier based on SAX-VSM representation and tf-idf statistics.
+standard_library.install_aliases()
+
+
+class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
+    """Classifier based on SAX-VSM representation and tf-idf statistics.
+    It uses the implementation from scikit-learn: TfidfVectorizer.
 
     Parameters
     ----------
-    tf : str
-        the way to compute idf. Possibles values:
+    norm : 'l1', 'l2' or None, optional
+        Norm used to normalize term vectors. None for no normalization.
 
-        - 'raw' : raw count
-        - 'freq' : term frequency
-        - 'log' : log normalization
-        - 'binary' : binary
+    use_idf : boolean, default=True
+        Enable inverse-document-frequency reweighting.
 
-    idf : str.
-        the way to compute idf. Possibles values:
+    smooth_idf : boolean, default=True
+        Smooth idf weights by adding one to document frequencies, as if an
+        extra document was seen containing every term in the collection
+        exactly once. Prevents zero divisions.
 
-        - 'idf' : inverse document frequency
-        - 'idf_smooth' : inverse document frequency smooth
-        - 'idf_max' : inverse document frequency max
+    sublinear_tf : boolean, default=False
+        Apply sublinear tf scaling, i.e. replace tf with 1 + log(tf).
 
-    https://en.wikipedia.org/wiki/Tf%E2%80%93idf
+    Attributes
+    ----------
+    vocabulary_ : dict
+        A mapping of terms to feature indices.
+
+    idf_ : array, shape = [n_features], or None
+        The learned idf vector (global term weights)
+        when ``use_idf`` is set to True, None otherwise.
+
+    stop_words_ : set
+        Terms that were ignored because they either:
+          - occurred in too many documents (`max_df`)
+          - occurred in too few documents (`min_df`)
+          - were cut off by feature selection (`max_features`).
+        This is only available if no vocabulary was given.
     """
 
-    def __init__(self, tf='log', idf='idf'):
+    def __init__(self, norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=False):
+        self.norm = norm
+        self.use_idf = use_idf
+        self.smooth_idf = smooth_idf
+        self.sublinear_tf = sublinear_tf
 
-        self.tf = tf
-        self.idf = idf
         self.fitted = False
 
     def fit(self, X, y):
-        """Fit the model according to the given training data.
 
-        Parameters
-        ----------
-        X : np.ndarray, shape = [n_samples,]
-            Training vector, where n_samples in the number of samples.
+        check_classification_targets(y)
 
-        y : np.array, shape = [n_samples]
-            Target vector relative to X
+        le = LabelEncoder()
+        y_ind = le.fit_transform(y)
+        self.classes_ = classes = le.classes_
+        n_classes = classes.size
 
-        Returns
-        -------
-        self : object
-            Returns self.
-        """
+        X_clas = []
 
-        # Check Parameters
-        if self.tf not in ['raw', 'log', 'binary', 'freq']:
-            raise ValueError("'tf' must be 'raw', 'log', 'binary' or 'freq'.")
-        if self.idf not in ['idf', 'idf_smooth', 'idf_max']:
-            raise ValueError("'idf' must be 'idf', 'idf_smooth' or 'idf_max'.")
+        for cur_class in range(n_classes):
+            center_mask = y_ind == cur_class
+            sentence = ' '.join(list(chain(*X[center_mask])))
+            X_clas.append(sentence)
 
-        # Sanity check for y
-        y_unique = np.unique(y)
-        if not np.all(y_unique == np.arange(y_unique.size)):
-            raise ValueError("Each element of 'y' must belong to {0, ..., num_class - 1}")
-
-        # Class parameters
-        num_classes = y_unique.size
-        self.num_classes_ = num_classes
-
-        # Compute tf and idf
-        all_words = np.unique(np.array([word for sublist in X for word in sublist]))
-        n_all_words = all_words.size
-
-        self.all_words_ = all_words
-        self.n_all_words_ = n_all_words
-
-        tf = np.zeros((num_classes, n_all_words))
-        idf = [0 for _ in range(n_all_words)]
-
-        for classe in range(num_classes):
-
-            class_list = list([X[i] for i in np.where(y == classe)[0]])
-            flat_class_list = np.array([word for sublist in class_list for word in sublist])
-
-            class_unique, class_counts = np.unique(flat_class_list, return_counts=True)
-
-            if self.tf == 'raw':
-                tf_class = class_counts.copy()
-            elif self.tf == 'log':
-                tf_class = np.log(1 + class_counts)
-            elif self.tf == 'binary':
-                tf_class = np.ceil(np.clip(class_counts / class_counts.sum(), 0, 1))
-            elif self.tf == 'freq':
-                tf_class = np.clip(class_counts / class_counts.sum(), 0, 1)
-
-            for i, word in enumerate(all_words):
-                if word in class_unique:
-                    tf[classe, i] = tf_class[np.where(class_unique == word)[0]]
-                    idf[i] += 1
-
-        if self.idf == 'idf':
-            idf = np.array([idf_func(x, num_classes) for x in idf])
-        elif self.idf == 'idf_smooth':
-            idf = np.array([idf_smooth_func(x, num_classes) for x in idf])
-        elif self.idf == 'idf_max':
-            idf = np.asarray(idf)
-            idf = np.log(idf.max() / (1 + idf))
-
-        self.tf_array_ = tf.copy()
-        self.idf_array_ = idf.copy()
-        self.tf_idf_array_ = tf * idf
+        tfidf = TfidfVectorizer(norm=self.norm,
+                                use_idf=self.use_idf,
+                                smooth_idf=self.smooth_idf,
+                                sublinear_tf=self.sublinear_tf)
+        self.tfidf_array_ = tfidf.fit_transform(X_clas)
+        self.tfidf_ = tfidf
 
         self.fitted = True
 
+        return self
+
     def predict(self, X):
-        """Predict the class labels for the provided data
-
-        Parameters
-        ----------
-        X : np.ndarray, shape = [n_samples]
-
-        Returns
-        -------
-        y : np.array of shape [n_samples]
-            Class labels for each data sample.
-        """
 
         if not self.fitted:
             raise NotFittedError("Estimator not fitted, call `fit` before exploiting the model.")
+        check_is_fitted(self.tfidf_, ['vocabulary_', 'idf_', 'stop_words_'])
+        check_is_fitted(self, ['classes_', 'tfidf_array_', 'tfidf_'])
 
-        n_samples = len(X)
-        frequencies = np.zeros((n_samples, self.n_all_words_))
-        for i in range(n_samples):
-            words_unique, words_counts = np.unique(X[i], return_counts=True)
-            for j, word in enumerate(self.all_words_):
-                if word in words_unique:
-                    frequencies[i, j] = words_counts[np.where(words_unique == word)[0]]
+        X_test = [' '.join(x) for x in X]
+        X_transformed = self.tfidf_.transform(X_test)
+        y_pred = cosine_similarity(X_transformed, self.tfidf_array_).argmax(axis=1)
 
-        self.frequencies_ = frequencies
-
-        y_pred = cosine_similarity(frequencies, self.tf_idf_array_).argmax(axis=1)
-
-        return y_pred
-
-    def score(self, X, y):
-        """Predict the class labels for the provided data X and compute
-        the accuracy with y.
-
-        Parameters
-        ----------
-        X : np.ndarray, shape = [n_samples]
-
-        y : np.array, shape = [n_samples]
-
-        Returns
-        -------
-        score : float
-            Score between y and the predicted classes.
-        """
-
-        return np.mean(self.predict(X) == y)
+        return self.classes_[y_pred]
 
 
-class KNNClassifier(BaseEstimator):
+class KNNClassifier(BaseEstimator, ClassifierMixin):
     """k nearest neighbors classifier
 
     Parameters
@@ -226,7 +163,6 @@ class KNNClassifier(BaseEstimator):
         The number of parallel jobs to run for neighbors search.
         If ``-1``, then the number of jobs is set to the number of CPU cores.
         Doesn't affect :meth:`fit` method.
-
     """
 
     def __init__(self, n_neighbors=1, weights='uniform', algorithm='auto', leaf_size=30,
@@ -262,6 +198,8 @@ class KNNClassifier(BaseEstimator):
             Returns self.
         """
 
+        X, y = check_X_y(X, y)
+
         if self.metric == 'dtw':
             self.clf = KNeighborsClassifier(self.n_neighbors, self.weights, self.algorithm,
                                             self.leaf_size, self.p, dtw, self.metric_params,
@@ -280,6 +218,8 @@ class KNNClassifier(BaseEstimator):
         self.clf.fit(X, y)
         self.fitted = True
 
+        return self
+
     def predict(self, X):
         """Predict the class labels for the provided data
 
@@ -293,25 +233,13 @@ class KNNClassifier(BaseEstimator):
             Class labels for each data sample.
         """
 
+        X = check_array(X)
+        if X.ndim == 1:
+            X_ = X.reshape((1, -1))
+        else:
+            X_ = X.copy()
+
         if not self.fitted:
             raise NotFittedError("Estimator not fitted, call `fit` before exploiting the model.")
 
-        return self.clf.predict(X)
-
-    def score(self, X, y):
-        """Predict the class labels for the provided data X and compute
-        the accuracy with y.
-
-        Parameters
-        ----------
-        X : np.ndarray, shape = [n_samples, n_features]
-
-        y : np.array, shape = [n_samples]
-
-        Returns
-        -------
-        score : float
-            Score between y and the predicted classes.
-        """
-
-        return np.mean(self.clf.predict(X) == y)
+        return self.clf.predict(X_)

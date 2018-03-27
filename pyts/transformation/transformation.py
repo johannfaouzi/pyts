@@ -6,21 +6,22 @@ from builtins import range
 from future import standard_library
 import numpy as np
 import scipy.stats
-from sklearn.base import BaseEstimator
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.utils.validation import check_array
 from pyts.utils import paa, sax, vsm, gaf, mtf, recurrence_plot
 
 
 standard_library.install_aliases()
 
 
-class StandardScaler(BaseEstimator):
+class StandardScaler(BaseEstimator, TransformerMixin):
     """
     Row-wise Standard Scaler (zero empirical mean, unit empirical variance).
 
     Parameters
     ----------
     epsilon : float (default = 1e-3)
-        value added to empirical variance before dividing.
+        value added to the empirical variance before dividing.
 
     """
 
@@ -28,22 +29,7 @@ class StandardScaler(BaseEstimator):
         self.epsilon = epsilon
 
     def fit(self, X, y=None):
-        pass
-
-    def fit_transform(self, X, y=None):
-        """Trasnform the provided data.
-
-        Parameters
-        ----------
-        X : np.ndarray, shape = [n_samples, n_features]
-
-        Returns
-        -------
-        X_new : np.ndarray, shape = [n_samples, n_features]
-            Transformed data.
-        """
-
-        return self.transform(X)
+        return self
 
     def transform(self, X):
         """Trasnform the provided data.
@@ -59,8 +45,7 @@ class StandardScaler(BaseEstimator):
         """
 
         # Check input data
-        if not (isinstance(X, np.ndarray) and X.ndim == 2):
-            raise ValueError("'X' must be a 2-dimensional np.ndarray.")
+        X = check_array(X)
 
         # Check parameters
         if not isinstance(self.epsilon, (int, float)):
@@ -71,7 +56,7 @@ class StandardScaler(BaseEstimator):
         return ((X.T - X.mean(axis=1)) / (X.std(axis=1) + self.epsilon)).T
 
 
-class PAA(BaseEstimator):
+class PAA(BaseEstimator, TransformerMixin):
     """
     Piecewise Aggregate Approximation.
 
@@ -97,24 +82,7 @@ class PAA(BaseEstimator):
         self.overlapping = overlapping
 
     def fit(self, X, y=None):
-        pass
-
-    def fit_transform(self, X, y=None):
-        """Trasnform the provided data.
-
-        Parameters
-        ----------
-        X : np.ndarray, shape = [n_samples, n_features]
-
-        Returns
-        -------
-        X_new : np.ndarray, shape = [n_samples, new_n_features]
-            Transformed data. If output_size is not None,
-            new_n_features is equal to output_size. Otherwise,
-            new_n_features is equal to ceil(n_features // window_size).
-        """
-
-        return self.transform(X)
+        return self
 
     def transform(self, X):
         """Trasnform the provided data.
@@ -130,8 +98,7 @@ class PAA(BaseEstimator):
         """
 
         # Check input data
-        if not (isinstance(X, np.ndarray) and X.ndim == 2):
-            raise ValueError("'X' must be a 2-dimensional np.ndarray.")
+        X = check_array(X)
 
         # Shape parameters
         n_samples, n_features = X.shape
@@ -166,7 +133,7 @@ class PAA(BaseEstimator):
         return np.apply_along_axis(paa, 1, X, n_features, window_size, self.overlapping, self.output_size)
 
 
-class SAX(BaseEstimator):
+class SAX(BaseEstimator, TransformerMixin):
     """
     Symbolic Aggregate approXimation.
 
@@ -188,22 +155,7 @@ class SAX(BaseEstimator):
         self.quantiles = quantiles
 
     def fit(self, X, y=None):
-        pass
-
-    def fit_transform(self, X, y=None):
-        """Trasnform the provided data.
-
-        Parameters
-        ----------
-        X : np.ndarray, shape = [n_samples, n_features]
-
-        Returns
-        -------
-        X_new : np.ndarray, shape = [n_samples, n_features]
-            Transformed data.
-        """
-
-        return self.transform(X)
+        return self
 
     def transform(self, X):
         """Trasnform the provided data.
@@ -219,8 +171,7 @@ class SAX(BaseEstimator):
         """
 
         # Check input data
-        if not (isinstance(X, np.ndarray) and X.ndim == 2):
-            raise ValueError("'X' must be a 2-dimensional np.ndarray.")
+        X = check_array(X)
 
         # Shape parameters
         n_samples, n_features = X.shape
@@ -247,7 +198,7 @@ class SAX(BaseEstimator):
         return np.apply_along_axis(sax, 1, X, self.n_bins, quantiles, alphabet)
 
 
-class VSM(BaseEstimator):
+class VSM(BaseEstimator, TransformerMixin):
     """
     Vector Space Model.
 
@@ -267,22 +218,7 @@ class VSM(BaseEstimator):
         self.numerosity_reduction = numerosity_reduction
 
     def fit(self, X, y=None):
-        pass
-
-    def fit_transform(self, X, y=None):
-        """Trasnform the provided data.
-
-        Parameters
-        ----------
-        X : np.ndarray, shape = [n_samples]
-
-        Returns
-        -------
-        X_new : np.ndarray, shape = [n_samples]
-            Transformed data.
-        """
-
-        return self.transform(X)
+        return self
 
     def transform(self, X):
         """Trasnform the provided data.
@@ -298,8 +234,9 @@ class VSM(BaseEstimator):
         """
 
         # Check input data
-        if not (isinstance(X, np.ndarray) and X.ndim == 1):
-            raise ValueError("'X' must be a 1-dimensional np.ndarray.")
+        X = check_array(X, ensure_2d=False)
+        if not X.ndim == 1:
+            raise ValueError("'X' must be a 1-dimensional array.")
 
         # Shape parameters
         n_samples, n_features = X.size, len(X[0])
@@ -317,7 +254,7 @@ class VSM(BaseEstimator):
         return np.array([vsm(X[i], n_features, self.window_size, self.numerosity_reduction) for i in range(n_samples)])
 
 
-class GASF(BaseEstimator):
+class GASF(BaseEstimator, TransformerMixin):
     """
     Gramian Angular Summation Field.
 
@@ -345,22 +282,7 @@ class GASF(BaseEstimator):
         self.scale = scale
 
     def fit(self, X, y=None):
-        pass
-
-    def fit_transform(self, X, y=None):
-        """Trasnform the provided data.
-
-        Parameters
-        ----------
-        X : np.ndarray, shape = [n_samples, n_features]
-
-        Returns
-        -------
-        X_new : np.ndarray, shape = [n_samples, image_size, image_size]
-            Transformed data.
-        """
-
-        return self.transform(X)
+        return self
 
     def transform(self, X):
         """Trasnform the provided data.
@@ -376,8 +298,7 @@ class GASF(BaseEstimator):
         """
 
         # Check input data
-        if not (isinstance(X, np.ndarray) and X.ndim == 2):
-            raise ValueError("'X' must be a 2-dimensional np.ndarray.")
+        X = check_array(X)
 
         # Shape parameters
         n_samples, n_features = X.shape
@@ -398,7 +319,7 @@ class GASF(BaseEstimator):
                                    self.overlapping, 's', self.scale)
 
 
-class GADF(BaseEstimator):
+class GADF(BaseEstimator, TransformerMixin):
     """
     Gramian Angular Difference Field.
 
@@ -426,22 +347,7 @@ class GADF(BaseEstimator):
         self.scale = scale
 
     def fit(self, X, y=None):
-        pass
-
-    def fit_transform(self, X, y=None):
-        """Trasnform the provided data.
-
-        Parameters
-        ----------
-        X : np.ndarray, shape = [n_samples, n_features]
-
-        Returns
-        -------
-        X_new : np.ndarray, shape = [n_samples, image_size, image_size]
-            Transformed data.
-        """
-
-        return self.transform(X)
+        return self
 
     def transform(self, X):
         """Trasnform the provided data.
@@ -457,8 +363,7 @@ class GADF(BaseEstimator):
         """
 
         # Check input data
-        if not (isinstance(X, np.ndarray) and X.ndim == 2):
-            raise ValueError("'X' must be a 2-dimensional np.ndarray.")
+        X = check_array(X)
 
         # Shape parameters
         n_samples, n_features = X.shape
@@ -479,7 +384,7 @@ class GADF(BaseEstimator):
                                    self.overlapping, 'd', self.scale)
 
 
-class MTF(BaseEstimator):
+class MTF(BaseEstimator, TransformerMixin):
     """
     Markov Transition Field.
 
@@ -512,22 +417,7 @@ class MTF(BaseEstimator):
         self.overlapping = overlapping
 
     def fit(self, X, y=None):
-        pass
-
-    def fit_transform(self, X, y=None):
-        """Trasnform the provided data.
-
-        Parameters
-        ----------
-        X : np.ndarray, shape = [n_samples, n_features]
-
-        Returns
-        -------
-        X_new : np.ndarray, shape = [n_samples, image_size, image_size]
-            Transformed data.
-        """
-
-        return self.transform(X)
+        return self
 
     def transform(self, X):
         """Trasnform the provided data.
@@ -543,8 +433,7 @@ class MTF(BaseEstimator):
         """
 
         # Check input data
-        if not (isinstance(X, np.ndarray) and X.ndim == 2):
-            raise ValueError("'X' must be a 2-dimensional np.ndarray.")
+        X = check_array(X)
 
         # Shape parameters
         n_samples, n_features = X.shape
@@ -575,7 +464,7 @@ class MTF(BaseEstimator):
                                    self.n_bins, quantiles, self.overlapping)
 
 
-class RecurrencePlots(BaseEstimator):
+class RecurrencePlots(BaseEstimator, TransformerMixin):
     """
     Recurrence plots.
 
@@ -601,22 +490,7 @@ class RecurrencePlots(BaseEstimator):
         self.percentage = percentage
 
     def fit(self, X, y=None):
-        pass
-
-    def fit_transform(self, X, y=None):
-        """Trasnform the provided data.
-
-        Parameters
-        ----------
-        X : np.ndarray, shape = [n_samples, n_features]
-
-        Returns
-        -------
-        X_new : np.ndarray, shape = [n_samples, n_features - dimension + 1, n_features - dimension + 1]
-            Transformed data.
-        """
-
-        return self.transform(X)
+        return self
 
     def transform(self, X):
         """Trasnform the provided data.
@@ -632,8 +506,7 @@ class RecurrencePlots(BaseEstimator):
         """
 
         # Check input data
-        if not (isinstance(X, np.ndarray) and X.ndim == 2):
-            raise ValueError("'X' must be a 2-dimensional np.ndarray.")
+        X = check_array(X)
 
         # Check parameters
         if not isinstance(self.dimension, int):

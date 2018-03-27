@@ -687,7 +687,7 @@ def plot_mtf(ts, image_size=32, n_bins=8, quantiles='empirical',
 
 def plot_recurrence_plots(ts, dimension=1, epsilon=None, percentage=10,
                           cmap='Greys', output_file=None, interpolation=None):
-    
+
     """Plot the image obtained after Recurrence plots transformation.
 
     Parameters
