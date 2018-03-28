@@ -294,7 +294,7 @@ k nearest neighbors is an often used classifier when dealing with time series. T
 Here is the code to perform a classification:
 
 ```python
-from pyts.classifier import KNNClassifier
+from pyts.classification import KNNClassifier
 
 clf = KNNClassifier(metric='minkowski', p=2)
 clf.fit(X_standardized[:80], y[:80])
