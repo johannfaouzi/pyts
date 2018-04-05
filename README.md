@@ -50,7 +50,7 @@ You can simulate a toy dataset with the following code:
 import numpy as np
 from scipy.stats import norm
 	
-n_samples = 10
+n_samples = 100
 n_features = 48
 n_classes = 2
 
