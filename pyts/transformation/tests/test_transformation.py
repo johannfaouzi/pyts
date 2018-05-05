@@ -1,11 +1,12 @@
+"""Testing for transformation module (pyts.transformation)."""
+
 import numpy as np
 from pyts.transformation import (StandardScaler, PAA, SAX,
-    VSM, GASF, GADF, MTF, RecurrencePlots)
+                                 VSM, GASF, GADF, MTF, RecurrencePlots)
 
 
 def test_StandardScaler():
-    """Testing 'StandardScaler'"""
-
+    """Testing 'StandardScaler'."""
     # Parameter
     X = np.arange(0, 7)
 
@@ -29,8 +30,7 @@ def test_StandardScaler():
 
 
 def test_PAA():
-    """Testing 'PAA'"""
-
+    """Testing 'PAA'."""
     # Parameter
     X = np.arange(30)
 
@@ -66,8 +66,7 @@ def test_PAA():
 
 
 def test_SAX():
-    """Testing 'SAX'"""
-
+    """Testing 'SAX'."""
     # Test 1
     X = np.tile(np.arange(3), 5)
     sax = SAX(n_bins=3, quantiles='empirical')
@@ -84,8 +83,7 @@ def test_SAX():
 
 
 def test_VSM():
-    """Testing 'VSM'"""
-
+    """Testing 'VSM'."""
     # Parameter
     X = np.array(["aaabbbcccddd"])
 
@@ -93,7 +91,8 @@ def test_VSM():
     window_size = 4
     vsm = VSM(window_size=window_size, numerosity_reduction=False)
     arr_actual = vsm.fit_transform(X)[0]
-    arr_desired = np.array([X[0][i: i + window_size] for i in range(len(X[0]) - window_size + 1)])
+    arr_desired = np.array([X[0][i: i + window_size]
+                            for i in range(len(X[0]) - window_size + 1)])
     np.testing.assert_array_equal(arr_actual, arr_desired)
 
     # Test 2
@@ -113,8 +112,7 @@ def test_VSM():
 
 
 def test_GASF():
-    "Testing 'GASF'"
-
+    """Testing 'GASF'."""
     # Parameter
     size = 9
     X = np.linspace(-1, 1, size)
@@ -133,14 +131,13 @@ def test_GASF():
     gasf = GASF(image_size=size_new)
     arr_actual = gasf.transform(X[np.newaxis, :])[0]
     X_new = np.linspace(-1, 1, size_new)
-    arr_desired = np.outer(X_new, X_new) - np.outer(np.sqrt(ones_new - X_new ** 2),
-                                                    np.sqrt(ones_new - X_new ** 2))
+    arr_sqrt = np.sqrt(ones_new - X_new**2)
+    arr_desired = np.outer(X_new, X_new) - np.outer(arr_sqrt, arr_sqrt)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
 
 def test_GADF():
-    "Testing 'GADF'"
-
+    """Testing 'GADF'."""
     # Parameter
     size = 9
     X = np.linspace(-1, 1, size)
@@ -149,7 +146,8 @@ def test_GADF():
     ones = np.ones(size)
     gadf = GADF(image_size=size)
     arr_actual = gadf.transform(X[np.newaxis, :])[0]
-    arr_desired = np.outer(np.sqrt(ones - X ** 2), X) - np.outer(X, np.sqrt(ones - X ** 2))
+    arr_sqrt = np.sqrt(ones - X**2)
+    arr_desired = np.outer(arr_sqrt, X) - np.outer(X, arr_sqrt)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
     # Test 2
@@ -158,14 +156,13 @@ def test_GADF():
     gadf = GADF(image_size=size_new)
     arr_actual = gadf.transform(X[np.newaxis, :])[0]
     X_new = np.linspace(-1, 1, size_new)
-    arr_desired = np.outer(np.sqrt(ones_new - X_new ** 2), X_new)\
-                - np.outer(X_new, np.sqrt(ones_new - X_new ** 2))
+    arr_new_sqrt = np.sqrt(ones_new - X_new**2)
+    arr_desired = np.outer(arr_new_sqrt, X_new) - np.outer(X_new, arr_new_sqrt)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
 
 def test_MTF():
-    "Testing 'MTF'"
-
+    """Testing 'MTF'."""
     # Parameter
     size = 9
     X = np.linspace(-1, 1, size)
@@ -188,8 +185,7 @@ def test_MTF():
 
 
 def test_ReccurencePlots():
-    "Testing 'ReccurencePlots'"
-
+    """Testing 'ReccurencePlots'."""
     # Parameter
     size = 9
     X = np.linspace(-1, 1, size)
@@ -212,7 +208,8 @@ def test_ReccurencePlots():
     arr_desired = np.empty((size, size))
     for i in range(size):
         for j in range(size):
-            arr_desired[i, j] = abs(X[i] - X[j]) < percentage * (X.max() - X.min()) / 100
+            threshold = percentage * (X.max() - X.min()) / 100
+            arr_desired[i, j] = abs(X[i] - X[j]) < threshold
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
     # Test 3
