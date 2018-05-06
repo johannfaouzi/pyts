@@ -1,3 +1,5 @@
+"""The :mod:`pyts.classification` module includes classification algorithms."""
+
 from __future__ import division
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -7,14 +9,12 @@ from itertools import chain
 from future import standard_library
 from sklearn.utils.validation import check_array, check_X_y, check_is_fitted
 from sklearn.utils.multiclass import check_classification_targets
-from pyts.utils import dtw, fast_dtw
+from ..utils import dtw, fast_dtw
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import LabelEncoder
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.exceptions import NotFittedError
-import numpy as np
 
 
 standard_library.install_aliases()
@@ -22,6 +22,7 @@ standard_library.install_aliases()
 
 class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
     """Classifier based on SAX-VSM representation and tf-idf statistics.
+
     It uses the implementation from scikit-learn: TfidfVectorizer.
 
     Parameters
@@ -55,20 +56,34 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
           - occurred in too few documents (`min_df`)
           - were cut off by feature selection (`max_features`).
         This is only available if no vocabulary was given.
+
     """
 
-    def __init__(self, norm='l2', use_idf=True, smooth_idf=True, sublinear_tf=False):
+    def __init__(self, norm='l2', use_idf=True,
+                 smooth_idf=True, sublinear_tf=False):
         self.norm = norm
         self.use_idf = use_idf
         self.smooth_idf = smooth_idf
         self.sublinear_tf = sublinear_tf
 
-        self.fitted = False
-
     def fit(self, X, y):
+        """Fit the model according to the given training data.
 
+        Parameters
+        ----------
+        X : np.ndarray, shape = [n_samples]
+            Training vector, where n_samples is the number of samples
+
+        y : np.array, shape = [n_samples]
+            Target vector relative to X
+
+        Returns
+        -------
+        self : object
+            Returns self.
+
+        """
         check_classification_targets(y)
-
         le = LabelEncoder()
         y_ind = le.fit_transform(y)
         self.classes_ = classes = le.classes_
@@ -87,27 +102,34 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
                                 sublinear_tf=self.sublinear_tf)
         self.tfidf_array_ = tfidf.fit_transform(X_clas)
         self.tfidf_ = tfidf
-
-        self.fitted = True
-
         return self
 
     def predict(self, X):
+        """Predict the class labels for the provided data.
 
-        if not self.fitted:
-            raise NotFittedError("Estimator not fitted, call `fit` before exploiting the model.")
+        Parameters
+        ----------
+        X : array-like, shape = [n_samples, n_features]
+
+        Returns
+        -------
+        y : array-like, shape [n_samples]
+            Class labels for each data sample.
+
+        """
         check_is_fitted(self.tfidf_, ['vocabulary_', 'idf_', 'stop_words_'])
         check_is_fitted(self, ['classes_', 'tfidf_array_', 'tfidf_'])
 
         X_test = [' '.join(x) for x in X]
         X_transformed = self.tfidf_.transform(X_test)
-        y_pred = cosine_similarity(X_transformed, self.tfidf_array_).argmax(axis=1)
+        y_pred = cosine_similarity(X_transformed,
+                                   self.tfidf_array_).argmax(axis=1)
 
         return self.classes_[y_pred]
 
 
 class KNNClassifier(BaseEstimator, ClassifierMixin):
-    """k nearest neighbors classifier
+    """k nearest neighbors classifier.
 
     Parameters
     ----------
@@ -163,11 +185,12 @@ class KNNClassifier(BaseEstimator, ClassifierMixin):
         The number of parallel jobs to run for neighbors search.
         If ``-1``, then the number of jobs is set to the number of CPU cores.
         Doesn't affect :meth:`fit` method.
+
     """
 
-    def __init__(self, n_neighbors=1, weights='uniform', algorithm='auto', leaf_size=30,
-                 p=2, metric='minkowski', metric_params=None, n_jobs=1, **kwargs):
-
+    def __init__(self, n_neighbors=1, weights='uniform', algorithm='auto',
+                 leaf_size=30, p=2, metric='minkowski', metric_params=None,
+                 n_jobs=1, **kwargs):
         self.n_neighbors = n_neighbors
         self.weights = weights
         self.algorithm = algorithm
@@ -178,68 +201,62 @@ class KNNClassifier(BaseEstimator, ClassifierMixin):
         self.n_jobs = n_jobs
         self.kwargs = kwargs
 
-        self.fitted = False
-
     def fit(self, X, y):
         """Fit the model according to the given training data.
 
         Parameters
         ----------
-        X : np.ndarray, shape = [n_samples, n_features]
-            Training vector, where n_samples in the number of samples and
+        X : array-like, shape = [n_samples, n_features]
+            Training vector, where n_samples is the number of samples and
             n_features is the number of features.
 
-        y : np.array, shape = [n_samples]
+        y : array-like, shape = [n_samples]
             Target vector relative to X
 
         Returns
         -------
         self : object
             Returns self.
-        """
 
+        """
         X, y = check_X_y(X, y)
 
         if self.metric == 'dtw':
-            self.clf = KNeighborsClassifier(self.n_neighbors, self.weights, self.algorithm,
-                                            self.leaf_size, self.p, dtw, self.metric_params,
-                                            self.n_jobs, **self.kwargs)
+            self._clf = KNeighborsClassifier(self.n_neighbors, self.weights,
+                                             self.algorithm, self.leaf_size,
+                                             self.p, dtw, self.metric_params,
+                                             self.n_jobs, **self.kwargs)
 
         elif self.metric == 'fast_dtw':
-            self.clf = KNeighborsClassifier(self.n_neighbors, self.weights, self.algorithm,
-                                            self.leaf_size, self.p, fast_dtw, self.metric_params,
-                                            self.n_jobs, **self.kwargs)
+            self._clf = KNeighborsClassifier(self.n_neighbors, self.weights,
+                                             self.algorithm, self.leaf_size,
+                                             self.p, fast_dtw,
+                                             self.metric_params,
+                                             self.n_jobs, **self.kwargs)
 
         else:
-            self.clf = KNeighborsClassifier(self.n_neighbors, self.weights, self.algorithm,
-                                            self.leaf_size, self.p, self.metric, self.metric_params,
-                                            self.n_jobs, **self.kwargs)
+            self._clf = KNeighborsClassifier(self.n_neighbors, self.weights,
+                                             self.algorithm, self.leaf_size,
+                                             self.p, self.metric,
+                                             self.metric_params,
+                                             self.n_jobs, **self.kwargs)
 
-        self.clf.fit(X, y)
-        self.fitted = True
-
+        self._clf.fit(X, y)
         return self
 
     def predict(self, X):
-        """Predict the class labels for the provided data
+        """Predict the class labels for the provided data.
 
         Parameters
         ----------
-        X : np.ndarray, shape = [n_samples, n_features]
+        X : array-like, shape = [n_samples, n_features]
 
         Returns
         -------
-        y : np.array of shape [n_samples]
+        y : array-like, shape [n_samples]
             Class labels for each data sample.
+
         """
-
+        check_is_fitted(self, '_clf')
         X = check_array(X)
-        if X.ndim == 1:
-            X_ = X.reshape((1, -1))
-        else:
-            X_ = X.copy()
-
-        if not self.fitted:
-            raise NotFittedError("Estimator not fitted, call `fit` before exploiting the model.")
-
-        return self.clf.predict(X_)
+        return self._clf.predict(X)

@@ -21,38 +21,52 @@ import numpy as np
 import scipy.stats
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_array
-from pyts.utils import paa, sax, vsm, gaf, mtf, recurrence_plot
+from ..utils import paa, sax, vsm, gaf, mtf, recurrence_plot
 
 
 standard_library.install_aliases()
 
 
 class StandardScaler(BaseEstimator, TransformerMixin):
-    """Row-wise Standard Scaler (zero empirical mean, unit empirical variance).
+    """Standardize time series by removing mean and scaling to unit variance.
 
     Parameters
     ----------
-    epsilon : float (default=1e-3)
+    epsilon : float (default = 0.001)
         value added to the empirical variance before dividing.
 
     """
 
-    def __init__(self, epsilon=1e-3):
+    def __init__(self, epsilon=0.001):
         self.epsilon = epsilon
 
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        """Trasnform the provided data.
+    def fit(self, X=None, y=None):
+        """Pass.
 
         Parameters
         ----------
-        X : np.ndarray, shape = [n_samples, n_features]
+        X
+            ignored
+
+        y
+            Ignored
+
+        """
+        return self
+
+    def transform(self, X):
+        """Transform the provided data.
+
+        Parameters
+        ----------
+        X : array-like, shape = [n_samples, n_features]
+
+        y
+            Ignored
 
         Returns
         -------
-        X_new : np.ndarray, shape = [n_samples, n_features]
+        X_new : array-like, shape = [n_samples, n_features]
             Transformed data.
 
         """
@@ -91,11 +105,22 @@ class PAA(BaseEstimator, TransformerMixin):
         self.output_size = output_size
         self.overlapping = overlapping
 
-    def fit(self, X, y=None):
+    def fit(self, X=None, y=None):
+        """Pass.
+
+        Parameters
+        ----------
+        X
+            ignored
+
+        y
+            Ignored
+
+        """
         return self
 
     def transform(self, X):
-        """Trasnform the provided data.
+        """Transform the provided data.
 
         Parameters
         ----------
@@ -171,11 +196,22 @@ class SAX(BaseEstimator, TransformerMixin):
         self.n_bins = n_bins
         self.quantiles = quantiles
 
-    def fit(self, X, y=None):
+    def fit(self, X=None, y=None):
+        """Pass.
+
+        Parameters
+        ----------
+        X
+            ignored
+
+        y
+            Ignored
+
+        """
         return self
 
     def transform(self, X):
-        """Trasnform the provided data.
+        """Transform the provided data.
 
         Parameters
         ----------
@@ -232,11 +268,21 @@ class VSM(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, window_size=4, numerosity_reduction=True):
-
         self.window_size = window_size
         self.numerosity_reduction = numerosity_reduction
 
-    def fit(self, X, y=None):
+    def fit(self, X=None, y=None):
+        """Pass.
+
+        Parameters
+        ----------
+        X
+            ignored
+
+        y
+            Ignored
+
+        """
         return self
 
     def transform(self, X):
@@ -244,7 +290,7 @@ class VSM(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : np.ndarray, shape = [n_samples]
+        X : array-like, shape = [n_samples, n_features]
 
         Returns
         -------
@@ -296,12 +342,22 @@ class GASF(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, image_size=32, overlapping=False, scale='-1'):
-
         self.image_size = image_size
         self.overlapping = overlapping
         self.scale = scale
 
-    def fit(self, X, y=None):
+    def fit(self, X=None, y=None):
+        """Pass.
+
+        Parameters
+        ----------
+        X
+            ignored
+
+        y
+            Ignored
+
+        """
         return self
 
     def transform(self, X):
@@ -365,19 +421,30 @@ class GADF(BaseEstimator, TransformerMixin):
         self.overlapping = overlapping
         self.scale = scale
 
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        """Trasnform the provided data.
+    def fit(self, X=None, y=None):
+        """Pass.
 
         Parameters
         ----------
-        X : np.ndarray, shape = [n_samples, n_features]
+        X
+            ignored
+
+        y
+            Ignored
+
+        """
+        return self
+
+    def transform(self, X):
+        """Transform the provided data.
+
+        Parameters
+        ----------
+        X : array-like, shape = [n_samples, n_features]
 
         Returns
         -------
-        X_new : np.ndarray, shape = [n_samples, image_size, image_size]
+        X_new : array-like, shape = [n_samples, image_size, image_size]
             Transformed data.
 
         """
@@ -425,6 +492,7 @@ class MTF(BaseEstimator, TransformerMixin):
         if False, reducing the image with the blurring kernel
         will be applied on non-overlapping rectangles; if True,
         it will be applied on possible overlapping squares.
+
     """
 
     def __init__(self, image_size=32, n_bins=8,
@@ -434,22 +502,33 @@ class MTF(BaseEstimator, TransformerMixin):
         self.quantiles = quantiles
         self.overlapping = overlapping
 
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        """Trasnform the provided data.
+    def fit(self, X=None, y=None):
+        """Pass.
 
         Parameters
         ----------
-        X : np.ndarray, shape = [n_samples, n_features]
+        X
+            ignored
+
+        y
+            Ignored
+
+        """
+        return self
+
+    def transform(self, X):
+        """Transform the provided data.
+
+        Parameters
+        ----------
+        X : array-like, shape = [n_samples, n_features]
 
         Returns
         -------
-        X_new : np.ndarray, shape = [n_samples, image_size, image_size]
+        X_new : array-like, shape = [n_samples, image_size, image_size]
             Transformed data.
-        """
 
+        """
         # Check input data
         X = check_array(X)
 
@@ -478,7 +557,7 @@ class MTF(BaseEstimator, TransformerMixin):
         if self.quantiles == 'gaussian':
             quantiles = scipy.stats.norm.ppf(
                 np.linspace(0, 1, num=self.n_bins)[1:]
-                )
+            )
         else:
             quantiles = self.quantiles
 
@@ -494,14 +573,14 @@ class RecurrencePlots(BaseEstimator, TransformerMixin):
     dimension : int (default = 1)
         dimension of the trajectory.
 
-    epsilon : None or 'percentage_points' or 'percentage_distance'
-    or float (default = None)
+    epsilon : float, 'percentage_points', 'percentage_distance' or None
+    (default = None)
         threshold for the minimum distance
 
     percentage : float (default = 10)
-        percentage of black points if epsilon == 'percentage_points'
+        percentage of black points if ``epsilon == 'percentage_points'``
         or percentage of maximum distance for threshold if
-        epsilon == 'percentage_distance'.
+        ``epsilon == 'percentage_distance'``.
 
     """
 
@@ -510,23 +589,34 @@ class RecurrencePlots(BaseEstimator, TransformerMixin):
         self.epsilon = epsilon
         self.percentage = percentage
 
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        """Trasnform the provided data.
+    def fit(self, X=None, y=None):
+        """Pass.
 
         Parameters
         ----------
-        X : np.ndarray, shape = [n_samples, n_features]
+        X
+            ignored
+
+        y
+            Ignored
+
+        """
+        return self
+
+    def transform(self, X):
+        """Transform the provided data.
+
+        Parameters
+        ----------
+        X : array-like, shape = [n_samples, n_features]
 
         Returns
         -------
-        X_new : np.ndarray, shape = [n_samples, n_features-dimension+1,
+        X_new : array-like, shape = [n_samples, n_features-dimension+1,
                                      n_features-dimension+1]
             Transformed data.
-        """
 
+        """
         # Check input data
         X = check_array(X)
 
