@@ -1,3 +1,16 @@
+"""The :mod:`pyts.transfomation` module includes transformation algorithms.
+
+Implemented algorithms are:
+- StandardScaler
+- Piecewise Aggregate Approximation
+- Symbolic Aggregate approXimation
+- Vector Space Model
+- Gramian Angular Summation Field
+- Gramian Angular Difference Field
+- Markov Transition Field
+- Recurrence Plots
+"""
+
 from __future__ import division
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -522,10 +535,10 @@ class RecurrencePlots(BaseEstimator, TransformerMixin):
             raise TypeError("'dimension' must be an integer.")
         if self.dimension <= 0:
             raise ValueError("'dimension' must be greater than or equal to 1.")
-        if (self.epsilon is not None)
-        and (self.epsilon not in ['percentage_points',
-                                  'percentage_distance'])
-        and (not isinstance(self.epsilon, (int, float))):
+        if (self.epsilon is not None and
+                self.epsilon not in ['percentage_points',
+                                     'percentage_distance'] and
+                not isinstance(self.epsilon, (int, float))):
             raise TypeError("'epsilon' must be either None, "
                             "'percentage_points', 'percentage_distance', "
                             "a float or an integer.")

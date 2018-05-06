@@ -35,16 +35,18 @@ def segmentation(bounds, window_size, overlapping):
     end = bounds[1:]
 
     if not overlapping:
-        return np.array([arange(np.array([start, end])[:, i]) for i in range(start.size)])
-
+        return np.array([arange(np.array([start, end])[:, i])
+                         for i in range(start.size)])
     else:
         correction = window_size - end + start
 
         new_start = start.copy()
-        new_start[start.size // 2:] = start[start.size // 2:] - correction[start.size // 2:]
+        new_start[start.size // 2:] = (start[start.size // 2:] -
+                                       correction[start.size // 2:])
 
         new_end = end.copy()
-        new_end[:end.size // 2] = end[:end.size // 2] + correction[:end.size // 2]
+        new_end[:end.size // 2] = (end[:end.size // 2] +
+                                   correction[:end.size // 2])
 
         return np.apply_along_axis(arange, 1, np.array([new_start, new_end]).T)
 
@@ -52,8 +54,8 @@ def segmentation(bounds, window_size, overlapping):
 def mean(ts, indices, overlapping):
 
     if not overlapping:
-        return np.array([ts[indices[i]].mean() for i in range(indices.shape[0])])
-
+        return np.array([ts[indices[i]].mean()
+                         for i in range(indices.shape[0])])
     else:
         return np.mean(ts[indices], axis=1)
 
@@ -72,7 +74,8 @@ def paa(ts, ts_size, window_size, overlapping, n_segments=None, plot=False):
         quotient = ts_size // window_size
         remainder = ts_size % window_size
         n_segments = quotient if remainder == 0 else quotient + 1
-    bounds = np.linspace(0, ts_size, n_segments + 1, endpoint=True).astype('int16')
+    bounds = np.linspace(0, ts_size,
+                         n_segments + 1, endpoint=True).astype('int64')
     indices = segmentation(bounds, window_size, overlapping)
 
     if not plot:
@@ -94,7 +97,9 @@ def sax(ts, n_bins, quantiles, alphabet, plot=False):
             quantiles = np.percentile(ts, np.linspace(0, 100, n_bins + 1)[1:])
 
         # Compute binned time series
-        binned_ts = [bin_allocation_alphabet(x, n_bins, alphabet_short, quantiles) for x in ts]
+        binned_ts = [bin_allocation_alphabet(x, n_bins,
+                                             alphabet_short, quantiles)
+                     for x in ts]
 
         if (plot and return_quantiles):
             # Return joined string
@@ -119,7 +124,8 @@ def num_red(array):
 
 def vsm(ts_sax, ts_sax_size, window_size, numerosity_reduction=True):
 
-    ts_vsm = [ts_sax[i:i + window_size] for i in range(ts_sax_size - window_size + 1)]
+    ts_vsm = [ts_sax[i:i + window_size]
+              for i in range(ts_sax_size - window_size + 1)]
 
     if numerosity_reduction:
         return num_red(ts_vsm)
@@ -157,14 +163,16 @@ def mtf(ts, ts_size, image_size, n_bins, quantiles, overlapping):
         quantiles = np.percentile(ts, np.linspace(0, 100, n_bins + 1)[1:])
 
     # Compute binned time series
-    binned_ts = np.array([bin_allocation_integers(x, n_bins, quantiles) for x in ts])
+    binned_ts = np.array([bin_allocation_integers(x, n_bins, quantiles)
+                          for x in ts])
 
     # Compute Markov Transition Matrix
     MTM = np.zeros((n_bins, n_bins))
     for i in range(ts_size - 1):
         MTM[binned_ts[i], binned_ts[i + 1]] += 1
     non_zero_rows = np.where(MTM.sum(axis=1) != 0)[0]
-    MTM = np.multiply(MTM[non_zero_rows][:, non_zero_rows].T, np.sum(MTM[non_zero_rows], axis=1)**(-1)).T
+    MTM = np.multiply(MTM[non_zero_rows][:, non_zero_rows].T,
+                      np.sum(MTM[non_zero_rows], axis=1)**(-1)).T
 
     # Compute list of indices based on values
     list_values = [np.where(binned_ts == q) for q in non_zero_rows]
@@ -178,11 +186,14 @@ def mtf(ts, ts_size, image_size, n_bins, quantiles, overlapping):
     # Compute Aggregated Markov Transition Field
     window_size, remainder = ts_size // image_size, ts_size % image_size
     if remainder == 0:
-        return np.reshape(MTF, (image_size, window_size, image_size, window_size)).mean(axis=(1, 3))
+        return np.reshape(MTF,
+                          (image_size, window_size, image_size, window_size)
+                          ).mean(axis=(1, 3))
 
     else:
         window_size += 1
-        bounds = np.linspace(0, ts_size, image_size + 1, endpoint=True).astype('int16')
+        bounds = np.linspace(0, ts_size, image_size + 1,
+                             endpoint=True).astype('int64')
         indices = segmentation(bounds, window_size, overlapping)
 
         AMTF = np.zeros((image_size, image_size))
@@ -228,7 +239,9 @@ def dtw(x, y, dist='absolute', return_path=False, **kwargs):
     # Compute the remaining cells recursively
     for j in range(1, x_size):
         for i in range(1, x_size):
-            D[i].append(C[i][j] + min(D[i - 1][j - 1], D[i - 1][j], D[i][j - 1]))
+            D[i].append(C[i][j] + min(D[i - 1][j - 1],
+                                      D[i - 1][j],
+                                      D[i][j - 1]))
 
     if not return_path:
         return D[x_size - 1][x_size - 1]
@@ -290,7 +303,10 @@ def fast_dtw(x, y, window_size, approximation=True,
                     if key not in region.keys():
                         region[key] = np.arange(first_value, second_value)
                     else:
-                        region[key] = np.append(region[key], np.arange(first_value, second_value))
+                        region[key] = np.append(region[key],
+                                                np.arange(first_value,
+                                                          second_value)
+                                                )
 
         # Cost matrix
         C = [[] for _ in range(x_size)]
@@ -323,7 +339,9 @@ def fast_dtw(x, y, window_size, approximation=True,
         # Compute the remaining cells recursively
         for j in range(1, x_size):
             for i in region[j]:
-                D[i, j] = C[i][j] + min(D[i - 1][j - 1], D[i - 1][j], D[i][j - 1])
+                D[i, j] = C[i][j] + min(D[i - 1][j - 1],
+                                        D[i - 1][j],
+                                        D[i][j - 1])
 
         if not return_path:
             return D[x_size - 1][x_size - 1]
@@ -353,18 +371,16 @@ def recurrence_plot(x, dimension=1, epsilon=None, percentage=10):
 
     x_size = x.size
 
-    array = np.asarray([x[i: min(x_size, i + dimension)] for i in range(x_size - dimension + 1)])
-
-    M = np.array([np.linalg.norm(array[i] - array, axis=1) for i in range(x_size - dimension + 1)])
+    array = np.asarray([x[i: min(x_size, i + dimension)]
+                        for i in range(x_size - dimension + 1)])
+    M = np.array([np.linalg.norm(array[i] - array, axis=1)
+                  for i in range(x_size - dimension + 1)])
 
     if epsilon is None:
         return M
-
     elif epsilon == 'percentage_points':
         return M < np.percentile(M, percentage)
-
     elif epsilon == 'percentage_distance':
         return M < percentage / 100 * np.max(M)
-
     else:
         return M < epsilon
