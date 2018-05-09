@@ -1,0 +1,97 @@
+# AppVeyor.com is a Continuous Integration service to build and run tests under
+# Windows
+
+
+environment:
+  global:
+    # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
+    # /E:ON and /V:ON options are not enabled in the batch script interpreter
+    # See: http://stackoverflow.com/a/13751649/163740
+    CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\ci_scripts\\appveyor\\run_with_env.cmd"
+    WHEELHOUSE_UPLOADER_USERNAME: sklearn
+    WHEELHOUSE_UPLOADER_SECRET:
+      secure: XzK+Mi6Ba5frV2B/jHq7h4aD8/nox9SsI3T8Kub1L2XNevRSIurUEry3PdWESzRY
+    MODULE: skltemplate
+    PROJECT_NAME: sklearn-template
+    CLOUD_STORAGE: CLOUDFILES
+    CLOUD_CONTATINER: sklearn-template-trial
+
+  matrix:
+    - PYTHON: "C:\\Python27"
+      PYTHON_VERSION: "2.7.8"
+      PYTHON_ARCH: "32"
+      MINICONDA: "C:\\Miniconda"
+
+    - PYTHON: "C:\\Python27-x64"
+      PYTHON_VERSION: "2.7.8"
+      PYTHON_ARCH: "64"
+      MINICONDA: "C:\\Miniconda-x64"
+
+    - PYTHON: "C:\\Python35"
+      PYTHON_VERSION: "3.5.0"
+      PYTHON_ARCH: "32"
+      MINICONDA: "C:\\Miniconda35"
+
+    - PYTHON: "C:\\Python35-x64"
+      PYTHON_VERSION: "3.5.0"
+      PYTHON_ARCH: "64"
+      MINICONDA: "C:\\Miniconda35-x64"
+
+install:
+  # Miniconda is pre-installed in the worker build
+  - "SET PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
+  - "python -m pip install -U pip"
+
+  # Check that we have the expected version and architecture for Python
+  - "python --version"
+  - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
+  - "pip --version"
+
+  # Remove cygwin because it clashes with conda
+  # see http://help.appveyor.com/discussions/problems/3712-git-remote-https-seems-to-be-broken
+  - rmdir C:\\cygwin /s /q
+
+  # Install the build and runtime dependencies of the project.
+  - conda install --quiet --yes numpy scipy cython nose scikit-learn wheel
+  - pip install wheelhouse_uploader nose-timer
+  - "%CMD_IN_ENV% python setup.py bdist_wheel bdist_wininst"
+  - ps: "ls dist"
+
+  # Install the generated wheel package to test it
+  - "pip install --pre --no-index --find-links dist %PROJECT_NAME%"
+
+
+# Not a .NET project, we build scikit-learn in the install step instead
+build: false
+
+
+artifacts:
+  # Archive the generated wheel package in the ci.appveyor.com build report.
+  - path: dist\*
+
+
+on_success:
+  # Upload the generated wheel package to Rackspace
+  # On Windows, Apache Libcloud cannot find a standard CA cert bundle so we
+  # disable the ssl checks.
+  - "python -m wheelhouse_uploader upload provider=%CLOUD_STORAGE% --no-ssl-check --local-folder=dist %CLOUD_CONTAINER%"
+
+
+test_script:
+  # Change to a non-source folder to make sure we run the tests on the
+  # installed library.
+  - "mkdir empty_folder"
+  - "cd empty_folder"
+
+  - "python -c \"import nose; nose.main()\" --with-timer --timer-top-n 20 -s -v %MODULE%"
+
+  # Move back to the project folder
+  - "cd .."
+
+
+cache:
+  # Use the appveyor cache to avoid re-downloading large archives such
+  # the MKL numpy and scipy wheels mirrored on a rackspace cloud
+  # container, speed up the appveyor jobs and reduce bandwidth
+  # usage on our rackspace account.
+  - '%APPDATA%\pip\Cache'
