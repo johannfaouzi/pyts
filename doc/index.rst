@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to sklearn-template's documentation!
+Welcome to pyts's documentation!
 ============================================
 
 This project is a reference implementation to anyone who wishes to develop
@@ -15,7 +15,6 @@ contains a single estimator with unit tests.
        :maxdepth: 2
        
        api
-       auto_examples/index
        ...
 
 See the `README <https://github.com/vighneshbirodkar/project-template/blob/master/README.md>`_
