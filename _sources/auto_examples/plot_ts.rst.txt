@@ -42,7 +42,7 @@ An example plot of `pyts.visualization.plot_ts`
     # Plot the first sample
     plot_ts(X[0])
 
-**Total running time of the script:** ( 0 minutes  0.340 seconds)
+**Total running time of the script:** ( 0 minutes  0.330 seconds)
 
 
 
