@@ -85,11 +85,11 @@ class BOW(BaseEstimator, TransformerMixin):
         X_window = np.asarray([X[:, i: i + self.window_size]
                                for i in range(n_windows)])
         X_window = X_window.reshape(n_samples * n_windows, -1, order='F')
-        X_vsm = np.apply_along_axis(lambda x: ''.join(x),
+        X_bow = np.apply_along_axis(lambda x: ''.join(x),
                                     1,
                                     X_window).reshape(n_samples, -1)
         if self.numerosity_reduction:
-            X_vsm = np.apply_along_axis(numerosity_reduction, 1, X_vsm)
+            X_bow = np.apply_along_axis(numerosity_reduction, 1, X_bow)
         else:
-            X_vsm = np.apply_along_axis(numerosity_reduction, 1, X_vsm)
-        return X_vsm
+            X_bow = np.apply_along_axis(numerosity_reduction, 1, X_bow)
+        return X_bow

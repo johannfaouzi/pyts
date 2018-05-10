@@ -36,12 +36,18 @@ def test_PAA():
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
     # Test 4
-    paa = PAA(output_size=10)
+    paa = PAA(output_size=10, overlapping=True)
     arr_actual = paa.fit_transform(X[np.newaxis, :])[0]
     arr_desired = np.arange(1, 30, 3)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
     # Test 5
+    paa = PAA(output_size=10, overlapping=False)
+    arr_actual = paa.fit_transform(X[np.newaxis, :])[0]
+    arr_desired = np.arange(1, 30, 3)
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+    # Test 6
     paa = PAA(window_size=4, overlapping=True)
     arr_actual = paa.fit_transform(X[np.newaxis, :])[0]
     arr_desired = np.array([1.5, 4.5, 8.5, 12.5, 15.5, 19.5, 23.5, 27.5])
@@ -104,3 +110,11 @@ def test_DFT():
     dft = DFT(n_coefs=2, anova=False, norm_mean=True, norm_std=False)
     arr_actual = dft.fit_transform(X)
     np.testing.assert_allclose(arr_actual, X_fft[:, 2:4], atol=1e-5, rtol=0.)
+
+    # Test 8
+    dft = DFT(n_coefs=2, anova=True, norm_mean=False, norm_std=False)
+    rng = np.random.RandomState(41)
+    X_noise = X + (rng.randn(4, 10) / 100)
+    y = [0, 1, 0, 1]
+    dft.fit_transform(X_noise, y)
+    dft.fit(X_noise, y).transform(X_noise)

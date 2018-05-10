@@ -238,7 +238,8 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
             sentence = ' '.join(list(chain(*X[center_mask])))
             X_clas.append(sentence)
 
-        tfidf = TfidfVectorizer(use_idf=self.use_idf,
+        tfidf = TfidfVectorizer(norm=None,
+                                use_idf=self.use_idf,
                                 smooth_idf=self.smooth_idf,
                                 sublinear_tf=self.sublinear_tf)
         self.tfidf_ = tfidf.fit_transform(X_clas)
@@ -300,10 +301,10 @@ class BOSSVSClassifier(BaseEstimator, ClassifierMixin):
     n_bins : int (default = 4)
         The number of bins. Ignored if ``quantiles='entropy'``.
 
-    quantiles : str (default = 'entropy')
-        bins are computed based on quantiles. Possible values:
-            - 'gaussian' : quantiles from a gaussian distribution N(0,1)
-            - 'empirical' : empirical quantiles
+    quantiles : {'gaussian', 'empirical'} (default = 'gaussian')
+        The way to compute quantiles. If 'gaussian', quantiles from a
+        gaussian distribution N(0,1) are used. If 'empirical', empirical
+        quantiles are used.
 
     variance_selection : bool (default = False)
         If True, the Fourier coefficients with low variance are removed.
