@@ -2,7 +2,7 @@ Welcome to **pyts**, a Python package for time series transformation and classif
 ===================
 [![Build Status](https://travis-ci.org/johannfaouzi/pyts.svg?branch=dev)](https://travis-ci.org/johannfaouzi/pyts)
 [![Coverage Status](https://coveralls.io/repos/github/johannfaouzi/pyts/badge.svg?branch=dev)](https://coveralls.io/github/johannfaouzi/pyts?branch=dev)
-[![CircleCI](https://circleci.com/gh/johannfaouzi/pyts/tree/dev.svg)](https://circleci.com/gh/johannfaouzi/pyts/tree/dev)
+[![CircleCI](https://circleci.com/gh/johannfaouzi/pyts/tree/dev.svg?style=shield)](https://circleci.com/gh/johannfaouzi/pyts/tree/dev)
 [![Python version](https://img.shields.io/pypi/pyversions/pyts.svg)](https://img.shields.io/pypi/pyversions/pyts)
 [![PyPI version](https://badge.fury.io/py/pyts.svg)](https://badge.fury.io/py/pyts)
 
