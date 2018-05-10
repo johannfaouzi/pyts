@@ -1,4 +1,10 @@
-"""The :mod:`pyts.classification` module includes classification algorithms."""
+"""The :mod:`pyts.classification` module includes classification algorithms.
+
+Implemented algorithms are:
+- k nearest neighbors
+- SAX-VSM
+- Bag-of-SFA in Vector Space
+"""
 
 from __future__ import division
 from __future__ import unicode_literals
@@ -7,125 +13,19 @@ from __future__ import absolute_import
 from builtins import range
 from itertools import chain
 from future import standard_library
+import numpy as np
 from sklearn.utils.validation import check_array, check_X_y, check_is_fitted
 from sklearn.utils.multiclass import check_classification_targets
-from ..utils import dtw, fast_dtw
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import LabelEncoder
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
+from ..quantization import SFA
+from ..utils import dtw, fast_dtw, numerosity_reduction
 
 
 standard_library.install_aliases()
-
-
-class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
-    """Classifier based on SAX-VSM representation and tf-idf statistics.
-
-    It uses the implementation from scikit-learn: TfidfVectorizer.
-
-    Parameters
-    ----------
-    norm : 'l1', 'l2' or None, optional
-        Norm used to normalize term vectors. None for no normalization.
-
-    use_idf : boolean, default=True
-        Enable inverse-document-frequency reweighting.
-
-    smooth_idf : boolean, default=True
-        Smooth idf weights by adding one to document frequencies, as if an
-        extra document was seen containing every term in the collection
-        exactly once. Prevents zero divisions.
-
-    sublinear_tf : boolean, default=False
-        Apply sublinear tf scaling, i.e. replace tf with 1 + log(tf).
-
-    Attributes
-    ----------
-    vocabulary_ : dict
-        A mapping of terms to feature indices.
-
-    idf_ : array, shape = [n_features], or None
-        The learned idf vector (global term weights)
-        when ``use_idf`` is set to True, None otherwise.
-
-    stop_words_ : set
-        Terms that were ignored because they either:
-          - occurred in too many documents (`max_df`)
-          - occurred in too few documents (`min_df`)
-          - were cut off by feature selection (`max_features`).
-        This is only available if no vocabulary was given.
-
-    """
-
-    def __init__(self, norm='l2', use_idf=True,
-                 smooth_idf=True, sublinear_tf=False):
-        self.norm = norm
-        self.use_idf = use_idf
-        self.smooth_idf = smooth_idf
-        self.sublinear_tf = sublinear_tf
-
-    def fit(self, X, y):
-        """Fit the model according to the given training data.
-
-        Parameters
-        ----------
-        X : np.ndarray, shape = [n_samples]
-            Training vector, where n_samples is the number of samples
-
-        y : np.array, shape = [n_samples]
-            Target vector relative to X
-
-        Returns
-        -------
-        self : object
-            Returns self.
-
-        """
-        check_classification_targets(y)
-        le = LabelEncoder()
-        y_ind = le.fit_transform(y)
-        self.classes_ = classes = le.classes_
-        n_classes = classes.size
-
-        X_clas = []
-
-        for cur_class in range(n_classes):
-            center_mask = y_ind == cur_class
-            sentence = ' '.join(list(chain(*X[center_mask])))
-            X_clas.append(sentence)
-
-        tfidf = TfidfVectorizer(norm=self.norm,
-                                use_idf=self.use_idf,
-                                smooth_idf=self.smooth_idf,
-                                sublinear_tf=self.sublinear_tf)
-        self.tfidf_array_ = tfidf.fit_transform(X_clas)
-        self.tfidf_ = tfidf
-        return self
-
-    def predict(self, X):
-        """Predict the class labels for the provided data.
-
-        Parameters
-        ----------
-        X : array-like, shape = [n_samples, n_features]
-
-        Returns
-        -------
-        y : array-like, shape [n_samples]
-            Class labels for each data sample.
-
-        """
-        check_is_fitted(self.tfidf_, ['vocabulary_', 'idf_', 'stop_words_'])
-        check_is_fitted(self, ['classes_', 'tfidf_array_', 'tfidf_'])
-
-        X_test = [' '.join(x) for x in X]
-        X_transformed = self.tfidf_.transform(X_test)
-        y_pred = cosine_similarity(X_transformed,
-                                   self.tfidf_array_).argmax(axis=1)
-
-        return self.classes_[y_pred]
 
 
 class KNNClassifier(BaseEstimator, ClassifierMixin):
@@ -133,7 +33,7 @@ class KNNClassifier(BaseEstimator, ClassifierMixin):
 
     Parameters
     ----------
-    n_neighbors : int, optional (default = 5)
+    n_neighbors : int, optional (default = 1)
         Number of neighbors to use by default for :meth:`k_neighbors` queries.
 
     weights : str or callable, optional (default = 'uniform')
@@ -260,3 +160,342 @@ class KNNClassifier(BaseEstimator, ClassifierMixin):
         check_is_fitted(self, '_clf')
         X = check_array(X)
         return self._clf.predict(X)
+
+
+class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
+    """Classifier based on SAX-VSM representation and tf-idf statistics.
+
+    It uses the implementation from scikit-learn: TfidfVectorizer.
+
+    Parameters
+    ----------
+    use_idf : boolean, default=True
+        Enable inverse-document-frequency reweighting.
+
+    smooth_idf : boolean, default=True
+        Smooth idf weights by adding one to document frequencies, as if an
+        extra document was seen containing every term in the collection
+        exactly once. Prevents zero divisions.
+
+    sublinear_tf : boolean, default=False
+        Apply sublinear tf scaling, i.e. replace tf with 1 + log(tf).
+
+    Attributes
+    ----------
+    vocabulary_ : dict
+        A mapping of terms to feature indices.
+
+    tfidf_ : sparse matrix, shape = [n_classes, n_words]
+        Term-document matrix
+
+    idf_ : array, shape = [n_features], or None
+        The learned idf vector (global term weights)
+        when ``use_idf`` is set to True, None otherwise.
+
+    stop_words_ : set
+        Terms that were ignored because they either:
+          - occurred in too many documents (`max_df`)
+          - occurred in too few documents (`min_df`)
+          - were cut off by feature selection (`max_features`).
+        This is only available if no vocabulary was given.
+
+    """
+
+    def __init__(self, norm='l2', use_idf=True,
+                 smooth_idf=True, sublinear_tf=False):
+        self.norm = norm
+        self.use_idf = use_idf
+        self.smooth_idf = smooth_idf
+        self.sublinear_tf = sublinear_tf
+
+    def fit(self, X, y):
+        """Fit the model according to the given training data.
+
+        Parameters
+        ----------
+        X : array-like, shape = [n_samples]
+            Training vector, where n_samples is the number of samples.
+
+        y : array-like, shape = [n_samples]
+            Target vector relative to X.
+
+        Returns
+        -------
+        self : object
+            Returns self.
+
+        """
+        check_classification_targets(y)
+        le = LabelEncoder()
+        y_ind = le.fit_transform(y)
+        self._classes = le.classes_
+        n_classes = self._classes.size
+
+        X_clas = []
+
+        for cur_class in range(n_classes):
+            center_mask = y_ind == cur_class
+            sentence = ' '.join(list(chain(*X[center_mask])))
+            X_clas.append(sentence)
+
+        tfidf = TfidfVectorizer(use_idf=self.use_idf,
+                                smooth_idf=self.smooth_idf,
+                                sublinear_tf=self.sublinear_tf)
+        self.tfidf_ = tfidf.fit_transform(X_clas)
+        self.vocabulary_ = tfidf.vocabulary_
+        self.stop_words_ = tfidf.stop_words
+        self.idf_ = tfidf.idf_
+        self._tfidf = tfidf
+        return self
+
+    def predict(self, X):
+        """Predict the class labels for the provided data.
+
+        Parameters
+        ----------
+        X : array-like, shape = [n_samples, n_features]
+
+        Returns
+        -------
+        y : array-like, shape [n_samples]
+            Class labels for each data sample.
+
+        """
+        check_is_fitted(self, ['vocabulary_', 'tfidf_', 'idf_',
+                               'stop_words_', '_tfidf'])
+
+        X_test = [' '.join(x) for x in X]
+        X_transformed = self._tfidf.transform(X_test)
+        if self.use_idf:
+            X_transformed /= self._tfidf.idf_
+        y_pred = cosine_similarity(X_transformed,
+                                   self.tfidf_).argmax(axis=1)
+
+        return self._classes[y_pred]
+
+
+class BOSSVSClassifier(BaseEstimator, ClassifierMixin):
+    """Bag-of-SFA Symbols in Vector Space.
+
+    Parameters
+    ----------
+    n_coefs : None or int (default = None)
+        The number of Fourier coefficients to keep. If ``coefs=None``,
+        all Fourier coefficients are returned. If `coefs` is an integer,
+        the `coefs` most significant Fourier coefficients are returned if
+        ``anova=True``, otherwise the first `coefs` Fourier coefficients
+        are returned. A even number is required (for real and imaginary values)
+        if ``anova=False``.
+
+    window_size : int
+        Window length to use to extracte sub time series.
+
+    norm_mean : bool (default = True)
+        If True, center the data before scaling. If ``norm_mean=True`` and
+        ``anova=False``, the first Fourier coefficient will be dropped.
+
+    norm_std : bool (default = True)
+        If True, scale the data to unit variance.
+
+    n_bins : int (default = 4)
+        The number of bins. Ignored if ``quantiles='entropy'``.
+
+    quantiles : str (default = 'entropy')
+        bins are computed based on quantiles. Possible values:
+            - 'gaussian' : quantiles from a gaussian distribution N(0,1)
+            - 'empirical' : empirical quantiles
+
+    variance_selection : bool (default = False)
+        If True, the Fourier coefficients with low variance are removed.
+
+    variance_threshold : float (default = 0.)
+        Fourier coefficients with a training-set variance lower than this
+        threshold will be removed. Ignored if ``variance_selection=False``.
+
+    numerosity_reduction : boolean (default = True)
+        whether or not numerosity reduction is applied. When the same word
+        occurs several times in a row, only one instance of this word is kept
+        if 'numerosity_reduction' = True, otherwise all instances are kept.
+
+    smooth_idf : boolean, default=True
+        smooth idf weights by adding one to document frequencies, as if an
+        extra document was seen containing every term in the collection
+        exactly once. Prevents zero divisions.
+
+    sublinear_tf : boolean, default=False
+        apply sublinear tf scaling, i.e. replace tf with 1 + log(tf).
+
+    Attributes
+    ----------
+    vocabulary_ : dict
+        A mapping of features indices to terms.
+
+    """
+
+    def __init__(self, n_coefs, window_size, norm_mean=True, norm_std=True,
+                 n_bins=4, quantiles='empirical', variance_selection=False,
+                 variance_threshold=0., numerosity_reduction=True,
+                 smooth_idf=True, sublinear_tf=True):
+        self.n_coefs = n_coefs
+        self.window_size = window_size
+        self.norm_mean = norm_mean
+        self.norm_std = norm_std
+        self.n_bins = n_bins
+        self.quantiles = quantiles
+        self.variance_selection = variance_selection
+        self.variance_threshold = variance_threshold
+        self.numerosity_reduction = numerosity_reduction
+        self.smooth_idf = smooth_idf
+        self.sublinear_tf = sublinear_tf
+
+    def fit(self, X, y, overlapping=True):
+        """Fit the model according to the given training data.
+
+        Parameters
+        ----------
+        X : {array-like, sparse matrix}, shape = [n_samples, n_features]
+            Training vector, where n_samples in the number of samples and
+            n_features is the number of features.
+
+        y : array-like, shape = [n_samples]
+            Target vector relative to X.
+
+        overlapping : boolean (default = False)
+            whether or not overlapping windows are used for the training
+            phase.
+
+        Returns
+        -------
+        self : object
+
+        """
+        # Check input data
+        X, y = check_X_y(X, y)
+        check_classification_targets(y)
+        le = LabelEncoder()
+        y_ind = le.fit_transform(y)
+        self._classes = le.classes_
+        n_classes = self._classes.size
+        n_samples, n_features = X.shape
+
+        # Check parameters
+        if (not isinstance(self.n_coefs, int)) and (self.n_coefs is not None):
+            raise ValueError("'n_coefs' must be None or an integer.")
+        if isinstance(self.n_coefs, int) and self.n_coefs < 2:
+            raise ValueError("'n_coefs' must be greater than or equal to 2.")
+        if isinstance(self.n_coefs, int) and self.n_coefs % 2 != 0:
+            raise ValueError("'n_coefs' must be an even integer.")
+        if not isinstance(self.window_size, int):
+            raise ValueError("'window_size' must be an integer.")
+        if self.window_size > n_features:
+            raise ValueError("'window_size' must be lower than or equal to "
+                             "the size of each time series.")
+        if isinstance(self.n_coefs, int) and self.n_coefs > self.window_size:
+            raise ValueError("'n_coefs' must be lower than or equal to "
+                             "'window_size'.")
+        if not isinstance(self.norm_mean, (int, float)):
+            raise ValueError("'norm_mean' must be a boolean.")
+        if not isinstance(self.norm_std, (int, float)):
+            raise ValueError("'norm_std' must be a boolean.")
+        if not isinstance(self.n_bins, int):
+            raise ValueError("'n_bins' must be an integer.")
+        if self.n_bins < 2:
+            raise ValueError("'n_bins' must be greater than or equal to 2.")
+        if self.quantiles not in ['empirical', 'gaussian']:
+            raise ValueError("'quantiles' must be either 'gaussian' or "
+                             "'empirical'.")
+        if not isinstance(self.variance_selection, (int, float)):
+            raise ValueError("'variance_selection' must be a boolean.")
+        if not isinstance(self.variance_threshold, (int, float)):
+            raise ValueError("'variance_threshold' must be a float.")
+        if not isinstance(self.numerosity_reduction, (int, float)):
+            raise ValueError("'numerosity_reduction' must be a boolean.")
+        if not isinstance(self.smooth_idf, (int, float)):
+            raise ValueError("'smooth_idf' must be a boolean.")
+        if not isinstance(self.sublinear_tf, (int, float)):
+            raise ValueError("'sublinear_tf' must be a boolean.")
+        if not isinstance(overlapping, (int, float)):
+            raise ValueError("'overlapping' must be a boolean.")
+
+        self.vocabulary_ = {}
+
+        if overlapping:
+            n_windows = n_features - self.window_size + 1
+            X_window = np.asarray([X[:, i: i + self.window_size]
+                                   for i in range(n_windows)])
+            X_window = X_window.reshape(n_samples * n_windows, -1, order='F')
+        else:
+            n_windows = n_features // self.window_size
+            remainder = n_features % self. window_size
+            if remainder == 0:
+                window_idx = np.array_split(np.arange(0, n_features),
+                                            n_windows)
+            else:
+                split_idx = np.arange(self.window_size,
+                                      n_windows * (self.window_size + 1),
+                                      self.window_size)
+                window_idx = np.split(np.arange(0, n_features), split_idx)[:-1]
+            X_window = X[:, window_idx].reshape(n_samples * n_windows, -1)
+
+        sfa = SFA(self.n_coefs, False, self.norm_mean,
+                  self.norm_std, self.n_bins, self.quantiles,
+                  self.variance_selection, self.variance_threshold)
+        tfidf = TfidfVectorizer(ngram_range=(1, 1), smooth_idf=self.smooth_idf,
+                                sublinear_tf=self.sublinear_tf)
+
+        X_sfa = sfa.fit_transform(X_window)
+        X_sfa = np.apply_along_axis(lambda x: ''.join(x),
+                                    1,
+                                    X_sfa).reshape(n_samples, -1)
+        if self.numerosity_reduction:
+            X_sfa = np.apply_along_axis(numerosity_reduction, 1, X_sfa)
+        else:
+            X_sfa = np.apply_along_axis(lambda x: ' '.join(x), 1, X_sfa)
+
+        X_class = np.array([' '.join(X_sfa[y_ind == i])
+                            for i in range(n_classes)])
+
+        X_tfidf = tfidf.fit_transform(X_class)
+        for key, value in tfidf.vocabulary_.items():
+            self.vocabulary_[value] = key
+        self._sfa = sfa
+        self._tfidf = tfidf
+        self.tfidf_ = X_tfidf
+        return self
+
+    def predict(self, X):
+        """Transform the provided data.
+
+        Parameters
+        ----------
+        X : np.ndarray, shape = [n_samples, n_features]
+
+        Returns
+        -------
+        X_new : sparse matrix, shape [n_samples, n_words]
+            Document-term matrix.
+
+        """
+        # Check fitted
+        check_is_fitted(self, ['tfidf_', '_sfa', '_tfidf', 'vocabulary_'])
+
+        # Check X
+        X = check_array(X)
+        n_samples, n_features = X.shape
+
+        n_windows = n_features - self.window_size + 1
+        X_window = np.asarray([X[:, i: i + self.window_size]
+                               for i in range(n_windows)])
+        X_window = X_window.reshape(n_samples * n_windows, -1, order='F')
+
+        X_sfa = self._sfa.transform(X_window)
+        X_sfa = np.apply_along_axis(lambda x: ''.join(x),
+                                    1,
+                                    X_sfa).reshape(n_samples, -1)
+        if self.numerosity_reduction:
+            X_sfa = np.apply_along_axis(numerosity_reduction, 1, X_sfa)
+        else:
+            X_sfa = np.apply_along_axis(lambda x: ' '.join(x), 1, X_sfa)
+        tf = self._tfidf.transform(X_sfa) / self._tfidf.idf_
+        y_pred = cosine_similarity(tf, self.tfidf_).argmax(axis=1)
+        return self._classes[y_pred]

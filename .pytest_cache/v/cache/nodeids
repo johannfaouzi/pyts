@@ -1,0 +1,22 @@
+[
+  "pyts/approximation/tests/test_approximation.py::test_PAA",
+  "pyts/approximation/tests/test_approximation.py::test_DFT",
+  "pyts/bow/tests/test_bow.py::test_BOW",
+  "pyts/classification/tests/test_classification.py::test_KNNClassifier",
+  "pyts/classification/tests/test_classification.py::test_SAXVSMClassifier",
+  "pyts/classification/tests/test_classification.py::test_BOSSVS",
+  "pyts/decomposition/tests/test_decomposition.py::test_SSA",
+  "pyts/image/tests/test_image.py::test_GASF",
+  "pyts/image/tests/test_image.py::test_GADF",
+  "pyts/image/tests/test_image.py::test_MTF",
+  "pyts/image/tests/test_image.py::test_RecurrencePlots",
+  "pyts/preprocessing/tests/test_preprocessing.py::test_StandardScaler",
+  "pyts/quantization/tests/test_quantization.py::test_SAX",
+  "pyts/quantization/tests/test_quantization.py::test_MCB",
+  "pyts/transformation/tests/test_transformation.py::test_BOSS",
+  "pyts/transformation/tests/test_transformation.py::test_WEASEL",
+  "pyts/utils/tests/test_utils.py::test_segmentation",
+  "pyts/utils/tests/test_utils.py::test_numerosity_reduction",
+  "pyts/utils/tests/test_utils.py::test_dtw",
+  "pyts/utils/tests/test_utils.py::test_fast_dtw"
+]
