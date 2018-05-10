@@ -9,7 +9,7 @@ classification.
 """
 
 from . import (preprocessing, approximation, quantization, bow, decomposition,
-               image, transformation, utils)
+               image, transformation, classification, utils)
 
 __version__ = '0.7.0'
 
@@ -20,4 +20,5 @@ __all__ = ["preprocessing",
            "decomposition",
            "image",
            "transformation",
+           "classification",
            "utils"]
