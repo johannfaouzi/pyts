@@ -22,7 +22,6 @@ setup(name='pyts',
         'numpy',
         'scipy',
         'scikit-learn',
-        'matplotlib',
         'future'
     ],
     zip_safe=False)
