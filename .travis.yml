@@ -8,9 +8,9 @@ python:
   - "3.5"
 
 install:
-  - pip install numpy
-  - pip install scipy
-  - pip install scikit-learn
+  - pip install 'numpy>= 1.8.2'
+  - pip install 'scipy>=0.13.3
+  - pip install 'scikit-learn>=0.19'
   - pip install future
   - pip install .
   - pip install pytest pytest-cov coverage coveralls
