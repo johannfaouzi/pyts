@@ -16,7 +16,7 @@ install:
   - pip install pytest pytest-cov coverage coveralls
 
 script:
-  - pytest --cov seglearn
+  - pytest --cov pyts
 
 after_success:
 - coveralls
