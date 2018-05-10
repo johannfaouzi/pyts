@@ -9,7 +9,7 @@ python:
 
 install:
   - pip install 'numpy>= 1.8.2'
-  - pip install 'scipy>=0.13.3
+  - pip install 'scipy>=0.13.3'
   - pip install 'scikit-learn>=0.19'
   - pip install future
   - pip install .
