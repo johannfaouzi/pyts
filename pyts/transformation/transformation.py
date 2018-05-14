@@ -445,12 +445,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
         self._relevant_features_list = []
         self.vocabulary_ = {}
 
-        if self.window_sizes is None:
-            self._window_sizes = np.arange(self.n_coefs, n_features)
-        else:
-            self._window_sizes = self.window_sizes
-
-        for window_size in self._window_sizes:
+        for window_size in self.window_sizes:
             if overlapping:
                 n_windows = n_features - window_size + 1
                 X_window = np.asarray([X[:, i: i + window_size]
@@ -526,7 +521,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
         X_features = scipy.sparse.csr_matrix((n_samples, 0), dtype=np.int64)
 
         for (window_size, sfa, count,
-             relevant_features) in zip(self._window_sizes,
+             relevant_features) in zip(self.window_sizes,
                                        self._sfa_list,
                                        self._count_list,
                                        self._relevant_features_list):

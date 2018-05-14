@@ -1,6 +1,7 @@
 """Tests for :mod:`pyts.utils` module."""
 
 import numpy as np
+from itertools import product
 from ..utils import segmentation, numerosity_reduction, dtw, fast_dtw
 
 
@@ -17,6 +18,18 @@ def test_segmentation():
     np.testing.assert_array_equal(res_actual[0], res_start)
     np.testing.assert_array_equal(res_actual[1], res_end)
     np.testing.assert_equal(res_actual[2], res_size)
+
+    # Test: loop
+    ts_size_list = [10, 13]
+    window_size_list = [4, 7]
+    overlapping_list = [True, False]
+    n_segments_list = [None, 3]
+    for (ts_size, window_size, overlapping,
+         n_segments) in product(*[ts_size_list,
+                                  window_size_list,
+                                  overlapping_list,
+                                  n_segments_list]):
+        segmentation(ts_size, window_size, overlapping, n_segments)
 
 
 def test_numerosity_reduction():
@@ -59,6 +72,12 @@ def test_dtw():
     cost_desired = 12
     np.testing.assert_equal(cost_actual, cost_desired)
 
+    # Test: loop
+    dist_list = ['absolute', 'square', lambda x, y: (x - y)**4]
+    return_path_list = [True, False]
+    for (dist, return_path) in product(*[dist_list, return_path_list]):
+        dtw(x1, x2, dist, return_path)
+
 
 def test_fast_dtw():
     """Testing 'fast_dtw'."""
@@ -81,3 +100,15 @@ def test_fast_dtw():
     cost_actual = fast_dtw(x2, x3, window_size=2)
     cost_desired = 6
     np.testing.assert_equal(cost_actual, cost_desired)
+
+    # Test: loop
+    window_size_list = [2, 3]
+    approximation_list = [True, False]
+    dist_list = ['absolute', 'square', lambda x, y: (x - y)**4]
+    return_path_list = [True, False]
+    for (window_size, approximation, dist,
+         return_path) in product(*[window_size_list,
+                                   approximation_list,
+                                   dist_list,
+                                   return_path_list]):
+        fast_dtw(x1, x2, window_size, approximation, 'absolute', return_path)

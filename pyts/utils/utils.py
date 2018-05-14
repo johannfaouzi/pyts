@@ -24,8 +24,8 @@ def segmentation(ts_size, window_size, overlapping, n_segments=None):
         The size of the window.
 
     overlapping : bool
-        If True, overlapping windows may be used.
-        If False, non-overlapping are used.
+        If True, overlapping windows may be used. If False, non-overlapping
+        are used.
 
     n_segments : int or None (default = None)
         The number of windows. If None, the number is automatically

@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import absolute_import
 from future import standard_library
+from itertools import product
 import numpy as np
 from ..approximation import PAA, DFT
 
@@ -111,10 +112,16 @@ def test_DFT():
     arr_actual = dft.fit_transform(X)
     np.testing.assert_allclose(arr_actual, X_fft[:, 2:4], atol=1e-5, rtol=0.)
 
-    # Test 8
-    dft = DFT(n_coefs=2, anova=True, norm_mean=False, norm_std=False)
+    # Test: loop
     rng = np.random.RandomState(41)
     X_noise = X + (rng.randn(4, 10) / 100)
     y = [0, 1, 0, 1]
-    dft.fit_transform(X_noise, y)
-    dft.fit(X_noise, y).transform(X_noise)
+    n_coefs_list = [None, 2]
+    anova_list = [True, False]
+    norm_mean_list = [True, False]
+    norm_std_list = [True, False]
+    for (n_coefs, anova, norm_mean,
+         norm_std) in product(*[n_coefs_list, anova_list,
+                                norm_mean_list, norm_std_list]):
+        dft.fit_transform(X_noise, y)
+        dft.fit(X_noise, y).transform(X_noise)
