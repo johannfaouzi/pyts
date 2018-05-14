@@ -1,7 +1,7 @@
-Template
-========
+Transformation
+==============
 
-The documentation of the template module.
+The documentation of the transformation module.
 
 .. automodule:: pyts.transformation
    :members:
