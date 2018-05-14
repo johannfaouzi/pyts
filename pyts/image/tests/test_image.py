@@ -163,11 +163,11 @@ def test_RecurrencePlots():
 
     # Test: loop
     dimension_list = [1, 2, 3]
-    epsilon_list = [None, 'percentage_points', 'percentage_distance']
+    epsilon_list = [None, 'percentage_points', 'percentage_distance', 3.]
     percentage_list = [10, 40]
     for (dimension, epsilon,
          percentage) in product(*[dimension_list,
                                   epsilon_list,
                                   percentage_list]):
         rp = RecurrencePlots(dimension, epsilon, percentage)
-        rp.transform(X[np.newaxis, :])
+        rp.fit_transform(X[np.newaxis, :])

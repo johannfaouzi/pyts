@@ -123,5 +123,6 @@ def test_DFT():
     for (n_coefs, anova, norm_mean,
          norm_std) in product(*[n_coefs_list, anova_list,
                                 norm_mean_list, norm_std_list]):
+        dft = DFT(n_coefs, anova, norm_mean, norm_std)
         dft.fit_transform(X_noise, y)
         dft.fit(X_noise, y).transform(X_noise)

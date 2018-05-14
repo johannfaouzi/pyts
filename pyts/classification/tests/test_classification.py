@@ -177,4 +177,5 @@ def test_BOSSVSClassifier():
                                   n_bins, quantiles, variance_selection,
                                   variance_threshold, numerosity_reduction,
                                   smooth_idf, sublinear_tf)
-        bossvs.fit(X_noise, y).predict(X_noise[:2])
+        bossvs.fit(X_noise, y, overlapping=True).predict(X_noise[:2])
+        bossvs.fit(X_noise, y, overlapping=False).predict(X_noise[:2])

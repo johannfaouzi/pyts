@@ -357,7 +357,7 @@ class BOSSVSClassifier(BaseEstimator, ClassifierMixin):
 
         Parameters
         ----------
-        X : {array-like, sparse matrix}, shape = [n_samples, n_features]
+        X : array-like, shape = [n_samples, n_features]
             Training vector, where n_samples in the number of samples and
             n_features is the number of features.
 
@@ -384,42 +384,42 @@ class BOSSVSClassifier(BaseEstimator, ClassifierMixin):
 
         # Check parameters
         if (not isinstance(self.n_coefs, int)) and (self.n_coefs is not None):
-            raise ValueError("'n_coefs' must be None or an integer.")
+            raise TypeError("'n_coefs' must be None or an integer.")
         if isinstance(self.n_coefs, int) and self.n_coefs < 2:
             raise ValueError("'n_coefs' must be greater than or equal to 2.")
         if isinstance(self.n_coefs, int) and self.n_coefs % 2 != 0:
             raise ValueError("'n_coefs' must be an even integer.")
         if not isinstance(self.window_size, int):
-            raise ValueError("'window_size' must be an integer.")
+            raise TypeError("'window_size' must be an integer.")
         if self.window_size > n_features:
             raise ValueError("'window_size' must be lower than or equal to "
                              "the size of each time series.")
         if isinstance(self.n_coefs, int) and self.n_coefs > self.window_size:
-            raise ValueError("'n_coefs' must be lower than or equal to "
-                             "'window_size'.")
+            raise TypeError("'n_coefs' must be lower than or equal to "
+                            "'window_size'.")
         if not isinstance(self.norm_mean, (int, float)):
-            raise ValueError("'norm_mean' must be a boolean.")
+            raise TypeError("'norm_mean' must be a boolean.")
         if not isinstance(self.norm_std, (int, float)):
-            raise ValueError("'norm_std' must be a boolean.")
+            raise TypeError("'norm_std' must be a boolean.")
         if not isinstance(self.n_bins, int):
-            raise ValueError("'n_bins' must be an integer.")
+            raise TypeError("'n_bins' must be an integer.")
         if self.n_bins < 2:
             raise ValueError("'n_bins' must be greater than or equal to 2.")
         if self.quantiles not in ['empirical', 'gaussian']:
             raise ValueError("'quantiles' must be either 'gaussian' or "
                              "'empirical'.")
         if not isinstance(self.variance_selection, (int, float)):
-            raise ValueError("'variance_selection' must be a boolean.")
+            raise TypeError("'variance_selection' must be a boolean.")
         if not isinstance(self.variance_threshold, (int, float)):
-            raise ValueError("'variance_threshold' must be a float.")
+            raise TypeError("'variance_threshold' must be a float.")
         if not isinstance(self.numerosity_reduction, (int, float)):
-            raise ValueError("'numerosity_reduction' must be a boolean.")
+            raise TypeError("'numerosity_reduction' must be a boolean.")
         if not isinstance(self.smooth_idf, (int, float)):
-            raise ValueError("'smooth_idf' must be a boolean.")
+            raise TypeError("'smooth_idf' must be a boolean.")
         if not isinstance(self.sublinear_tf, (int, float)):
-            raise ValueError("'sublinear_tf' must be a boolean.")
+            raise TypeError("'sublinear_tf' must be a boolean.")
         if not isinstance(overlapping, (int, float)):
-            raise ValueError("'overlapping' must be a boolean.")
+            raise TypeError("'overlapping' must be a boolean.")
 
         self.vocabulary_ = {}
 
@@ -472,7 +472,7 @@ class BOSSVSClassifier(BaseEstimator, ClassifierMixin):
 
         Parameters
         ----------
-        X : np.ndarray, shape = [n_samples, n_features]
+        X : array-like, shape = [n_samples, n_features]
 
         Returns
         -------

@@ -65,8 +65,10 @@ def test_BOSS():
         boss = BOSS(n_coefs, window_size, anova, norm_mean, norm_std,
                     n_bins, quantiles, variance_selection, variance_threshold,
                     numerosity_reduction)
-        boss.fit(X_noise).transform(X_noise)
-        boss.fit_transform(X_noise)
+        boss.fit(X_noise, overlapping=True).transform(X_noise)
+        boss.fit(X_noise, overlapping=False).transform(X_noise)
+        boss.fit_transform(X_noise, overlapping=True)
+        boss.fit_transform(X_noise, overlapping=False)
 
 
 def test_WEASEL():
