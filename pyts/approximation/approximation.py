@@ -335,4 +335,7 @@ class DFT(BaseEstimator, TransformerMixin):
             raise ZeroDivisionError("The within-group mean square value is "
                                     "equal to zero for every feature.")
         F, _ = f_classif(X[:, feature_mask], y)
-        return feature_mask[np.argsort(F)[-self.n_coefs:][::-1]]
+        if isinstance(self.n_coefs, int):
+            return feature_mask[np.argsort(F)[-self.n_coefs:][::-1]]
+        else:
+            return feature_mask[np.argsort(F)[::-1]]
