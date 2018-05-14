@@ -245,7 +245,10 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
         self.tfidf_ = tfidf.fit_transform(X_clas)
         self.vocabulary_ = tfidf.vocabulary_
         self.stop_words_ = tfidf.stop_words
-        self.idf_ = tfidf.idf_
+        if self.use_idf:
+            self.idf_ = tfidf.idf_
+        else:
+            self.idf_ = None
         self._tfidf = tfidf
         return self
 
