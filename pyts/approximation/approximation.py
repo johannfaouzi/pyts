@@ -2,7 +2,7 @@
 
 Implemented algorithms are:
 - Piecewise Aggregate Approximation
-- Fast Fourier Transform
+- Discrete Fourier Transform
 """
 
 from __future__ import division
@@ -36,9 +36,9 @@ class PAA(BaseEstimator, TransformerMixin):
         Size of the returned time series.
 
     overlapping : bool (default = True)
-        When ``output_size`` is specified, the window size is fixed
-        if ``overlapping=True`` and may vary if ``overlapping=False``.
-        Ignored if ``window_size`` is specified.
+        When `output_size` is specified, the window size is fixed
+        if `overlapping=True` and may vary if `overlapping=False.
+        Ignored if `window_size` is specified.
 
     """
 
@@ -66,11 +66,11 @@ class PAA(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : np.ndarray, shape = [n_samples, n_features]
+        X : array-like, shape = [n_samples, n_features]
 
         Returns
         -------
-        X_new : np.ndarray, shape = [n_samples, n_features]
+        X_new : array-like, shape = [n_samples, n_features]
             Transformed data.
 
         """

@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import absolute_import
 from future import standard_library
+from itertools import product
 import numpy as np
 from ..transformation import BOSS, WEASEL
 
@@ -35,6 +36,37 @@ def test_BOSS():
     arr_desired = np.eye(4)  # Expected words: ["ad", "bd", "cd", "dd"]
     np.testing.assert_allclose(arr_actual, arr_desired)
 
+    # Test: loop
+    rng = np.random.RandomState(41)
+    X_noise = rng.randn(20, 10)
+
+    n_coefs_list = [None, 4, 6]
+    window_size_list = [6, 8]
+    anova_list = [True, False]
+    norm_mean_list = [True, False]
+    norm_std_list = [True, False]
+    n_bins_list = [2, 4]
+    quantiles_list = ['gaussian', 'empirical']
+    variance_selection_list = [True, False]
+    variance_threshold_list = [0, 0.001]
+    numerosity_reduction_list = [True, False]
+    for (n_coefs, window_size, anova, norm_mean, norm_std, n_bins,
+         quantiles, variance_selection, variance_threshold,
+         numerosity_reduction) in product(*[n_coefs_list,
+                                            window_size_list,
+                                            anova_list,
+                                            norm_mean_list,
+                                            norm_std_list,
+                                            n_bins_list,
+                                            quantiles_list,
+                                            variance_selection_list,
+                                            variance_threshold_list,
+                                            numerosity_reduction_list]):
+        boss = BOSS(n_coefs, window_size, anova, norm_mean, norm_std,
+                    n_bins, quantiles, variance_selection, variance_threshold,
+                    numerosity_reduction)
+        boss.fit_transform(X_noise)
+
 
 def test_WEASEL():
     """Testing 'WEASEL'."""
@@ -56,3 +88,31 @@ def test_WEASEL():
                     norm_std=False, n_bins=3, pvalue_threshold=0.5)
     weasel.fit(X, y)
     weasel.transform(X[2:])
+
+    # Test: loop
+    rng = np.random.RandomState(41)
+    X_noise = rng.randn(20, 10)
+    y = rng.randint(3, size=20)
+
+    n_coefs_list = [4, 6]
+    window_sizes_list = [[6, 7], [6, 8]]
+    norm_mean_list = [True, False]
+    norm_std_list = [True, False]
+    n_bins_list = [2, 4]
+    variance_selection_list = [True, False]
+    variance_threshold_list = [0, 0.001]
+    pvalue_threshold_list = [0.2, 0.9]
+    for (n_coefs, window_sizes, norm_mean, norm_std, n_bins,
+         variance_selection, variance_threshold,
+         pvalue_threshold) in product(*[n_coefs_list,
+                                        window_sizes_list,
+                                        norm_mean_list,
+                                        norm_std_list,
+                                        n_bins_list,
+                                        variance_selection_list,
+                                        variance_threshold_list,
+                                        pvalue_threshold_list]):
+        weasel = WEASEL(n_coefs, window_sizes, norm_mean, norm_std,
+                        n_bins, variance_selection, variance_threshold,
+                        pvalue_threshold)
+        weasel.fit_transform(X_noise, y)

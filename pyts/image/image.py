@@ -331,9 +331,7 @@ class MTF(BaseEstimator, TransformerMixin):
                               ).mean(axis=(1, 3))
         else:
             window_size += 1
-            bounds = np.linspace(0, ts_size, image_size + 1,
-                                 endpoint=True).astype('int64')
-            start, end, _ = segmentation(bounds, window_size, overlapping)
+            start, end, _ = segmentation(ts_size, window_size, overlapping)
             AMTF = np.zeros((image_size, image_size))
             for i in range(image_size):
                 for j in range(image_size):

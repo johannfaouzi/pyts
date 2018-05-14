@@ -6,6 +6,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from builtins import range
 from future import standard_library
+from itertools import product
 import numpy as np
 from ..image import GASF, GADF, MTF, RecurrencePlots
 
@@ -37,6 +38,16 @@ def test_GASF():
     arr_desired = np.outer(X_new, X_new) - np.outer(arr_sqrt, arr_sqrt)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
+    # Test: loop
+    image_size_list = [3, 5]
+    overlapping_list = [True, False]
+    scale_list = [-1, 0]
+    for image_size, overlapping, scale in product(*[image_size_list,
+                                                    overlapping_list,
+                                                    scale_list]):
+        gasf = GASF(image_size, overlapping, scale)
+        gasf.fit_transform(X[np.newaxis, :])
+
 
 def test_GADF():
     """Testing 'GADF'."""
@@ -62,6 +73,16 @@ def test_GADF():
     arr_desired = np.outer(arr_new_sqrt, X_new) - np.outer(X_new, arr_new_sqrt)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
+    # Test: loop
+    image_size_list = [3, 5]
+    overlapping_list = [True, False]
+    scale_list = [-1, 0]
+    for image_size, overlapping, scale in product(*[image_size_list,
+                                                    overlapping_list,
+                                                    scale_list]):
+        gadf = GADF(image_size, overlapping, scale)
+        gadf.fit_transform(X[np.newaxis, :])
+
 
 def test_MTF():
     """Testing 'MTF'."""
@@ -84,6 +105,19 @@ def test_MTF():
     MTF_arr = np.array([[2., 1., 0.], [0., 2., 1.], [0., 0., 2.]])
     arr_desired = np.multiply(MTF_arr.T, (MTF_arr.sum(axis=1) ** (-1))).T
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+    # Test: loop
+    image_size_list = [3, 5]
+    n_bins_list = [2, 4]
+    quantiles_list = ['empirical', 'gaussian']
+    overlapping_list = [True, False]
+    for (image_size, n_bins,
+         quantiles, overlapping) in product(*[image_size_list,
+                                              n_bins_list,
+                                              quantiles_list,
+                                              overlapping_list]):
+        mtf = MTF(image_size, n_bins, quantiles, overlapping)
+        mtf.fit_transform(X[np.newaxis, :])
 
 
 def test_RecurrencePlots():
@@ -126,3 +160,14 @@ def test_RecurrencePlots():
             arr_desired[i, j] = abs(X[i] - X[j])
     arr_desired = arr_desired < np.percentile(arr_desired, q=50)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+    # Test: loop
+    dimension_list = [1, 2, 3]
+    epsilon_list = [None, 'percentage_points', 'percentage_distance']
+    percentage_list = [10, 40]
+    for (dimension, epsilon,
+         percentage) in product(*[dimension_list,
+                                  epsilon_list,
+                                  percentage_list]):
+        rp = RecurrencePlots(dimension, epsilon, percentage)
+        rp.transform(X[np.newaxis, :])

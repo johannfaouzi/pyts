@@ -112,7 +112,7 @@ class MCB(BaseEstimator, TransformerMixin):
     Parameters
     ----------
     n_bins : int (default = 4)
-        The number of bins; ignored if quantiles = 'entropy'.
+        The number of bins. Ignored if ``quantiles='entropy'``.
 
     quantiles : {'gaussian', 'empirical', 'entropy'} (default = 'gaussian')
         The way to compute quantiles. If 'gaussian', quantiles from a

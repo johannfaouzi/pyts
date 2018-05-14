@@ -18,13 +18,13 @@ def test_PAA():
     X = np.arange(30).astype('float64')
 
     # Test 1
-    paa = PAA(window_size=2)
+    paa = PAA(window_size=2, overlapping=True)
     arr_actual = paa.fit_transform(X[np.newaxis, :])[0]
     arr_desired = np.arange(0.5, 30, 2)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
     # Test 2
-    paa = PAA(window_size=3)
+    paa = PAA(window_size=3, overlapping=False)
     arr_actual = paa.fit_transform(X[np.newaxis, :])[0]
     arr_desired = np.arange(1, 30, 3)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)

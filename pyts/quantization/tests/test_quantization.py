@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import absolute_import
 from future import standard_library
+from itertools import product
 import numpy as np
 import scipy.stats
 from ..quantization import SAX, MCB
@@ -58,3 +59,10 @@ def test_MCB():
     arr_actual = mcb.fit_transform(X, y)
     arr_desired = np.repeat(np.array(["a", "a", "b", "b"]), 10).reshape(4, 10)
     np.testing.assert_array_equal(arr_desired, arr_actual)
+
+    # Test: loop
+    n_bins_list = [2, 3, 4]
+    quantiles_list = ['empirical', 'gaussian', 'entropy']
+    for n_bins, quantiles in product(*[n_bins_list, quantiles_list]):
+        mcb = MCB(n_bins, quantiles)
+        mcb.fit(X, y).transform(X)

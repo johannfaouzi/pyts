@@ -71,6 +71,27 @@ def test_KNNClassifier():
     y_pred = clf.predict(X[1].reshape(1, -1))
     np.testing.assert_array_equal(1, y_pred)
 
+    # Test: loop
+    n_neighbors_list = [1, 2]
+    weights_list = ['uniform', 'distance']
+    algorithm_list = ['auto', 'ball_tree', 'kd_tree', 'brute']
+    leaf_size_list = [5, 30]
+    metric_list = ['euclidean', 'minkowski', 'manhattan']
+    p_list = [1, 2, 3]
+    n_jobs_list = [1, -1]
+    for (n_neighbors, weights, algorithm, leaf_size, metric, p,
+         n_jobs) in product(*[n_neighbors_list, weights_list, algorithm_list,
+                              leaf_size_list, metric_list, p_list,
+                              n_jobs_list]):
+        clf = KNNClassifier(n_neighbors=n_neighbors,
+                            weights=weights,
+                            algorithm=algorithm,
+                            leaf_size=leaf_size,
+                            metric=metric,
+                            p=p,
+                            n_jobs=n_jobs)
+        clf.fit(X[indices], y).predict(X)
+
 
 def test_SAXVSMClassifier():
     """Testing 'SAXVSMClassifier'."""
@@ -107,8 +128,8 @@ def test_SAXVSMClassifier():
         clf.predict(X[:2])
 
 
-def test_BOSSVS():
-    """Testing 'BOSSVS'."""
+def test_BOSSVSClassifier():
+    """Testing 'BOSSVSClassifier'."""
     # Parameters
     X = np.arange(1, 21).reshape(20, 1) * np.ones((20, 10))
     y = np.repeat([0, 0, 1, 1, 0, 0, 1, 1, 2, 2], 2)

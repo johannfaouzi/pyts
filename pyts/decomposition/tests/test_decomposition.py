@@ -6,6 +6,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from builtins import range
 from future import standard_library
+from itertools import product
 import numpy as np
 from ..decomposition import SSA
 
@@ -60,3 +61,11 @@ def test_SSA():
     grouping = [[0, 1, 2], [3, 4]]
     arr_actual = ssa._ssa(X, size, window_size, grouping).sum(axis=0)
     np.testing.assert_allclose(arr_actual, X, atol=1e-5, rtol=0.)
+
+    # Test: loop
+    window_size_list = [10, 12, 17]
+    grouping_list = [None, 2, 3, [[0, 1, 2], [3, 4, 5]]]
+    for window_size, grouping in product(*[window_size_list,
+                                           grouping_list]):
+        ssa = SSA(window_size=window_size, grouping=grouping)
+        ssa.fit(X_tiled).transform(X_tiled)

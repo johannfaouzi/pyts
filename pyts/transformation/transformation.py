@@ -39,6 +39,9 @@ class BOSS(BaseEstimator, TransformerMixin):
         are returned. A even number is required (for real and imaginary values)
         if ``anova=False``.
 
+    window_size : int
+        The size of the window.
+
     anova : bool (default = False)
         If True, the Fourier coefficients selection is done via a one-way
         ANOVA test. If False, the first Fourier coefficients are selected.
@@ -53,11 +56,10 @@ class BOSS(BaseEstimator, TransformerMixin):
     n_bins : int (default = 4)
         The number of bins. Ignored if ``quantiles='entropy'``.
 
-    quantiles : str (default = 'entropy')
-        Bins are computed based on quantiles. Possible values:
-            - 'gaussian' : quantiles from a gaussian distribution N(0,1)
-            - 'empirical' : empirical quantiles
-            - 'entropy' : quantiles based on information gain
+    quantiles : {'gaussian', 'empirical'} (default = 'gaussian')
+        The way to compute quantiles. If 'gaussian', quantiles from a
+        gaussian distribution N(0,1) are used. If 'empirical', empirical
+        quantiles are used.
 
     variance_selection : bool (default = False)
         If True, the Fourier coefficients with low variance are removed.
@@ -77,11 +79,13 @@ class BOSS(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, n_coefs, window_size, norm_mean=True, norm_std=True,
-                 n_bins=4, quantiles='empirical', variance_selection=False,
-                 variance_threshold=0., numerosity_reduction=True):
+    def __init__(self, n_coefs, window_size, anova=False, norm_mean=True,
+                 norm_std=True, n_bins=4, quantiles='empirical',
+                 variance_selection=False, variance_threshold=0.,
+                 numerosity_reduction=True):
         self.n_coefs = n_coefs
         self.window_size = window_size
+        self.anova = anova
         self.norm_mean = norm_mean
         self.norm_std = norm_std
         self.n_bins = n_bins
@@ -326,13 +330,12 @@ class WEASEL(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    n_coefs : None or int (default = None)
-        The number of Fourier coefficients to keep. If ``coefs=None``,
-        all Fourier coefficients are returned. If `coefs` is an integer,
-        the `coefs` most significant Fourier coefficients are returned if
-        ``anova=True``, otherwise the first `coefs` Fourier coefficients
-        are returned. A even number is required (for real and imaginary values)
-        if ``anova=False``.
+    n_coefs : int
+        The number of Fourier coefficients to keep. The `n_coefs` most
+        significant Fourier coefficients are returned.
+
+    window_sizes : array-like
+        The size of the windows.
 
     anova : bool (default = False)
         If True, the Fourier coefficients selection is done via a one-way
@@ -346,13 +349,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
         If True, scale the data to unit variance.
 
     n_bins : int (default = 4)
-        the number of bins. Ignored if quantiles = 'entropy'.
-
-    quantiles : str (default = 'entropy')
-        bins are computed based on quantiles. Possible values:
-            - 'gaussian' : quantiles from a gaussian distribution N(0,1)
-            - 'empirical' : empirical quantiles
-            - 'entropy' : quantiles based on information gain
+        The number of bins (also known as the size of the alphabet).
 
     variance_selection : bool (default = False)
         If True, the Fourier coefficients with low variance are removed.
@@ -397,8 +394,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
             Target vector relative to X.
 
         overlapping : boolean (default = False)
-            whether or not overlapping windows are used for the training
-            phase.
+            If True, overlapping windows are used.
 
         Returns
         -------
