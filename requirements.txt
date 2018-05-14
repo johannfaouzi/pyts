@@ -1,3 +1,4 @@
-numpy>=1.13.3
-scipy>=1.0.0
-scikit-learn>=0.19.1
+numpy>=1.8.2
+scipy>=0.13.3
+scikit-learn>=0.17.0
+future>=0.13.1
