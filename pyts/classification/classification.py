@@ -283,6 +283,8 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
                                 use_idf=self.use_idf,
                                 smooth_idf=self.smooth_idf,
                                 sublinear_tf=self.sublinear_tf)
+        if self.window_size == 1:
+            tfidf.set_params(tokenizer=self._tok)
         self.tfidf_ = tfidf.fit_transform(X_clas)
         self.vocabulary_ = tfidf.vocabulary_
         self.stop_words_ = tfidf.stop_words
@@ -320,6 +322,9 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
         y_pred = cosine_similarity(X_transformed,
                                    self.tfidf_).argmax(axis=1)
         return self._classes[y_pred]
+
+    def _tok(self, x):
+        return x.split(' ')
 
 
 class BOSSVSClassifier(BaseEstimator, ClassifierMixin):

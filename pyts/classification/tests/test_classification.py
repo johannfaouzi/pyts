@@ -103,7 +103,7 @@ def test_SAXVSMClassifier():
     # Test: loop
     n_bins_list = [3, 4]
     quantiles_list = ['empirical', 'gaussian']
-    window_size_list = [4, 6]
+    window_size_list = [1, 4, 6]
     numerosity_reduction_list = [True, False]
     use_idf_list = [True, False]
     smooth_idf_list = [True, False]
