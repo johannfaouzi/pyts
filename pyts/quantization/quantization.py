@@ -31,7 +31,7 @@ class SAX(BaseEstimator, TransformerMixin):
     Parameters
     ----------
     n_bins : int (default = 4)
-        Number of bins (also known as the size of the alphabet)
+        Number of bins (also known as the size of the alphabet).
 
     quantiles : {'gaussian', 'empirical'} (default = 'gaussian')
         The way to compute quantiles. If 'gaussian', quantiles from a

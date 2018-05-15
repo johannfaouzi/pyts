@@ -121,13 +121,13 @@ class BOSS(BaseEstimator, TransformerMixin):
 
         # Check parameters
         if (not isinstance(self.n_coefs, int)) and (self.n_coefs is not None):
-            raise ValueError("'n_coefs' must be None or an integer.")
+            raise TypeError("'n_coefs' must be None or an integer.")
         if isinstance(self.n_coefs, int) and self.n_coefs < 2:
             raise ValueError("'n_coefs' must be greater than or equal to 2.")
         if isinstance(self.n_coefs, int) and self.n_coefs % 2 != 0:
             raise ValueError("'n_coefs' must be an even integer.")
         if not isinstance(self.window_size, int):
-            raise ValueError("'window_size' must be an integer.")
+            raise TypeError("'window_size' must be an integer.")
         if self.window_size > n_features:
             raise ValueError("'window_size' must be lower than or equal to "
                              "the size of each time series.")
@@ -135,24 +135,24 @@ class BOSS(BaseEstimator, TransformerMixin):
             raise ValueError("'n_coefs' must be lower than or equal to "
                              "'window_size'.")
         if not isinstance(self.norm_mean, (int, float)):
-            raise ValueError("'norm_mean' must be a boolean.")
+            raise TypeError("'norm_mean' must be a boolean.")
         if not isinstance(self.norm_std, (int, float)):
-            raise ValueError("'norm_std' must be a boolean.")
+            raise TypeError("'norm_std' must be a boolean.")
         if not isinstance(self.n_bins, int):
-            raise ValueError("'n_bins' must be an integer.")
+            raise TypeError("'n_bins' must be an integer.")
         if self.n_bins < 2:
             raise ValueError("'n_bins' must be greater than or equal to 2.")
         if self.quantiles not in ['empirical', 'gaussian']:
             raise ValueError("'quantiles' must be either 'gaussian' or "
                              "'empirical'.")
         if not isinstance(self.variance_selection, (int, float)):
-            raise ValueError("'variance_selection' must be a boolean.")
+            raise TypeError("'variance_selection' must be a boolean.")
         if not isinstance(self.variance_threshold, (int, float)):
-            raise ValueError("'variance_threshold' must be a float.")
+            raise TypeError("'variance_threshold' must be a float.")
         if not isinstance(self.numerosity_reduction, (int, float)):
-            raise ValueError("'numerosity_reduction' must be a boolean.")
+            raise TypeError("'numerosity_reduction' must be a boolean.")
         if not isinstance(overlapping, (int, float)):
-            raise ValueError("'overlapping' must be a boolean.")
+            raise TypeError("'overlapping' must be a boolean.")
 
         self.vocabulary_ = {}
 
@@ -238,7 +238,7 @@ class BOSS(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : np.ndarray, shape = [n_samples, n_features]
+        X : array-like, shape = [n_samples, n_features]
 
         Returns
         -------
@@ -252,13 +252,13 @@ class BOSS(BaseEstimator, TransformerMixin):
 
         # Check parameters
         if (not isinstance(self.n_coefs, int)) and (self.n_coefs is not None):
-            raise ValueError("'n_coefs' must be None or an integer.")
+            raise TypeError("'n_coefs' must be None or an integer.")
         if isinstance(self.n_coefs, int) and self.n_coefs < 2:
             raise ValueError("'n_coefs' must be greater than or equal to 2.")
         if isinstance(self.n_coefs, int) and self.n_coefs % 2 != 0:
             raise ValueError("'n_coefs' must be an even integer.")
         if not isinstance(self.window_size, int):
-            raise ValueError("'window_size' must be an integer.")
+            raise TypeError("'window_size' must be an integer.")
         if self.window_size > n_features:
             raise ValueError("'window_size' must be lower than or equal to "
                              "the size of each time series.")
@@ -266,24 +266,24 @@ class BOSS(BaseEstimator, TransformerMixin):
             raise ValueError("'n_coefs' must be lower than or equal to "
                              "'window_size'.")
         if not isinstance(self.norm_mean, (int, float)):
-            raise ValueError("'norm_mean' must be a boolean.")
+            raise TypeError("'norm_mean' must be a boolean.")
         if not isinstance(self.norm_std, (int, float)):
-            raise ValueError("'norm_std' must be a boolean.")
+            raise TypeError("'norm_std' must be a boolean.")
         if not isinstance(self.n_bins, int):
-            raise ValueError("'n_bins' must be an integer.")
+            raise TypeError("'n_bins' must be an integer.")
         if self.n_bins < 2:
             raise ValueError("'n_bins' must be greater than or equal to 2.")
         if self.quantiles not in ['empirical', 'gaussian']:
             raise ValueError("'quantiles' must be either 'gaussian' or "
                              "'empirical'.")
         if not isinstance(self.variance_selection, (int, float)):
-            raise ValueError("'variance_selection' must be a boolean.")
+            raise TypeError("'variance_selection' must be a boolean.")
         if not isinstance(self.variance_threshold, (int, float)):
-            raise ValueError("'variance_threshold' must be a float.")
+            raise TypeError("'variance_threshold' must be a float.")
         if not isinstance(self.numerosity_reduction, (int, float)):
-            raise ValueError("'numerosity_reduction' must be a boolean.")
+            raise TypeError("'numerosity_reduction' must be a boolean.")
         if not isinstance(overlapping, (int, float)):
-            raise ValueError("'overlapping' must be a boolean.")
+            raise TypeError("'overlapping' must be a boolean.")
 
         self.vocabulary_ = {}
 
@@ -403,34 +403,34 @@ class WEASEL(BaseEstimator, TransformerMixin):
         """
         # Check parameters
         if not isinstance(self.n_coefs, int):
-            raise ValueError("'n_coefs' must be an integer.")
+            raise TypeError("'n_coefs' must be an integer.")
         if isinstance(self.n_coefs, int) and self.n_coefs < 2:
             raise ValueError("'n_coefs' must be greater than or equal to 2.")
         if not isinstance(self.window_sizes, (list, tuple, np.ndarray)):
-            raise ValueError("'window_sizes' must be array-like.")
+            raise TypeError("'window_sizes' must be array-like.")
         if (isinstance(self.n_coefs, int) and
                 self.n_coefs > np.min(self.window_sizes)):
             raise ValueError("'n_coefs' must be lower than or equal to the "
                              "minimum value in 'window_sizes'.")
         if not isinstance(self.norm_mean, (int, float)):
-            raise ValueError("'norm_mean' must be a boolean.")
+            raise TypeError("'norm_mean' must be a boolean.")
         if not isinstance(self.norm_std, (int, float)):
-            raise ValueError("'norm_std' must be a boolean.")
+            raise TypeError("'norm_std' must be a boolean.")
         if not isinstance(self.n_bins, int):
             raise ValueError("'n_bins' must be an integer.")
         if self.n_bins < 2:
             raise ValueError("'n_bins' must be greater than or equal to 2.")
         if not isinstance(self.variance_selection, (int, float)):
-            raise ValueError("'variance_selection' must be a boolean.")
+            raise TypeError("'variance_selection' must be a boolean.")
         if not isinstance(self.variance_threshold, (int, float)):
-            raise ValueError("'variance_threshold' must be a float.")
+            raise TypeError("'variance_threshold' must be a float.")
         if not isinstance(self.pvalue_threshold, (int, float)):
-            raise ValueError("'pvalue_threshold' must be a float or an "
-                             "integer.")
+            raise TypeError("'pvalue_threshold' must be a float or an "
+                            "integer.")
         if (self.pvalue_threshold < 0) or (self.pvalue_threshold > 1):
             raise ValueError("'pvalue_threshold' must be between 0 and 1.")
         if not isinstance(overlapping, (int, float)):
-            raise ValueError("'overlapping' must be a boolean.")
+            raise TypeError("'overlapping' must be a boolean.")
 
         # Check X and y
         X, y = check_X_y(X, y)

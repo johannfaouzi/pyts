@@ -25,10 +25,10 @@ class BOW(BaseEstimator, TransformerMixin):
     Parameters
     ----------
     window_size : int (default = 4)
-        Size of the window (i.e. the size of each word)
+        Size of the window (i.e. the size of each word).
 
     numerosity_reduction : bool (default = True)
-        If True, deletes all but one occurence of back to back
+        If True, delete all but one occurence of back to back
         identical occurences of the same words.
 
     """
@@ -74,9 +74,10 @@ class BOW(BaseEstimator, TransformerMixin):
         if not isinstance(self.window_size, int):
             raise TypeError("'window_size' must be an integer.")
         if self.window_size < 1:
-            raise ValueError("'window_size' must be greater or equal than 1.")
+            raise ValueError("'window_size' must be greater than or equal "
+                             "to 1.")
         if self.window_size > n_features:
-            raise ValueError("'window_size' must be lower or equal than "
+            raise ValueError("'window_size' must be lower than or equal to "
                              "the size of each time series.")
         if not isinstance(self.numerosity_reduction, (int, float)):
             raise TypeError("'numerosity_reduction' must be a boolean.")

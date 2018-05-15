@@ -25,10 +25,11 @@ class SSA(BaseEstimator, TransformerMixin):
     ----------
     window_size : int
         The size of the sliding window.
+
     grouping : None, int or array-like (default = None)
-        The way the elementary matrices are grouped. When None,
-        no grouping is performed. When an integer, the number of
-        groups is equal to this integer. When array-like, each element
+        The way the elementary matrices are grouped. If None,
+        no grouping is performed. If an integer, the number of
+        groups is equal to this integer. If array-like, each element
         must be a array-like containing the indices for each group.
 
     """
@@ -61,8 +62,8 @@ class SSA(BaseEstimator, TransformerMixin):
         Returns
         -------
         X_new : array-like, shape = [n_samples, n_splits, n_features]
-            Transformed data. n_splits value depends on the value of
-            'grouping'. If ``grouping=None``, `n_splits` is equal to
+            Transformed data. `n_splits` value depends on the value of
+            `grouping`. If ``grouping=None``, `n_splits` is equal to
             `window_size`. If `grouping` is an integer, `n_splits` is
             equal to `grouping`. If 'grouping' is array-like, `n_splits`
             is equal to the length of `grouping`.
@@ -76,7 +77,7 @@ class SSA(BaseEstimator, TransformerMixin):
 
         # Check parameters
         if not isinstance(self.window_size, int):
-            raise ValueError("'window_size' must be an integer.")
+            raise TypeError("'window_size' must be an integer.")
         if self.window_size < 1:
             raise ValueError("'window_size' must be greater or equal than 1.")
         if self.window_size > n_features:
@@ -84,8 +85,8 @@ class SSA(BaseEstimator, TransformerMixin):
                              "the size of each time series.")
         if not (self.grouping is None or
                 isinstance(self.grouping, (int, list, tuple, np.ndarray))):
-            raise ValueError("'grouping' must be either None, an integer "
-                             "or array-like.")
+            raise TypeError("'grouping' must be either None, an integer "
+                            "or array-like.")
         if isinstance(self.grouping, int) and self.grouping > self.window_size:
             raise ValueError("If 'grouping' is an integer, it must be "
                              "lower than or equal to 'window_size'.")

@@ -34,7 +34,7 @@ class KNNClassifier(BaseEstimator, ClassifierMixin):
     Parameters
     ----------
     n_neighbors : int, optional (default = 1)
-        Number of neighbors to use by default for :meth:`k_neighbors` queries.
+        Number of neighbors to use.
 
     weights : str or callable, optional (default = 'uniform')
         weight function used in prediction.  Possible values:
@@ -111,7 +111,7 @@ class KNNClassifier(BaseEstimator, ClassifierMixin):
             n_features is the number of features.
 
         y : array-like, shape = [n_samples]
-            Target vector relative to X
+            Target vector relative to X.
 
         Returns
         -------
@@ -165,19 +165,17 @@ class KNNClassifier(BaseEstimator, ClassifierMixin):
 class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
     """Classifier based on SAX-VSM representation and tf-idf statistics.
 
-    It uses the implementation from scikit-learn: TfidfVectorizer.
-
     Parameters
     ----------
-    use_idf : boolean, default=True
+    use_idf : bool (default = True)
         Enable inverse-document-frequency reweighting.
 
-    smooth_idf : boolean, default=True
+    smooth_idf : bool (default = True)
         Smooth idf weights by adding one to document frequencies, as if an
         extra document was seen containing every term in the collection
         exactly once. Prevents zero divisions.
 
-    sublinear_tf : boolean, default=False
+    sublinear_tf : bool (default = False)
         Apply sublinear tf scaling, i.e. replace tf with 1 + log(tf).
 
     Attributes
@@ -189,8 +187,8 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
         Term-document matrix
 
     idf_ : array, shape = [n_features], or None
-        The learned idf vector (global term weights)
-        when ``use_idf`` is set to True, None otherwise.
+        The learned idf vector (global term weights) when ``use_idf=True``,
+        None otherwise.
 
     stop_words_ : set
         Terms that were ignored because they either:
@@ -201,9 +199,7 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
 
     """
 
-    def __init__(self, norm='l2', use_idf=True,
-                 smooth_idf=True, sublinear_tf=False):
-        self.norm = norm
+    def __init__(self, use_idf=True, smooth_idf=True, sublinear_tf=False):
         self.use_idf = use_idf
         self.smooth_idf = smooth_idf
         self.sublinear_tf = sublinear_tf
@@ -225,6 +221,14 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
             Returns self.
 
         """
+        # Check parameters
+        if not isinstance(self.use_idf, (int, float)):
+            raise TypeError("'use_idf' must be a boolean.")
+        if not isinstance(self.smooth_idf, (int, float)):
+            raise TypeError("'smooth_idf' must be a boolean.")
+        if not isinstance(self.sublinear_tf, (int, float)):
+            raise TypeError("'sublinear_tf' must be a boolean.")
+
         check_classification_targets(y)
         le = LabelEncoder()
         y_ind = le.fit_transform(y)
@@ -364,9 +368,8 @@ class BOSSVSClassifier(BaseEstimator, ClassifierMixin):
         y : array-like, shape = [n_samples]
             Target vector relative to X.
 
-        overlapping : boolean (default = False)
-            whether or not overlapping windows are used for the training
-            phase.
+        overlapping : bool (default = False)
+            If True, overlapping windows are used for the training phase.
 
         Returns
         -------

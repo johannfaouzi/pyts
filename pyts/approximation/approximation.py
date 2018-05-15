@@ -37,7 +37,7 @@ class PAA(BaseEstimator, TransformerMixin):
 
     overlapping : bool (default = True)
         When `output_size` is specified, the window size is fixed
-        if `overlapping=True` and may vary if `overlapping=False.
+        if ``overlapping=True`` and may vary if ``overlapping=False``.
         Ignored if `window_size` is specified.
 
     """
@@ -82,11 +82,11 @@ class PAA(BaseEstimator, TransformerMixin):
 
         # Check parameters and compute window_size if output_size is given
         if (self.window_size is None and self.output_size is None):
-            raise ValueError("'window_size' xor 'output_size' must be "
-                             "specified.")
+            raise TypeError("'window_size' xor 'output_size' must be "
+                            "specified.")
         elif (self.window_size is not None and self.output_size is not None):
-            raise ValueError("'window_size' xor 'output_size' must be "
-                             "specified.")
+            raise TypeError("'window_size' xor 'output_size' must be "
+                            "specified.")
         elif (self.window_size is not None and self.output_size is None):
             if not isinstance(self.overlapping, (float, int)):
                 raise TypeError("'overlapping' must be a boolean.")
@@ -132,8 +132,8 @@ class DFT(BaseEstimator, TransformerMixin):
     Parameters
     ----------
     n_coefs : None or int (default = None)
-        The number of Fourier coefficients to keep. If ``coefs=None``,
-        all Fourier coefficients are returned. If `coefs` is an integer,
+        The number of Fourier coefficients to keep. If ``n_coefs=None``,
+        all Fourier coefficients are returned. If `n_coefs` is an integer,
         the `coefs` most significant Fourier coefficients are returned if
         ``anova=True``, otherwise the first `coefs` Fourier coefficients
         are returned. A even number is required (for real and imaginary values)
@@ -174,7 +174,7 @@ class DFT(BaseEstimator, TransformerMixin):
             n_features is the number of features.
 
         y : None or array-like, shape = [n_samples]
-            Target vector relative to X
+            Target vector relative to X.
 
         Returns
         -------
@@ -278,11 +278,11 @@ class DFT(BaseEstimator, TransformerMixin):
         """
         # Check parameters
         if (not isinstance(self.n_coefs, int)) and (self.n_coefs is not None):
-            raise ValueError("'n_coefs' must be None or an integer.")
+            raise TypeError("'n_coefs' must be None or an integer.")
         if isinstance(self.n_coefs, int) and self.n_coefs < 2:
             raise ValueError("'n_coefs' must be greater than or equal to 2.")
         if not isinstance(self.anova, (int, float)):
-            raise ValueError("'anova' must be a boolean.")
+            raise TypeError("'anova' must be a boolean.")
         if (not self.anova) and isinstance(self.n_coefs, int):
             if self.n_coefs % 2 != 0:
                 raise ValueError("'n_coefs' must be an even integer.")

@@ -30,12 +30,11 @@ class GASF(BaseEstimator, TransformerMixin):
     Parameters
     ----------
     image_size : int (default = 32)
-        Determines the shape of the output images:
-        (image_size, image_size)
+        Determine the shape of the output images: (image_size, image_size)
 
     overlapping : bool (default = False)
-        If True, reducing the size of each time series with PAA is
-        done with possible overlapping windows.
+        If True, reduce the size of each time series using PAA with possible
+        overlapping windows.
 
     scale : {-1, 0} (default = -1)
         The lower bound of the scaled time series.
@@ -113,8 +112,7 @@ class GADF(BaseEstimator, TransformerMixin):
     Parameters
     ----------
     image_size : int (default = 32)
-        Determines the shape of the output images:
-        (image_size, image_size)
+        Determine the shape of the output images: (image_size, image_size)
 
     overlapping : bool (default = False)
         If True, reducing the size of the time series with PAA is
@@ -208,8 +206,7 @@ class MTF(BaseEstimator, TransformerMixin):
     Parameters
     ----------
     image_size : int (default = 32)
-        Determines the shape of the output images:
-        (image_size, image_size)
+        Determine the shape of the output images: (image_size, image_size)
 
     n_bins : int (default = 4)
         Number of bins (also known as the size of the alphabet)
@@ -222,7 +219,7 @@ class MTF(BaseEstimator, TransformerMixin):
     overlapping : bool (default = False)
         If False, reducing the image with the blurring kernel
         will be applied on non-overlapping rectangles. If True,
-        it will be applied on possible overlapping squares.
+        it will be applied on eventually overlapping squares.
 
     """
 
