@@ -6,9 +6,9 @@
 Welcome to pyts's documentation!
 ============================================
 
-This project is a reference implementation to anyone who wishes to develop
-scikit-learn compatible classes. It comes with a `template` module which
-contains a single estimator with unit tests.
+pyts is a Python package that aims to provide state-of-the-art
+as well as recently published algorithms for time series
+classification.
 
 
     .. toctree::
@@ -16,9 +16,6 @@ contains a single estimator with unit tests.
        
        api
        ...
-
-See the `README <https://github.com/vighneshbirodkar/project-template/blob/master/README.md>`_
-for more information.
 
 
 Indices and tables
