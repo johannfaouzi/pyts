@@ -20,9 +20,9 @@ setup(name='pyts',
     packages=find_packages(),
     tests_require=['pytest'],
     install_requires=[
-        'numpy',
-        'scipy',
-        'scikit-learn',
-        'future'
+        'numpy>=1.8.2'
+        'scipy>=0.13.3'
+        'scikit-learn>=0.17.0'
+        'future>=0.13.1'
     ],
     zip_safe=False)
