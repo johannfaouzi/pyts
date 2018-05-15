@@ -173,8 +173,8 @@ class DFT(BaseEstimator, TransformerMixin):
             Training vector, where n_samples in the number of samples and
             n_features is the number of features.
 
-        y : None or array-like, shape = [n_samples]
-            Target vector relative to X.
+        y : None or array-like, shape = [n_samples] (default = None)
+            Class labels for each data sample.
 
         Returns
         -------
@@ -267,8 +267,8 @@ class DFT(BaseEstimator, TransformerMixin):
             Training vector, where n_samples in the number of samples and
             n_features is the number of features.
 
-        y : None or array-like, shape = [n_samples]
-            Target vector relative to X
+        y : None or array-like, shape = [n_samples] (default = None)
+            Class labels for each data sample.
 
         Returns
         -------

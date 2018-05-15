@@ -96,32 +96,32 @@ def test_KNNClassifier():
 def test_SAXVSMClassifier():
     """Testing 'SAXVSMClassifier'."""
     # Parameter
-    x1 = np.array(["aaa", "bbb", "bbb"])
-    x2 = np.array(["aaa", "bbb", "ccc"])
-    x3 = np.array(["aaa", "ddd", "ddd"])
-    x4 = np.array(["aaa", "ddd", "eee"])
-    X = np.vstack([x1, x2, x3, x4])
+    rng = np.random.RandomState(41)
+    X = rng.randn(4, 10)
     y = np.array([0, 0, 1, 1])
 
-    # Test 1
-    clf = SAXVSMClassifier(use_idf=True,
-                           smooth_idf=True,
-                           sublinear_tf=False)
-    clf.fit(X, y)
-    test_index = 2
-    np.testing.assert_equal(y[test_index],
-                            clf.predict(X[test_index][np.newaxis, :]))
-    test_index = np.array([2, 3])
-    np.testing.assert_equal(y[test_index], clf.predict(X[test_index]))
-
-    # Test 2: loop
+    # Test: loop
+    n_bins_list = [3, 4]
+    quantiles_list = ['empirical', 'gaussian']
+    window_size_list = [4, 6]
+    numerosity_reduction_list = [True, False]
     use_idf_list = [True, False]
     smooth_idf_list = [True, False]
     sublinear_tf_list = [True, False]
-    for use_idf, smooth_idf, sublinear_tf in product(*[use_idf_list,
-                                                       smooth_idf_list,
-                                                       sublinear_tf_list]):
-        clf = SAXVSMClassifier(use_idf=use_idf,
+    for (n_bins, quantiles, window_size, numerosity_reduction, use_idf,
+         smooth_idf, sublinear_tf) in product(*[n_bins_list,
+                                                quantiles_list,
+                                                window_size_list,
+                                                numerosity_reduction_list,
+                                                use_idf_list,
+                                                smooth_idf_list,
+                                                sublinear_tf_list]):
+        print(numerosity_reduction)
+        clf = SAXVSMClassifier(n_bins=n_bins,
+                               quantiles=quantiles,
+                               window_size=window_size,
+                               numerosity_reduction=numerosity_reduction,
+                               use_idf=use_idf,
                                smooth_idf=smooth_idf,
                                sublinear_tf=sublinear_tf)
         clf.fit(X, y)

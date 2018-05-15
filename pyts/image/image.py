@@ -52,7 +52,7 @@ class GASF(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         X
-            ignored
+            Ignored
 
         y
             Ignored
@@ -134,7 +134,7 @@ class GADF(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         X
-            ignored
+            Ignored
 
         y
             Ignored
@@ -236,7 +236,7 @@ class MTF(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         X
-            ignored
+            Ignored
 
         y
             Ignored
@@ -368,7 +368,7 @@ class RecurrencePlots(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         X
-            ignored
+            Ignored
 
         y
             Ignored

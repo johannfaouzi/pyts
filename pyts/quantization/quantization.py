@@ -3,6 +3,7 @@
 Implemented algorithms are:
 - Symbolic Aggregate approXimation
 - Multiple Coefficient Binning
+- Symbolic Fourier Approximation
 """
 
 from __future__ import division
@@ -50,7 +51,7 @@ class SAX(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         X
-            ignored
+            Ignored
 
         y
             Ignored
@@ -63,11 +64,11 @@ class SAX(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : np.ndarray, shape = [n_samples, n_features]
+        X : array-like, shape = [n_samples, n_features]
 
         Returns
         -------
-        X_new : np.ndarray, shape = [n_samples, n_features]
+        X_new : array-like, shape = [n_samples, n_features]
             Transformed data.
 
         """
@@ -102,7 +103,6 @@ class SAX(BaseEstimator, TransformerMixin):
                                  axis=1)
             indices = np.array([np.digitize(X[i], bins[:, i])
                                 for i in range(n_samples)])
-
         return alphabet[indices]
 
 
@@ -135,8 +135,8 @@ class MCB(BaseEstimator, TransformerMixin):
             Training vector, where n_samples in the number of samples and
             n_features is the number of features.
 
-        y : None or array-like, shape = [n_samples]
-            Target vector relative to X
+        y : None or array-like, shape = [n_samples] (default = None)
+            Class labels for each data sample.
 
         Returns
         -------
@@ -324,8 +324,8 @@ class SFA(BaseEstimator, TransformerMixin):
             Training vector, where n_samples in the number of samples and
             n_features is the number of features.
 
-        y : None or array-like, shape = [n_samples]
-            Target vector relative to X
+        y : None or array-like, shape = [n_samples] (default = None)
+            Class labels for each data sample.
 
         Returns
         -------

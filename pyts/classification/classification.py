@@ -11,7 +11,6 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import absolute_import
 from builtins import range
-from itertools import chain
 from future import standard_library
 import numpy as np
 from sklearn.utils.validation import check_array, check_X_y, check_is_fitted
@@ -21,7 +20,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import LabelEncoder
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
-from ..quantization import SFA
+from ..bow import BOW
+from ..quantization import SAX, SFA
 from ..utils import dtw, fast_dtw, numerosity_reduction
 
 
@@ -111,7 +111,7 @@ class KNNClassifier(BaseEstimator, ClassifierMixin):
             n_features is the number of features.
 
         y : array-like, shape = [n_samples]
-            Target vector relative to X.
+            Class labels for each data sample.
 
         Returns
         -------
@@ -167,6 +167,21 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
 
     Parameters
     ----------
+    n_bins : int (default = 4)
+        Number of bins (also known as the size of the alphabet).
+
+    quantiles : {'gaussian', 'empirical'} (default = 'empirical')
+        The way to compute quantiles. If 'gaussian', quantiles from a
+        gaussian distribution N(0,1) are used. If 'empirical', empirical
+        quantiles are used.
+
+    window_size : int (default = 4)
+        Size of the window (i.e. the size of each word).
+
+    numerosity_reduction : bool (default = True)
+        If True, delete all but one occurence of back to back
+        identical occurences of the same words.
+
     use_idf : bool (default = True)
         Enable inverse-document-frequency reweighting.
 
@@ -199,7 +214,13 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
 
     """
 
-    def __init__(self, use_idf=True, smooth_idf=True, sublinear_tf=False):
+    def __init__(self, n_bins=4, quantiles='empirical', window_size=4,
+                 numerosity_reduction=True, use_idf=True, smooth_idf=True,
+                 sublinear_tf=False):
+        self.n_bins = n_bins
+        self.quantiles = quantiles
+        self.window_size = window_size
+        self.numerosity_reduction = numerosity_reduction
         self.use_idf = use_idf
         self.smooth_idf = smooth_idf
         self.sublinear_tf = sublinear_tf
@@ -213,7 +234,7 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
             Training vector, where n_samples is the number of samples.
 
         y : array-like, shape = [n_samples]
-            Target vector relative to X.
+            Class labels for each data sample.
 
         Returns
         -------
@@ -222,6 +243,16 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
 
         """
         # Check parameters
+        if not isinstance(self.n_bins, int):
+            raise TypeError("'n_bins' must be an integer.")
+        if self.n_bins < 2:
+            raise ValueError("'n_bins' must be greater than or equal to 2.")
+        if self.n_bins > 26:
+            raise ValueError("'n_bins' must be lower than or equal to 26.")
+        if self.quantiles not in ['gaussian', 'empirical']:
+            raise ValueError("'quantiles' must be either 'gaussian' or "
+                             "'empirical'.")
+
         if not isinstance(self.use_idf, (int, float)):
             raise TypeError("'use_idf' must be a boolean.")
         if not isinstance(self.smooth_idf, (int, float)):
@@ -229,17 +260,23 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
         if not isinstance(self.sublinear_tf, (int, float)):
             raise TypeError("'sublinear_tf' must be a boolean.")
 
+        X, y = check_X_y(X, y)
         check_classification_targets(y)
         le = LabelEncoder()
         y_ind = le.fit_transform(y)
         self._classes = le.classes_
         n_classes = self._classes.size
 
-        X_clas = []
+        # SAX and BOW transformations
+        sax = SAX(self.n_bins, self.quantiles)
+        X_sax = sax.fit_transform(X)
+        bow = BOW(self.window_size, self.numerosity_reduction)
+        X_bow = bow.fit_transform(X_sax)
 
+        X_clas = []
         for cur_class in range(n_classes):
             center_mask = y_ind == cur_class
-            sentence = ' '.join(list(chain(*X[center_mask])))
+            sentence = ' '.join(X_bow[center_mask])
             X_clas.append(sentence)
 
         tfidf = TfidfVectorizer(norm=None,
@@ -254,6 +291,8 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
         else:
             self.idf_ = None
         self._tfidf = tfidf
+        self._sax = sax
+        self._bow = bow
         return self
 
     def predict(self, X):
@@ -272,13 +311,14 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
         check_is_fitted(self, ['vocabulary_', 'tfidf_', 'idf_',
                                'stop_words_', '_tfidf'])
 
-        X_test = [' '.join(x) for x in X]
-        X_transformed = self._tfidf.transform(X_test)
+        # SAX and BOW transformations
+        X_sax = self._sax.transform(X)
+        X_bow = self._bow.transform(X_sax)
+        X_transformed = self._tfidf.transform(X_bow)
         if self.use_idf:
             X_transformed /= self._tfidf.idf_
         y_pred = cosine_similarity(X_transformed,
                                    self.tfidf_).argmax(axis=1)
-
         return self._classes[y_pred]
 
 
@@ -366,7 +406,7 @@ class BOSSVSClassifier(BaseEstimator, ClassifierMixin):
             n_features is the number of features.
 
         y : array-like, shape = [n_samples]
-            Target vector relative to X.
+            Class labels for each data sample.
 
         overlapping : bool (default = False)
             If True, overlapping windows are used for the training phase.
@@ -454,6 +494,9 @@ class BOSSVSClassifier(BaseEstimator, ClassifierMixin):
         X_sfa = np.apply_along_axis(lambda x: ''.join(x),
                                     1,
                                     X_sfa).reshape(n_samples, -1)
+        word_size = len(X_sfa[0, 0])
+        if word_size == 1:
+            tfidf.set_params(tokenizer=self._tok)
         if self.numerosity_reduction:
             X_sfa = np.apply_along_axis(numerosity_reduction, 1, X_sfa)
         else:
@@ -506,3 +549,6 @@ class BOSSVSClassifier(BaseEstimator, ClassifierMixin):
         tf = self._tfidf.transform(X_sfa) / self._tfidf.idf_
         y_pred = cosine_similarity(tf, self.tfidf_).argmax(axis=1)
         return self._classes[y_pred]
+
+    def _tok(self, x):
+        return x.split(' ')

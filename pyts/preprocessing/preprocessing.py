@@ -40,7 +40,7 @@ class StandardScaler(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         X
-            ignored
+            Ignored
 
         y
             Ignored

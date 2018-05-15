@@ -92,5 +92,5 @@ class BOW(BaseEstimator, TransformerMixin):
         if self.numerosity_reduction:
             X_bow = np.apply_along_axis(numerosity_reduction, 1, X_bow)
         else:
-            X_bow = np.apply_along_axis(numerosity_reduction, 1, X_bow)
+            X_bow = np.apply_along_axis(lambda x: ' '.join(x), 1, X_bow)
         return X_bow

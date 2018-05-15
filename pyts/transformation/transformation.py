@@ -31,9 +31,9 @@ class BOSS(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    n_coefs : None or int (default = None)
-        The number of Fourier coefficients to keep. If ``coefs=None``,
-        all Fourier coefficients are returned. If `coefs` is an integer,
+    n_coefs : None or int
+        The number of Fourier coefficients to keep. If ``n_coefs=None``,
+        all Fourier coefficients are returned. If `n_coefs` is an integer,
         the `coefs` most significant Fourier coefficients are returned if
         ``anova=True``, otherwise the first `coefs` Fourier coefficients
         are returned. A even number is required (for real and imaginary values)
@@ -103,8 +103,8 @@ class BOSS(BaseEstimator, TransformerMixin):
             Training vector, where n_samples in the number of samples and
             n_features is the number of features.
 
-        y : None or array-like, shape = [n_samples]
-            Target vector relative to X. Ignored.
+        y :
+            Ignored.
 
         overlapping : boolean (default = True)
             whether or not overlapping windows are used for the training
@@ -183,6 +183,9 @@ class BOSS(BaseEstimator, TransformerMixin):
         X_sfa = np.apply_along_axis(lambda x: ''.join(x),
                                     1,
                                     X_sfa).reshape(n_samples, -1)
+        word_size = len(X_sfa[0, 0])
+        if word_size == 1:
+            count.set_params(tokenizer=self._tok)
         if self.numerosity_reduction:
             X_sfa = np.apply_along_axis(numerosity_reduction, 1, X_sfa)
         else:
@@ -314,6 +317,9 @@ class BOSS(BaseEstimator, TransformerMixin):
         X_sfa = np.apply_along_axis(lambda x: ''.join(x),
                                     1,
                                     X_sfa).reshape(n_samples, -1)
+        word_size = len(X_sfa[0, 0])
+        if word_size == 1:
+            count.set_params(tokenizer=self._tok)
         if self.numerosity_reduction:
             X_sfa = np.apply_along_axis(numerosity_reduction, 1, X_sfa)
         else:
@@ -323,6 +329,9 @@ class BOSS(BaseEstimator, TransformerMixin):
         for key, value in count.vocabulary_.items():
             self.vocabulary_[value] = key
         return tf
+
+    def _tok(self, x):
+        return x.split(' ')
 
 
 class WEASEL(BaseEstimator, TransformerMixin):
@@ -391,7 +400,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
             n_features is the number of features.
 
         y : array-like, shape = [n_samples]
-            Target vector relative to X.
+            Class labels for each data sample.
 
         overlapping : boolean (default = False)
             If True, overlapping windows are used.
@@ -477,6 +486,9 @@ class WEASEL(BaseEstimator, TransformerMixin):
             X_sfa = np.apply_along_axis(lambda x: ''.join(x),
                                         1,
                                         X_sfa).reshape(n_samples, -1)
+            word_size = len(X_sfa[0, 0])
+            if word_size == 1:
+                count.set_params(tokenizer=self._tok)
             X_sfa = np.apply_along_axis(lambda x: ' '.join(x), 1, X_sfa)
 
             tf = count.fit_transform(X_sfa)
@@ -542,3 +554,6 @@ class WEASEL(BaseEstimator, TransformerMixin):
                                               tf[:, relevant_features]])
 
         return X_features
+
+    def _tok(self, x):
+        return x.split(' ')
