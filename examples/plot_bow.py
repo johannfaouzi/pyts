@@ -1,9 +1,11 @@
 """
-===
-BOW
-===
+============
+Bag of Words
+============
 
-Illustration of Bag of Words.
+This example shows how you can transform a quantized time series (i.e. a time
+series represented as a sequence of letters) into a bag of words using
+:class:`pyts.bow.BOW`.
 """
 
 import numpy as np

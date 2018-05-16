@@ -1,9 +1,11 @@
 """
-===
-GAF
-===
+=====================
+Gramian Angular Field
+=====================
 
-Illustration of Gramian Angular Fields.
+This example shows how you can transform a time series into a Gramian Angular
+Field using :class:`pyts.image.GASF` for Gramian Angular Summation Field and
+:class:`pyts.image.GADF` for Gramian Angular Difference Field.
 """
 
 import numpy as np

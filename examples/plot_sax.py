@@ -1,9 +1,11 @@
 """
-===
-SAX
-===
+================================
+Symbolic Aggregate approXimation
+================================
 
-Illustration of Symbolic Aggregate approXimation.
+This example shows how you can quantize a time series (i.e. transform a
+sequence of real numbers into a sequence of letters) using
+:class:`pyts.quantization.SAX`.
 """
 
 import numpy as np

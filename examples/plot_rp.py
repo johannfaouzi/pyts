@@ -3,7 +3,8 @@
 Recurrence Plots
 ================
 
-Illustration of Recurrence Plots.
+This example shows how you can transform a time series into a Recurrence Plot
+using :class:`pyts.image.RecurrencePlots`.
 """
 
 import numpy as np

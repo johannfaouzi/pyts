@@ -1,9 +1,10 @@
 """
-===
-SSA
-===
+==========================
+Singular Spectrum Analysis
+==========================
 
-Illustration of Singular Spectrum Analysis.
+This example shows how you can decompose a time series into several time series
+using :class:`pyts.decomposition.SSA`.
 """
 
 import numpy as np

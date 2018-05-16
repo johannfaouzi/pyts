@@ -1,9 +1,10 @@
 """
-===
-PAA
-===
+=================================
+Piecewise Aggregate Approximation
+=================================
 
-Illustration of Piecewise Aggregate Approximation.
+This example shows how you can approximate a time series using
+:class:`pyts.approximation.PAA`.
 """
 
 import numpy as np
@@ -27,8 +28,7 @@ plt.figure(figsize=(12, 8))
 plt.plot(np.arange(n_features), X[0], 'o-', label='Original')
 plt.plot(np.arange(window_size // 2,
                    n_features + window_size // 2,
-                   window_size), X_paa[0], 'o--',
-         label='PAA')
+                   window_size), X_paa[0], 'o--', label='PAA')
 plt.vlines(np.arange(0, n_features, window_size),
            X[0].min(), X[0].max(), color='g', linestyles='--', linewidth=0.5)
 plt.legend(loc='best', fontsize=14)

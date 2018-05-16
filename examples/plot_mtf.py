@@ -1,9 +1,10 @@
 """
-===
-MTF
-===
+=======================
+Markov Transition Field
+=======================
 
-Illustration of Markov Transition Field.
+This example shows how you can transform a time series into a Markov Transition
+Field using :class:`pyts.image.MTF`.
 """
 
 import numpy as np

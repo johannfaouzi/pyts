@@ -1,9 +1,10 @@
 """
-===
-DFT
-===
+==========================
+Discrete Fourier Transform
+==========================
 
-Illustration of Discrete Fourier Transform.
+This example shows how you can approximate a time series using only some of its
+Fourier coefficients using :class:`pyts.approximation.DFT`.
 """
 
 import numpy as np
