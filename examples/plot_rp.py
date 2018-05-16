@@ -18,7 +18,7 @@ n_samples, n_features = 100, 144
 rng = np.random.RandomState(41)
 X = rng.randn(n_samples, n_features)
 
-# MTF transformations
+# Recurrence plot transformation
 rp = RecurrencePlots(dimension=1,
                      epsilon='percentage_points',
                      percentage=30)

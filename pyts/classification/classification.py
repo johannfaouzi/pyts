@@ -196,7 +196,7 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
     Attributes
     ----------
     vocabulary_ : dict
-        A mapping of terms to feature indices.
+        A mapping of feature indices to terms.
 
     tfidf_ : sparse matrix, shape = [n_classes, n_words]
         Term-document matrix
@@ -273,11 +273,8 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
         bow = BOW(self.window_size, self.numerosity_reduction)
         X_bow = bow.fit_transform(X_sax)
 
-        X_clas = []
-        for cur_class in range(n_classes):
-            center_mask = y_ind == cur_class
-            sentence = ' '.join(X_bow[center_mask])
-            X_clas.append(sentence)
+        X_class = [' '.join(X_bow[y_ind == classe])
+                   for classe in range(n_classes)]
 
         tfidf = TfidfVectorizer(norm=None,
                                 use_idf=self.use_idf,
@@ -285,8 +282,9 @@ class SAXVSMClassifier(BaseEstimator, ClassifierMixin):
                                 sublinear_tf=self.sublinear_tf)
         if self.window_size == 1:
             tfidf.set_params(tokenizer=self._tok)
-        self.tfidf_ = tfidf.fit_transform(X_clas)
-        self.vocabulary_ = tfidf.vocabulary_
+        self.tfidf_ = tfidf.fit_transform(X_class)
+        self.vocabulary_ = {value: key for key, value in
+                            tfidf.vocabulary_.items()}
         self.stop_words_ = tfidf.stop_words
         if self.use_idf:
             self.idf_ = tfidf.idf_

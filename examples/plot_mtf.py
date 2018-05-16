@@ -18,7 +18,7 @@ n_samples, n_features = 100, 144
 rng = np.random.RandomState(41)
 X = rng.randn(n_samples, n_features)
 
-# MTF transformations
+# MTF transformation
 image_size = 24
 mtf = MTF(image_size)
 X_mtf = mtf.fit_transform(X)
