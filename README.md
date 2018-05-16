@@ -1,7 +1,7 @@
 Welcome to **pyts**, a Python package for time series transformation and classification !
 ===================
 [![Build Status](https://travis-ci.org/johannfaouzi/pyts.svg?branch=dev)](https://travis-ci.org/johannfaouzi/pyts)
-[![Coverage Status](https://coveralls.io/repos/github/johannfaouzi/pyts/badge.svg?branch=dev)](https://coveralls.io/github/johannfaouzi/pyts?branch=dev)
+[![codecov](https://codecov.io/gh/johannfaouzi/pyts/branch/dev/graph/badge.svg)](https://codecov.io/gh/johannfaouzi/pyts)
 [![CircleCI](https://circleci.com/gh/johannfaouzi/pyts/tree/dev.svg?style=shield)](https://circleci.com/gh/johannfaouzi/pyts/tree/dev)
 [![Python version](https://img.shields.io/pypi/pyversions/pyts.svg)](https://img.shields.io/pypi/pyversions/pyts)
 [![PyPI version](https://badge.fury.io/py/pyts.svg)](https://badge.fury.io/py/pyts)
@@ -12,7 +12,7 @@ Welcome to **pyts**, a Python package for time series transformation and classif
 	- PAA : Piecewise Aggregate Approximation
 	- SAX : Symbolic Aggregate approXimation
 	- VSM : Vector Space Model
-	- GAF : Grammian Angular Field
+	- GAF : Gramian Angular Field
 	- MTF : Markov Transition Field
 - Classification :
 	- SAX-VSM : algorithm based on SAX-VSM transformation that uses tf-idf statistics to perform classification
@@ -54,7 +54,7 @@ You can simulate a toy dataset with the following code:
 ```python
 import numpy as np
 from scipy.stats import norm
-	
+
 n_samples = 100
 n_features = 48
 n_classes = 2
@@ -63,7 +63,7 @@ rng = np.random.RandomState(41)
 
 delta = 0.5
 dt = 1
-    
+
 X = (norm.rvs(scale=delta**2 * dt, size=n_samples*n_features, random_state=rng)
          .reshape((n_samples, n_features)))
 X[:, 0] = 0
@@ -97,7 +97,7 @@ from pyts.transformation import StandardScaler
 standardscaler = StandardScaler(epsilon=1e-2)
 X_standardized = standardscaler.transform(X)
 ```
-	
+
 The function `plot_standardscaler` from the module `visualization` allows you to see the time series before and after the transformation.
 
 ```python
@@ -113,7 +113,7 @@ plot_standardscaler(X[0])
 
 ### 3. Piecewise Aggregation Approximation (PAA)
 
-Piecewise Aggregation Approximation is a dimension reduction technique. It splits the time series into bins and computes the mean inside each bin. It returns the sample of means. It is implemented as a class named `PAA(window_size=None, output_size=None, overlapping=True)`, from the module `transformation`. 
+Piecewise Aggregation Approximation is a dimension reduction technique. It splits the time series into bins and computes the mean inside each bin. It returns the sample of means. It is implemented as a class named `PAA(window_size=None, output_size=None, overlapping=True)`, from the module `transformation`.
 
 You can specify either `window_size` or `output_size`. If you specify `output_size`, the returned time series will be of length `output_size`. You can also specify `overlapping`, which will determine if each bin has the same number of elements `(overlapping=True)` or if each datapoint belong to only one bin `(overlapping=False)`. If you specify `window_size`, the size of each bin will be equal to `window_size` and `overlapping` will be ignored.
 
@@ -125,7 +125,7 @@ from pyts.transformation import PAA
 paa = PAA(window_size=None, output_size=8, overlapping=True)
 X_paa = paa.transform(X_standardized)
 ```
-	
+
 The function `plot_paa` from the module `visualization` allows you to see the time series before and after the transformation.
 
 ```python
@@ -151,7 +151,7 @@ from pyts.transformation import SAX
 sax = SAX(n_bins=5, quantiles='gaussian')
 X_sax = sax.transform(X_paa)
 ```
-	
+
 The function `plot_sax` from the module `visualization` allows you to see the time series before and after the transformation. It may help you understand what SAX does.
 
 ```python
@@ -372,7 +372,7 @@ pipeline = Pipeline([("sc", StandardScaler()),
                      ("vsm", VSM(numerosity_reduction=True)),
                      ("clf", SAXVSMClassifier())
                     ])
-                    
+
 parameters = {"paa__overlapping": [True, False], "vsm__window_size": [3, 4, 5]}
 
 clf = GridSearchCV(pipeline, parameters)
