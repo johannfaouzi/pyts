@@ -17,15 +17,11 @@ User installation
 -----------------
 
 If you already have a working installation of numpy, scipy and
-scikit-learn, you can easily install pyts using ``pip``
-
-.. code-block::
+scikit-learn, you can easily install pyts using ``pip``::
 
     pip install pyts
 
-You can also get the latest version of pyts by cloning the repository
-
-.. code-block::
+You can also get the latest version of pyts by cloning the repository::
 
     git clone https://github.com/johannfaouzi/pyts.git
     cd pyts
