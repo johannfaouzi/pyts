@@ -1,7 +1,8 @@
 Installation
 ============
 
-## Dependencies
+Dependencies
+------------
 
 pyts has been tested on Python 2.7 and 3.5 with the following dependencies:
 
@@ -12,14 +13,19 @@ pyts has been tested on Python 2.7 and 3.5 with the following dependencies:
 To run the examples matplotlib is required (matplotlib >= 2.0.0 has
 been tested).
 
-## User installation
+User installation
+-----------------
 
 If you already have a working installation of numpy, scipy and
 scikit-learn, you can easily install pyts using ``pip``
 
+.. code-block::
+
     pip install pyts
 
 You can also get the latest version of pyts by cloning the repository
+
+.. code-block::
 
     git clone https://github.com/johannfaouzi/pyts.git
     cd pyts
