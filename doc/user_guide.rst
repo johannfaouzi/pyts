@@ -14,7 +14,7 @@ before applying a standard machine learning classification algorithm.
 
 In the following sections we'll present the algorithms implemented in pyts. If
 you want more information about the algorithms, you can have a look at the references
-and the **Examples** section.
+and the :ref:`general_examples` section.
 
 Preprocessing
 -------------
@@ -47,14 +47,15 @@ the most if a vector of class labels is provided.
 It is implemented as :class:`pyts.approximation.DFT`.
 
 References:
+^^^^^^^^^^^
 
 - Eamonn J. Keogh and Michael J. Pazzani.
-A simple dimensionality reduction technique for fast similarity search in
-large time series databases. *Knowledge Discovery and Data Mining* ,2000.
+  A simple dimensionality reduction technique for fast similarity search in
+  large time series databases. *Knowledge Discovery and Data Mining* ,2000.
 
 
 - Christos Faloutsos, M. Ranganathan and Yannis Manolopoulos.
-Fast Subsequence Matching in Time-Series Databases. *ACM SIGMOD Record*, 2000.
+  Fast Subsequence Matching in Time-Series Databases. *ACM SIGMOD Record*, 2000.
 
 Quantization
 ------------
@@ -79,13 +80,14 @@ It performs DFT then MCB, i.e. MCB is applied to the selected Fourier coefficien
 of each time series. It is implemented as :class:`pyts.quantization.SFA`.
 
 References:
+^^^^^^^^^^^
 
 - Jessica Lin, Eamonn Keogh, Li Wei, and Stefano Lonardi. Experiencing SAX: a Novel
-Symbolic Representation of Time Series. *Data Mining and Knowledge Discovery*, 2007.
+  Symbolic Representation of Time Series. *Data Mining and Knowledge Discovery*, 2007.
 
 - Patrick Schäfer and Mikael Högqvist. (2012). SFA: A Symbolic Fourier Approximation
-and Index for Similarity Search in High Dimensional Datasets.
-*ACM International Conference Proceeding Series*, 2012.
+  and Index for Similarity Search in High Dimensional Datasets.
+  *ACM International Conference Proceeding Series*, 2012.
 
 Bag of Words
 ------------
@@ -121,12 +123,13 @@ discrimative features (i.e. words) are kept (based on the chi-2 test).
 It is implemented as :class:`pyts.transformation.WEASEL`.
 
 References:
+^^^^^^^^^^^
 
 - Patrick Schäfer. The BOSS is concerned with time series classification in
-the presence of noise. *Data Mining and Knowledge Discovery*, 2015.
+  the presence of noise. *Data Mining and Knowledge Discovery*, 2015.
 
 - Patrick Schäfer and Ulf Leser. Fast and Accurate Time Series Classification with WEASEL.
-*CoRR*, 2017.
+  *CoRR*, 2017.
 
 CLassification
 --------------
@@ -156,13 +159,14 @@ are created using SFA instead of SAX.
 It is implemented as :class:`pyts.classification.BOSSVSClassifier`.
 
 References:
+^^^^^^^^^^^
 
 - Meinard Müller. Dynamic Time Warping (DTW).
-*Information Retrieval for Music and Motion*, 2007.
+  *Information Retrieval for Music and Motion*, 2007.
 
 - Senin Pavel and Malinchik Sergey. SAX-VSM: Interpretable Time Series
-Classification Using SAX and Vector Space Model. *Data Mining (ICDM),
-2013 IEEE 13th International Conference on, pp.1175,1180*, 2013.
+  Classification Using SAX and Vector Space Model. *Data Mining (ICDM),
+  2013 IEEE 13th International Conference on, pp.1175,1180*, 2013.
 
 - Patrick Schäfer. Scalable Time Series Classification. *DMKD* and *ECML/PKDD*, 2016.
 
@@ -193,12 +197,13 @@ and finally to compute the Markov transition field from the transition matrix.
 It is implemented as :class:`pyts.image.MTF`.
 
 References:
+^^^^^^^^^^^
 
 - J.-P. Eckmann, S. Oliffson Kamphorst and D. Ruelle.
-Recurrence Plots of Dynamical Systems. *Europhysics Letters*, 1987.
+  Recurrence Plots of Dynamical Systems. *Europhysics Letters*, 1987.
 
 - Zhiguang Wang and Tim Oates. Imaging time-series to improve classification and imputation.
-*Proceedings of the 24th International Conference on Artificial Intelligence*, 2015.
+  *Proceedings of the 24th International Conference on Artificial Intelligence*, 2015.
 
 Decomposition
 -------------
@@ -215,6 +220,7 @@ eigenmatrice.
 It is implemented as :class:`pyts.decomposition.SSA`.
 
 References:
+^^^^^^^^^^^
 
 - Nina Golyandina and Anatoly Zhigljavsky.
- Singular Spectrum Analysis for Time Series. 2013
+  Singular Spectrum Analysis for Time Series. 2013
