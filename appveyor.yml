@@ -11,8 +11,8 @@ environment:
     WHEELHOUSE_UPLOADER_USERNAME: sklearn
     WHEELHOUSE_UPLOADER_SECRET:
       secure: XzK+Mi6Ba5frV2B/jHq7h4aD8/nox9SsI3T8Kub1L2XNevRSIurUEry3PdWESzRY
-    MODULE: skltemplate
-    PROJECT_NAME: sklearn-template
+    MODULE: pyts
+    PROJECT_NAME: pyts
     CLOUD_STORAGE: CLOUDFILES
     CLOUD_CONTATINER: sklearn-template-trial
 
