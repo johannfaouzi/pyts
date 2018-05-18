@@ -12,7 +12,9 @@ don't work well on **raw time series of real numbers**. Most algorithms
 developed recently have been focusing on *transforming* the raw time series
 before applying a standard machine learning classification algorithm.
 
-In the following sections we'll present the algorithms implemented in pyts.
+In the following sections we'll present the algorithms implemented in pyts. If
+you want more information about the algorithms, you can have a look at the references
+and the **Examples** section.
 
 Preprocessing
 -------------
@@ -35,8 +37,7 @@ to approximate a time series can be found in the :mod:`pyts.approximation` modul
 
 The first algorithm implemented is **Piecewise Aggregate Approximation (PAA)**. The
 main idea of this algorithm is to apply windows along a time series and to
-take the mean value in each window. It is implemented as :class:`pyts.approximation.PAA`
-and you can find an illustration of the algorithm in the ..auto_examples section.
+take the mean value in each window. It is implemented as :class:`pyts.approximation.PAA`.
 
 The second algorithm implemented is **Discrete Fourier Transform (DFT)**. The idea
 is to approximate a time series with a subsample of its Fourier coefficients.
@@ -44,6 +45,16 @@ The selected Fourier coefficients are either the first ones (as they represent
 the trend of the time series) or the ones that separe the different classes
 the most if a vector of class labels is provided.
 It is implemented as :class:`pyts.approximation.DFT`.
+
+References:
+
+- Eamonn J. Keogh and Michael J. Pazzani.
+A simple dimensionality reduction technique for fast similarity search in
+large time series databases. *Knowledge Discovery and Data Mining* ,2000.
+
+
+- Christos Faloutsos, M. Ranganathan and Yannis Manolopoulos.
+Fast Subsequence Matching in Time-Series Databases. *ACM SIGMOD Record*, 2000.
 
 Quantization
 ------------
@@ -66,6 +77,15 @@ at each timestamp. It is implemented as :class:`pyts.quantization.MCB`.
 The third algorithm implemented is **Symbolic Fourier Approximation (SFA)**.
 It performs DFT then MCB, i.e. MCB is applied to the selected Fourier coefficients
 of each time series. It is implemented as :class:`pyts.quantization.SFA`.
+
+References:
+
+- Jessica Lin, Eamonn Keogh, Li Wei, and Stefano Lonardi. Experiencing SAX: a Novel
+Symbolic Representation of Time Series. *Data Mining and Knowledge Discovery*, 2007.
+
+- Patrick Schäfer and Mikael Högqvist. (2012). SFA: A Symbolic Fourier Approximation
+and Index for Similarity Search in High Dimensional Datasets.
+*ACM International Conference Proceeding Series*, 2012.
 
 Bag of Words
 ------------
@@ -100,6 +120,14 @@ one-way ANOVA test), several lengths for the sliding window are used and the mos
 discrimative features (i.e. words) are kept (based on the chi-2 test).
 It is implemented as :class:`pyts.transformation.WEASEL`.
 
+References:
+
+- Patrick Schäfer. The BOSS is concerned with time series classification in
+the presence of noise. *Data Mining and Knowledge Discovery*, 2015.
+
+- Patrick Schäfer and Ulf Leser. Fast and Accurate Time Series Classification with WEASEL.
+*CoRR*, 2017.
+
 CLassification
 --------------
 
@@ -127,6 +155,17 @@ The outline of this algorithm is quite similar to the one of SAX-VSM but words
 are created using SFA instead of SAX.
 It is implemented as :class:`pyts.classification.BOSSVSClassifier`.
 
+References:
+
+- Meinard Müller. Dynamic Time Warping (DTW).
+*Information Retrieval for Music and Motion*, 2007.
+
+- Senin Pavel and Malinchik Sergey. SAX-VSM: Interpretable Time Series
+Classification Using SAX and Vector Space Model. *Data Mining (ICDM),
+2013 IEEE 13th International Conference on, pp.1175,1180*, 2013.
+
+- Patrick Schäfer. Scalable Time Series Classification. *DMKD* and *ECML/PKDD*, 2016.
+
 Image
 -----
 
@@ -153,6 +192,14 @@ the Markov transition matrix (the quantized time series is seen as a Markov chai
 and finally to compute the Markov transition field from the transition matrix.
 It is implemented as :class:`pyts.image.MTF`.
 
+References:
+
+- J.-P. Eckmann, S. Oliffson Kamphorst and D. Ruelle.
+Recurrence Plots of Dynamical Systems. *Europhysics Letters*, 1987.
+
+- Zhiguang Wang and Tim Oates. Imaging time-series to improve classification and imputation.
+*Proceedings of the 24th International Conference on Artificial Intelligence*, 2015.
+
 Decomposition
 -------------
 
@@ -166,3 +213,8 @@ vectors, then compute the eigenvalues and eigenvectors of this matrix multiplied
 transpose, after compute the eigenmatrices and finally compute the time series for each
 eigenmatrice.
 It is implemented as :class:`pyts.decomposition.SSA`.
+
+References:
+
+- Nina Golyandina and Anatoly Zhigljavsky.
+ Singular Spectrum Analysis for Time Series. 2013
