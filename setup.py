@@ -3,7 +3,7 @@ from distutils.core import setup
 
 
 setup(name='pyts',
-    version='0.6.1',
+    version='0.7.0',
     description='A package for transformation and classification of time series',
     classifiers=[
         'Development Status :: 3 - Alpha',
