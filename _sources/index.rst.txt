@@ -1,24 +1,22 @@
-.. project-template documentation master file, created by
-   sphinx-quickstart on Mon Jan 18 14:44:12 2016.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to pyts's documentation!
+Welcome to pyts documentation!
 ============================================
 
-This project is a reference implementation to anyone who wishes to develop
-scikit-learn compatible classes. It comes with a `template` module which
-contains a single estimator with unit tests.
+pyts is a Python package for time series transformation and classification. It
+aims to provide state-of-the-art as well as recently published algorithms
+for time series classification. Most of these algorithms transform time series,
+thus pyts provides several tools to perform these transformations.
 
 
     .. toctree::
        :maxdepth: 2
-       
-       api
-       ...
+       :hidden:
 
-See the `README <https://github.com/vighneshbirodkar/project-template/blob/master/README.md>`_
-for more information.
+       install
+       user_guide
+       api
+       auto_examples/index
+       citation
+       ...
 
 
 Indices and tables
@@ -27,4 +25,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

@@ -1,0 +1,363 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Utils &mdash; pyts 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyts
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyts</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="utils">
+<h1>Utils<a class="headerlink" href="#utils" title="Permalink to this headline">¶</a></h1>
+<p>The documentation of the approximation module.</p>
+<span class="target" id="module-pyts.utils"></span><p>The <a class="reference internal" href="#module-pyts.utils" title="pyts.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyts.utils</span></code></a> module includes utility functions.</p>
+<dl class="function">
+<dt id="pyts.utils.segmentation">
+<code class="descclassname">pyts.utils.</code><code class="descname">segmentation</code><span class="sig-paren">(</span><em>ts_size</em>, <em>window_size</em>, <em>overlapping</em>, <em>n_segments=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/utils/utils.html#segmentation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.utils.segmentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the indices for Piecewise Agrgegate Approximation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>ts_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">The size of the time series.</p>
+</dd>
+<dt><strong>window_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">The size of the window.</p>
+</dd>
+<dt><strong>overlapping</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
+<dd><p class="first last">If True, overlapping windows may be used. If False, non-overlapping
+are used.</p>
+</dd>
+<dt><strong>n_segments</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int or None (default = None)</span></dt>
+<dd><p class="first last">The number of windows. If None, the number is automatically
+computed using <cite>window_size</cite>.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>start</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd><p class="first last">The lower bound for each window.</p>
+</dd>
+<dt><strong>end</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd><p class="first last">The upper bound for each window.</p>
+</dd>
+<dt><strong>size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">The size of <cite>start</cite>.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyts.utils.numerosity_reduction">
+<code class="descclassname">pyts.utils.</code><code class="descname">numerosity_reduction</code><span class="sig-paren">(</span><em>arr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/utils/utils.html#numerosity_reduction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.utils.numerosity_reduction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform numerosity reduction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>arr</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape [n_samples]</span></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>res</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">string with each word separated with a whitespace.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyts.utils.dtw">
+<code class="descclassname">pyts.utils.</code><code class="descname">dtw</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>dist=u'absolute'</em>, <em>return_path=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/utils/utils.html#dtw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.utils.dtw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dynamic Time Warping.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>x</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape [n1]</span></dt>
+<dd><p class="first last">First array.</p>
+</dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape [n2]</span></dt>
+<dd><p class="first last">Second array</p>
+</dd>
+<dt><strong>dist</strong> <span class="classifier-delimiter">:</span> <span class="classifier">{‘absolute’, ‘square’ or callable} (default = ‘absolue’)</span></dt>
+<dd><p class="first last">The distance metric used. If callable, the first two arguments
+must be float numbers.</p>
+</dd>
+<dt><strong>return_path</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = False)</span></dt>
+<dd><p class="first last">If true, the path along the accumulated cost matrix is returned.</p>
+</dd>
+<dt><strong>kwargs</strong></dt>
+<dd><p class="first last">Additional keyword arguments for <cite>dist</cite> if <cite>dist</cite> is callable.
+Ignored otherwise.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyts.utils.fast_dtw">
+<code class="descclassname">pyts.utils.</code><code class="descname">fast_dtw</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>window_size</em>, <em>approximation=True</em>, <em>dist=u'absolute'</em>, <em>return_path=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/utils/utils.html#fast_dtw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.utils.fast_dtw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fast Dynamic Time Warping.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>x</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape [n1]</span></dt>
+<dd><p class="first last">First array.</p>
+</dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape [n2]</span></dt>
+<dd><p class="first last">Second array</p>
+</dd>
+<dt><strong>window_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">The size of the window for the PAA algorithm.</p>
+</dd>
+<dt><strong>approximation</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = True)</span></dt>
+<dd><p class="first last">If True, compute Dynamic Time Warping between the shrunk time
+series. If False, compute Dynamic Time Warping on the original
+time series with a constraint region based on the path of the
+Dynamic Time Warping of the shrunk time series.</p>
+</dd>
+<dt><strong>dist</strong> <span class="classifier-delimiter">:</span> <span class="classifier">{‘absolute’, ‘square’ or callable} (default = ‘absolue’)</span></dt>
+<dd><p class="first last">The distance metric used. If callable, the first two arguments
+must be float numbers.</p>
+</dd>
+<dt><strong>return_path</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = False)</span></dt>
+<dd><p class="first last">If true, the path along the accumulated cost matrix is returned.</p>
+</dd>
+<dt><strong>kwargs</strong></dt>
+<dd><p class="first last">Additional keyword arguments for <cite>dist</cite> if <cite>dist</cite> is callable.
+Ignored otherwise.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018, Johann Faouzi.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.7.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

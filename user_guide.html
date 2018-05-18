@@ -1,0 +1,455 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>User guide &mdash; pyts 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Documentation" href="api.html" />
+    <link rel="prev" title="Installation" href="install.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyts
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#preprocessing">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#approximation">Approximation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#references">References:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#quantization">Quantization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">References:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#bag-of-words">Bag of Words</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transformation">Transformation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">References:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#classification">Classification</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">References:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#image">Image</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">References:</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#decomposition">Decomposition</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">References:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyts</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>User guide</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/user_guide.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="user-guide">
+<h1>User guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Time series are very common data and classifying them can be of interest in a
+lot of fields. However standard machine learning algorithms for classification,
+like Logistic Regression, Support Vector Machine or K-Nearest Neighbors with
+usual metrics, don’t work very well. To be more precise, these algorithms
+don’t work well on <strong>raw time series of real numbers</strong>. Most algorithms
+developed recently have been focusing on <em>transforming</em> the raw time series
+before applying a standard machine learning classification algorithm.</p>
+<p>In the following sections we’ll present the algorithms implemented in pyts. If
+you want more information about the algorithms, you can have a look at the references
+and the <a class="reference internal" href="auto_examples/index.html#general-examples"><span class="std std-ref">Examples</span></a> section.</p>
+</div>
+<div class="section" id="preprocessing">
+<h2>Preprocessing<a class="headerlink" href="#preprocessing" title="Permalink to this headline">¶</a></h2>
+<p>It is standard in machine learning to perform some preprocessing on raw data.
+Likewise it is standard to perform some preprocessing on time series. Implemented
+algorithms can be found in the <a class="reference internal" href="preprocessing.html#module-pyts.preprocessing" title="pyts.preprocessing"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyts.preprocessing</span></code></a> module.</p>
+<p>Currently the only preprocessing tool implemented is <strong>StandardScaler</strong>
+It performs standardization (z-normalization) for each time series: the preprocessed
+time series all have zero mean and unit variance.
+It is implemented as <a class="reference internal" href="preprocessing.html#pyts.preprocessing.StandardScaler" title="pyts.preprocessing.StandardScaler"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.preprocessing.StandardScaler</span></code></a>.</p>
+</div>
+<div class="section" id="approximation">
+<h2>Approximation<a class="headerlink" href="#approximation" title="Permalink to this headline">¶</a></h2>
+<p>Time series can be of huge size or be very noisy. It can be useful to sum up
+the most important information of each time series. Implemented algorithms
+to approximate a time series can be found in the <a class="reference internal" href="approximation.html#module-pyts.approximation" title="pyts.approximation"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyts.approximation</span></code></a> module.</p>
+<p>The first algorithm implemented is <strong>Piecewise Aggregate Approximation (PAA)</strong>. The
+main idea of this algorithm is to apply windows along a time series and to
+take the mean value in each window. It is implemented as <a class="reference internal" href="approximation.html#pyts.approximation.PAA" title="pyts.approximation.PAA"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.approximation.PAA</span></code></a>.</p>
+<p>The second algorithm implemented is <strong>Discrete Fourier Transform (DFT)</strong>. The idea
+is to approximate a time series with a subsample of its Fourier coefficients.
+The selected Fourier coefficients are either the first ones (as they represent
+the trend of the time series) or the ones that discriminate the different classes
+the most if a vector of class labels is provided.
+It is implemented as <a class="reference internal" href="approximation.html#pyts.approximation.DFT" title="pyts.approximation.DFT"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.approximation.DFT</span></code></a>.</p>
+<div class="section" id="references">
+<h3>References:<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Eamonn J. Keogh and Michael J. Pazzani.
+A simple dimensionality reduction technique for fast similarity search in
+large time series databases. <em>Knowledge Discovery and Data Mining</em> ,2000.</li>
+<li>Christos Faloutsos, M. Ranganathan and Yannis Manolopoulos.
+Fast Subsequence Matching in Time-Series Databases. <em>ACM SIGMOD Record</em>, 2000.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="quantization">
+<h2>Quantization<a class="headerlink" href="#quantization" title="Permalink to this headline">¶</a></h2>
+<p>One of the most interesting parts in time series classification is that several
+state-of-the-art algorithms use text mining techniques for classification
+and thus transform time series into bag of words. But first a time series
+of real numbers needs to be transformed into a sequence of letters. Implemented
+algorithms that quantize time series can be found in the <a class="reference internal" href="quantization.html#module-pyts.quantization" title="pyts.quantization"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyts.quantization</span></code></a> module.</p>
+<p>The first algorithm implemented is <strong>Symbolic Aggregate approXimation (SAX)</strong>. For
+each time series, bins are computed using gaussian or empirical quantiles. Then
+each datapoint is replaced by the bin it is in. It is implemented as
+<a class="reference internal" href="quantization.html#pyts.quantization.SAX" title="pyts.quantization.SAX"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.quantization.SAX</span></code></a>.</p>
+<p>The second algorithm implemented is <strong>Multiple Coefficient Binning (MCB)</strong>. The idea
+is very similar to SAX and the difference is that the quantization is applied
+at each timestamp. It is implemented as <a class="reference internal" href="quantization.html#pyts.quantization.MCB" title="pyts.quantization.MCB"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.quantization.MCB</span></code></a>.</p>
+<p>The third algorithm implemented is <strong>Symbolic Fourier Approximation (SFA)</strong>.
+It performs DFT then MCB, i.e. MCB is applied to the selected Fourier coefficients
+of each time series. It is implemented as <a class="reference internal" href="quantization.html#pyts.quantization.SFA" title="pyts.quantization.SFA"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.quantization.SFA</span></code></a>.</p>
+<div class="section" id="id1">
+<h3>References:<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Jessica Lin, Eamonn Keogh, Li Wei, and Stefano Lonardi. Experiencing SAX: a Novel
+Symbolic Representation of Time Series. <em>Data Mining and Knowledge Discovery</em>, 2007.</li>
+<li>Patrick Schäfer and Mikael Högqvist. (2012). SFA: A Symbolic Fourier Approximation
+and Index for Similarity Search in High Dimensional Datasets.
+<em>ACM International Conference Proceeding Series</em>, 2012.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="bag-of-words">
+<h2>Bag of Words<a class="headerlink" href="#bag-of-words" title="Permalink to this headline">¶</a></h2>
+<p>Now that you know how you can transform a time series of real numbers into
+a sequence of letters, it’s time to create bag of words. These algorithms are
+can be found in the <a class="reference internal" href="bow.html#module-pyts.bow" title="pyts.bow"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyts.bow</span></code></a> module.</p>
+<p>The only algorithm implemented for the moment is <strong>Bag of Words (BOW)</strong>. It
+applies a sliding window of fixed length along the sequence of letters to create
+words. It is implemented as <a class="reference internal" href="bow.html#pyts.bow.BOW" title="pyts.bow.BOW"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.bow.BOW</span></code></a>.</p>
+</div>
+<div class="section" id="transformation">
+<h2>Transformation<a class="headerlink" href="#transformation" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="transformation.html#module-pyts.transformation" title="pyts.transformation"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyts.transformation</span></code></a> module consists of more complex algorithms that
+transform a dataset of raw time series with shape [n_samples, n_timestamps] into
+a more standard dataset of features with shape [n_samples, n_features] that
+can be used as input data for a standard machine learning classification
+algorithm.</p>
+<p>The first algorithm implemented is <strong>Bag-of-SFA Symbols (BOSS)</strong>. Each time
+series is first transformed into a bag of words using SFA and BOW. After this
+transformation the features that are created are the frequencies of each word.
+It is implemented as <a class="reference internal" href="transformation.html#pyts.transformation.BOSS" title="pyts.transformation.BOSS"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.transformation.BOSS</span></code></a>.</p>
+<p>The second algorithm implemented is <strong>Word ExtrAction for time SEries cLassification (WEASEL)</strong>.
+The idea is similar to BOSS: first transform each time series into a bag of words
+then compute the frequencies of each word. WEASEL is more sophisticated in the sense
+that the selected Fourier coefficients are the most discrimative ones (based on the
+one-way ANOVA test), several lengths for the sliding window are used and the most
+discriminative features (i.e. words) are kept (based on the chi-2 test).
+It is implemented as <a class="reference internal" href="transformation.html#pyts.transformation.WEASEL" title="pyts.transformation.WEASEL"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.transformation.WEASEL</span></code></a>.</p>
+<div class="section" id="id2">
+<h3>References:<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Patrick Schäfer. The BOSS is concerned with time series classification in
+the presence of noise. <em>Data Mining and Knowledge Discovery</em>, 2015.</li>
+<li>Patrick Schäfer and Ulf Leser. Fast and Accurate Time Series Classification with WEASEL.
+<em>CoRR</em>, 2017.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="classification">
+<h2>Classification<a class="headerlink" href="#classification" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="classification.html#module-pyts.classification" title="pyts.classification"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyts.classification</span></code></a> module consists of several classification
+algorithms.</p>
+<p>The first algorithm implemented is <strong>K-Nearest Neighbors (KNN)</strong>. For time
+series classification it is the go-to algorithm for a good baseline. The most
+common metrics used for time series classification are the Euclidean distance
+and the Dynamic Time Warping distance.
+It is implemented as <a class="reference internal" href="classification.html#pyts.classification.KNNClassifier" title="pyts.classification.KNNClassifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.classification.KNNClassifier</span></code></a>.</p>
+<p>The second algorithm implemented is <strong>SAX-VSM</strong>. The outline of this algorithm is
+to first transform raw time series into bags of words using SAX and BOW, then
+merge, for each class label, all bags of words for this class label into only
+one bag of words, and finally compute tf-idf for each bag of words. This leads
+to a tf-idf vector for each class label. To predict an unlabeled time series,
+this time series if first transformed into a term frequency vector, then the
+predicted label is the one giving the highest cosine similarity among the tf-idf
+vectors learned in the training phase.
+It is implemented as <a class="reference internal" href="classification.html#pyts.classification.SAXVSMClassifier" title="pyts.classification.SAXVSMClassifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.classification.SAXVSMClassifier</span></code></a>.</p>
+<p>The third algorithm implemented is <strong>Bag-of-SFA Symbols in Vector Space (BOSSVS)</strong>.
+The outline of this algorithm is quite similar to the one of SAX-VSM but words
+are created using SFA instead of SAX.
+It is implemented as <a class="reference internal" href="classification.html#pyts.classification.BOSSVSClassifier" title="pyts.classification.BOSSVSClassifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.classification.BOSSVSClassifier</span></code></a>.</p>
+<div class="section" id="id3">
+<h3>References:<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Meinard Müller. Dynamic Time Warping (DTW).
+<em>Information Retrieval for Music and Motion</em>, 2007.</li>
+<li>Senin Pavel and Malinchik Sergey. SAX-VSM: Interpretable Time Series
+Classification Using SAX and Vector Space Model. <em>Data Mining (ICDM),
+2013 IEEE 13th International Conference on, pp.1175,1180</em>, 2013.</li>
+<li>Patrick Schäfer. Scalable Time Series Classification. <em>DMKD</em> and <em>ECML/PKDD</em>, 2016.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="image">
+<h2>Image<a class="headerlink" href="#image" title="Permalink to this headline">¶</a></h2>
+<p>Instead of transforming a time series into a bag of words, it is also possible
+to transform it into an image ! The <a class="reference internal" href="image.html#module-pyts.image" title="pyts.image"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyts.image</span></code></a> module consists of
+several algorithms that perform that kind of transformation.</p>
+<p>The first algorithm implemented is <strong>Recurrence Plot</strong>. It transforms a time series
+into a matrix where each value corresponds to the distance between two trajectories
+(a trajectory is a sub time series, i.e. a subsequence of back-to-back values
+of a time series). The matrix can be binarized using a threshold.
+It is implemented as <a class="reference internal" href="image.html#pyts.image.RecurrencePlots" title="pyts.image.RecurrencePlots"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.image.RecurrencePlots</span></code></a>.</p>
+<p>The second algorithm implemented is <strong>Gramian Angular Field (GAF)</strong>. First a
+time series is represented as polar coordinates. Then the time series can be
+transformed into a <strong>Gramian Angular Summation Field (GASF)</strong> when the cosine
+of the sum of the angular coordinates is computed or a <strong>Gramian Angular Difference
+Field (GADF)</strong> when the sine of the difference of the angular coordinates is computed.
+It is implemented as <a class="reference internal" href="image.html#pyts.image.GASF" title="pyts.image.GASF"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.image.GASF</span></code></a> and <a class="reference internal" href="image.html#pyts.image.GADF" title="pyts.image.GADF"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.image.GADF</span></code></a>.</p>
+<p>The third algorithm implemented is <strong>Markov Transition Field (MTF)</strong>. The outline
+of the algorithm is to first quantize a time series using SAX, then to compute
+the Markov transition matrix (the quantized time series is seen as a Markov chain)
+and finally to compute the Markov transition field from the transition matrix.
+It is implemented as <a class="reference internal" href="image.html#pyts.image.MTF" title="pyts.image.MTF"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.image.MTF</span></code></a>.</p>
+<div class="section" id="id4">
+<h3>References:<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>J.-P. Eckmann, S. Oliffson Kamphorst and D. Ruelle.
+Recurrence Plots of Dynamical Systems. <em>Europhysics Letters</em>, 1987.</li>
+<li>Zhiguang Wang and Tim Oates. Imaging time-series to improve classification and imputation.
+<em>Proceedings of the 24th International Conference on Artificial Intelligence</em>, 2015.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="decomposition">
+<h2>Decomposition<a class="headerlink" href="#decomposition" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="decomposition.html#module-pyts.decomposition" title="pyts.decomposition"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyts.decomposition</span></code></a> module consists of algorithms that decompose a
+time series into several time series. The idea is to distinguish the different parts
+of time series, such as the trend, the noise, etc.</p>
+<p>The only algorithm implemented currently is <strong>Singular Spectrum Analysis (SSA)</strong>.
+The outline of the algorithm is to first compute a matrix from a time series using lagged
+vectors, then compute the eigenvalues and eigenvectors of this matrix multiplied by its
+transpose, after compute the eigenmatrices and finally compute the time series for each
+eigenmatrice.
+It is implemented as <a class="reference internal" href="decomposition.html#pyts.decomposition.SSA" title="pyts.decomposition.SSA"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.decomposition.SSA</span></code></a>.</p>
+<div class="section" id="id5">
+<h3>References:<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Nina Golyandina and Anatoly Zhigljavsky.
+Singular Spectrum Analysis for Time Series. 2013</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api.html" class="btn btn-neutral float-right" title="API Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="install.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018, Johann Faouzi.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.7.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,547 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Quantization &mdash; pyts 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyts
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyts</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Quantization</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/quantization.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="quantization">
+<h1>Quantization<a class="headerlink" href="#quantization" title="Permalink to this headline">¶</a></h1>
+<p>The documentation of the quantization module.</p>
+<span class="target" id="module-pyts.quantization"></span><p>The <a class="reference internal" href="#module-pyts.quantization" title="pyts.quantization"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyts.quantization</span></code></a> module includes quantization algorithms.</p>
+<dl class="class">
+<dt id="pyts.quantization.SAX">
+<em class="property">class </em><code class="descclassname">pyts.quantization.</code><code class="descname">SAX</code><span class="sig-paren">(</span><em>n_bins=4</em>, <em>quantiles=u'gaussian'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/quantization/quantization.html#SAX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.quantization.SAX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Symbolic Aggregate approXimation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>n_bins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default = 4)</span></dt>
+<dd><p class="first last">Number of bins (also known as the size of the alphabet).</p>
+</dd>
+<dt><strong>quantiles</strong> <span class="classifier-delimiter">:</span> <span class="classifier">{‘gaussian’, ‘empirical’} (default = ‘gaussian’)</span></dt>
+<dd><p class="first last">The way to compute quantiles. If ‘gaussian’, quantiles from a
+gaussian distribution N(0,1) are used. If ‘empirical’, empirical
+quantiles are used.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.quantization.SAX.fit" title="pyts.quantization.SAX.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>([X,&nbsp;y])</td>
+<td>Pass.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(X[,&nbsp;y])</td>
+<td>Fit to data, then transform it.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</td>
+<td>Get parameters for this estimator.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</td>
+<td>Set the parameters of this estimator.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.quantization.SAX.transform" title="pyts.quantization.SAX.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</td>
+<td>Quantize the time series.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pyts.quantization.SAX.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/quantization/quantization.html#SAX.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.quantization.SAX.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>X</strong></dt>
+<dd><p class="first last">Ignored</p>
+</dd>
+<dt><strong>y</strong></dt>
+<dd><p class="first last">Ignored</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyts.quantization.SAX.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/quantization/quantization.html#SAX.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.quantization.SAX.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quantize the time series.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>X_new</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
+<dd><p class="first last">Transformed data.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyts.quantization.MCB">
+<em class="property">class </em><code class="descclassname">pyts.quantization.</code><code class="descname">MCB</code><span class="sig-paren">(</span><em>n_bins=4</em>, <em>quantiles=u'gaussian'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/quantization/quantization.html#MCB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.quantization.MCB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiple Coefficient Binning.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>n_bins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default = 4)</span></dt>
+<dd><p class="first last">The number of bins. Ignored if <code class="docutils literal notranslate"><span class="pre">quantiles='entropy'</span></code>.</p>
+</dd>
+<dt><strong>quantiles</strong> <span class="classifier-delimiter">:</span> <span class="classifier">{‘gaussian’, ‘empirical’, ‘entropy’} (default = ‘gaussian’)</span></dt>
+<dd><p class="first last">The way to compute quantiles. If ‘gaussian’, quantiles from a
+gaussian distribution N(0,1) are used. If ‘empirical’, empirical
+quantiles are used. If ‘entropy’, quantiles are computed using
+the breakpoints leading to the maximum information gain.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.quantization.MCB.fit" title="pyts.quantization.MCB.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[,&nbsp;y])</td>
+<td>Fit the model according to the given training data.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(X[,&nbsp;y])</td>
+<td>Fit to data, then transform it.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</td>
+<td>Get parameters for this estimator.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</td>
+<td>Set the parameters of this estimator.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.quantization.MCB.transform" title="pyts.quantization.MCB.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</td>
+<td>Transform the provided data.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pyts.quantization.MCB.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/quantization/quantization.html#MCB.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.quantization.MCB.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model according to the given training data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
+<dd><p class="first last">Training vector, where n_samples in the number of samples and
+n_features is the number of features.</p>
+</dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">None or array-like, shape = [n_samples] (default = None)</span></dt>
+<dd><p class="first last">Class labels for each data sample.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyts.quantization.MCB.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/quantization/quantization.html#MCB.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.quantization.MCB.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform the provided data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape [n_samples, n_features]</span></dt>
+<dd><p class="first last">The data used to scale along the features axis.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>X_new</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape [n_samples, n_features]</span></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyts.quantization.SFA">
+<em class="property">class </em><code class="descclassname">pyts.quantization.</code><code class="descname">SFA</code><span class="sig-paren">(</span><em>n_coefs=None</em>, <em>anova=True</em>, <em>norm_mean=True</em>, <em>norm_std=True</em>, <em>n_bins=4</em>, <em>quantiles=u'entropy'</em>, <em>variance_selection=False</em>, <em>variance_threshold=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/quantization/quantization.html#SFA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.quantization.SFA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Symbolic Fourier Approximation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>n_coefs</strong> <span class="classifier-delimiter">:</span> <span class="classifier">None or int (default = None)</span></dt>
+<dd><p class="first last">The number of Fourier coefficients to keep. If <code class="docutils literal notranslate"><span class="pre">n_coefs=None</span></code>,
+all Fourier coefficients are returned. If <code class="docutils literal notranslate"><span class="pre">n_coefs</span></code> is an integer,
+the <code class="docutils literal notranslate"><span class="pre">n_coefs</span></code> most significant Fourier coefficients are returned if
+<code class="docutils literal notranslate"><span class="pre">anova=True</span></code>, otherwise the first <code class="docutils literal notranslate"><span class="pre">n_coefs</span></code> Fourier coefficients
+are returned. A even number is required (for real and imaginary values)
+if <code class="docutils literal notranslate"><span class="pre">anova=False</span></code>.</p>
+</dd>
+<dt><strong>anova</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = False)</span></dt>
+<dd><p class="first last">If True, the Fourier coefficients selection is done via a one-way
+ANOVA test. If False, the first Fourier coefficients are selected.</p>
+</dd>
+<dt><strong>norm_mean</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = True)</span></dt>
+<dd><p class="first last">If True, center the data before scaling. If <code class="docutils literal notranslate"><span class="pre">norm_mean=True</span></code> and
+<code class="docutils literal notranslate"><span class="pre">anova=False</span></code>, the first Fourier coefficient will be dropped.</p>
+</dd>
+<dt><strong>norm_std</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = True)</span></dt>
+<dd><p class="first last">If True, scale the data to unit variance.</p>
+</dd>
+<dt><strong>n_bins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default = 4)</span></dt>
+<dd><p class="first last">The number of bins. Ignored if <code class="docutils literal notranslate"><span class="pre">quantiles='entropy'</span></code>.</p>
+</dd>
+<dt><strong>quantiles</strong> <span class="classifier-delimiter">:</span> <span class="classifier">{‘gaussian’, ‘empirical’, ‘entropy’} (default = ‘gaussian’)</span></dt>
+<dd><p class="first last">The way to compute quantiles. If ‘gaussian’, quantiles from a
+gaussian distribution N(0,1) are used. If ‘empirical’, empirical
+quantiles are used. If ‘entropy’, quantiles are computed using
+the breakpoints leading to the maximum information gain.</p>
+</dd>
+<dt><strong>variance_selection</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = False)</span></dt>
+<dd><p class="first last">If True, the Fourier coefficients with low variance are removed.</p>
+</dd>
+<dt><strong>variance_threshold</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float (default = 0.)</span></dt>
+<dd><p class="first last">Fourier coefficients with a training-set variance lower than this
+threshold will be removed. Ignored if <code class="docutils literal notranslate"><span class="pre">variance_selection=False</span></code>.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.quantization.SFA.fit" title="pyts.quantization.SFA.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[,&nbsp;y])</td>
+<td>Fit the model according to the given training data.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(X[,&nbsp;y])</td>
+<td>Fit to data, then transform it.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</td>
+<td>Get parameters for this estimator.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</td>
+<td>Set the parameters of this estimator.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.quantization.SFA.transform" title="pyts.quantization.SFA.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</td>
+<td>Transform the provided data.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pyts.quantization.SFA.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/quantization/quantization.html#SFA.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.quantization.SFA.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model according to the given training data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
+<dd><p class="first last">Training vector, where n_samples in the number of samples and
+n_features is the number of features.</p>
+</dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">None or array-like, shape = [n_samples] (default = None)</span></dt>
+<dd><p class="first last">Class labels for each data sample.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyts.quantization.SFA.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/quantization/quantization.html#SFA.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.quantization.SFA.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform the provided data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape [n_samples, n_features]</span></dt>
+<dd><p class="first last">The data used to scale along the features axis.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>X_new</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape [n_samples]</span></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018, Johann Faouzi.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.7.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Template &mdash; sklearn-template 0.1.0 documentation</title>
+  <title>Transformation &mdash; pyts 0.7.0 documentation</title>
   
 
   
@@ -48,7 +48,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> sklearn-template
+            <a href="index.html" class="icon icon-home"> pyts
           
 
           
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.1
+                0.7
               </div>
             
           
@@ -83,7 +83,11 @@
             
             
               <ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
 </ul>
 
             
@@ -98,7 +102,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">sklearn-template</a>
+          <a href="index.html">pyts</a>
         
       </nav>
 
@@ -129,7 +133,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Template</li>
+      <li>Transformation</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -148,21 +152,66 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="template">
-<h1>Template<a class="headerlink" href="#template" title="Permalink to this headline">¶</a></h1>
-<p>The documentation of the template module.</p>
-<span class="target" id="module-pyts.transformation"></span><p>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">pyts.transfomation</span></code> module includes transformation algorithms.</p>
+  <div class="section" id="transformation">
+<h1>Transformation<a class="headerlink" href="#transformation" title="Permalink to this headline">¶</a></h1>
+<p>The documentation of the transformation module.</p>
+<span class="target" id="module-pyts.transformation"></span><p>The <a class="reference internal" href="#module-pyts.transformation" title="pyts.transformation"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyts.transformation</span></code></a> module includes transformation algorithms.</p>
 <dl class="class">
-<dt id="pyts.transformation.StandardScaler">
-<em class="property">class </em><code class="descclassname">pyts.transformation.</code><code class="descname">StandardScaler</code><span class="sig-paren">(</span><em>epsilon=0.001</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#StandardScaler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.StandardScaler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Standardize time series by removing mean and scaling to unit variance.</p>
+<dt id="pyts.transformation.BOSS">
+<em class="property">class </em><code class="descclassname">pyts.transformation.</code><code class="descname">BOSS</code><span class="sig-paren">(</span><em>n_coefs</em>, <em>window_size</em>, <em>anova=False</em>, <em>norm_mean=True</em>, <em>norm_std=True</em>, <em>n_bins=4</em>, <em>quantiles=u'empirical'</em>, <em>variance_selection=False</em>, <em>variance_threshold=0.0</em>, <em>numerosity_reduction=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#BOSS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.BOSS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bag-of-SFA Symbols.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>epsilon</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float (default = 0.001)</span></dt>
-<dd><p class="first last">value added to the empirical variance before dividing.</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>n_coefs</strong> <span class="classifier-delimiter">:</span> <span class="classifier">None or int (default = None)</span></dt>
+<dd><p class="first last">The number of Fourier coefficients to keep. If <code class="docutils literal notranslate"><span class="pre">n_coefs=None</span></code>,
+all Fourier coefficients are returned. If <code class="docutils literal notranslate"><span class="pre">n_coefs</span></code> is an integer,
+the <code class="docutils literal notranslate"><span class="pre">n_coefs</span></code> most significant Fourier coefficients are returned if
+<code class="docutils literal notranslate"><span class="pre">anova=True</span></code>, otherwise the first <code class="docutils literal notranslate"><span class="pre">n_coefs</span></code> Fourier coefficients
+are returned. A even number is required (for real and imaginary values)
+if <code class="docutils literal notranslate"><span class="pre">anova=False</span></code>.</p>
+</dd>
+<dt><strong>window_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">The size of the window.</p>
+</dd>
+<dt><strong>anova</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = False)</span></dt>
+<dd><p class="first last">If True, the Fourier coefficients selection is done via a one-way
+ANOVA test. If False, the first Fourier coefficients are selected.</p>
+</dd>
+<dt><strong>norm_mean</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = True)</span></dt>
+<dd><p class="first last">If True, center the data before scaling. If <code class="docutils literal notranslate"><span class="pre">norm_mean=True</span></code> and
+<code class="docutils literal notranslate"><span class="pre">anova=False</span></code>, the first Fourier coefficient will be dropped.</p>
+</dd>
+<dt><strong>norm_std</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = True)</span></dt>
+<dd><p class="first last">If True, scale the data to unit variance.</p>
+</dd>
+<dt><strong>n_bins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default = 4)</span></dt>
+<dd><p class="first last">The number of bins. Ignored if <code class="docutils literal notranslate"><span class="pre">quantiles='entropy'</span></code>.</p>
+</dd>
+<dt><strong>quantiles</strong> <span class="classifier-delimiter">:</span> <span class="classifier">{‘gaussian’, ‘empirical’} (default = ‘gaussian’)</span></dt>
+<dd><p class="first last">The way to compute quantiles. If ‘gaussian’, quantiles from a
+gaussian distribution N(0,1) are used. If ‘empirical’, empirical
+quantiles are used.</p>
+</dd>
+<dt><strong>variance_selection</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = False)</span></dt>
+<dd><p class="first last">If True, the Fourier coefficients with low variance are removed.</p>
+</dd>
+<dt><strong>variance_threshold</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float (default = 0.)</span></dt>
+<dd><p class="first last">Fourier coefficients with a training-set variance lower than this
+threshold will be removed. Ignored if <code class="docutils literal notranslate"><span class="pre">variance_selection=False</span></code>.</p>
+</dd>
+<dt><strong>numerosity_reduction</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = True)</span></dt>
+<dd><p class="first last">If True, numerosity reduction is applied: When the same word
+occurs several times in a row, only one instance of this word is kept.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>vocabulary_</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd><p class="first last">A mapping of features indices to terms.</p>
 </dd>
 </dl>
 </td>
@@ -176,11 +225,11 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.StandardScaler.fit" title="pyts.transformation.StandardScaler.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>([X,&nbsp;y])</td>
-<td>Pass.</td>
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.BOSS.fit" title="pyts.transformation.BOSS.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[,&nbsp;y,&nbsp;overlapping])</td>
+<td>Fit the model according to the given training data.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(X[,&nbsp;y])</td>
-<td>Fit to data, then transform it.</td>
+<tr class="row-even"><td><a class="reference internal" href="#pyts.transformation.BOSS.fit_transform" title="pyts.transformation.BOSS.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[,&nbsp;y,&nbsp;overlapping])</td>
+<td>Fit the data then transform it.</td>
 </tr>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</td>
 <td>Get parameters for this estimator.</td>
@@ -188,26 +237,37 @@
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</td>
 <td>Set the parameters of this estimator.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.StandardScaler.transform" title="pyts.transformation.StandardScaler.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.BOSS.transform" title="pyts.transformation.BOSS.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</td>
 <td>Transform the provided data.</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="pyts.transformation.StandardScaler.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#StandardScaler.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.StandardScaler.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pass.</p>
+<dt id="pyts.transformation.BOSS.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>overlapping=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#BOSS.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.BOSS.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model according to the given training data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X</strong></dt>
-<dd><p class="first last">ignored</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
+<dd><p class="first last">Training vector, where n_samples in the number of samples and
+n_features is the number of features.</p>
 </dd>
-<dt><strong>y</strong></dt>
-<dd><p class="first last">Ignored</p>
+<dt><strong>y :</strong></dt>
+<dd><p class="first last">Ignored.</p>
 </dd>
+<dt><strong>overlapping</strong> <span class="classifier-delimiter">:</span> <span class="classifier">boolean (default = True)</span></dt>
+<dd><p class="first last">whether or not overlapping windows are used for the training
+phase.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd></dd>
 </dl>
 </td>
 </tr>
@@ -216,9 +276,9 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="pyts.transformation.StandardScaler.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#StandardScaler.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.StandardScaler.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transform the provided data.</p>
+<dt id="pyts.transformation.BOSS.fit_transform">
+<code class="descname">fit_transform</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>overlapping=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#BOSS.fit_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.BOSS.fit_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the data then transform it.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -226,88 +286,12 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
 <dd></dd>
-<dt><strong>y</strong></dt>
-<dd><p class="first last">Ignored</p>
-</dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X_new</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
-<dd><p class="first last">Transformed data.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pyts.transformation.PAA">
-<em class="property">class </em><code class="descclassname">pyts.transformation.</code><code class="descname">PAA</code><span class="sig-paren">(</span><em>window_size=None</em>, <em>output_size=None</em>, <em>overlapping=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#PAA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.PAA" title="Permalink to this definition">¶</a></dt>
-<dd><p>Piecewise Aggregate Approximation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>window_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int or None (default=None)</span></dt>
-<dd><p class="first last">size of the sliding window.</p>
-</dd>
-<dt><strong>output_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int or None (default=None)</span></dt>
-<dd><p class="first last">size of the returned time series.</p>
-</dd>
-<dt><strong>overlapping</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default=True)</span></dt>
-<dd><p class="first last">when <code class="docutils literal notranslate"><span class="pre">output_size</span></code> is specified, the window size is fixed
-if <code class="docutils literal notranslate"><span class="pre">overlapping=True</span></code> and may vary if <code class="docutils literal notranslate"><span class="pre">overlapping=False</span></code>.
-Ignored if <code class="docutils literal notranslate"><span class="pre">window_size</span></code> is specified.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.PAA.fit" title="pyts.transformation.PAA.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>([X,&nbsp;y])</td>
-<td>Pass.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(X[,&nbsp;y])</td>
-<td>Fit to data, then transform it.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</td>
-<td>Get parameters for this estimator.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</td>
-<td>Set the parameters of this estimator.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.PAA.transform" title="pyts.transformation.PAA.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</td>
-<td>Transform the provided data.</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="pyts.transformation.PAA.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#PAA.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.PAA.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pass.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X</strong></dt>
-<dd><p class="first last">ignored</p>
-</dd>
-<dt><strong>y</strong></dt>
-<dd><p class="first last">Ignored</p>
+<dt><strong>X_new</strong> <span class="classifier-delimiter">:</span> <span class="classifier">sparse matrix, shape [n_samples, n_words]</span></dt>
+<dd><p class="first last">Document-term matrix.</p>
 </dd>
 </dl>
 </td>
@@ -317,202 +301,8 @@ Ignored if <code class="docutils literal notranslate"><span class="pre">window_s
 </dd></dl>
 
 <dl class="method">
-<dt id="pyts.transformation.PAA.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#PAA.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.PAA.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transform the provided data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">np.ndarray, shape = [n_samples, n_features]</span></dt>
-<dd></dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X_new</strong> <span class="classifier-delimiter">:</span> <span class="classifier">np.ndarray, shape = [n_samples, n_features]</span></dt>
-<dd><p class="first last">Transformed data.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pyts.transformation.SAX">
-<em class="property">class </em><code class="descclassname">pyts.transformation.</code><code class="descname">SAX</code><span class="sig-paren">(</span><em>n_bins=4</em>, <em>quantiles=u'gaussian'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#SAX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.SAX" title="Permalink to this definition">¶</a></dt>
-<dd><p>Symbolic Aggregate approXimation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>n_bins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default=4)</span></dt>
-<dd><p class="first last">number of bins (also known as the size of the alphabet)</p>
-</dd>
-<dt><strong>quantiles</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (default=’gaussian’)</span></dt>
-<dd><dl class="first last docutils">
-<dt>the way to compute quantiles. Possible values:</dt>
-<dd><ul class="first last simple">
-<li>‘gaussian’ : quantiles from a gaussian distribution N(0,1)</li>
-<li>‘empirical’ : empirical quantiles</li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.SAX.fit" title="pyts.transformation.SAX.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>([X,&nbsp;y])</td>
-<td>Pass.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(X[,&nbsp;y])</td>
-<td>Fit to data, then transform it.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</td>
-<td>Get parameters for this estimator.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</td>
-<td>Set the parameters of this estimator.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.SAX.transform" title="pyts.transformation.SAX.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</td>
-<td>Transform the provided data.</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="pyts.transformation.SAX.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#SAX.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.SAX.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pass.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X</strong></dt>
-<dd><p class="first last">ignored</p>
-</dd>
-<dt><strong>y</strong></dt>
-<dd><p class="first last">Ignored</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyts.transformation.SAX.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#SAX.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.SAX.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transform the provided data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">np.ndarray, shape = [n_samples, n_features]</span></dt>
-<dd></dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X_new</strong> <span class="classifier-delimiter">:</span> <span class="classifier">np.ndarray, shape = [n_samples, n_features]</span></dt>
-<dd><p class="first last">Transformed data.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pyts.transformation.VSM">
-<em class="property">class </em><code class="descclassname">pyts.transformation.</code><code class="descname">VSM</code><span class="sig-paren">(</span><em>window_size=4</em>, <em>numerosity_reduction=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#VSM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.VSM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Vector Space Model.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>window_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default=4)</span></dt>
-<dd><p class="first last">size of the window (size of each word)</p>
-</dd>
-<dt><strong>numerosity_reduction</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default=True)</span></dt>
-<dd><p class="first last">if True, deletes all but one occurence of back to back
-identical occurences of the same words.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.VSM.fit" title="pyts.transformation.VSM.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>([X,&nbsp;y])</td>
-<td>Pass.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(X[,&nbsp;y])</td>
-<td>Fit to data, then transform it.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</td>
-<td>Get parameters for this estimator.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</td>
-<td>Set the parameters of this estimator.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.VSM.transform" title="pyts.transformation.VSM.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</td>
-<td>Transform the provided data.</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="pyts.transformation.VSM.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#VSM.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.VSM.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pass.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X</strong></dt>
-<dd><p class="first last">ignored</p>
-</dd>
-<dt><strong>y</strong></dt>
-<dd><p class="first last">Ignored</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyts.transformation.VSM.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#VSM.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.VSM.transform" title="Permalink to this definition">¶</a></dt>
+<dt id="pyts.transformation.BOSS.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#BOSS.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.BOSS.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transform the provided data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -525,8 +315,8 @@ identical occurences of the same words.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X_new</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list, size = [n_samples]</span></dt>
-<dd><p class="first last">Transformed data.</p>
+<dt><strong>X_new</strong> <span class="classifier-delimiter">:</span> <span class="classifier">sparse matrix, shape [n_samples, n_words]</span></dt>
+<dd><p class="first last">Document-term matrix.</p>
 </dd>
 </dl>
 </td>
@@ -538,136 +328,52 @@ identical occurences of the same words.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="pyts.transformation.GASF">
-<em class="property">class </em><code class="descclassname">pyts.transformation.</code><code class="descname">GASF</code><span class="sig-paren">(</span><em>image_size=32</em>, <em>overlapping=False</em>, <em>scale=u'-1'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#GASF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.GASF" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gramian Angular Summation Field.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>image_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default=32)</span></dt>
-<dd><p class="first last">determines the shapes of the output image :
-image_size x image_size</p>
-</dd>
-<dt><strong>overlapping</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default=False)</span></dt>
-<dd><p class="first last">if True, reducing the size of the time series with PAA is
-done with possible overlapping windows.</p>
-</dd>
-<dt><strong>scale</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (default=’-1’)</span></dt>
-<dd><dl class="first last docutils">
-<dt>the lower bound of the scaled time series. Possible values:</dt>
-<dd><ul class="first last simple">
-<li>‘-1’ : the time series are scaled in [-1,1]</li>
-<li>‘0’ : the time series are scaled in [0,1]</li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.GASF.fit" title="pyts.transformation.GASF.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>([X,&nbsp;y])</td>
-<td>Pass.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(X[,&nbsp;y])</td>
-<td>Fit to data, then transform it.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</td>
-<td>Get parameters for this estimator.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</td>
-<td>Set the parameters of this estimator.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.GASF.transform" title="pyts.transformation.GASF.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</td>
-<td>Trasnform the provided data.</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="pyts.transformation.GASF.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#GASF.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.GASF.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pass.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X</strong></dt>
-<dd><p class="first last">ignored</p>
-</dd>
-<dt><strong>y</strong></dt>
-<dd><p class="first last">Ignored</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyts.transformation.GASF.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#GASF.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.GASF.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Trasnform the provided data.</p>
+<dt id="pyts.transformation.WEASEL">
+<em class="property">class </em><code class="descclassname">pyts.transformation.</code><code class="descname">WEASEL</code><span class="sig-paren">(</span><em>n_coefs</em>, <em>window_sizes</em>, <em>norm_mean=True</em>, <em>norm_std=True</em>, <em>n_bins=4</em>, <em>variance_selection=False</em>, <em>variance_threshold=0.0</em>, <em>pvalue_threshold=0.9</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#WEASEL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.WEASEL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Word ExtrAction for time SEries cLassification.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">np.ndarray, shape = [n_samples, n_features]</span></dt>
-<dd></dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X_new</strong> <span class="classifier-delimiter">:</span> <span class="classifier">np.ndarray, shape = [n_samples, image_size, image_size]</span></dt>
-<dd><p class="first last">Transformed data.</p>
+<dt><strong>n_coefs</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">The number of Fourier coefficients to keep. The <cite>n_coefs</cite> most
+significant Fourier coefficients are returned.</p>
+</dd>
+<dt><strong>window_sizes</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like</span></dt>
+<dd><p class="first last">The size of the windows.</p>
+</dd>
+<dt><strong>anova</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = False)</span></dt>
+<dd><p class="first last">If True, the Fourier coefficients selection is done via a one-way
+ANOVA test. If False, the first Fourier coefficients are selected.</p>
+</dd>
+<dt><strong>norm_mean</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = True)</span></dt>
+<dd><p class="first last">If True, center the data before scaling. If <code class="docutils literal notranslate"><span class="pre">norm_mean=True</span></code> and
+<code class="docutils literal notranslate"><span class="pre">anova=False</span></code>, the first Fourier coefficient will be dropped.</p>
+</dd>
+<dt><strong>norm_std</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = True)</span></dt>
+<dd><p class="first last">If True, scale the data to unit variance.</p>
+</dd>
+<dt><strong>n_bins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default = 4)</span></dt>
+<dd><p class="first last">The number of bins (also known as the size of the alphabet).</p>
+</dd>
+<dt><strong>variance_selection</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = False)</span></dt>
+<dd><p class="first last">If True, the Fourier coefficients with low variance are removed.</p>
+</dd>
+<dt><strong>variance_threshold</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float (default = 0.)</span></dt>
+<dd><p class="first last">Fourier coefficients with a training-set variance lower than this
+threshold will be removed. Ignored if <code class="docutils literal notranslate"><span class="pre">variance_selection=False</span></code>.</p>
+</dd>
+<dt><strong>pvalue_threshold</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float (default = 0.9)</span></dt>
+<dd><p class="first last">threshold for the feature selection. Features with p-values above
+‘pvalue_threshold’ for the Chi-2 test are kept.</p>
 </dd>
 </dl>
 </td>
 </tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pyts.transformation.GADF">
-<em class="property">class </em><code class="descclassname">pyts.transformation.</code><code class="descname">GADF</code><span class="sig-paren">(</span><em>image_size=32</em>, <em>overlapping=False</em>, <em>scale=u'-1'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#GADF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.GADF" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gramian Angular Difference Field.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>image_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default=32)</span></dt>
-<dd><p class="first last">determines the shapes of the output image :
-image_size x image_size</p>
-</dd>
-<dt><strong>overlapping</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default=False)</span></dt>
-<dd><p class="first last">if True, reducing the size of the time series with PAA is
-done with possible overlapping windows.</p>
-</dd>
-<dt><strong>scale</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (default=’-1’)</span></dt>
-<dd><dl class="first last docutils">
-<dt>the lower bound of the scaled time series. Possible values:</dt>
-<dd><ul class="first last simple">
-<li>‘-1’ : the time series are scaled in [-1,1]</li>
-<li>‘0’ : the time series are scaled in [0,1]</li>
-</ul>
-</dd>
-</dl>
+<tr class="field-even field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>vocabulary_</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd><p class="first last">A mapping of features indices to terms.</p>
 </dd>
 </dl>
 </td>
@@ -681,8 +387,8 @@ done with possible overlapping windows.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.GADF.fit" title="pyts.transformation.GADF.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>([X,&nbsp;y])</td>
-<td>Pass.</td>
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.WEASEL.fit" title="pyts.transformation.WEASEL.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X,&nbsp;y[,&nbsp;overlapping])</td>
+<td>Fit the model according to the given training data.</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(X[,&nbsp;y])</td>
 <td>Fit to data, then transform it.</td>
@@ -693,135 +399,36 @@ done with possible overlapping windows.</p>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</td>
 <td>Set the parameters of this estimator.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.GADF.transform" title="pyts.transformation.GADF.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.WEASEL.transform" title="pyts.transformation.WEASEL.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</td>
 <td>Transform the provided data.</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="pyts.transformation.GADF.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#GADF.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.GADF.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pass.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X</strong></dt>
-<dd><p class="first last">ignored</p>
-</dd>
-<dt><strong>y</strong></dt>
-<dd><p class="first last">Ignored</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyts.transformation.GADF.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#GADF.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.GADF.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transform the provided data.</p>
+<dt id="pyts.transformation.WEASEL.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>overlapping=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#WEASEL.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.WEASEL.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model according to the given training data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
-<dd></dd>
+<dd><p class="first last">Training vector, where n_samples in the number of samples and
+n_features is the number of features.</p>
+</dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples]</span></dt>
+<dd><p class="first last">Class labels for each data sample.</p>
+</dd>
+<dt><strong>overlapping</strong> <span class="classifier-delimiter">:</span> <span class="classifier">boolean (default = False)</span></dt>
+<dd><p class="first last">If True, overlapping windows are used.</p>
+</dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X_new</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, image_size, image_size]</span></dt>
-<dd><p class="first last">Transformed data.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pyts.transformation.MTF">
-<em class="property">class </em><code class="descclassname">pyts.transformation.</code><code class="descname">MTF</code><span class="sig-paren">(</span><em>image_size=32</em>, <em>n_bins=8</em>, <em>quantiles=u'empirical'</em>, <em>overlapping=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#MTF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.MTF" title="Permalink to this definition">¶</a></dt>
-<dd><p>Markov Transition Field.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>image_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default = 32)</span></dt>
-<dd><p class="first last">determines the shapes of the output image :
-image_size x image_size</p>
-</dd>
-<dt><strong>n_bins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default = 8)</span></dt>
-<dd><p class="first last">number of bins (also known as the size of the alphabet)</p>
-</dd>
-<dt><strong>quantiles</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str (default = ‘gaussian’)</span></dt>
-<dd><dl class="first last docutils">
-<dt>the way to compute quantiles. Possible values:</dt>
-<dd><ul class="first last simple">
-<li>‘gaussian’ : quantiles from a gaussian distribution N(0,1)</li>
-<li>‘empirical’ : empirical quantiles</li>
-</ul>
-</dd>
-</dl>
-</dd>
-<dt><strong>overlapping</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = False)</span></dt>
-<dd><p class="first last">if False, reducing the image with the blurring kernel
-will be applied on non-overlapping rectangles; if True,
-it will be applied on possible overlapping squares.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.MTF.fit" title="pyts.transformation.MTF.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>([X,&nbsp;y])</td>
-<td>Pass.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(X[,&nbsp;y])</td>
-<td>Fit to data, then transform it.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</td>
-<td>Get parameters for this estimator.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</td>
-<td>Set the parameters of this estimator.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.MTF.transform" title="pyts.transformation.MTF.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</td>
-<td>Transform the provided data.</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="pyts.transformation.MTF.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#MTF.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.MTF.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pass.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X</strong></dt>
-<dd><p class="first last">ignored</p>
-</dd>
-<dt><strong>y</strong></dt>
-<dd><p class="first last">Ignored</p>
-</dd>
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd></dd>
 </dl>
 </td>
 </tr>
@@ -830,125 +437,23 @@ it will be applied on possible overlapping squares.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyts.transformation.MTF.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#MTF.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.MTF.transform" title="Permalink to this definition">¶</a></dt>
+<dt id="pyts.transformation.WEASEL.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#WEASEL.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.WEASEL.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transform the provided data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
-<dd></dd>
+<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape [n_samples, n_features]</span></dt>
+<dd><p class="first last">The data used to scale along the features axis.</p>
+</dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X_new</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, image_size, image_size]</span></dt>
-<dd><p class="first last">Transformed data.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="pyts.transformation.RecurrencePlots">
-<em class="property">class </em><code class="descclassname">pyts.transformation.</code><code class="descname">RecurrencePlots</code><span class="sig-paren">(</span><em>dimension=1</em>, <em>epsilon=None</em>, <em>percentage=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#RecurrencePlots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.RecurrencePlots" title="Permalink to this definition">¶</a></dt>
-<dd><p>Recurrence plots.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>dimension</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default = 1)</span></dt>
-<dd><p class="first last">dimension of the trajectory.</p>
-</dd>
-<dt><strong>epsilon</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float, ‘percentage_points’, ‘percentage_distance’ or None</span></dt>
-<dd></dd>
-<dt><strong>(default = None)</strong></dt>
-<dd><p class="first last">threshold for the minimum distance</p>
-</dd>
-<dt><strong>percentage</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float (default = 10)</span></dt>
-<dd><p class="first last">percentage of black points if <code class="docutils literal notranslate"><span class="pre">epsilon</span> <span class="pre">==</span> <span class="pre">'percentage_points'</span></code>
-or percentage of maximum distance for threshold if
-<code class="docutils literal notranslate"><span class="pre">epsilon</span> <span class="pre">==</span> <span class="pre">'percentage_distance'</span></code>.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.RecurrencePlots.fit" title="pyts.transformation.RecurrencePlots.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>([X,&nbsp;y])</td>
-<td>Pass.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(X[,&nbsp;y])</td>
-<td>Fit to data, then transform it.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</td>
-<td>Get parameters for this estimator.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</td>
-<td>Set the parameters of this estimator.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#pyts.transformation.RecurrencePlots.transform" title="pyts.transformation.RecurrencePlots.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</td>
-<td>Transform the provided data.</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="pyts.transformation.RecurrencePlots.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#RecurrencePlots.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.RecurrencePlots.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pass.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X</strong></dt>
-<dd><p class="first last">ignored</p>
-</dd>
-<dt><strong>y</strong></dt>
-<dd><p class="first last">Ignored</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyts.transformation.RecurrencePlots.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/transformation/transformation.html#RecurrencePlots.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.transformation.RecurrencePlots.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transform the provided data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
-<dd></dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>X_new</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features-dimension+1,</span></dt>
-<dd><blockquote class="first">
-<div><p>n_features-dimension+1]</p>
-</div></blockquote>
-<p class="last">Transformed data.</p>
+<dt><strong>X_new</strong> <span class="classifier-delimiter">:</span> <span class="classifier">sparse matrix, shape [n_samples, n_relevant_features]</span></dt>
+<dd><p class="first last">Document-term matrix with relevant features only.</p>
 </dd>
 </dl>
 </td>
@@ -972,7 +477,7 @@ or percentage of maximum distance for threshold if
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Vighnesh Birodkar.
+        &copy; Copyright 2017-2018, Johann Faouzi.
 
     </p>
   </div>
@@ -994,7 +499,7 @@ or percentage of maximum distance for threshold if
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1.0',
+            VERSION:'0.7.0',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

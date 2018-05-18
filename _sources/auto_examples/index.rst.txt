@@ -2,16 +2,18 @@
 
 .. _general_examples:
 
-General examples
-================
+Examples
+========
 
-Introductory examples.
+Here you can find some introductory examples about the algorithms implemented in
+this package. It may help you understand how to use the implementations of
+these algorithms as well as what these algorithms do.
 
 
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="An example plot of `pyts.visualization.plot_ts` ">
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how you can plot a single time series. ">
 
 .. only:: html
 
@@ -28,6 +30,326 @@ Introductory examples.
    :hidden:
 
    /auto_examples/plot_ts
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how you can transform a time series into a Markov Transition Field using :cl...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_mtf_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_mtf.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_mtf
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how you can transform a time series into a Recurrence Plot using :class:`pyt...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_rp_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_rp.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_rp
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how you can decompose a time series into several time series using :class:`p...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_ssa_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_ssa.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_ssa
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how you can transform a time series into a Gramian Angular Field using :clas...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_gaf_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_gaf.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_gaf
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how the BOSS algorithm transforms a time series of real numbers into a seque...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_boss_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_boss.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_boss
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to compute and visualize the optimal path when computing the Dynamic Tim...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_dtw_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_dtw.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_dtw
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how you can approximate a time series using :class:`pyts.approximation.PAA`....">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_paa_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_paa.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_paa
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how you can transform a quantized time series (i.e. a time series represente...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_bow_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_bow.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_bow
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how the WEASEL algorithm transforms a time series of real numbers into a seq...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_weasel_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_weasel.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_weasel
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how the SAXVSM algorithm transforms a dataset consisting of time series and ...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_saxvsm_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_saxvsm.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_saxvsm
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how the BOSSVS algorithm transforms a dataset consisting of time series and ...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_bossvs_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_bossvs.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_bossvs
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to compute and visualize the optimal path when computing the Fast Dynami...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_fastdtw_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_fastdtw.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_fastdtw
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how you can approximate a time series using only some of its Fourier coeffic...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_dft_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_dft.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_dft
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how you can quantize a time series (i.e. transform a sequence of real number...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_sax_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_sax.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_sax
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how the MCB algorithm transforms a dataset of time series of real numbers in...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_mcb_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_mcb.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_mcb
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to use the classifiers from :mod:`pyts.classification`. If you are famil...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_classifiers_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_classifiers.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_classifiers
 .. raw:: html
 
     <div style='clear:both'></div>

@@ -1,0 +1,658 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Classification &mdash; pyts 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyts
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyts</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Classification</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/classification.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="classification">
+<h1>Classification<a class="headerlink" href="#classification" title="Permalink to this headline">¶</a></h1>
+<p>The documentation of the classification module.</p>
+<span class="target" id="module-pyts.classification"></span><p>The <a class="reference internal" href="#module-pyts.classification" title="pyts.classification"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyts.classification</span></code></a> module includes classification algorithms.</p>
+<dl class="class">
+<dt id="pyts.classification.KNNClassifier">
+<em class="property">class </em><code class="descclassname">pyts.classification.</code><code class="descname">KNNClassifier</code><span class="sig-paren">(</span><em>n_neighbors=1</em>, <em>weights=u'uniform'</em>, <em>algorithm=u'auto'</em>, <em>leaf_size=30</em>, <em>p=2</em>, <em>metric=u'minkowski'</em>, <em>metric_params=None</em>, <em>n_jobs=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/classification/classification.html#KNNClassifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.classification.KNNClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>k nearest neighbors classifier.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>n_neighbors</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int, optional (default = 1)</span></dt>
+<dd><p class="first last">Number of neighbors to use.</p>
+</dd>
+<dt><strong>weights</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str or callable, optional (default = ‘uniform’)</span></dt>
+<dd><p class="first">weight function used in prediction.  Possible values:</p>
+<ul class="last simple">
+<li>‘uniform’ : uniform weights.  All points in each neighborhood
+are weighted equally.</li>
+<li>‘distance’ : weight points by the inverse of their distance.
+in this case, closer neighbors of a query point will have a
+greater influence than neighbors which are further away.</li>
+<li>[callable] : a user-defined function which accepts an
+array of distances, and returns an array of the same shape
+containing the weights.</li>
+</ul>
+</dd>
+<dt><strong>algorithm</strong> <span class="classifier-delimiter">:</span> <span class="classifier">{‘auto’, ‘ball_tree’, ‘kd_tree’, ‘brute’}, optional</span></dt>
+<dd><p class="first">Algorithm used to compute the nearest neighbors.</p>
+<p class="last">Note: fitting on sparse input will override the setting of
+this parameter, using brute force.</p>
+</dd>
+<dt><strong>leaf_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int, optional (default = 30)</span></dt>
+<dd><p class="first last">Leaf size passed to BallTree or KDTree.  This can affect the
+speed of the construction and query, as well as the memory
+required to store the tree.  The optimal value depends on the
+nature of the problem.</p>
+</dd>
+<dt><strong>metric</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string or DistanceMetric object (default = ‘minkowski’)</span></dt>
+<dd><p class="first last">the distance metric to use for the tree.  The default metric is
+minkowski, and with p=2 is equivalent to the standard Euclidean
+metric. See the documentation of the DistanceMetric class for a
+list of available metrics. ‘dtw’ and ‘fast_dtw’ are also
+available.</p>
+</dd>
+<dt><strong>p</strong> <span class="classifier-delimiter">:</span> <span class="classifier">integer, optional (default = 2)</span></dt>
+<dd><p class="first last">Power parameter for the Minkowski metric. When p = 1, this is
+equivalent to using manhattan_distance (l1), and euclidean_distance
+(l2) for p = 2. For arbitrary p, minkowski_distance (l_p) is used.</p>
+</dd>
+<dt><strong>metric_params</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict, optional (default = None)</span></dt>
+<dd><p class="first last">Additional keyword arguments for the metric function.</p>
+</dd>
+<dt><strong>n_jobs</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int, optional (default = 1)</span></dt>
+<dd><p class="first last">The number of parallel jobs to run for neighbors search.
+If <code class="docutils literal notranslate"><span class="pre">n_jobs=-1</span></code>, then the number of jobs is set to the number of CPU
+cores. Doesn’t affect <a class="reference internal" href="#pyts.classification.KNNClassifier.fit" title="pyts.classification.KNNClassifier.fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit()</span></code></a> method.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.classification.KNNClassifier.fit" title="pyts.classification.KNNClassifier.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X,&nbsp;y)</td>
+<td>Fit the model according to the given training data.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</td>
+<td>Get parameters for this estimator.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.classification.KNNClassifier.predict" title="pyts.classification.KNNClassifier.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(X)</td>
+<td>Predict the class labels for the provided data.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code>(X,&nbsp;y[,&nbsp;sample_weight])</td>
+<td>Returns the mean accuracy on the given test data and labels.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</td>
+<td>Set the parameters of this estimator.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pyts.classification.KNNClassifier.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/classification/classification.html#KNNClassifier.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.classification.KNNClassifier.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model according to the given training data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
+<dd><p class="first last">Training vector, where n_samples is the number of samples and
+n_features is the number of features.</p>
+</dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples]</span></dt>
+<dd><p class="first last">Class labels for each data sample.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyts.classification.KNNClassifier.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/classification/classification.html#KNNClassifier.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.classification.KNNClassifier.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the class labels for the provided data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape [n_samples]</span></dt>
+<dd><p class="first last">Class labels for each data sample.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyts.classification.SAXVSMClassifier">
+<em class="property">class </em><code class="descclassname">pyts.classification.</code><code class="descname">SAXVSMClassifier</code><span class="sig-paren">(</span><em>n_bins=4</em>, <em>quantiles=u'empirical'</em>, <em>window_size=4</em>, <em>numerosity_reduction=True</em>, <em>use_idf=True</em>, <em>smooth_idf=True</em>, <em>sublinear_tf=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/classification/classification.html#SAXVSMClassifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.classification.SAXVSMClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Classifier based on SAX-VSM representation and tf-idf statistics.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>n_bins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default = 4)</span></dt>
+<dd><p class="first last">Number of bins (also known as the size of the alphabet).</p>
+</dd>
+<dt><strong>quantiles</strong> <span class="classifier-delimiter">:</span> <span class="classifier">{‘gaussian’, ‘empirical’} (default = ‘empirical’)</span></dt>
+<dd><p class="first last">The way to compute quantiles. If ‘gaussian’, quantiles from a
+gaussian distribution N(0,1) are used. If ‘empirical’, empirical
+quantiles are used.</p>
+</dd>
+<dt><strong>window_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default = 4)</span></dt>
+<dd><p class="first last">Size of the window (i.e. the size of each word).</p>
+</dd>
+<dt><strong>numerosity_reduction</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = True)</span></dt>
+<dd><p class="first last">If True, delete all but one occurence of back to back
+identical occurences of the same words.</p>
+</dd>
+<dt><strong>use_idf</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = True)</span></dt>
+<dd><p class="first last">Enable inverse-document-frequency reweighting.</p>
+</dd>
+<dt><strong>smooth_idf</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = True)</span></dt>
+<dd><p class="first last">Smooth idf weights by adding one to document frequencies, as if an
+extra document was seen containing every term in the collection
+exactly once. Prevents zero divisions.</p>
+</dd>
+<dt><strong>sublinear_tf</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = False)</span></dt>
+<dd><p class="first last">Apply sublinear tf scaling, i.e. replace tf with 1 + log(tf).</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>vocabulary_</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd><p class="first last">A mapping of feature indices to terms.</p>
+</dd>
+<dt><strong>tfidf_</strong> <span class="classifier-delimiter">:</span> <span class="classifier">sparse matrix, shape = [n_classes, n_words]</span></dt>
+<dd><p class="first last">Term-document matrix</p>
+</dd>
+<dt><strong>idf_</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array, shape = [n_features], or None</span></dt>
+<dd><p class="first last">The learned idf vector (global term weights) when <code class="docutils literal notranslate"><span class="pre">use_idf=True</span></code>,
+None otherwise.</p>
+</dd>
+<dt><strong>stop_words_</strong> <span class="classifier-delimiter">:</span> <span class="classifier">set</span></dt>
+<dd><dl class="first docutils">
+<dt>Terms that were ignored because they either:</dt>
+<dd><ul class="first last simple">
+<li>occurred in too many documents (<cite>max_df</cite>)</li>
+<li>occurred in too few documents (<cite>min_df</cite>)</li>
+<li>were cut off by feature selection (<cite>max_features</cite>).</li>
+</ul>
+</dd>
+</dl>
+<p class="last">This is only available if no vocabulary was given.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.classification.SAXVSMClassifier.fit" title="pyts.classification.SAXVSMClassifier.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X,&nbsp;y)</td>
+<td>Fit the model according to the given training data.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</td>
+<td>Get parameters for this estimator.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.classification.SAXVSMClassifier.predict" title="pyts.classification.SAXVSMClassifier.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(X)</td>
+<td>Predict the class labels for the provided data.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code>(X,&nbsp;y[,&nbsp;sample_weight])</td>
+<td>Returns the mean accuracy on the given test data and labels.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</td>
+<td>Set the parameters of this estimator.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pyts.classification.SAXVSMClassifier.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/classification/classification.html#SAXVSMClassifier.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.classification.SAXVSMClassifier.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model according to the given training data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples]</span></dt>
+<dd><p class="first last">Training vector, where n_samples is the number of samples.</p>
+</dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples]</span></dt>
+<dd><p class="first last">Class labels for each data sample.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyts.classification.SAXVSMClassifier.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/classification/classification.html#SAXVSMClassifier.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.classification.SAXVSMClassifier.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the class labels for the provided data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape [n_samples]</span></dt>
+<dd><p class="first last">Class labels for each data sample.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyts.classification.BOSSVSClassifier">
+<em class="property">class </em><code class="descclassname">pyts.classification.</code><code class="descname">BOSSVSClassifier</code><span class="sig-paren">(</span><em>n_coefs</em>, <em>window_size</em>, <em>norm_mean=True</em>, <em>norm_std=True</em>, <em>n_bins=4</em>, <em>quantiles=u'empirical'</em>, <em>variance_selection=False</em>, <em>variance_threshold=0.0</em>, <em>numerosity_reduction=True</em>, <em>smooth_idf=True</em>, <em>sublinear_tf=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/classification/classification.html#BOSSVSClassifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.classification.BOSSVSClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bag-of-SFA Symbols in Vector Space.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>n_coefs</strong> <span class="classifier-delimiter">:</span> <span class="classifier">None or int (default = None)</span></dt>
+<dd><p class="first last">The number of Fourier coefficients to keep. If <code class="docutils literal notranslate"><span class="pre">n_coefs=None</span></code>,
+all Fourier coefficients are returned. If <code class="docutils literal notranslate"><span class="pre">n_coefs</span></code> is an integer,
+the <code class="docutils literal notranslate"><span class="pre">n_coefs</span></code> most significant Fourier coefficients are returned if
+<code class="docutils literal notranslate"><span class="pre">anova=True</span></code>, otherwise the first <code class="docutils literal notranslate"><span class="pre">n_coefs</span></code> Fourier coefficients
+are returned. A even number is required (for real and imaginary values)
+if <code class="docutils literal notranslate"><span class="pre">anova=False</span></code>.</p>
+</dd>
+<dt><strong>window_size</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd><p class="first last">Window length to use to extracte sub time series.</p>
+</dd>
+<dt><strong>norm_mean</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = True)</span></dt>
+<dd><p class="first last">If True, center the data before scaling. If <code class="docutils literal notranslate"><span class="pre">norm_mean=True</span></code> and
+<code class="docutils literal notranslate"><span class="pre">anova=False</span></code>, the first Fourier coefficient will be dropped.</p>
+</dd>
+<dt><strong>norm_std</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = True)</span></dt>
+<dd><p class="first last">If True, scale the data to unit variance.</p>
+</dd>
+<dt><strong>n_bins</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int (default = 4)</span></dt>
+<dd><p class="first last">The number of bins. Ignored if <code class="docutils literal notranslate"><span class="pre">quantiles='entropy'</span></code>.</p>
+</dd>
+<dt><strong>quantiles</strong> <span class="classifier-delimiter">:</span> <span class="classifier">{‘gaussian’, ‘empirical’} (default = ‘gaussian’)</span></dt>
+<dd><p class="first last">The way to compute quantiles. If ‘gaussian’, quantiles from a
+gaussian distribution N(0,1) are used. If ‘empirical’, empirical
+quantiles are used.</p>
+</dd>
+<dt><strong>variance_selection</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = False)</span></dt>
+<dd><p class="first last">If True, the Fourier coefficients with low variance are removed.</p>
+</dd>
+<dt><strong>variance_threshold</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float (default = 0.)</span></dt>
+<dd><p class="first last">Fourier coefficients with a training-set variance lower than this
+threshold will be removed. Ignored if <code class="docutils literal notranslate"><span class="pre">variance_selection=False</span></code>.</p>
+</dd>
+<dt><strong>numerosity_reduction</strong> <span class="classifier-delimiter">:</span> <span class="classifier">boolean (default = True)</span></dt>
+<dd><p class="first last">whether or not numerosity reduction is applied. When the same word
+occurs several times in a row, only one instance of this word is kept
+if <code class="docutils literal notranslate"><span class="pre">numerosity_reduction=True</span></code>, otherwise all instances are kept.</p>
+</dd>
+<dt><strong>smooth_idf</strong> <span class="classifier-delimiter">:</span> <span class="classifier">boolean, default=True</span></dt>
+<dd><p class="first last">smooth idf weights by adding one to document frequencies, as if an
+extra document was seen containing every term in the collection
+exactly once. Prevents zero divisions.</p>
+</dd>
+<dt><strong>sublinear_tf</strong> <span class="classifier-delimiter">:</span> <span class="classifier">boolean, default=False</span></dt>
+<dd><p class="first last">apply sublinear tf scaling, i.e. replace tf with 1 + log(tf).</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>vocabulary_</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd><p class="first last">A mapping of features indices to terms.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.classification.BOSSVSClassifier.fit" title="pyts.classification.BOSSVSClassifier.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X,&nbsp;y[,&nbsp;overlapping])</td>
+<td>Fit the model according to the given training data.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</td>
+<td>Get parameters for this estimator.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pyts.classification.BOSSVSClassifier.predict" title="pyts.classification.BOSSVSClassifier.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(X)</td>
+<td>Transform the provided data.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code>(X,&nbsp;y[,&nbsp;sample_weight])</td>
+<td>Returns the mean accuracy on the given test data and labels.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</td>
+<td>Set the parameters of this estimator.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pyts.classification.BOSSVSClassifier.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>overlapping=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/classification/classification.html#BOSSVSClassifier.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.classification.BOSSVSClassifier.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model according to the given training data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
+<dd><p class="first last">Training vector, where n_samples in the number of samples and
+n_features is the number of features.</p>
+</dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples]</span></dt>
+<dd><p class="first last">Class labels for each data sample.</p>
+</dd>
+<dt><strong>overlapping</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool (default = False)</span></dt>
+<dd><p class="first last">If True, overlapping windows are used for the training phase.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyts.classification.BOSSVSClassifier.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyts/classification/classification.html#BOSSVSClassifier.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyts.classification.BOSSVSClassifier.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform the provided data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>X_new</strong> <span class="classifier-delimiter">:</span> <span class="classifier">sparse matrix, shape [n_samples, n_words]</span></dt>
+<dd><p class="first last">Document-term matrix.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018, Johann Faouzi.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.7.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

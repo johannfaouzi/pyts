@@ -1,0 +1,765 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyts.classification.classification &mdash; pyts 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pyts
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citation.html">Citation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyts</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyts.classification.classification</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyts.classification.classification</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The :mod:`pyts.classification` module includes classification algorithms.</span>
+
+<span class="sd">Implemented algorithms are:</span>
+<span class="sd">- k nearest neighbors</span>
+<span class="sd">- SAX-VSM</span>
+<span class="sd">- Bag-of-SFA in Vector Space</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">range</span>
+<span class="kn">from</span> <span class="nn">future</span> <span class="k">import</span> <span class="n">standard_library</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils.validation</span> <span class="k">import</span> <span class="n">check_array</span><span class="p">,</span> <span class="n">check_X_y</span><span class="p">,</span> <span class="n">check_is_fitted</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils.multiclass</span> <span class="k">import</span> <span class="n">check_classification_targets</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="k">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ClassifierMixin</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="k">import</span> <span class="n">cosine_similarity</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">LabelEncoder</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="k">import</span> <span class="n">KNeighborsClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="k">import</span> <span class="n">TfidfVectorizer</span>
+<span class="kn">from</span> <span class="nn">..bow</span> <span class="k">import</span> <span class="n">BOW</span>
+<span class="kn">from</span> <span class="nn">..quantization</span> <span class="k">import</span> <span class="n">SAX</span><span class="p">,</span> <span class="n">SFA</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">dtw</span><span class="p">,</span> <span class="n">fast_dtw</span><span class="p">,</span> <span class="n">numerosity_reduction</span>
+
+
+<span class="n">standard_library</span><span class="o">.</span><span class="n">install_aliases</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="KNNClassifier"><a class="viewcode-back" href="../../../classification.html#pyts.classification.KNNClassifier">[docs]</a><span class="k">class</span> <span class="nc">KNNClassifier</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ClassifierMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;k nearest neighbors classifier.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_neighbors : int, optional (default = 1)</span>
+<span class="sd">        Number of neighbors to use.</span>
+
+<span class="sd">    weights : str or callable, optional (default = &#39;uniform&#39;)</span>
+<span class="sd">        weight function used in prediction.  Possible values:</span>
+
+<span class="sd">        - &#39;uniform&#39; : uniform weights.  All points in each neighborhood</span>
+<span class="sd">          are weighted equally.</span>
+<span class="sd">        - &#39;distance&#39; : weight points by the inverse of their distance.</span>
+<span class="sd">          in this case, closer neighbors of a query point will have a</span>
+<span class="sd">          greater influence than neighbors which are further away.</span>
+<span class="sd">        - [callable] : a user-defined function which accepts an</span>
+<span class="sd">          array of distances, and returns an array of the same shape</span>
+<span class="sd">          containing the weights.</span>
+
+<span class="sd">    algorithm : {&#39;auto&#39;, &#39;ball_tree&#39;, &#39;kd_tree&#39;, &#39;brute&#39;}, optional</span>
+<span class="sd">        Algorithm used to compute the nearest neighbors.</span>
+
+<span class="sd">        Note: fitting on sparse input will override the setting of</span>
+<span class="sd">        this parameter, using brute force.</span>
+
+<span class="sd">    leaf_size : int, optional (default = 30)</span>
+<span class="sd">        Leaf size passed to BallTree or KDTree.  This can affect the</span>
+<span class="sd">        speed of the construction and query, as well as the memory</span>
+<span class="sd">        required to store the tree.  The optimal value depends on the</span>
+<span class="sd">        nature of the problem.</span>
+
+<span class="sd">    metric : string or DistanceMetric object (default = &#39;minkowski&#39;)</span>
+<span class="sd">        the distance metric to use for the tree.  The default metric is</span>
+<span class="sd">        minkowski, and with p=2 is equivalent to the standard Euclidean</span>
+<span class="sd">        metric. See the documentation of the DistanceMetric class for a</span>
+<span class="sd">        list of available metrics. &#39;dtw&#39; and &#39;fast_dtw&#39; are also</span>
+<span class="sd">        available.</span>
+
+<span class="sd">    p : integer, optional (default = 2)</span>
+<span class="sd">        Power parameter for the Minkowski metric. When p = 1, this is</span>
+<span class="sd">        equivalent to using manhattan_distance (l1), and euclidean_distance</span>
+<span class="sd">        (l2) for p = 2. For arbitrary p, minkowski_distance (l_p) is used.</span>
+
+<span class="sd">    metric_params : dict, optional (default = None)</span>
+<span class="sd">        Additional keyword arguments for the metric function.</span>
+
+<span class="sd">    n_jobs : int, optional (default = 1)</span>
+<span class="sd">        The number of parallel jobs to run for neighbors search.</span>
+<span class="sd">        If ``n_jobs=-1``, then the number of jobs is set to the number of CPU</span>
+<span class="sd">        cores. Doesn&#39;t affect :meth:`fit` method.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="s1">&#39;uniform&#39;</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+                 <span class="n">leaf_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;minkowski&#39;</span><span class="p">,</span> <span class="n">metric_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_neighbors</span> <span class="o">=</span> <span class="n">n_neighbors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">weights</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span> <span class="o">=</span> <span class="n">algorithm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leaf_size</span> <span class="o">=</span> <span class="n">leaf_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric_params</span> <span class="o">=</span> <span class="n">metric_params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">=</span> <span class="n">n_jobs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+
+<div class="viewcode-block" id="KNNClassifier.fit"><a class="viewcode-back" href="../../../classification.html#pyts.classification.KNNClassifier.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fit the model according to the given training data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = [n_samples, n_features]</span>
+<span class="sd">            Training vector, where n_samples is the number of samples and</span>
+<span class="sd">            n_features is the number of features.</span>
+
+<span class="sd">        y : array-like, shape = [n_samples]</span>
+<span class="sd">            Class labels for each data sample.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+<span class="sd">            Returns self.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">check_X_y</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">==</span> <span class="s1">&#39;dtw&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_clf</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_neighbors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaf_size</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="n">dtw</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_params</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">==</span> <span class="s1">&#39;fast_dtw&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_clf</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_neighbors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaf_size</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="n">fast_dtw</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">metric_params</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_clf</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_neighbors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaf_size</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">metric_params</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="KNNClassifier.predict"><a class="viewcode-back" href="../../../classification.html#pyts.classification.KNNClassifier.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Predict the class labels for the provided data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = [n_samples, n_features]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        y : array-like, shape [n_samples]</span>
+<span class="sd">            Class labels for each data sample.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">check_is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_clf&#39;</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="SAXVSMClassifier"><a class="viewcode-back" href="../../../classification.html#pyts.classification.SAXVSMClassifier">[docs]</a><span class="k">class</span> <span class="nc">SAXVSMClassifier</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ClassifierMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Classifier based on SAX-VSM representation and tf-idf statistics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_bins : int (default = 4)</span>
+<span class="sd">        Number of bins (also known as the size of the alphabet).</span>
+
+<span class="sd">    quantiles : {&#39;gaussian&#39;, &#39;empirical&#39;} (default = &#39;empirical&#39;)</span>
+<span class="sd">        The way to compute quantiles. If &#39;gaussian&#39;, quantiles from a</span>
+<span class="sd">        gaussian distribution N(0,1) are used. If &#39;empirical&#39;, empirical</span>
+<span class="sd">        quantiles are used.</span>
+
+<span class="sd">    window_size : int (default = 4)</span>
+<span class="sd">        Size of the window (i.e. the size of each word).</span>
+
+<span class="sd">    numerosity_reduction : bool (default = True)</span>
+<span class="sd">        If True, delete all but one occurence of back to back</span>
+<span class="sd">        identical occurences of the same words.</span>
+
+<span class="sd">    use_idf : bool (default = True)</span>
+<span class="sd">        Enable inverse-document-frequency reweighting.</span>
+
+<span class="sd">    smooth_idf : bool (default = True)</span>
+<span class="sd">        Smooth idf weights by adding one to document frequencies, as if an</span>
+<span class="sd">        extra document was seen containing every term in the collection</span>
+<span class="sd">        exactly once. Prevents zero divisions.</span>
+
+<span class="sd">    sublinear_tf : bool (default = False)</span>
+<span class="sd">        Apply sublinear tf scaling, i.e. replace tf with 1 + log(tf).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vocabulary_ : dict</span>
+<span class="sd">        A mapping of feature indices to terms.</span>
+
+<span class="sd">    tfidf_ : sparse matrix, shape = [n_classes, n_words]</span>
+<span class="sd">        Term-document matrix</span>
+
+<span class="sd">    idf_ : array, shape = [n_features], or None</span>
+<span class="sd">        The learned idf vector (global term weights) when ``use_idf=True``,</span>
+<span class="sd">        None otherwise.</span>
+
+<span class="sd">    stop_words_ : set</span>
+<span class="sd">        Terms that were ignored because they either:</span>
+<span class="sd">          - occurred in too many documents (`max_df`)</span>
+<span class="sd">          - occurred in too few documents (`min_df`)</span>
+<span class="sd">          - were cut off by feature selection (`max_features`).</span>
+<span class="sd">        This is only available if no vocabulary was given.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_bins</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="s1">&#39;empirical&#39;</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                 <span class="n">numerosity_reduction</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_idf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">smooth_idf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">sublinear_tf</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span> <span class="o">=</span> <span class="n">n_bins</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quantiles</span> <span class="o">=</span> <span class="n">quantiles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">=</span> <span class="n">window_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numerosity_reduction</span> <span class="o">=</span> <span class="n">numerosity_reduction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_idf</span> <span class="o">=</span> <span class="n">use_idf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smooth_idf</span> <span class="o">=</span> <span class="n">smooth_idf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sublinear_tf</span> <span class="o">=</span> <span class="n">sublinear_tf</span>
+
+<div class="viewcode-block" id="SAXVSMClassifier.fit"><a class="viewcode-back" href="../../../classification.html#pyts.classification.SAXVSMClassifier.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fit the model according to the given training data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = [n_samples]</span>
+<span class="sd">            Training vector, where n_samples is the number of samples.</span>
+
+<span class="sd">        y : array-like, shape = [n_samples]</span>
+<span class="sd">            Class labels for each data sample.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+<span class="sd">            Returns self.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check parameters</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;n_bins&#39; must be an integer.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;n_bins&#39; must be greater than or equal to 2.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span> <span class="o">&gt;</span> <span class="mi">26</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;n_bins&#39; must be lower than or equal to 26.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantiles</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span> <span class="s1">&#39;empirical&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;quantiles&#39; must be either &#39;gaussian&#39; or &quot;</span>
+                             <span class="s2">&quot;&#39;empirical&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">use_idf</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;use_idf&#39; must be a boolean.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smooth_idf</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;smooth_idf&#39; must be a boolean.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sublinear_tf</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;sublinear_tf&#39; must be a boolean.&quot;</span><span class="p">)</span>
+
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">check_X_y</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">check_classification_targets</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">le</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
+        <span class="n">y_ind</span> <span class="o">=</span> <span class="n">le</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span> <span class="o">=</span> <span class="n">le</span><span class="o">.</span><span class="n">classes_</span>
+        <span class="n">n_classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="c1"># SAX and BOW transformations</span>
+        <span class="n">sax</span> <span class="o">=</span> <span class="n">SAX</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantiles</span><span class="p">)</span>
+        <span class="n">X_sax</span> <span class="o">=</span> <span class="n">sax</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">bow</span> <span class="o">=</span> <span class="n">BOW</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numerosity_reduction</span><span class="p">)</span>
+        <span class="n">X_bow</span> <span class="o">=</span> <span class="n">bow</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_sax</span><span class="p">)</span>
+
+        <span class="n">X_class</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">X_bow</span><span class="p">[</span><span class="n">y_ind</span> <span class="o">==</span> <span class="n">classe</span><span class="p">])</span>
+                   <span class="k">for</span> <span class="n">classe</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_classes</span><span class="p">)]</span>
+
+        <span class="n">tfidf</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                <span class="n">use_idf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_idf</span><span class="p">,</span>
+                                <span class="n">smooth_idf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">smooth_idf</span><span class="p">,</span>
+                                <span class="n">sublinear_tf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sublinear_tf</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">tfidf</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tok</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tfidf_</span> <span class="o">=</span> <span class="n">tfidf</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_class</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary_</span> <span class="o">=</span> <span class="p">{</span><span class="n">value</span><span class="p">:</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span>
+                            <span class="n">tfidf</span><span class="o">.</span><span class="n">vocabulary_</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_words_</span> <span class="o">=</span> <span class="n">tfidf</span><span class="o">.</span><span class="n">stop_words</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_idf</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">idf_</span> <span class="o">=</span> <span class="n">tfidf</span><span class="o">.</span><span class="n">idf_</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">idf_</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tfidf</span> <span class="o">=</span> <span class="n">tfidf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sax</span> <span class="o">=</span> <span class="n">sax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bow</span> <span class="o">=</span> <span class="n">bow</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="SAXVSMClassifier.predict"><a class="viewcode-back" href="../../../classification.html#pyts.classification.SAXVSMClassifier.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Predict the class labels for the provided data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = [n_samples, n_features]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        y : array-like, shape [n_samples]</span>
+<span class="sd">            Class labels for each data sample.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">check_is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;vocabulary_&#39;</span><span class="p">,</span> <span class="s1">&#39;tfidf_&#39;</span><span class="p">,</span> <span class="s1">&#39;idf_&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;stop_words_&#39;</span><span class="p">,</span> <span class="s1">&#39;_tfidf&#39;</span><span class="p">])</span>
+
+        <span class="c1"># SAX and BOW transformations</span>
+        <span class="n">X_sax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sax</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">X_bow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bow</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_sax</span><span class="p">)</span>
+        <span class="n">X_transformed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tfidf</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_bow</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_idf</span><span class="p">:</span>
+            <span class="n">X_transformed</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tfidf</span><span class="o">.</span><span class="n">idf_</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">X_transformed</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">tfidf_</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">y_pred</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">_tok</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BOSSVSClassifier"><a class="viewcode-back" href="../../../classification.html#pyts.classification.BOSSVSClassifier">[docs]</a><span class="k">class</span> <span class="nc">BOSSVSClassifier</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ClassifierMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Bag-of-SFA Symbols in Vector Space.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_coefs : None or int (default = None)</span>
+<span class="sd">        The number of Fourier coefficients to keep. If ``n_coefs=None``,</span>
+<span class="sd">        all Fourier coefficients are returned. If ``n_coefs`` is an integer,</span>
+<span class="sd">        the ``n_coefs`` most significant Fourier coefficients are returned if</span>
+<span class="sd">        ``anova=True``, otherwise the first ``n_coefs`` Fourier coefficients</span>
+<span class="sd">        are returned. A even number is required (for real and imaginary values)</span>
+<span class="sd">        if ``anova=False``.</span>
+
+<span class="sd">    window_size : int</span>
+<span class="sd">        Window length to use to extracte sub time series.</span>
+
+<span class="sd">    norm_mean : bool (default = True)</span>
+<span class="sd">        If True, center the data before scaling. If ``norm_mean=True`` and</span>
+<span class="sd">        ``anova=False``, the first Fourier coefficient will be dropped.</span>
+
+<span class="sd">    norm_std : bool (default = True)</span>
+<span class="sd">        If True, scale the data to unit variance.</span>
+
+<span class="sd">    n_bins : int (default = 4)</span>
+<span class="sd">        The number of bins. Ignored if ``quantiles=&#39;entropy&#39;``.</span>
+
+<span class="sd">    quantiles : {&#39;gaussian&#39;, &#39;empirical&#39;} (default = &#39;gaussian&#39;)</span>
+<span class="sd">        The way to compute quantiles. If &#39;gaussian&#39;, quantiles from a</span>
+<span class="sd">        gaussian distribution N(0,1) are used. If &#39;empirical&#39;, empirical</span>
+<span class="sd">        quantiles are used.</span>
+
+<span class="sd">    variance_selection : bool (default = False)</span>
+<span class="sd">        If True, the Fourier coefficients with low variance are removed.</span>
+
+<span class="sd">    variance_threshold : float (default = 0.)</span>
+<span class="sd">        Fourier coefficients with a training-set variance lower than this</span>
+<span class="sd">        threshold will be removed. Ignored if ``variance_selection=False``.</span>
+
+<span class="sd">    numerosity_reduction : boolean (default = True)</span>
+<span class="sd">        whether or not numerosity reduction is applied. When the same word</span>
+<span class="sd">        occurs several times in a row, only one instance of this word is kept</span>
+<span class="sd">        if ``numerosity_reduction=True``, otherwise all instances are kept.</span>
+
+<span class="sd">    smooth_idf : boolean, default=True</span>
+<span class="sd">        smooth idf weights by adding one to document frequencies, as if an</span>
+<span class="sd">        extra document was seen containing every term in the collection</span>
+<span class="sd">        exactly once. Prevents zero divisions.</span>
+
+<span class="sd">    sublinear_tf : boolean, default=False</span>
+<span class="sd">        apply sublinear tf scaling, i.e. replace tf with 1 + log(tf).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vocabulary_ : dict</span>
+<span class="sd">        A mapping of features indices to terms.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_coefs</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">norm_mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">norm_std</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">n_bins</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="s1">&#39;empirical&#39;</span><span class="p">,</span> <span class="n">variance_selection</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">variance_threshold</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">numerosity_reduction</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">smooth_idf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sublinear_tf</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_coefs</span> <span class="o">=</span> <span class="n">n_coefs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">=</span> <span class="n">window_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_mean</span> <span class="o">=</span> <span class="n">norm_mean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm_std</span> <span class="o">=</span> <span class="n">norm_std</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span> <span class="o">=</span> <span class="n">n_bins</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quantiles</span> <span class="o">=</span> <span class="n">quantiles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variance_selection</span> <span class="o">=</span> <span class="n">variance_selection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variance_threshold</span> <span class="o">=</span> <span class="n">variance_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numerosity_reduction</span> <span class="o">=</span> <span class="n">numerosity_reduction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smooth_idf</span> <span class="o">=</span> <span class="n">smooth_idf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sublinear_tf</span> <span class="o">=</span> <span class="n">sublinear_tf</span>
+
+<div class="viewcode-block" id="BOSSVSClassifier.fit"><a class="viewcode-back" href="../../../classification.html#pyts.classification.BOSSVSClassifier.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">overlapping</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fit the model according to the given training data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = [n_samples, n_features]</span>
+<span class="sd">            Training vector, where n_samples in the number of samples and</span>
+<span class="sd">            n_features is the number of features.</span>
+
+<span class="sd">        y : array-like, shape = [n_samples]</span>
+<span class="sd">            Class labels for each data sample.</span>
+
+<span class="sd">        overlapping : bool (default = False)</span>
+<span class="sd">            If True, overlapping windows are used for the training phase.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check input data</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">check_X_y</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">check_classification_targets</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">le</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
+        <span class="n">y_ind</span> <span class="o">=</span> <span class="n">le</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span> <span class="o">=</span> <span class="n">le</span><span class="o">.</span><span class="n">classes_</span>
+        <span class="n">n_classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="c1"># Check parameters</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_coefs</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_coefs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;n_coefs&#39; must be None or an integer.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_coefs</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_coefs</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;n_coefs&#39; must be greater than or equal to 2.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_coefs</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_coefs</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;n_coefs&#39; must be an even integer.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;window_size&#39; must be an integer.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">&gt;</span> <span class="n">n_features</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;window_size&#39; must be lower than or equal to &quot;</span>
+                             <span class="s2">&quot;the size of each time series.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_coefs</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_coefs</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;n_coefs&#39; must be lower than or equal to &quot;</span>
+                            <span class="s2">&quot;&#39;window_size&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">norm_mean</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;norm_mean&#39; must be a boolean.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">norm_std</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;norm_std&#39; must be a boolean.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;n_bins&#39; must be an integer.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;n_bins&#39; must be greater than or equal to 2.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantiles</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;empirical&#39;</span><span class="p">,</span> <span class="s1">&#39;gaussian&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;quantiles&#39; must be either &#39;gaussian&#39; or &quot;</span>
+                             <span class="s2">&quot;&#39;empirical&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variance_selection</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;variance_selection&#39; must be a boolean.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variance_threshold</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;variance_threshold&#39; must be a float.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numerosity_reduction</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;numerosity_reduction&#39; must be a boolean.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smooth_idf</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;smooth_idf&#39; must be a boolean.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sublinear_tf</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;sublinear_tf&#39; must be a boolean.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">overlapping</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;overlapping&#39; must be a boolean.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary_</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">overlapping</span><span class="p">:</span>
+            <span class="n">n_windows</span> <span class="o">=</span> <span class="n">n_features</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">X_window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">X</span><span class="p">[:,</span> <span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">]</span>
+                                   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_windows</span><span class="p">)])</span>
+            <span class="n">X_window</span> <span class="o">=</span> <span class="n">X_window</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_samples</span> <span class="o">*</span> <span class="n">n_windows</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">n_windows</span> <span class="o">=</span> <span class="n">n_features</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span>
+            <span class="n">remainder</span> <span class="o">=</span> <span class="n">n_features</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span> <span class="n">window_size</span>
+            <span class="k">if</span> <span class="n">remainder</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">window_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_features</span><span class="p">),</span>
+                                            <span class="n">n_windows</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">split_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span>
+                                      <span class="n">n_windows</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">)</span>
+                <span class="n">window_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_features</span><span class="p">),</span> <span class="n">split_idx</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">X_window</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">window_idx</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_samples</span> <span class="o">*</span> <span class="n">n_windows</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">sfa</span> <span class="o">=</span> <span class="n">SFA</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_coefs</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_mean</span><span class="p">,</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">norm_std</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_bins</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantiles</span><span class="p">,</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">variance_selection</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variance_threshold</span><span class="p">)</span>
+        <span class="n">tfidf</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">smooth_idf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">smooth_idf</span><span class="p">,</span>
+                                <span class="n">sublinear_tf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sublinear_tf</span><span class="p">)</span>
+
+        <span class="n">X_sfa</span> <span class="o">=</span> <span class="n">sfa</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_window</span><span class="p">)</span>
+        <span class="n">X_sfa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+                                    <span class="mi">1</span><span class="p">,</span>
+                                    <span class="n">X_sfa</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">word_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_sfa</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">word_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">tfidf</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tok</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numerosity_reduction</span><span class="p">:</span>
+            <span class="n">X_sfa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">numerosity_reduction</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">X_sfa</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">X_sfa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">X_sfa</span><span class="p">)</span>
+
+        <span class="n">X_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">X_sfa</span><span class="p">[</span><span class="n">y_ind</span> <span class="o">==</span> <span class="n">i</span><span class="p">])</span>
+                            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_classes</span><span class="p">)])</span>
+
+        <span class="n">X_tfidf</span> <span class="o">=</span> <span class="n">tfidf</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_class</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">tfidf</span><span class="o">.</span><span class="n">vocabulary_</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vocabulary_</span><span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sfa</span> <span class="o">=</span> <span class="n">sfa</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tfidf</span> <span class="o">=</span> <span class="n">tfidf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tfidf_</span> <span class="o">=</span> <span class="n">X_tfidf</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="BOSSVSClassifier.predict"><a class="viewcode-back" href="../../../classification.html#pyts.classification.BOSSVSClassifier.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Transform the provided data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = [n_samples, n_features]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_new : sparse matrix, shape [n_samples, n_words]</span>
+<span class="sd">            Document-term matrix.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check fitted</span>
+        <span class="n">check_is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;tfidf_&#39;</span><span class="p">,</span> <span class="s1">&#39;_sfa&#39;</span><span class="p">,</span> <span class="s1">&#39;_tfidf&#39;</span><span class="p">,</span> <span class="s1">&#39;vocabulary_&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Check X</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="n">n_windows</span> <span class="o">=</span> <span class="n">n_features</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">X_window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">X</span><span class="p">[:,</span> <span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">]</span>
+                               <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_windows</span><span class="p">)])</span>
+        <span class="n">X_window</span> <span class="o">=</span> <span class="n">X_window</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_samples</span> <span class="o">*</span> <span class="n">n_windows</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+
+        <span class="n">X_sfa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sfa</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_window</span><span class="p">)</span>
+        <span class="n">X_sfa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+                                    <span class="mi">1</span><span class="p">,</span>
+                                    <span class="n">X_sfa</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numerosity_reduction</span><span class="p">:</span>
+            <span class="n">X_sfa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">numerosity_reduction</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">X_sfa</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">X_sfa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">X_sfa</span><span class="p">)</span>
+        <span class="n">tf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tfidf</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_sfa</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tfidf</span><span class="o">.</span><span class="n">idf_</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">tf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tfidf_</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">y_pred</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">_tok</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018, Johann Faouzi.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.7.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

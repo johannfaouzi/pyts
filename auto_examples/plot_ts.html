@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Plotting a time series &mdash; sklearn-template 0.1.0 documentation</title>
+  <title>Plotting a time series &mdash; pyts 0.7.0 documentation</title>
   
 
   
@@ -29,7 +29,9 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Markov Transition Field" href="plot_mtf.html" />
+    <link rel="prev" title="Examples" href="index.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -48,7 +50,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> sklearn-template
+            <a href="../index.html" class="icon icon-home"> pyts
           
 
           
@@ -58,7 +60,7 @@
             
             
               <div class="version">
-                0.1
+                0.7
               </div>
             
           
@@ -82,8 +84,31 @@
               
             
             
-              <ul>
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide.html">User guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Plotting a time series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_mtf.html">Markov Transition Field</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_rp.html">Recurrence Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_ssa.html">Singular Spectrum Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_gaf.html">Gramian Angular Field</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_boss.html">Bag-of-SFA Symbols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_dtw.html">Dynamic Time Warping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_paa.html">Piecewise Aggregate Approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_bow.html">Bag of Words</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_weasel.html">Word ExtrAction for time SEries cLassification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_saxvsm.html">SAXVSM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_bossvs.html">Bag-of-SFA Symbols in Vector Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_fastdtw.html">Fast Dynamic Time Warping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_dft.html">Discrete Fourier Transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_sax.html">Symbolic Aggregate approXimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_mcb.html">Multiple Coefficient Binning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_classifiers.html">Classifiers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation</a></li>
 </ul>
 
             
@@ -98,7 +123,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">sklearn-template</a>
+          <a href="../index.html">pyts</a>
         
       </nav>
 
@@ -129,6 +154,8 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
+          <li><a href="index.html">Examples</a> &raquo;</li>
+        
       <li>Plotting a time series</li>
     
     
@@ -150,30 +177,24 @@
             
   <div class="section" id="plotting-a-time-series">
 <span id="sphx-glr-auto-examples-plot-ts-py"></span><h1>Plotting a time series<a class="headerlink" href="#plotting-a-time-series" title="Permalink to this headline">¶</a></h1>
-<p>An example plot of <cite>pyts.visualization.plot_ts</cite></p>
+<p>This example shows how you can plot a single time series.</p>
 <img alt="../_images/sphx_glr_plot_ts_001.png" class="align-center" src="../_images/sphx_glr_plot_ts_001.png" />
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">norm</span>
-<span class="kn">from</span> <span class="nn">pyts.visualization</span> <span class="kn">import</span> <span class="n">plot_ts</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 
 <span class="c1"># Parameters</span>
-<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="n">n_features</span> <span class="o">=</span> <span class="mi">48</span>
+<span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">48</span>
+
+<span class="c1"># Toy dataset</span>
 <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">41</span><span class="p">)</span>
-<span class="n">delta</span> <span class="o">=</span> <span class="mf">0.5</span>
-<span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span><span class="p">)</span>
 
-<span class="c1"># Generate a toy dataset</span>
-<span class="n">X</span> <span class="o">=</span> <span class="p">(</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">delta</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">dt</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_samples</span><span class="o">*</span><span class="n">n_features</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
-         <span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span><span class="p">)))</span>
-<span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="c1"># Plot the first sample</span>
-<span class="n">plot_ts</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="c1"># Plot the first time series</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p><strong>Total running time of the script:</strong> ( 0 minutes  0.341 seconds)</p>
+<p><strong>Total running time of the script:</strong> ( 0 minutes  0.069 seconds)</p>
 <div class="sphx-glr-footer docutils container">
 <div class="sphx-glr-download docutils container">
 <a class="reference download internal" href="../_downloads/plot_ts.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_ts.py</span></code></a></div>
@@ -189,12 +210,21 @@
           </div>
           <footer>
   
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="plot_mtf.html" class="btn btn-neutral float-right" title="Markov Transition Field" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Vighnesh Birodkar.
+        &copy; Copyright 2017-2018, Johann Faouzi.
 
     </p>
   </div>
@@ -216,7 +246,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1.0',
+            VERSION:'0.7.0',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
