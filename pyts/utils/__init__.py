@@ -1,20 +1,8 @@
 """The :mod:`pyts.utils` module includes utility functions."""
 
-from .utils import (bin_allocation_integers, bin_allocation_alphabet,
-                    segmentation, mean, arange, paa, sax, num_red, vsm,
-                    gaf, mtf, dtw, fast_dtw, recurrence_plot)
+from .utils import segmentation, numerosity_reduction, dtw, fast_dtw
 
-__all__ = ['bin_allocation_integers',
-           'bin_allocation_alphabet',
-           'segmentation',
-           'mean',
-           'arange',
-           'paa',
-           'sax',
-           'num_red',
-           'vsm',
-           'gaf',
-           'mtf',
+__all__ = ['segmentation',
+           'numerosity_reduction',
            'dtw',
-           'fast_dtw',
-           'recurrence_plot']
+           'fast_dtw']

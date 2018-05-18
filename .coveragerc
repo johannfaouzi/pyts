@@ -1,0 +1,6 @@
+[run]
+branch = True
+source = pyts
+include = */pyts/*
+omit =
+    */setup.py

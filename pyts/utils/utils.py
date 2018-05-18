@@ -1,3 +1,5 @@
+"""The :mod:`pyts.utils` module includes utility functions."""
+
 from __future__ import division
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -5,207 +7,106 @@ from __future__ import absolute_import
 from builtins import range
 from future import standard_library
 import numpy as np
-from math import log
 
 
 standard_library.install_aliases()
 
 
-def bin_allocation_integers(x, n_bins, quantiles):
+def segmentation(ts_size, window_size, overlapping, n_segments=None):
+    """Compute the indices for Piecewise Agrgegate Approximation.
 
-    for i in range(n_bins - 1):
-        if x < quantiles[i]:
-            return i
+    Parameters
+    ----------
+    ts_size : int
+        The size of the time series.
 
-    return n_bins - 1
+    window_size : int
+        The size of the window.
 
+    overlapping : bool
+        If True, overlapping windows may be used. If False, non-overlapping
+        are used.
 
-def bin_allocation_alphabet(x, n_bins, alphabet, quantiles):
+    n_segments : int or None (default = None)
+        The number of windows. If None, the number is automatically
+        computed using `window_size`.
 
-    for i in range(n_bins - 1):
-        if x < quantiles[i]:
-            return alphabet[i]
+    Returns
+    -------
+    start : array
+        The lower bound for each window.
 
-    return alphabet[n_bins - 1]
+    end : array
+        The upper bound for each window.
 
+    size : int
+        The size of `start`.
 
-def segmentation(bounds, window_size, overlapping):
-
-    start = bounds[:-1]
-    end = bounds[1:]
-
-    if not overlapping:
-        return np.array([arange(np.array([start, end])[:, i])
-                         for i in range(start.size)])
-    else:
-        correction = window_size - end + start
-
-        new_start = start.copy()
-        new_start[start.size // 2:] = (start[start.size // 2:] -
-                                       correction[start.size // 2:])
-
-        new_end = end.copy()
-        new_end[:end.size // 2] = (end[:end.size // 2] +
-                                   correction[:end.size // 2])
-
-        return np.apply_along_axis(arange, 1, np.array([new_start, new_end]).T)
-
-
-def mean(ts, indices, overlapping):
-
-    if not overlapping:
-        return np.array([ts[indices[i]].mean()
-                         for i in range(indices.shape[0])])
-    else:
-        return np.mean(ts[indices], axis=1)
-
-
-def arange(array):
-
-    return np.arange(*array)
-
-
-def paa(ts, ts_size, window_size, overlapping, n_segments=None, plot=False):
-
-    if (n_segments == ts_size or window_size == 1):
-        return ts
-
+    """
     if n_segments is None:
         quotient = ts_size // window_size
         remainder = ts_size % window_size
         n_segments = quotient if remainder == 0 else quotient + 1
+
     bounds = np.linspace(0, ts_size,
                          n_segments + 1, endpoint=True).astype('int64')
-    indices = segmentation(bounds, window_size, overlapping)
 
-    if not plot:
-        return mean(ts, indices, overlapping)
+    start = bounds[:-1]
+    end = bounds[1:]
+    size = start.size
+
+    if not overlapping:
+        return start, end, size
     else:
-        return indices, mean(ts, indices, overlapping)
+        correction = window_size - end + start
+        half_size = size // 2
+        new_start = start.copy()
+        new_start[half_size:] = start[half_size:] - correction[half_size:]
+        new_end = end.copy()
+        new_end[:half_size] = end[:half_size] + correction[:half_size]
+        return new_start, new_end, size
 
 
-def sax(ts, n_bins, quantiles, alphabet, plot=False):
+def numerosity_reduction(arr):
+    """Perform numerosity reduction.
 
-        # Alphabet
-        alphabet_short = alphabet[:n_bins]
+    Parameters
+    ----------
+    arr : array-like, shape [n_samples]
 
-        return_quantiles = False
+    Returns
+    -------
+    res : str
+        string with each word separated with a whitespace.
 
-        # Compute empirical quantiles if quantiles == 'empirical'
-        if type(quantiles) == str:
-            return_quantiles = True
-            quantiles = np.percentile(ts, np.linspace(0, 100, n_bins + 1)[1:])
-
-        # Compute binned time series
-        binned_ts = [bin_allocation_alphabet(x, n_bins,
-                                             alphabet_short, quantiles)
-                     for x in ts]
-
-        if (plot and return_quantiles):
-            # Return joined string
-            return quantiles, ''.join(x for x in binned_ts)
-        else:
-            # Return joined string
-            return ''.join(x for x in binned_ts)
-
-
-def num_red(array):
-
-    indices = []
-    array_size = len(array)
-    index = 1
-    while index < array_size:
-        if array[index - 1] == array[index]:
-            indices.append(index)
-        index += 1
-
-    return np.delete(array, indices).tolist()
-
-
-def vsm(ts_sax, ts_sax_size, window_size, numerosity_reduction=True):
-
-    ts_vsm = [ts_sax[i:i + window_size]
-              for i in range(ts_sax_size - window_size + 1)]
-
-    if numerosity_reduction:
-        return num_red(ts_vsm)
-
-    else:
-        return ts_vsm
-
-
-def gaf(ts, ts_size, image_size, overlapping, method, scale):
-
-    # Compute aggregated time series
-    window_size = ts_size // image_size
-    window_size += 0 if ts_size % image_size == 0 else 1
-    aggregated_ts = paa(ts, ts_size, window_size, overlapping, image_size)
-
-    # Rescaling aggregated time series
-    min_ts, max_ts = np.min(aggregated_ts), np.max(aggregated_ts)
-    if scale == '0':
-        rescaled_ts = (aggregated_ts - min_ts) / (max_ts - min_ts)
-    if scale == '-1':
-        rescaled_ts = (2 * aggregated_ts - max_ts - min_ts) / (max_ts - min_ts)
-
-    # Compute GAF
-    sin_ts = np.sqrt(np.clip(1 - rescaled_ts**2, 0, 1))
-    if method == 's':
-        return np.outer(rescaled_ts, rescaled_ts) - np.outer(sin_ts, sin_ts)
-    if method == 'd':
-        return np.outer(sin_ts, rescaled_ts) - np.outer(rescaled_ts, sin_ts)
-
-
-def mtf(ts, ts_size, image_size, n_bins, quantiles, overlapping):
-
-    # Compute empirical quantiles if quantiles == 'empirical'
-    if type(quantiles) == str:
-        quantiles = np.percentile(ts, np.linspace(0, 100, n_bins + 1)[1:])
-
-    # Compute binned time series
-    binned_ts = np.array([bin_allocation_integers(x, n_bins, quantiles)
-                          for x in ts])
-
-    # Compute Markov Transition Matrix
-    MTM = np.zeros((n_bins, n_bins))
-    for i in range(ts_size - 1):
-        MTM[binned_ts[i], binned_ts[i + 1]] += 1
-    non_zero_rows = np.where(MTM.sum(axis=1) != 0)[0]
-    MTM = np.multiply(MTM[non_zero_rows][:, non_zero_rows].T,
-                      np.sum(MTM[non_zero_rows], axis=1)**(-1)).T
-
-    # Compute list of indices based on values
-    list_values = [np.where(binned_ts == q) for q in non_zero_rows]
-
-    # Compute Markov Transition Field
-    MTF = np.zeros((ts_size, ts_size))
-    for i in range(non_zero_rows.size):
-        for j in range(non_zero_rows.size):
-            MTF[np.meshgrid(list_values[i], list_values[j])] = MTM[i, j]
-
-    # Compute Aggregated Markov Transition Field
-    window_size, remainder = ts_size // image_size, ts_size % image_size
-    if remainder == 0:
-        return np.reshape(MTF,
-                          (image_size, window_size, image_size, window_size)
-                          ).mean(axis=(1, 3))
-
-    else:
-        window_size += 1
-        bounds = np.linspace(0, ts_size, image_size + 1,
-                             endpoint=True).astype('int64')
-        indices = segmentation(bounds, window_size, overlapping)
-
-        AMTF = np.zeros((image_size, image_size))
-        for i in range(image_size):
-            for j in range(image_size):
-                AMTF[i, j] = MTF[indices[i]][:, indices[j]].mean()
-
-        return AMTF
+    """
+    not_equal = np.array(arr[1:] != arr[:-1])
+    return ' '.join(np.append(arr[np.where(not_equal)], arr[-1]))
 
 
 def dtw(x, y, dist='absolute', return_path=False, **kwargs):
+    """Dynamic Time Warping.
 
+    Parameters
+    ----------
+    x : array-like, shape [n1]
+        First array.
+
+    y : array-like, shape [n2]
+        Second array
+
+    dist : {'absolute', 'square' or callable} (default = 'absolue')
+        The distance metric used. If callable, the first two arguments
+        must be float numbers.
+
+    return_path : bool (default = False)
+        If true, the path along the accumulated cost matrix is returned.
+
+    kwargs
+        Additional keyword arguments for `dist` if `dist` is callable.
+        Ignored otherwise.
+
+    """
     x_size = x.size
 
     # Cost matrix
@@ -269,7 +170,37 @@ def dtw(x, y, dist='absolute', return_path=False, **kwargs):
 
 def fast_dtw(x, y, window_size, approximation=True,
              dist='absolute', return_path=False, **kwargs):
+    """Fast Dynamic Time Warping.
 
+    Parameters
+    ----------
+    x : array-like, shape [n1]
+        First array.
+
+    y : array-like, shape [n2]
+        Second array
+
+    window_size : int
+        The size of the window for the PAA algorithm.
+
+    approximation : bool (default = True)
+        If True, compute Dynamic Time Warping between the shrunk time
+        series. If False, compute Dynamic Time Warping on the original
+        time series with a constraint region based on the path of the
+        Dynamic Time Warping of the shrunk time series.
+
+    dist : {'absolute', 'square' or callable} (default = 'absolue')
+        The distance metric used. If callable, the first two arguments
+        must be float numbers.
+
+    return_path : bool (default = False)
+        If true, the path along the accumulated cost matrix is returned.
+
+    kwargs
+        Additional keyword arguments for `dist` if `dist` is callable.
+        Ignored otherwise.
+
+    """
     x_size = x.size
 
     # Compute path for shrunk time series
@@ -307,20 +238,16 @@ def fast_dtw(x, y, window_size, approximation=True,
                                                 np.arange(first_value,
                                                           second_value)
                                                 )
-
         # Cost matrix
         C = [[] for _ in range(x_size)]
-
         if dist == 'absolute':
             for i in range(x_size):
                 for j in range(x_size):
                     C[i].append(abs(x[i] - y[j]))
-
         elif dist == 'square':
             for i in range(x_size):
                 for j in range(x_size):
                     C[i].append((x[i] - y[j])**2)
-
         else:
             for i in range(x_size):
                 for j in range(x_size):
@@ -328,24 +255,16 @@ def fast_dtw(x, y, window_size, approximation=True,
 
         # Accumulated cost matrix
         D = np.zeros((x_size, x_size)) + np.inf
-
-        # Compute first row
         D[0, :window_size] = np.cumsum(np.asarray(C[0][:window_size]))
-
-        # Compute first column
         for j in range(1, window_size):
             D[j, 0] = D[j - 1, 0] + C[j][0]
-
-        # Compute the remaining cells recursively
         for j in range(1, x_size):
             for i in region[j]:
                 D[i, j] = C[i][j] + min(D[i - 1][j - 1],
                                         D[i - 1][j],
                                         D[i][j - 1])
-
         if not return_path:
             return D[x_size - 1][x_size - 1]
-
         else:
             path = [(x_size - 1, x_size - 1)]
             while path[-1] != (0, 0):
@@ -355,32 +274,13 @@ def fast_dtw(x, y, window_size, approximation=True,
                 elif j == 0:
                     path.append((i - 1, 0))
                 else:
-                    List = [D[i - 1][j - 1], D[i - 1][j], D[i][j - 1]]
-                    argmin_List = List.index(min(List))
-                    if argmin_List == 0:
+                    liste = [D[i - 1][j - 1], D[i - 1][j], D[i][j - 1]]
+                    argmin_liste = np.argmin(liste)
+                    if argmin_liste == 0:
                         path.append((i - 1, j - 1))
-                    elif argmin_List == 1:
+                    elif argmin_liste == 1:
                         path.append((i - 1, j))
                     else:
                         path.append((i, j - 1))
 
         return region, D, path[::-1]
-
-
-def recurrence_plot(x, dimension=1, epsilon=None, percentage=10):
-
-    x_size = x.size
-
-    array = np.asarray([x[i: min(x_size, i + dimension)]
-                        for i in range(x_size - dimension + 1)])
-    M = np.array([np.linalg.norm(array[i] - array, axis=1)
-                  for i in range(x_size - dimension + 1)])
-
-    if epsilon is None:
-        return M
-    elif epsilon == 'percentage_points':
-        return M < np.percentile(M, percentage)
-    elif epsilon == 'percentage_distance':
-        return M < percentage / 100 * np.max(M)
-    else:
-        return M < epsilon
