@@ -21,6 +21,7 @@ pyts has been tested on Python 2.7 and 3.5 with the following dependencies:
 - numpy (>= 1.8.2)
 - scipy (>= 0.13.3)
 - scikit-learn (>=0.17.0)
+- future (>=0.13.0) (for Python 2 compatibility)
 
 To run the examples matplotlib is required (matplotlib >= 2.0.0 has
 been tested).
@@ -52,8 +53,7 @@ If you use it in a scientific publication, please cite us
 
     @misc{johann_faouzi_2018_1244152,
     author       = {Johann Faouzi},
-    title        = {{pyts: a Python package for time series
-									 transformation and classification}},
+    title        = {{pyts: a Python package for time series transformation and classification}},
     month        = may,
     year         = 2018,
     doi          = {10.5281/zenodo.1244152},
