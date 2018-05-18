@@ -49,13 +49,7 @@ class KNNClassifier(BaseEstimator, ClassifierMixin):
           containing the weights.
 
     algorithm : {'auto', 'ball_tree', 'kd_tree', 'brute'}, optional
-        Algorithm used to compute the nearest neighbors:
-
-        - 'ball_tree' will use :class:`BallTree`
-        - 'kd_tree' will use :class:`KDTree`
-        - 'brute' will use a brute-force search.
-        - 'auto' will attempt to decide the most appropriate algorithm
-          based on the values passed to :meth:`fit` method.
+        Algorithm used to compute the nearest neighbors.
 
         Note: fitting on sparse input will override the setting of
         this parameter, using brute force.
@@ -83,8 +77,8 @@ class KNNClassifier(BaseEstimator, ClassifierMixin):
 
     n_jobs : int, optional (default = 1)
         The number of parallel jobs to run for neighbors search.
-        If ``-1``, then the number of jobs is set to the number of CPU cores.
-        Doesn't affect :meth:`fit` method.
+        If ``n_jobs=-1``, then the number of jobs is set to the number of CPU
+        cores. Doesn't affect :meth:`fit` method.
 
     """
 
@@ -331,10 +325,10 @@ class BOSSVSClassifier(BaseEstimator, ClassifierMixin):
     Parameters
     ----------
     n_coefs : None or int (default = None)
-        The number of Fourier coefficients to keep. If ``coefs=None``,
-        all Fourier coefficients are returned. If `coefs` is an integer,
-        the `coefs` most significant Fourier coefficients are returned if
-        ``anova=True``, otherwise the first `coefs` Fourier coefficients
+        The number of Fourier coefficients to keep. If ``n_coefs=None``,
+        all Fourier coefficients are returned. If ``n_coefs`` is an integer,
+        the ``n_coefs`` most significant Fourier coefficients are returned if
+        ``anova=True``, otherwise the first ``n_coefs`` Fourier coefficients
         are returned. A even number is required (for real and imaginary values)
         if ``anova=False``.
 
@@ -366,7 +360,7 @@ class BOSSVSClassifier(BaseEstimator, ClassifierMixin):
     numerosity_reduction : boolean (default = True)
         whether or not numerosity reduction is applied. When the same word
         occurs several times in a row, only one instance of this word is kept
-        if 'numerosity_reduction' = True, otherwise all instances are kept.
+        if ``numerosity_reduction=True``, otherwise all instances are kept.
 
     smooth_idf : boolean, default=True
         smooth idf weights by adding one to document frequencies, as if an

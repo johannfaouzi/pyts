@@ -5,7 +5,7 @@ Introduction
 ------------
 
 Time series are very common data and classifying them can be of interest in a
-lot of fields. However tradional machine learning algorithms for classification,
+lot of fields. However standard machine learning algorithms for classification,
 like Logistic Regression, Support Vector Machine or K-Nearest Neighbors with
 usual metrics, don't work very well. To be more precise, these algorithms
 don't work well on **raw time series of real numbers**. Most algorithms
@@ -42,7 +42,7 @@ take the mean value in each window. It is implemented as :class:`pyts.approximat
 The second algorithm implemented is **Discrete Fourier Transform (DFT)**. The idea
 is to approximate a time series with a subsample of its Fourier coefficients.
 The selected Fourier coefficients are either the first ones (as they represent
-the trend of the time series) or the ones that separe the different classes
+the trend of the time series) or the ones that discriminate the different classes
 the most if a vector of class labels is provided.
 It is implemented as :class:`pyts.approximation.DFT`.
 
@@ -67,7 +67,7 @@ of real numbers needs to be transformed into a sequence of letters. Implemented
 algorithms that quantize time series can be found in the :mod:`pyts.quantization` module.
 
 The first algorithm implemented is **Symbolic Aggregate approXimation (SAX)**. For
-eah time series, bins are computed using gaussian or empirical quantiles. Then
+each time series, bins are computed using gaussian or empirical quantiles. Then
 each datapoint is replaced by the bin it is in. It is implemented as
 :class:`pyts.quantization.SAX`.
 
@@ -119,7 +119,7 @@ The idea is similar to BOSS: first transform each time series into a bag of word
 then compute the frequencies of each word. WEASEL is more sophisticated in the sense
 that the selected Fourier coefficients are the most discrimative ones (based on the
 one-way ANOVA test), several lengths for the sliding window are used and the most
-discrimative features (i.e. words) are kept (based on the chi-2 test).
+discriminative features (i.e. words) are kept (based on the chi-2 test).
 It is implemented as :class:`pyts.transformation.WEASEL`.
 
 References:
@@ -131,7 +131,7 @@ References:
 - Patrick Schäfer and Ulf Leser. Fast and Accurate Time Series Classification with WEASEL.
   *CoRR*, 2017.
 
-CLassification
+Classification
 --------------
 
 The :mod:`pyts.classification` module consists of several classification

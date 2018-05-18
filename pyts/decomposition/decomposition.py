@@ -62,11 +62,11 @@ class SSA(BaseEstimator, TransformerMixin):
         Returns
         -------
         X_new : array-like, shape = [n_samples, n_splits, n_features]
-            Transformed data. `n_splits` value depends on the value of
-            `grouping`. If ``grouping=None``, `n_splits` is equal to
-            `window_size`. If `grouping` is an integer, `n_splits` is
-            equal to `grouping`. If 'grouping' is array-like, `n_splits`
-            is equal to the length of `grouping`.
+            Transformed data. ``n_splits`` value depends on the value of
+            ``grouping``. If ``grouping=None``, ``n_splits`` is equal to
+            ``window_size``. If ``grouping`` is an integer, ``n_splits`` is
+            equal to ``grouping``. If ``grouping`` is array-like, ``n_splits``
+            is equal to the length of ``grouping``.
 
         """
         # Check input data

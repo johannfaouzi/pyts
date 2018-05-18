@@ -31,11 +31,11 @@ class BOSS(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    n_coefs : None or int
+    n_coefs : None or int (default = None)
         The number of Fourier coefficients to keep. If ``n_coefs=None``,
-        all Fourier coefficients are returned. If `n_coefs` is an integer,
-        the `coefs` most significant Fourier coefficients are returned if
-        ``anova=True``, otherwise the first `coefs` Fourier coefficients
+        all Fourier coefficients are returned. If ``n_coefs`` is an integer,
+        the ``n_coefs`` most significant Fourier coefficients are returned if
+        ``anova=True``, otherwise the first ``n_coefs`` Fourier coefficients
         are returned. A even number is required (for real and imaginary values)
         if ``anova=False``.
 
@@ -197,7 +197,6 @@ class BOSS(BaseEstimator, TransformerMixin):
 
         self._sfa = sfa
         self._count = count
-
         return self
 
     def transform(self, X):

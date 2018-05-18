@@ -36,9 +36,9 @@ class PAA(BaseEstimator, TransformerMixin):
         Size of the returned time series.
 
     overlapping : bool (default = True)
-        When `output_size` is specified, the window size is fixed
+        When ``output_size`` is specified, the window size is fixed
         if ``overlapping=True`` and may vary if ``overlapping=False``.
-        Ignored if `window_size` is specified.
+        Ignored if ``window_size`` is specified.
 
     """
 
@@ -133,9 +133,9 @@ class DFT(BaseEstimator, TransformerMixin):
     ----------
     n_coefs : None or int (default = None)
         The number of Fourier coefficients to keep. If ``n_coefs=None``,
-        all Fourier coefficients are returned. If `n_coefs` is an integer,
-        the `coefs` most significant Fourier coefficients are returned if
-        ``anova=True``, otherwise the first `coefs` Fourier coefficients
+        all Fourier coefficients are returned. If ``n_coefs`` is an integer,
+        the ``n_coefs`` most significant Fourier coefficients are returned if
+        ``anova=True``, otherwise the first ``n_coefs`` Fourier coefficients
         are returned. A even number is required (for real and imaginary values)
         if ``anova=False``.
 
@@ -190,7 +190,7 @@ class DFT(BaseEstimator, TransformerMixin):
             raise TypeError("'anova' must be a boolean.")
         if (not self.anova) and isinstance(self.n_coefs, int):
             if self.n_coefs % 2 != 0:
-                raise ValueError("If 'anova' = False, n_coefs' must be an "
+                raise ValueError("If 'anova' = False, 'n_coefs' must be an "
                                  "even integer.")
 
         if not self.anova:

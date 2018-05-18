@@ -30,7 +30,7 @@ class StandardScaler(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, norm_mean, norm_std):
+    def __init__(self, norm_mean=True, norm_std=True):
         self.norm_mean = norm_mean
         self.norm_std = norm_std
 

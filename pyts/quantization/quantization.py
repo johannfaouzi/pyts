@@ -267,10 +267,10 @@ class SFA(BaseEstimator, TransformerMixin):
     Parameters
     ----------
     n_coefs : None or int (default = None)
-        The number of Fourier coefficients to keep. If ``coefs=None``,
-        all Fourier coefficients are returned. If `coefs` is an integer,
-        the `coefs` most significant Fourier coefficients are returned if
-        ``anova=True``, otherwise the first `coefs` Fourier coefficients
+        The number of Fourier coefficients to keep. If ``n_coefs=None``,
+        all Fourier coefficients are returned. If ``n_coefs`` is an integer,
+        the ``n_coefs`` most significant Fourier coefficients are returned if
+        ``anova=True``, otherwise the first ``n_coefs`` Fourier coefficients
         are returned. A even number is required (for real and imaginary values)
         if ``anova=False``.
 
@@ -320,7 +320,7 @@ class SFA(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : {array-like, sparse matrix}, shape = [n_samples, n_features]
+        X : array-like, shape = [n_samples, n_features]
             Training vector, where n_samples in the number of samples and
             n_features is the number of features.
 
