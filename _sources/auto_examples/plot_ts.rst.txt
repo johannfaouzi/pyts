@@ -36,7 +36,7 @@ This example shows how you can plot a single time series.
     plt.plot(X[0])
     plt.show()
 
-**Total running time of the script:** ( 0 minutes  0.068 seconds)
+**Total running time of the script:** ( 0 minutes  0.063 seconds)
 
 
 

@@ -90,28 +90,28 @@
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#preprocessing">Preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#approximation">Approximation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#references">References:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#quantization">Quantization</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id1">References:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">References</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#bag-of-words">Bag of Words</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#transformation">Transformation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id2">References:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">References</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#classification">Classification</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id3">References:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">References</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#image">Image</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id4">References:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">References</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#decomposition">Decomposition</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id5">References:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">References</a></li>
 </ul>
 </li>
 </ul>
@@ -223,7 +223,7 @@ the trend of the time series) or the ones that discriminate the different classe
 the most if a vector of class labels is provided.
 It is implemented as <a class="reference internal" href="approximation.html#pyts.approximation.DFT" title="pyts.approximation.DFT"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.approximation.DFT</span></code></a>.</p>
 <div class="section" id="references">
-<h3>References:<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+<h3>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Eamonn J. Keogh and Michael J. Pazzani.
 A simple dimensionality reduction technique for fast similarity search in
@@ -251,11 +251,11 @@ at each timestamp. It is implemented as <a class="reference internal" href="quan
 It performs DFT then MCB, i.e. MCB is applied to the selected Fourier coefficients
 of each time series. It is implemented as <a class="reference internal" href="quantization.html#pyts.quantization.SFA" title="pyts.quantization.SFA"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.quantization.SFA</span></code></a>.</p>
 <div class="section" id="id1">
-<h3>References:<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<h3>References<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Jessica Lin, Eamonn Keogh, Li Wei, and Stefano Lonardi. Experiencing SAX: a Novel
 Symbolic Representation of Time Series. <em>Data Mining and Knowledge Discovery</em>, 2007.</li>
-<li>Patrick Schäfer and Mikael Högqvist. (2012). SFA: A Symbolic Fourier Approximation
+<li>Patrick Schäfer and Mikael Högqvist. SFA: A Symbolic Fourier Approximation
 and Index for Similarity Search in High Dimensional Datasets.
 <em>ACM International Conference Proceeding Series</em>, 2012.</li>
 </ul>
@@ -289,7 +289,7 @@ one-way ANOVA test), several lengths for the sliding window are used and the mos
 discriminative features (i.e. words) are kept (based on the chi-2 test).
 It is implemented as <a class="reference internal" href="transformation.html#pyts.transformation.WEASEL" title="pyts.transformation.WEASEL"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.transformation.WEASEL</span></code></a>.</p>
 <div class="section" id="id2">
-<h3>References:<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<h3>References<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Patrick Schäfer. The BOSS is concerned with time series classification in
 the presence of noise. <em>Data Mining and Knowledge Discovery</em>, 2015.</li>
@@ -321,7 +321,7 @@ The outline of this algorithm is quite similar to the one of SAX-VSM but words
 are created using SFA instead of SAX.
 It is implemented as <a class="reference internal" href="classification.html#pyts.classification.BOSSVSClassifier" title="pyts.classification.BOSSVSClassifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.classification.BOSSVSClassifier</span></code></a>.</p>
 <div class="section" id="id3">
-<h3>References:<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<h3>References<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Meinard Müller. Dynamic Time Warping (DTW).
 <em>Information Retrieval for Music and Motion</em>, 2007.</li>
@@ -354,7 +354,7 @@ the Markov transition matrix (the quantized time series is seen as a Markov chai
 and finally to compute the Markov transition field from the transition matrix.
 It is implemented as <a class="reference internal" href="image.html#pyts.image.MTF" title="pyts.image.MTF"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.image.MTF</span></code></a>.</p>
 <div class="section" id="id4">
-<h3>References:<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<h3>References<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>J.-P. Eckmann, S. Oliffson Kamphorst and D. Ruelle.
 Recurrence Plots of Dynamical Systems. <em>Europhysics Letters</em>, 1987.</li>
@@ -375,7 +375,7 @@ transpose, after compute the eigenmatrices and finally compute the time series f
 eigenmatrice.
 It is implemented as <a class="reference internal" href="decomposition.html#pyts.decomposition.SSA" title="pyts.decomposition.SSA"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyts.decomposition.SSA</span></code></a>.</p>
 <div class="section" id="id5">
-<h3>References:<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<h3>References<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Nina Golyandina and Anatoly Zhigljavsky.
 Singular Spectrum Analysis for Time Series. 2013</li>
