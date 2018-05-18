@@ -46,8 +46,8 @@ the trend of the time series) or the ones that discriminate the different classe
 the most if a vector of class labels is provided.
 It is implemented as :class:`pyts.approximation.DFT`.
 
-References:
-^^^^^^^^^^^
+References
+^^^^^^^^^^
 
 - Eamonn J. Keogh and Michael J. Pazzani.
   A simple dimensionality reduction technique for fast similarity search in
@@ -79,13 +79,13 @@ The third algorithm implemented is **Symbolic Fourier Approximation (SFA)**.
 It performs DFT then MCB, i.e. MCB is applied to the selected Fourier coefficients
 of each time series. It is implemented as :class:`pyts.quantization.SFA`.
 
-References:
-^^^^^^^^^^^
+References
+^^^^^^^^^^
 
 - Jessica Lin, Eamonn Keogh, Li Wei, and Stefano Lonardi. Experiencing SAX: a Novel
   Symbolic Representation of Time Series. *Data Mining and Knowledge Discovery*, 2007.
 
-- Patrick Schäfer and Mikael Högqvist. (2012). SFA: A Symbolic Fourier Approximation
+- Patrick Schäfer and Mikael Högqvist. SFA: A Symbolic Fourier Approximation
   and Index for Similarity Search in High Dimensional Datasets.
   *ACM International Conference Proceeding Series*, 2012.
 
@@ -122,8 +122,8 @@ one-way ANOVA test), several lengths for the sliding window are used and the mos
 discriminative features (i.e. words) are kept (based on the chi-2 test).
 It is implemented as :class:`pyts.transformation.WEASEL`.
 
-References:
-^^^^^^^^^^^
+References
+^^^^^^^^^^
 
 - Patrick Schäfer. The BOSS is concerned with time series classification in
   the presence of noise. *Data Mining and Knowledge Discovery*, 2015.
@@ -158,8 +158,8 @@ The outline of this algorithm is quite similar to the one of SAX-VSM but words
 are created using SFA instead of SAX.
 It is implemented as :class:`pyts.classification.BOSSVSClassifier`.
 
-References:
-^^^^^^^^^^^
+References
+^^^^^^^^^^
 
 - Meinard Müller. Dynamic Time Warping (DTW).
   *Information Retrieval for Music and Motion*, 2007.
@@ -196,8 +196,8 @@ the Markov transition matrix (the quantized time series is seen as a Markov chai
 and finally to compute the Markov transition field from the transition matrix.
 It is implemented as :class:`pyts.image.MTF`.
 
-References:
-^^^^^^^^^^^
+References
+^^^^^^^^^^
 
 - J.-P. Eckmann, S. Oliffson Kamphorst and D. Ruelle.
   Recurrence Plots of Dynamical Systems. *Europhysics Letters*, 1987.
@@ -219,7 +219,7 @@ transpose, after compute the eigenmatrices and finally compute the time series f
 eigenmatrice.
 It is implemented as :class:`pyts.decomposition.SSA`.
 
-References:
+References
 ^^^^^^^^^^^
 
 - Nina Golyandina and Anatoly Zhigljavsky.
