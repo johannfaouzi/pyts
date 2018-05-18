@@ -49,7 +49,7 @@ numbers into a sequence of frequencies of words. It is implemented as
     plt.ylabel("Frequencies", fontsize=18)
     plt.show()
 
-**Total running time of the script:** ( 0 minutes  0.217 seconds)
+**Total running time of the script:** ( 0 minutes  0.185 seconds)
 
 
 

@@ -58,7 +58,7 @@ the tfidf vectors for each clss. BOSSVS algorithm is implemented as
     plt.legend(loc='best', fontsize=14)
     plt.show()
 
-**Total running time of the script:** ( 0 minutes  0.214 seconds)
+**Total running time of the script:** ( 0 minutes  0.206 seconds)
 
 
 

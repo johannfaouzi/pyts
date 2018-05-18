@@ -52,7 +52,7 @@ as :func:`pyts.utils.dtw`.
     plt.suptitle("Dynamic Time Warping", fontsize=22)
     plt.show()
 
-**Total running time of the script:** ( 0 minutes  0.202 seconds)
+**Total running time of the script:** ( 0 minutes  0.187 seconds)
 
 
 

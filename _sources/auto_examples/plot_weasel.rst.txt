@@ -51,7 +51,7 @@ numbers into a sequence of frequencies of words. It is implemented as
     plt.ylabel("Frequencies", fontsize=18)
     plt.show()
 
-**Total running time of the script:** ( 0 minutes  3.995 seconds)
+**Total running time of the script:** ( 0 minutes  3.813 seconds)
 
 
 

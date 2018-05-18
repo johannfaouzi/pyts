@@ -50,7 +50,7 @@ This example shows how you can approximate a time series using
     plt.legend(loc='best', fontsize=14)
     plt.show()
 
-**Total running time of the script:** ( 0 minutes  0.039 seconds)
+**Total running time of the script:** ( 0 minutes  0.037 seconds)
 
 
 

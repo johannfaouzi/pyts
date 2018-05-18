@@ -94,7 +94,7 @@ confusion matrix for each classifier is also plotted.
         plt.xlabel('Predicted label', fontsize=12)
     plt.show()
 
-**Total running time of the script:** ( 0 minutes  1.079 seconds)
+**Total running time of the script:** ( 0 minutes  0.966 seconds)
 
 
 
