@@ -3,7 +3,7 @@ Welcome to pyts, a Python package for time series transformation and classificat
 [![Build Status](https://travis-ci.org/johannfaouzi/pyts.svg?branch=dev)](https://travis-ci.org/johannfaouzi/pyts)
 [![codecov](https://codecov.io/gh/johannfaouzi/pyts/branch/master/graph/badge.svg)](https://codecov.io/gh/johannfaouzi/pyts)
 [![CircleCI](https://circleci.com/gh/johannfaouzi/pyts.svg?style=shield)](https://circleci.com/gh/johannfaouzi/pyts)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyts.svg)](https://img.shields.io/pypi/pyversions/pyts)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyts.svg)](https://img.shields.io/pypi/pyversions/pyts.svg)
 [![PyPI version](https://badge.fury.io/py/pyts.svg)](https://badge.fury.io/py/pyts)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1244152.svg)](https://doi.org/10.5281/zenodo.1244152)
 
