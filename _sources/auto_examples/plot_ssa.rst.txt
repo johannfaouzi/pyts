@@ -47,7 +47,7 @@ using :class:`pyts.decomposition.SSA`.
     plt.legend(loc='best', fontsize=14)
     plt.show()
 
-**Total running time of the script:** ( 0 minutes  0.385 seconds)
+**Total running time of the script:** ( 0 minutes  0.357 seconds)
 
 
 

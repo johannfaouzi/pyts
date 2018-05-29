@@ -52,7 +52,7 @@ Field using :class:`pyts.image.GASF` for Gramian Angular Summation Field and
     plt.title("GADF", fontsize=16)
     plt.show()
 
-**Total running time of the script:** ( 0 minutes  0.112 seconds)
+**Total running time of the script:** ( 0 minutes  0.120 seconds)
 
 
 

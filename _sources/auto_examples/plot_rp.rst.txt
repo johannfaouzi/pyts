@@ -45,7 +45,7 @@ using :class:`pyts.image.RecurrencePlots`.
     plt.imshow(X_rp[0], cmap='binary', origin='lower')
     plt.show()
 
-**Total running time of the script:** ( 0 minutes  0.501 seconds)
+**Total running time of the script:** ( 0 minutes  0.099 seconds)
 
 
 
