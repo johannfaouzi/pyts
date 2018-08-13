@@ -332,8 +332,7 @@ class MTF(BaseEstimator, TransformerMixin):
             AMTF = np.zeros((image_size, image_size))
             for i in range(image_size):
                 for j in range(image_size):
-                    AMTF[i, j] = MTF[np.arange(start[i], end[i]),
-                                     np.arange(start[j], end[j])].mean()
+                    AMTF[i, j] = MTF[start[i]:end[i], start[j]:end[j]].mean()
 
             return AMTF
 
