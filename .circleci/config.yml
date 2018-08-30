@@ -13,7 +13,7 @@ jobs:
             . venv/bin/activate
             sudo -E apt-get -yq remove texlive-binaries --purge
             sudo apt-get update
-            sudo apt-get install libatlas-dev libatlas3gf-base
+            sudo apt-get install libatlas-dev
             sudo apt-get install build-essential python-dev python-setuptools
             pip install --upgrade numpy
             pip install --upgrade scipy matplotlib setuptools nose coverage sphinx pillow sphinx-gallery sphinx_rtd_theme
