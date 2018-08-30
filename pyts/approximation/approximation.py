@@ -81,6 +81,16 @@ class PAA(BaseEstimator, TransformerMixin):
         n_samples, n_features = X.shape
 
         # Check parameters and compute window_size if output_size is given
+        window_size = self._check_params(self, n_samples, n_features)
+
+        if window_size == 1:
+            return X
+        else:
+            start, end, size = segmentation(n_features, window_size,
+                                            self.overlapping, self.output_size)
+            return np.apply_along_axis(self._paa, 1, X, start, end, size)
+
+    def _check_params(self, n_samples, n_features):
         if (self.window_size is None and self.output_size is None):
             raise TypeError("'window_size' xor 'output_size' must be "
                             "specified.")
@@ -114,13 +124,7 @@ class PAA(BaseEstimator, TransformerMixin):
                     "each time series.")
             window_size = n_features // self.output_size
             window_size += 0 if n_features % self.output_size == 0 else 1
-
-        if window_size == 1:
-            return X
-        else:
-            start, end, size = segmentation(n_features, window_size,
-                                            self.overlapping, self.output_size)
-            return np.apply_along_axis(self._paa, 1, X, start, end, size)
+        return window_size
 
     def _paa(self, ts, start, end, size):
         return np.array([ts[start[i]:end[i]].mean() for i in range(size)])
