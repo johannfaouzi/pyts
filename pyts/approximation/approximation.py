@@ -81,7 +81,7 @@ class PAA(BaseEstimator, TransformerMixin):
         n_samples, n_features = X.shape
 
         # Check parameters and compute window_size if output_size is given
-        window_size = self._check_params(self, n_samples, n_features)
+        window_size = self._check_params(n_samples, n_features)
 
         if window_size == 1:
             return X
