@@ -17,7 +17,7 @@ thus pyts provides several tools to perform these transformations.
 
 pyts has been tested on Python 2.7 and 3.5 with the following dependencies:
 
-- numpy (>= 1.8.2)
+- numpy (>= 1.13.3)
 - scipy (>= 0.13.3)
 - scikit-learn (>=0.17.0)
 - future (>=0.13.0) (for Python 2 compatibility)
