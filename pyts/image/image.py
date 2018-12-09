@@ -211,7 +211,7 @@ class MTF(BaseEstimator, TransformerMixin):
     n_bins : int (default = 4)
         Number of bins (also known as the size of the alphabet)
 
-    quantiles : {'gaussian', 'empirical'} (default = 'gaussian')
+    quantiles : {'gaussian', 'empirical'} (default = 'empirical')
         The way to compute quantiles. If 'gaussian', quantiles from a
         gaussian distribution N(0,1) are used. If 'empirical', empirical
         quantiles are used.
