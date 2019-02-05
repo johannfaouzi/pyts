@@ -37,7 +37,8 @@ class GASF(BaseEstimator, TransformerMixin):
         overlapping windows.
 
     scale : {-1, 0, None} (default = -1)
-        The lower bound of the scaled time series. If scale is None, the time series will not be scaled.
+        The lower bound of the scaled time series.
+        If scale is None, the time series will not be scaled.
 
     """
 
@@ -122,7 +123,8 @@ class GADF(BaseEstimator, TransformerMixin):
         done with possible overlapping windows.
 
     scale : {-1, 0, None} (default = -1)
-        The lower bound of the scaled time series. If scale is None, the time series will not be scaled.
+        The lower bound of the scaled time series.
+        If scale is None, the time series will not be scaled.
 
     """
 
