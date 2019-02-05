@@ -37,8 +37,8 @@ class GASF(BaseEstimator, TransformerMixin):
         overlapping windows.
 
     scale : {-1, 0, None} (default = -1)
-        The lower bound of the scaled time series.
-        If scale is None, the time series will not be scaled.
+        The lower bound of the scaled time series. If None, the time series
+        will not be scaled.
 
     """
 
@@ -100,6 +100,10 @@ class GASF(BaseEstimator, TransformerMixin):
             scaler = MinMaxScaler(feature_range=(self.scale, 1))
             X_scaled = scaler.fit_transform(X_paa.T).T
         else:
+            X_min, X_max = np.min(X), np.max(X)
+            if (X_min < -1) or (X_max > 1):
+                raise ValueError("If 'scaling=None', all the values of X "
+                                 "must be between -1 and 1".)
             X_scaled = X_paa
         X_sin = np.sqrt(np.clip(1 - X_scaled**2, 0, 1))
         X_scaled_outer = np.apply_along_axis(self._outer, 1, X_scaled)
@@ -123,8 +127,8 @@ class GADF(BaseEstimator, TransformerMixin):
         done with possible overlapping windows.
 
     scale : {-1, 0, None} (default = -1)
-        The lower bound of the scaled time series.
-        If scale is None, the time series will not be scaled.
+        The lower bound of the scaled time series. If None, the time series
+        will not be scaled.
 
     """
 
@@ -186,6 +190,10 @@ class GADF(BaseEstimator, TransformerMixin):
             scaler = MinMaxScaler(feature_range=(self.scale, 1))
             X_scaled = scaler.fit_transform(X_paa.T).T
         else:
+            X_min, X_max = np.min(X), np.max(X)
+            if (X_min < -1) or (X_max > 1):
+                raise ValueError("If 'scaling=None', all the values of X "
+                                 "must be between -1 and 1".)
             X_scaled = X_paa
         X_sin = np.sqrt(np.clip(1 - X_scaled**2, 0, 1))
         X_scaled_sin = np.hstack([X_scaled, X_sin])
