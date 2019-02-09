@@ -36,8 +36,9 @@ class GASF(BaseEstimator, TransformerMixin):
         If True, reduce the size of each time series using PAA with possible
         overlapping windows.
 
-    scale : {-1, 0} (default = -1)
-        The lower bound of the scaled time series.
+    scale : {-1, 0, None} (default = -1)
+        The lower bound of the scaled time series. If None, the time series
+        will not be scaled.
 
     """
 
@@ -90,13 +91,20 @@ class GASF(BaseEstimator, TransformerMixin):
                              "the size of each time series.")
         if not isinstance(self.overlapping, (float, int)):
             raise TypeError("'overlapping' must be a boolean.")
-        if self.scale not in [0, -1]:
-            raise ValueError("'scale' must be either 0 or -1.")
+        if self.scale not in [0, -1, None]:
+            raise ValueError("'scale' must be either 0, -1, or None.")
 
         paa = PAA(output_size=self.image_size, overlapping=self.overlapping)
         X_paa = paa.fit_transform(X)
-        scaler = MinMaxScaler(feature_range=(self.scale, 1))
-        X_scaled = scaler.fit_transform(X_paa.T).T
+        if self.scale is not None:
+            scaler = MinMaxScaler(feature_range=(self.scale, 1))
+            X_scaled = scaler.fit_transform(X_paa.T).T
+        else:
+            X_min, X_max = np.min(X), np.max(X)
+            if (X_min < -1) or (X_max > 1):
+                raise ValueError("If 'scaling=None', all the values of X "
+                                 "must be between -1 and 1".)
+            X_scaled = X_paa
         X_sin = np.sqrt(np.clip(1 - X_scaled**2, 0, 1))
         X_scaled_outer = np.apply_along_axis(self._outer, 1, X_scaled)
         X_sin_outer = np.apply_along_axis(self._outer, 1, X_sin)
@@ -118,8 +126,9 @@ class GADF(BaseEstimator, TransformerMixin):
         If True, reducing the size of the time series with PAA is
         done with possible overlapping windows.
 
-    scale : {-1, 0} (default = -1)
-        The lower bound of the scaled time series.
+    scale : {-1, 0, None} (default = -1)
+        The lower bound of the scaled time series. If None, the time series
+        will not be scaled.
 
     """
 
@@ -171,14 +180,21 @@ class GADF(BaseEstimator, TransformerMixin):
                              "the size of each time series.")
         if not isinstance(self.overlapping, (float, int)):
             raise TypeError("'overlapping' must be a boolean.")
-        if self.scale not in [0, -1]:
-            raise ValueError("'scale' must be either 0 or -1.")
+        if self.scale not in [0, -1, None]:
+            raise ValueError("'scale' must be either 0, -1, or None.")
 
         paa = PAA(output_size=self.image_size, overlapping=self.overlapping)
         X_paa = paa.fit_transform(X)
         n_features_new = X_paa.shape[1]
-        scaler = MinMaxScaler(feature_range=(self.scale, 1))
-        X_scaled = scaler.fit_transform(X_paa.T).T
+        if self.scale is not None:
+            scaler = MinMaxScaler(feature_range=(self.scale, 1))
+            X_scaled = scaler.fit_transform(X_paa.T).T
+        else:
+            X_min, X_max = np.min(X), np.max(X)
+            if (X_min < -1) or (X_max > 1):
+                raise ValueError("If 'scaling=None', all the values of X "
+                                 "must be between -1 and 1".)
+            X_scaled = X_paa
         X_sin = np.sqrt(np.clip(1 - X_scaled**2, 0, 1))
         X_scaled_sin = np.hstack([X_scaled, X_sin])
         X_scaled_sin_outer = np.apply_along_axis(self._outer_stacked,
