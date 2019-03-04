@@ -1,5 +1,10 @@
-"""The :mod:`pyts.image` module includes imaging algorithms."""
+"""
+The :mod:`pyts.image` module includes algorithms that transform times series
+into images.
+"""
 
-from .image import GASF, GADF, MTF, RecurrencePlots
+from .gaf import GramianAngularField
+from .mtf import MarkovTransitionField
+from .recurrence import RecurrencePlot
 
-__all__ = ['GASF', 'GADF', 'MTF', 'RecurrencePlots']
+__all__ = ['GramianAngularField', 'MarkovTransitionField', 'RecurrencePlot']

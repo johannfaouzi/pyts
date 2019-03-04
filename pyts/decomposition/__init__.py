@@ -1,5 +1,6 @@
-"""The :mod:`pyts.decomposition` module includes decomposition algorithms."""
+"""The :mod:`pyts.approximation` module includes decomposition algorithms."""
 
-from .decomposition import SSA
+from .ssa import SingularSpectrumAnalysis
 
-__all__ = ['SSA']
+
+__all__ = ['SingularSpectrumAnalysis']

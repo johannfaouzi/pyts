@@ -1,15 +1,8 @@
-"""The :mod:`pyts.utils` module includes utility functions."""
+"""Code for utility tools."""
 
-from __future__ import division
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import absolute_import
-from builtins import range
-from future import standard_library
 import numpy as np
-
-
-standard_library.install_aliases()
+from numpy.lib.stride_tricks import as_strided
+from sklearn.utils import check_array
 
 
 def segmentation(ts_size, window_size, overlapping, n_segments=None):
@@ -29,7 +22,7 @@ def segmentation(ts_size, window_size, overlapping, n_segments=None):
 
     n_segments : int or None (default = None)
         The number of windows. If None, the number is automatically
-        computed using `window_size`.
+        computed using ``window_size``.
 
     Returns
     -------
@@ -40,12 +33,33 @@ def segmentation(ts_size, window_size, overlapping, n_segments=None):
         The upper bound for each window.
 
     size : int
-        The size of `start`.
+        The size of ``start``.
 
     """
+    if not isinstance(ts_size, (int, np.integer)):
+        raise TypeError("'ts_size' must be an integer.")
+    if not ts_size >= 2:
+        raise ValueError("'ts_size' must be an integer greater than or equal "
+                         "to 2 (got {0}).".format(ts_size))
+    if not isinstance(window_size, (int, np.integer)):
+        raise TypeError("'window_size' must be an integer.")
+    if not window_size >= 1:
+        raise ValueError("'window_size' must be an integer greater than or "
+                         "equal to 1 (got {0}).".format(window_size))
+    if not window_size <= ts_size:
+        raise ValueError("'window_size' must be lower than or equal to "
+                         "'ts_size' ({0} > {1}).".format(window_size, ts_size))
+    if not (n_segments is None or isinstance(n_segments, (int, np.integer))):
+        raise TypeError("'n_segments' must be None or an integer.")
+    if isinstance(n_segments, (int, np.integer)):
+        if not n_segments <= ts_size:
+            raise ValueError(
+                "If 'n_segments' is an integer, it must be lower than or "
+                "equal to 'ts_size' ({0} > {1}).".format(n_segments, ts_size)
+            )
+
     if n_segments is None:
-        quotient = ts_size // window_size
-        remainder = ts_size % window_size
+        quotient, remainder = divmod(ts_size, window_size)
         n_segments = quotient if remainder == 0 else quotient + 1
 
     bounds = np.linspace(0, ts_size,
@@ -67,220 +81,44 @@ def segmentation(ts_size, window_size, overlapping, n_segments=None):
         return new_start, new_end, size
 
 
-def numerosity_reduction(arr):
-    """Perform numerosity reduction.
+def windowed_view(X, window_size, window_step=1):
+    """Return a windowed view of a 2D array.
 
     Parameters
     ----------
-    arr : array-like, shape [n_samples]
+    X : array-like, shape = (n_samples, n_timestamps)
+        Input data.
+
+    window_size : int
+        The size of the window. It must be between 1 and ``n_timestamps``.
+
+    window_step : int (default = 1)
+        The step of the sliding window
 
     Returns
     -------
-    res : str
-        string with each word separated with a whitespace.
+    X_new : array, shape = (n_samples, n_windows, window_size)
+        Windowed view of the input data. ``n_windows``is computed as
+        ``(n_timestamps - window_size + window_step) // window_step``.
 
     """
-    not_equal = np.array(arr[1:] != arr[:-1])
-    return ' '.join(np.append(arr[np.where(not_equal)], arr[-1]))
+    X = check_array(X, dtype=None)
+    n_samples, n_timestamps = X.shape
 
+    if not isinstance(window_size, (int, np.integer)):
+        raise TypeError("'window_size' must be an integer.")
+    if not 1 <= window_size <= n_timestamps:
+        raise ValueError("'window_size' must be an integer between 1 and "
+                         "n_timestamps.")
+    if not isinstance(window_step, (int, np.integer)):
+        raise TypeError("'window_step' must be an integer.")
+    if not 1 <= window_step <= n_timestamps:
+        raise ValueError("'window_step' must be an integer between 1 and "
+                         "n_timestamps.")
 
-def dtw(x, y, dist='absolute', return_path=False, **kwargs):
-    """Dynamic Time Warping.
-
-    Parameters
-    ----------
-    x : array-like, shape [n1]
-        First array.
-
-    y : array-like, shape [n2]
-        Second array
-
-    dist : {'absolute', 'square' or callable} (default = 'absolue')
-        The distance metric used. If callable, the first two arguments
-        must be float numbers.
-
-    return_path : bool (default = False)
-        If true, the path along the accumulated cost matrix is returned.
-
-    kwargs
-        Additional keyword arguments for `dist` if `dist` is callable.
-        Ignored otherwise.
-
-    """
-    x_size = x.size
-
-    # Cost matrix
-    C = [[] for _ in range(x_size)]
-
-    if dist == 'absolute':
-        for i in range(x_size):
-            for j in range(x_size):
-                C[i].append(abs(x[i] - y[j]))
-
-    elif dist == 'square':
-        for i in range(x_size):
-            for j in range(x_size):
-                C[i].append((x[i] - y[j])**2)
-
-    else:
-        for i in range(x_size):
-            for j in range(x_size):
-                C[i].append(dist(x[i], y[j], **kwargs))
-
-    # Accumulated cost matrix
-    D = [[0] for _ in range(x_size)]
-
-    # Compute first row
-    D[0] = np.cumsum(C[0]).tolist()
-
-    # Compute first column
-    for j in range(1, x_size):
-        D[j][0] = D[j - 1][0] + C[j][0]
-
-    # Compute the remaining cells recursively
-    for j in range(1, x_size):
-        for i in range(1, x_size):
-            D[i].append(C[i][j] + min(D[i - 1][j - 1],
-                                      D[i - 1][j],
-                                      D[i][j - 1]))
-
-    if not return_path:
-        return D[x_size - 1][x_size - 1]
-
-    else:
-        path = [(x_size - 1, x_size - 1)]
-        while path[-1] != (0, 0):
-            i, j = path[-1]
-            if i == 0:
-                path.append((0, j - 1))
-            elif j == 0:
-                path.append((i - 1, 0))
-            else:
-                List = [D[i - 1][j - 1], D[i - 1][j], D[i][j - 1]]
-                argmin_List = List.index(min(List))
-                if argmin_List == 0:
-                    path.append((i - 1, j - 1))
-                elif argmin_List == 1:
-                    path.append((i - 1, j))
-                else:
-                    path.append((i, j - 1))
-
-        return D, path[::-1]
-
-
-def fast_dtw(x, y, window_size, approximation=True,
-             dist='absolute', return_path=False, **kwargs):
-    """Fast Dynamic Time Warping.
-
-    Parameters
-    ----------
-    x : array-like, shape [n1]
-        First array.
-
-    y : array-like, shape [n2]
-        Second array
-
-    window_size : int
-        The size of the window for the PAA algorithm.
-
-    approximation : bool (default = True)
-        If True, compute Dynamic Time Warping between the shrunk time
-        series. If False, compute Dynamic Time Warping on the original
-        time series with a constraint region based on the path of the
-        Dynamic Time Warping of the shrunk time series.
-
-    dist : {'absolute', 'square' or callable} (default = 'absolue')
-        The distance metric used. If callable, the first two arguments
-        must be float numbers.
-
-    return_path : bool (default = False)
-        If true, the path along the accumulated cost matrix is returned.
-
-    kwargs
-        Additional keyword arguments for `dist` if `dist` is callable.
-        Ignored otherwise.
-
-    """
-    x_size = x.size
-
-    # Compute path for shrunk time series
-    remainder = x_size % window_size
-
-    if remainder != 0:
-        x_copy = np.append(x, [x[-1] for _ in range(window_size - remainder)])
-        y_copy = np.append(y, [y[-1] for _ in range(window_size - remainder)])
-    else:
-        x_copy = x.copy()
-        y_copy = y.copy()
-
-    x_shrunk_size = x_copy.size // window_size
-    x_shrunk = x_copy.reshape(x_shrunk_size, window_size).mean(axis=1)
-    y_shrunk = y_copy.reshape(x_shrunk_size, window_size).mean(axis=1)
-
-    if approximation:
-        return dtw(x_shrunk, y_shrunk, dist, return_path, **kwargs)
-
-    else:
-        _, fast_path = dtw(x_shrunk, y_shrunk, dist, True, **kwargs)
-
-        # Region of constraints
-        region = {}
-        for i, j in fast_path:
-            first_value = i * window_size
-            second_value = min((i + 1) * window_size, x_size)
-            for a in range(window_size):
-                key = j * window_size + a
-                if key < x_size:
-                    if key not in region.keys():
-                        region[key] = np.arange(first_value, second_value)
-                    else:
-                        region[key] = np.append(region[key],
-                                                np.arange(first_value,
-                                                          second_value)
-                                                )
-        # Cost matrix
-        C = [[] for _ in range(x_size)]
-        if dist == 'absolute':
-            for i in range(x_size):
-                for j in range(x_size):
-                    C[i].append(abs(x[i] - y[j]))
-        elif dist == 'square':
-            for i in range(x_size):
-                for j in range(x_size):
-                    C[i].append((x[i] - y[j])**2)
-        else:
-            for i in range(x_size):
-                for j in range(x_size):
-                    C[i].append(dist(x[i], y[j], **kwargs))
-
-        # Accumulated cost matrix
-        D = np.zeros((x_size, x_size)) + np.inf
-        D[0, :window_size] = np.cumsum(np.asarray(C[0][:window_size]))
-        for j in range(1, window_size):
-            D[j, 0] = D[j - 1, 0] + C[j][0]
-        for j in range(1, x_size):
-            for i in region[j]:
-                D[i, j] = C[i][j] + min(D[i - 1][j - 1],
-                                        D[i - 1][j],
-                                        D[i][j - 1])
-        if not return_path:
-            return D[x_size - 1][x_size - 1]
-        else:
-            path = [(x_size - 1, x_size - 1)]
-            while path[-1] != (0, 0):
-                i, j = path[-1]
-                if i == 0:
-                    path.append((0, j - 1))
-                elif j == 0:
-                    path.append((i - 1, 0))
-                else:
-                    liste = [D[i - 1][j - 1], D[i - 1][j], D[i][j - 1]]
-                    argmin_liste = np.argmin(liste)
-                    if argmin_liste == 0:
-                        path.append((i - 1, j - 1))
-                    elif argmin_liste == 1:
-                        path.append((i - 1, j))
-                    else:
-                        path.append((i, j - 1))
-
-        return region, D, path[::-1]
+    overlap = window_size - window_step
+    shape_new = (n_samples, ) + ((n_timestamps - overlap) // window_step,
+                                 window_size)
+    s0, s1 = X.strides
+    strides_new = (s0, window_step * s1, s1)
+    return as_strided(X, shape=shape_new, strides=strides_new)

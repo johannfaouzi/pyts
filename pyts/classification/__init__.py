@@ -1,5 +1,7 @@
 """The :mod:`pyts.classification` module includes classification algorithms."""
 
-from .classification import KNNClassifier, SAXVSMClassifier, BOSSVSClassifier
+from .bossvs import BOSSVS
+from .knn import KNeighborsClassifier
+from .saxvsm import SAXVSM
 
-__all__ = ['KNNClassifier', 'SAXVSMClassifier', 'BOSSVSClassifier']
+__all__ = ['BOSSVS', 'KNeighborsClassifier', 'SAXVSM']

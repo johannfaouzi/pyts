@@ -1,4 +1,4 @@
-Copyright (c) 2018, Johann Faouzi
+Copyright (c) 2018, Johann Faouzi and pyts contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@ modification, are permitted provided that the following conditions are met:
   and/or other materials provided with the distribution.
 
 * Neither the name of pyts nor the names of its contributors may be used to
-  endorse or promote products derived from this software without specific 
+  endorse or promote products derived from this software without specific
   prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"

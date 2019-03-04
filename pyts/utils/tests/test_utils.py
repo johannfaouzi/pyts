@@ -1,12 +1,53 @@
-"""Tests for :mod:`pyts.utils` module."""
+"""Testing for utility tools."""
 
 import numpy as np
 from itertools import product
-from ..utils import segmentation, numerosity_reduction, dtw, fast_dtw
+from ..utils import segmentation, windowed_view
 
 
 def test_segmentation():
-    """Testing 'segmentation'."""
+    """Test 'segmentation' function."""
+    # Parameters check
+    def type_error_list():
+        type_error_list_ = ["'ts_size' must be an integer.",
+                            "'window_size' must be an integer.",
+                            "'n_segments' must be None or an integer."]
+        return type_error_list_
+
+    def value_error_list(ts_size, window_size, n_segments):
+        value_error_list_ = [
+            "'ts_size' must be an integer greater than or equal "
+            "to 2 (got {0}).".format(ts_size),
+            "'window_size' must be an integer greater than or "
+            "equal to 1 (got {0}).".format(window_size),
+            "'window_size' must be lower than or equal to "
+            "'ts_size' ({0} > {1}).".format(window_size, ts_size),
+            "If 'n_segments' is an integer, it must be lower than or "
+            "equal to 'ts_size' ({0} > {1}).".format(n_segments, ts_size)
+        ]
+        return value_error_list_
+
+    ts_size_list = [-1, 2, 3, None]
+    window_size_list = [-1, 1, 2, 4, None]
+    overlapping_list = [True, False]
+    n_segments_list = [-1, 1, 2, 4, None]
+
+    for (ts_size, window_size, overlapping, n_segments) in product(
+        ts_size_list, window_size_list, overlapping_list, n_segments_list
+    ):
+        try:
+            segmentation(ts_size, window_size, overlapping, n_segments)
+        except ValueError as e:
+            if str(e) in value_error_list(ts_size, window_size, n_segments):
+                pass
+            else:
+                raise ValueError("Unexpected ValueError: {}".format(e))
+        except TypeError as e:
+            if str(e) in type_error_list():
+                pass
+            else:
+                raise TypeError("Unexpected TypeError: {}".format(e))
+
     # Test 1
     bounds = np.array([0, 4, 8, 12, 16, 20])
     window_size = 4
@@ -19,96 +60,65 @@ def test_segmentation():
     np.testing.assert_array_equal(res_actual[1], res_end)
     np.testing.assert_equal(res_actual[2], res_size)
 
-    # Test: loop
-    ts_size_list = [10, 13]
-    window_size_list = [4, 7]
-    overlapping_list = [True, False]
-    n_segments_list = [None, 3]
-    for (ts_size, window_size, overlapping,
-         n_segments) in product(*[ts_size_list,
-                                  window_size_list,
-                                  overlapping_list,
-                                  n_segments_list]):
-        segmentation(ts_size, window_size, overlapping, n_segments)
 
+def test_windowed_view():
+    """Test 'windowed_view' function."""
+    X = np.arange(10).reshape(2, 5)
 
-def test_numerosity_reduction():
-    """Testing 'numerosity_reduction'."""
+    # Parameters check
+    def type_error_list():
+        type_error_list_ = ["'window_size' must be an integer.",
+                            "'window_step' must be an integer."]
+        return type_error_list_
+
+    def value_error_list():
+        value_error_list_ = [
+            "'window_size' must be an integer between 1 and n_timestamps.",
+            "'window_step' must be an integer between 1 and n_timestamps."
+        ]
+        return value_error_list_
+
+    window_size_list = [-1, 1, 2, 4, None]
+    window_step_list = [-1, 1, 2, 4, None]
+
+    for (window_size, window_step) in product(
+        window_size_list, window_step_list
+    ):
+        try:
+            windowed_view(X, window_size, window_step)
+        except ValueError as e:
+            if str(e) in value_error_list():
+                pass
+            else:
+                raise ValueError("Unexpected ValueError: {}".format(e))
+        except TypeError as e:
+            if str(e) in type_error_list():
+                pass
+            else:
+                raise TypeError("Unexpected TypeError: {}".format(e))
+
     # Test 1
-    array = np.array(["aaa", "aaa", "aaa", "bbb", "bbb", "ccc", "aaa"])
-    arr_actual = numerosity_reduction(array)
-    arr_desired = ' '.join(["aaa", "bbb", "ccc", "aaa"])
+    arr_actual = windowed_view(X, window_size=3, window_step=1)
+    arr_desired = [[[0, 1, 2],
+                    [1, 2, 3],
+                    [2, 3, 4]],
+                   [[5, 6, 7],
+                    [6, 7, 8],
+                    [7, 8, 9]]]
     np.testing.assert_array_equal(arr_actual, arr_desired)
 
-
-def test_dtw():
-    """Testing 'dtw'."""
-    # Parameter 1
-    x1 = np.array([1, -1, -1, 1, 1])
-    x2 = np.array([1, 1, -1, -1, 1])
-
-    # Test 1
-    cost_actual = dtw(x1, x2)
-    cost_desired = 0
-    np.testing.assert_equal(cost_actual, cost_desired)
-
-    # Parameter 2
-    x1 = np.array([1, -1, 1, 1, 1, -1])
-    x2 = np.ones(6)
-    x3 = - np.ones(6)
-
-    # Test 1
-    cost_actual = dtw(x1, x2)
-    cost_desired = 4
-    np.testing.assert_equal(cost_actual, cost_desired)
-
     # Test 2
-    cost_actual = dtw(x1, x3)
-    cost_desired = 8
-    np.testing.assert_equal(cost_actual, cost_desired)
+    arr_actual = windowed_view(X, window_size=3, window_step=2)
+    arr_desired = [[[0, 1, 2],
+                    [2, 3, 4]],
+                   [[5, 6, 7],
+                    [7, 8, 9]]]
+    np.testing.assert_array_equal(arr_actual, arr_desired)
 
     # Test 3
-    cost_actual = dtw(x2, x3)
-    cost_desired = 12
-    np.testing.assert_equal(cost_actual, cost_desired)
-
-    # Test: loop
-    dist_list = ['absolute', 'square', lambda x, y: (x - y)**4]
-    return_path_list = [True, False]
-    for (dist, return_path) in product(*[dist_list, return_path_list]):
-        dtw(x1, x2, dist, return_path)
-
-
-def test_fast_dtw():
-    """Testing 'fast_dtw'."""
-    # Parameter
-    x1 = np.array([1, -1, 1, 1, 1, -1])
-    x2 = np.ones(6)
-    x3 = - np.ones(6)
-
-    # Test 1
-    cost_actual = fast_dtw(x1, x2, window_size=2)
-    cost_desired = 2
-    np.testing.assert_equal(cost_actual, cost_desired)
-
-    # Test 2
-    cost_actual = fast_dtw(x1, x3, window_size=2)
-    cost_desired = 4
-    np.testing.assert_equal(cost_actual, cost_desired)
-
-    # Test 3
-    cost_actual = fast_dtw(x2, x3, window_size=2)
-    cost_desired = 6
-    np.testing.assert_equal(cost_actual, cost_desired)
-
-    # Test: loop
-    window_size_list = [2, 3]
-    approximation_list = [True, False]
-    dist_list = ['absolute', 'square', lambda x, y: (x - y)**4]
-    return_path_list = [True, False]
-    for (window_size, approximation, dist,
-         return_path) in product(*[window_size_list,
-                                   approximation_list,
-                                   dist_list,
-                                   return_path_list]):
-        fast_dtw(x1, x2, window_size, approximation, 'absolute', return_path)
+    arr_actual = windowed_view(X, window_size=2, window_step=3)
+    arr_desired = [[[0, 1],
+                    [3, 4]],
+                   [[5, 6],
+                    [8, 9]]]
+    np.testing.assert_array_equal(arr_actual, arr_desired)
