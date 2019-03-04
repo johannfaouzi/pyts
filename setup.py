@@ -1,5 +1,6 @@
 """A python package for time series transformation and classification."""
 
+import pyts
 from setuptools import find_packages, setup
 
 
