@@ -1,7 +1,8 @@
 """Testing for Markov Transition Field."""
 
 import numpy as np
-from itertools import product
+import pytest
+import re
 from ..mtf import (_markov_transition_matrix,
                    _markov_transition_field,
                    _aggregated_markov_transition_field,
@@ -100,48 +101,56 @@ def test_MarkovTransitionField():
     X = np.tile(np.arange(8), 2).reshape(2, 8)
 
     # Parameter check
-    def type_error_list():
-        type_error_list_ = [
-            "'image_size' must be an integer or a float.",
-            "'n_bins' must be an integer."
-        ]
-        return type_error_list_
+    msg_error = "'image_size' must be an integer or a float."
+    with pytest.raises(TypeError, match=msg_error):
+        mtf = MarkovTransitionField(
+            image_size="3", n_bins=2, strategy='quantile', overlapping=False
+        )
+        mtf.fit_transform(X)
 
-    def value_error_list(image_size):
-        value_error_list_ = [
-            "If 'image_size' is an integer, it must be greater "
-            "than or equal to 1 and lower than or equal to the size "
-            "of each time series (i.e. the size of the last dimension "
-            "of X) (got {0}).".format(image_size),
-            "If 'image_size' is a float, it must be greater "
-            "than or equal to 0 and lower than or equal to 1 "
-            "(got {0}).".format(image_size),
-            "'n_bins' must be greater than or equal to 2.",
-            "'strategy' must be 'uniform', 'quantile' or 'normal'."
-        ]
-        return value_error_list_
+    msg_error = "'n_bins' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        mtf = MarkovTransitionField(
+            image_size=3, n_bins="4", strategy='quantile', overlapping=False
+        )
+        mtf.fit_transform(X)
 
-    image_size_list = [1., -1, 2., None]
-    n_bins_list = [0, 2, None]
-    strategy_list = ['quantile', 'normal', 'uniform', None]
-    overlapping_list = [True, False]
+    msg_error = re.escape(
+        "If 'image_size' is an integer, it must be greater "
+        "than or equal to 1 and lower than or equal to the size "
+        "of each time series (i.e. the size of the last dimension "
+        "of X) (got {0}).".format(0)
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        mtf = MarkovTransitionField(
+            image_size=0, n_bins=2, strategy='quantile', overlapping=False
+        )
+        mtf.fit_transform(X)
 
-    for (image_size, n_bins, strategy, overlapping) in product(
-        image_size_list, n_bins_list, strategy_list, overlapping_list
-    ):
-        mtf = MarkovTransitionField(image_size, n_bins, strategy, overlapping)
-        try:
-            mtf.fit_transform(X)
-        except ValueError as e:
-            if str(e) in value_error_list(image_size):
-                pass
-            else:
-                raise ValueError("Unexpected ValueError: {}".format(e))
-        except TypeError as e:
-            if str(e) in type_error_list():
-                pass
-            else:
-                raise TypeError("Unexpected TypeError: {}".format(e))
+    msg_error = re.escape(
+        "If 'image_size' is a float, it must be greater "
+        "than or equal to 0 and lower than or equal to 1 "
+        "(got {0}).".format(2.),
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        mtf = MarkovTransitionField(
+            image_size=2., n_bins=2, strategy='quantile', overlapping=False
+        )
+        mtf.fit_transform(X)
+
+    msg_error = "'n_bins' must be greater than or equal to 2."
+    with pytest.raises(ValueError, match=msg_error):
+        mtf = MarkovTransitionField(
+            image_size=3, n_bins=1, strategy='quantile', overlapping=False
+        )
+        mtf.fit_transform(X)
+
+    msg_error = "'strategy' must be 'uniform', 'quantile' or 'normal'."
+    with pytest.raises(ValueError, match=msg_error):
+        mtf = MarkovTransitionField(
+            image_size=3, n_bins=2, strategy='whoops', overlapping=False
+        )
+        mtf.fit_transform(X)
 
     # Accurate result check
     image_size, n_bins, quantiles = 2, 4, 'quantile'

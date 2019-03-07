@@ -23,7 +23,7 @@ def _uniform_bins(timestamp_min, timestamp_max, n_timestamps, n_bins):
 def _digitize_1d(X, bins, n_samples, n_timestamps):
     X_digit = np.empty((n_samples, n_timestamps))
     for i in prange(n_timestamps):
-        X_digit[:, i] = np.digitize(X[:, i], bins)
+        X_digit[:, i] = np.digitize(X[:, i], bins, right=True)
     return X_digit
 
 
@@ -31,7 +31,7 @@ def _digitize_1d(X, bins, n_samples, n_timestamps):
 def _digitize_2d(X, bins, n_samples, n_timestamps):
     X_digit = np.empty((n_samples, n_timestamps))
     for i in prange(n_timestamps):
-        X_digit[:, i] = np.digitize(X[:, i], bins[i])
+        X_digit[:, i] = np.digitize(X[:, i], bins[i], right=True)
     return X_digit
 
 
@@ -189,7 +189,7 @@ class MultipleCoefficientBinning(BaseEstimator, TransformerMixin):
             raise ValueError(
                 "The number of timestamps in X must be the same as "
                 "the number of timestamps when `fit` was called "
-                "({0} != {1})".format(self._n_timestamps_fit, X.shape[1])
+                "({0} != {1}).".format(self._n_timestamps_fit, X.shape[1])
             )
 
     def _compute_bins(self, X, y, n_timestamps, n_bins, strategy):

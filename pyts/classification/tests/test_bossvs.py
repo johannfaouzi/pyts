@@ -1,7 +1,8 @@
 """Testing for Bag-of-SFA Symbols in Vector Space."""
 
 import numpy as np
-from itertools import product
+import pytest
+import re
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 from ..bossvs import BOSSVS
@@ -15,59 +16,85 @@ def test_BOSSVS():
     y = np.asarray([0, 0, 0, 0, 1, 1, 1, 1])
 
     # Parameter check
-    def type_error_list():
-        type_error_list_ = [
-            "'word_size' must be an integer.",
-            "'window_size' must be an integer or a float.",
-            "'window_step' must be an integer or a float.",
-        ]
-        return type_error_list_
+    msg_error = "'word_size' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        bossvs = BOSSVS(word_size="3", window_size=4,
+                        window_step=1, drop_sum=False)
+        bossvs.fit(X, y).predict(X)
 
-    def value_error_list():
-        value_error_list_ = [
-            "'word_size' must be a positive integer.",
-            "If 'window_size' is an integer, it must be greater "
-            "than or equal to 1 and lower than or equal to "
-            "(n_timestamps - 1) if 'drop_sum=True'.",
-            "If 'window_size' is an integer, it must be greater "
-            "than or equal to 1 and lower than or equal to "
-            "n_timestamps if 'drop_sum=False'.",
-            "If 'window_size' is a float, it must be greater "
-            "than 0 and lower than or equal to 1.",
-            "If 'window_step' is an integer, it must be greater "
-            "than or equal to 1 and lower than or equal to "
-            "n_timestamps.",
-            "If 'window_step' is a float, it must be greater "
-            "than 0 and lower than or equal to 1.",
-            "'word_size' must be lower than or equal to "
-            "(window_size - 1) if 'drop_sum=True'.",
-            "'word_size' must be lower than or equal to "
-            "window_size if 'drop_sum=False'."
-        ]
-        return value_error_list_
+    msg_error = "'window_size' must be an integer or a float."
+    with pytest.raises(TypeError, match=msg_error):
+        bossvs = BOSSVS(word_size=2, window_size="3",
+                        window_step=1, drop_sum=False)
+        bossvs.fit(X, y).predict(X)
 
-    word_size_list = [-1, 2, 40, 8, None]
-    window_size_list = [-1, 2, 5, 7, 8, 0.5, None]
-    window_step_list = [-1, 2, 5, 7, 8, 0.5, None]
-    drop_sum_list = [True, False]
+    msg_error = "'window_step' must be an integer or a float."
+    with pytest.raises(TypeError, match=msg_error):
+        bossvs = BOSSVS(word_size=2, window_size=4,
+                        window_step=None, drop_sum=False)
+        bossvs.fit(X, y).predict(X)
 
-    for (word_size, window_size, window_step, drop_sum) in product(
-        word_size_list, window_size_list, window_step_list, drop_sum_list
-    ):
-        bossvs = BOSSVS(word_size=word_size, window_size=window_size,
-                        window_step=window_step, drop_sum=drop_sum)
-        try:
-            bossvs.fit(X, y).predict(X)
-        except ValueError as e:
-            if str(e) in value_error_list():
-                pass
-            else:
-                raise ValueError("Unexpected ValueError: {}".format(e))
-        except TypeError as e:
-            if str(e) in type_error_list():
-                pass
-            else:
-                raise TypeError("Unexpected TypeError: {}".format(e))
+    msg_error = "'word_size' must be a positive integer."
+    with pytest.raises(ValueError, match=msg_error):
+        bossvs = BOSSVS(word_size=0, window_size=4,
+                        window_step=1, drop_sum=False)
+        bossvs.fit(X, y).predict(X)
+
+    msg_error = re.escape(
+        "If 'window_size' is an integer, it must be greater "
+        "than or equal to 1 and lower than or equal to "
+        "(n_timestamps - 1) if 'drop_sum=True'."
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        bossvs = BOSSVS(word_size=2, window_size=0,
+                        window_step=1, drop_sum=True)
+        bossvs.fit(X, y).predict(X)
+
+    msg_error = (
+        "If 'window_size' is a float, it must be greater "
+        "than 0 and lower than or equal to 1."
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        bossvs = BOSSVS(word_size=2, window_size=2.,
+                        window_step=1, drop_sum=False)
+        bossvs.fit(X, y).predict(X)
+
+    msg_error = (
+        "If 'window_step' is an integer, it must be greater "
+        "than or equal to 1 and lower than or equal to "
+        "n_timestamps."
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        bossvs = BOSSVS(word_size=2, window_size=4,
+                        window_step=0, drop_sum=False)
+        bossvs.fit(X, y).predict(X)
+
+    msg_error = (
+        "If 'window_step' is a float, it must be greater "
+        "than 0 and lower than or equal to 1."
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        bossvs = BOSSVS(word_size=2, window_size=4,
+                        window_step=2., drop_sum=False)
+        bossvs.fit(X, y).predict(X)
+
+    msg_error = re.escape(
+        "'word_size' must be lower than or equal to "
+        "(window_size - 1) if 'drop_sum=True'."
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        bossvs = BOSSVS(word_size=4, window_size=4,
+                        window_step=1, drop_sum=True)
+        bossvs.fit(X, y).predict(X)
+
+    msg_error = (
+        "'word_size' must be lower than or equal to "
+        "window_size if 'drop_sum=False'."
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        bossvs = BOSSVS(word_size=5, window_size=4,
+                        window_step=1, drop_sum=False)
+        bossvs.fit(X, y).predict(X)
 
     # Test 1: numerosity_reduction=False
     bossvs = BOSSVS(

@@ -1,7 +1,8 @@
 """Testing for imputers."""
 
 import numpy as np
-from itertools import product
+import pytest
+import re
 from ..imputer import InterpolationImputer
 
 
@@ -11,31 +12,33 @@ def test_InterpolationImputer():
     X = [[None, 0, 1, 2, None, 4],
          [0, 2, 4, None, 8, np.nan]]
 
-    def value_error_list(missing_values, strategy):
-        value_error_list_ = [
-            "'missing_values' cannot be infinity.",
-            "'missing_values' must be an integer, a float, None or "
-            "np.nan (got {0!s})".format(missing_values),
-            "'strategy' must be an integer or one of 'linear', 'nearest', "
-            "'zero', 'slinear', 'quadratic', 'cubic', 'previous', 'next' "
-            "(got {0})".format(strategy)
-        ]
-        return value_error_list_
+    msg_error = "'missing_values' cannot be infinity."
+    with pytest.raises(ValueError, match=msg_error):
+        imputer = InterpolationImputer(
+            missing_values=np.inf, strategy='linear'
+        )
+        imputer.fit_transform(X)
 
-    missing_values_list = [-3, None, np.inf, np.nan]
-    strategy_list = ['linear', 2, None]
-    for (missing_values, strategy) in product(
-        missing_values_list, strategy_list
-    ):
-        try:
-            imputer = InterpolationImputer(
-                missing_values=missing_values, strategy=strategy
-            )
-        except ValueError as e:
-            if str(e) in value_error_list(missing_values, strategy):
-                pass
-            else:
-                raise ValueError("Unexpected ValueError: {0}".format(e))
+    msg_error = re.escape(
+        "'missing_values' must be an integer, a float, None or "
+        "np.nan (got {0!s})".format("3")
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        imputer = InterpolationImputer(
+            missing_values="3", strategy='linear'
+        )
+        imputer.fit_transform(X)
+
+    msg_error = re.escape(
+        "'strategy' must be an integer or one of 'linear', 'nearest', "
+        "'zero', 'slinear', 'quadratic', 'cubic', 'previous', 'next' "
+        "(got {0})".format('whoops')
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        imputer = InterpolationImputer(
+            missing_values=np.nan, strategy='whoops'
+        )
+        imputer.fit_transform(X)
 
     # Test 1
     X = [[None, 0, 1, 2, None, 4],

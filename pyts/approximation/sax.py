@@ -113,13 +113,8 @@ class SymbolicAggregateApproximation(BaseEstimator, TransformerMixin):
         elif self.alphabet == 'ordinal':
             alphabet = 'ordinal'
         else:
-            try:
-                alphabet = np.asarray(self.alphabet)
-            except:
-                raise ValueError("'alphabet' must be None or array-like "
-                                 "with shape (n_bins, ).")
-            else:
-                if alphabet.shape != (self.n_bins, ):
-                    raise ValueError("If 'alphabet' is array-like, its shape "
-                                     "must be equal to (n_bins, ).")
+            alphabet = np.asarray(self.alphabet)
+            if alphabet.shape != (self.n_bins, ):
+                raise ValueError("If 'alphabet' is array-like, its shape "
+                                 "must be equal to (n_bins,).")
         return alphabet

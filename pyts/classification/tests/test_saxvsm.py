@@ -1,6 +1,7 @@
 """Testing for SAX-VSM."""
 
 import numpy as np
+import pytest
 from math import log
 from sklearn.metrics.pairwise import cosine_similarity
 from ..saxvsm import SAXVSM
@@ -8,6 +9,19 @@ from ..saxvsm import SAXVSM
 
 def test_SAXVSM():
     """Test 'SAXVSM' class."""
+    # Parameter check
+    msg_error = "'n_bins' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        clf = SAXVSM(n_bins="3", strategy='uniform', window_size=2,
+                     numerosity_reduction=False, sublinear_tf=False)
+        clf.fit(np.c_[np.ones((4, 5)), np.zeros((4, 6))], [0, 0, 1, 1])
+
+    msg_error = "'n_bins' must be between 2 and 26."
+    with pytest.raises(ValueError, match=msg_error):
+        clf = SAXVSM(n_bins=30, strategy='uniform', window_size=2,
+                     numerosity_reduction=False, sublinear_tf=False)
+        clf.fit(np.c_[np.ones((4, 5)), np.zeros((4, 6))], [0, 0, 1, 1])
+
     # Test 1
     X = [[0, 0, 0, 1, 0, 0, 1, 1, 1],
          [0, 1, 1, 1, 0, 0, 1, 1, 1],

@@ -1,8 +1,40 @@
 """Testing for Multiple Coefficient Binning."""
 
 import numpy as np
-from itertools import product
-from ..mcb import MultipleCoefficientBinning
+import pytest
+import re
+from ..mcb import _uniform_bins, _digitize, MultipleCoefficientBinning
+
+
+def test_uniform_bins():
+    """Test '_uniform_bins' function."""
+    timestamp_min = np.arange(5)
+    timestamp_max = np.arange(2, 7)
+    arr_actual = _uniform_bins(timestamp_min, timestamp_max,
+                               n_timestamps=5, n_bins=2)
+    arr_desired = ((timestamp_min + timestamp_max) / 2).reshape(5, 1)
+    np.testing.assert_array_equal(arr_actual, arr_desired)
+
+
+def test_digitize():
+    """Test '_digitize' function."""
+    n_samples = 10
+    n_bins = 5
+    X = np.asarray([np.linspace(0, 1, n_samples),
+                    np.linspace(0, 1, n_samples)[::-1]]).T
+    bins = np.percentile(X, np.linspace(0, 100, n_bins + 1)[1:-1], axis=0).T
+
+    # Accuracte result (1d) check
+    arr_actual = _digitize(X, bins[0])
+    arr_desired = np.asarray([np.repeat(np.arange(n_bins), 2),
+                              np.repeat(np.arange(n_bins), 2)[::-1]]).T
+    np.testing.assert_array_equal(arr_actual, arr_desired)
+
+    # Accuracte result (2d) check
+    arr_actual = _digitize(X, bins)
+    arr_desired = np.asarray([np.repeat(np.arange(n_bins), 2),
+                              np.repeat(np.arange(n_bins), 2)[::-1]]).T
+    np.testing.assert_array_equal(arr_actual, arr_desired)
 
 
 def test_MultipleCoefficientBinning():
@@ -11,91 +43,58 @@ def test_MultipleCoefficientBinning():
     y = [0, 0, 0, 1, 1, 2, 1]
 
     # Parameter check
-    def type_error_list():
-        type_error_list_ = ["'n_bins' must be an integer."]
-        return type_error_list_
+    msg_error = "'n_bins' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        mcb = MultipleCoefficientBinning(n_bins=None, strategy='quantile')
+        mcb.fit_transform(X, y)
 
-    def value_error_list(n_bins, strategy):
-        value_error_list_ = [
-            "'n_bins' must be greater than or equal to 2 and lower than "
-            "or equal to n_samples (got {0}).".format(n_bins),
-            "'strategy' must be either 'uniform', 'quantile', "
-            "'normal' or 'entropy' (got {0}).".format(strategy),
-        ]
-        return value_error_list_
+    msg_error = re.escape(
+        "'n_bins' must be greater than or equal to 2 and lower than "
+        "or equal to n_samples (got {0}).".format(1)
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        mcb = MultipleCoefficientBinning(n_bins=1, strategy='quantile')
+        mcb.fit_transform(X, y)
 
-    n_bins_list = [None, 1, 2]
-    strategy_list = [None, 'quantile']
-
-    for (n_bins, strategy) in product(n_bins_list, strategy_list):
-        mcb = MultipleCoefficientBinning(n_bins, strategy)
-        try:
-            mcb.fit_transform(X, y)
-        except ValueError as e:
-            if str(e) in value_error_list(n_bins, strategy):
-                pass
-            else:
-                raise ValueError("Unexpected ValueError: {}".format(e))
-        except TypeError as e:
-            if str(e) in type_error_list():
-                pass
-            else:
-                raise TypeError("Unexpected TypeError: {}".format(e))
+    msg_error = re.escape(
+        "'strategy' must be either 'uniform', 'quantile', "
+        "'normal' or 'entropy' (got {0}).".format('whoops')
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        mcb = MultipleCoefficientBinning(n_bins=2, strategy='whoops')
+        mcb.fit_transform(X, y)
 
     # Consistent lengths check
-    mcb = MultipleCoefficientBinning(n_bins=3, strategy='quantile')
-    try:
-        mcb.fit(X, y).transform(X[:, :5])
-    except ValueError as e:
-        value_error = (
-            "The number of timestamps in X must be the same as "
-            "the number of timestamps when `fit` was called "
-            "({0} != {1})".format(7, 5)
-        )
-        if str(e) == value_error:
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
+    msg_error = re.escape(
+        "The number of timestamps in X must be the same as "
+        "the number of timestamps when `fit` was called "
+        "({0} != {1}).".format(2, 1)
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        mcb = MultipleCoefficientBinning(n_bins=3, strategy='quantile')
+        mcb.fit(X, y).transform(X[:, :1])
 
     # Constant feature check
-    mcb = MultipleCoefficientBinning(n_bins=3, strategy='quantile')
-    try:
+    msg_error = ("At least one timestamp is constant.")
+    with pytest.raises(ValueError, match=msg_error):
+        mcb = MultipleCoefficientBinning(n_bins=3, strategy='quantile')
         mcb.fit(np.ones((10, 2)))
-    except ValueError as e:
-        if str(e) == "At least one timestamp is constant.":
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
 
     # 'quantile' bins check
-    mcb = MultipleCoefficientBinning(n_bins=6, strategy='quantile')
-    try:
+    msg_error = ("At least two consecutive quantiles are equal. "
+                 "You should try with a smaller number of bins or "
+                 "remove features with low variation.")
+    with pytest.raises(ValueError, match=msg_error):
+        mcb = MultipleCoefficientBinning(n_bins=6, strategy='quantile')
         mcb.fit(np.r_[np.zeros((4, 2)), np.ones((4, 2))])
-    except ValueError as e:
-        value_error = (
-            "At least two consecutive quantiles are equal. "
-            "You should try with a smaller number of bins or "
-            "remove features with low variation."
-        )
-        if str(e) == value_error:
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
 
     # 'entropy' bins check
-    mcb = MultipleCoefficientBinning(n_bins=6, strategy='entropy')
-    try:
+    msg_error = ("The number of bins is too high for feature {0}. "
+                 "Try with a smaller number of bins or remove "
+                 "this feature.".format(0))
+    with pytest.raises(ValueError, match=msg_error):
+        mcb = MultipleCoefficientBinning(n_bins=6, strategy='entropy')
         mcb.fit(X, y)
-    except ValueError as e:
-        value_error = (
-            "The number of bins is too high for feature {0}. "
-            "Try with a smaller number of bins or remove "
-            "this feature.".format(0)
-        )
-        if str(e) == value_error:
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
 
     # Test 1
     mcb = MultipleCoefficientBinning(
@@ -104,9 +103,9 @@ def test_MultipleCoefficientBinning():
     arr_actual = mcb.fit_transform(X)
     arr_desired = [[0, 0],
                    [0, 0],
+                   [0, 0],
                    [1, 1],
                    [1, 1],
-                   [2, 2],
                    [2, 2],
                    [2, 2]]
     np.testing.assert_array_equal(arr_actual, arr_desired)
@@ -118,9 +117,9 @@ def test_MultipleCoefficientBinning():
     arr_actual = mcb.fit_transform(X)
     arr_desired = [[0, 0],
                    [0, 0],
+                   [0, 0],
                    [1, 1],
                    [1, 1],
-                   [2, 2],
                    [2, 2],
                    [2, 2]]
     np.testing.assert_array_equal(arr_actual, arr_desired)

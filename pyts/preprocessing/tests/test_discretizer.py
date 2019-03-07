@@ -1,6 +1,8 @@
 """Testing for discretizers."""
 
 import numpy as np
+import pytest
+import re
 from itertools import product
 from warnings import catch_warnings
 from ..discretizer import _uniform_bins, _digitize, KBinsDiscretizer
@@ -38,50 +40,44 @@ def test_digitize():
 
 def test_KBinsDiscretizer():
     """Test 'KBinsDiscretizer' class."""
-    # Parameter check
-    def value_error_list(n_bins, strategy):
-        value_error_list_ = [
-            "'n_bins' must be greater than or equal to 2 and lower than "
-            "or equal to n_timestamps (got {0}).".format(n_bins),
-            "'strategy' must be either 'uniform', 'quantile' "
-            "or 'normal' (got {0}).".format(strategy)
-        ]
-        return value_error_list_
-
-    def type_error_list():
-        type_error_list_ = ["'n_bins' must be an integer."]
-        return type_error_list_
-
     X = np.arange(15).reshape(3, 5)
-    n_bins_list = ['0', 0, 2]
-    strategy_list = [0, 'uniform']
-    for (n_bins, strategy) in product(n_bins_list, strategy_list):
-        discretizer = KBinsDiscretizer(n_bins=n_bins, strategy=strategy)
-        try:
-            discretizer.fit_transform(X)
-        except ValueError as e:
-            if str(e) not in value_error_list(n_bins, strategy):
-                raise ValueError("Unexpected ValueError: {}".format(e))
-        except TypeError as e:
-            if str(e) not in type_error_list():
-                raise TypeError("Unexpected TypeError: {}".format(e))
+
+    # Parameter check
+    msg_error = "'n_bins' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        discretizer = KBinsDiscretizer(n_bins=None, strategy='uniform')
+        discretizer.fit_transform(X)
+
+    msg_error = re.escape(
+        "'n_bins' must be greater than or equal to 2 and lower than "
+        "or equal to n_timestamps (got {0}).".format(0)
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        discretizer = KBinsDiscretizer(n_bins=0, strategy='uniform')
+        discretizer.fit_transform(X)
+
+    msg_error = re.escape(
+        "'strategy' must be either 'uniform', 'quantile' "
+        "or 'normal' (got {0}).".format('whoops')
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        discretizer = KBinsDiscretizer(n_bins=2, strategy='whoops')
+        discretizer.fit_transform(X)
 
     # Constant check
-    X = np.ones((10, 15))
-    discretizer = KBinsDiscretizer(n_bins=3, strategy='uniform')
-    try:
-        discretizer._check_constant(X)
-    except ValueError as e:
-        if str(e) != "At least one sample is constant.":
-            raise ValueError("Unexpected ValueError: {}".format(e))
+    msg_error = "At least one sample is constant."
+    with pytest.raises(ValueError, match=msg_error):
+        discretizer = KBinsDiscretizer(n_bins=2, strategy='uniform')
+        discretizer.fit_transform(np.ones((10, 15)))
 
     # Compute bins check
-    X = [0] * 5 + 1 * [2] + [2] * 5
-    X = np.asarray(X).reshape(1, -1)
-    discretizer = KBinsDiscretizer()
     with catch_warnings(record=True) as w:
-        discretizer._compute_bins(X, n_samples=1,
-                                  n_bins=5, strategy='quantile')
+        X = [0] * 5 + 1 * [2] + [2] * 5
+        X = np.asarray(X).reshape(1, -1)
+        discretizer = KBinsDiscretizer()
+        discretizer._compute_bins(
+            X, n_samples=1, n_bins=5, strategy='quantile'
+        )
         warning = (
             "Some quantiles are equal. The number of bins will be "
             "smaller for sample {0}. Consider decreasing the number "

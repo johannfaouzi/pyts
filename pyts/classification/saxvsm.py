@@ -114,6 +114,7 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
 
         """
         X, y = check_X_y(X, y)
+        self._check_params()
         check_classification_targets(y)
         le = LabelEncoder()
         y_ind = le.fit_transform(y)

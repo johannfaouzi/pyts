@@ -41,6 +41,3 @@ def test_QuantileTransformer():
     arr_desired = X
     atol = 0.01 * X.shape[1]
     np.testing.assert_allclose(arr_actual, arr_desired, atol=atol)
-
-
-test_QuantileTransformer()

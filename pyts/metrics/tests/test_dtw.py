@@ -1,7 +1,8 @@
 """Testing for Dynamic Time Warping and its variants."""
 
 import numpy as np
-from itertools import product
+import pytest
+import re
 from numba import njit
 from ..dtw import (
     _square, _absolute, cost_matrix, accumulated_cost_matrix, _check_input_dtw,
@@ -31,71 +32,33 @@ def test_cost_matrix():
     y = np.arange(3)[::-1]
 
     # Parameter check
-    try:
-        cost_matrix(x[:, None], y, dist='square')
-    except ValueError as e:
-        if str(e) == "'x' must a one-dimensional array.":
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
-
-    try:
-        cost_matrix(x, y[:, None], dist='square')
-    except ValueError as e:
-        if str(e) == "'y' must a one-dimensional array.":
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
-
-    try:
-        cost_matrix(x, y[:2], dist='square')
-    except ValueError as e:
-        if str(e) == "'x' and 'y' must have the same shape.":
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
-
-    try:
+    msg_error = re.escape("'dist' must be either 'square', 'absolute' or "
+                          "callable (got {0}).".format('sqaure'))
+    with pytest.raises(ValueError, match=msg_error):
         cost_matrix(x, y, dist='sqaure')
-    except ValueError as e:
-        if str(e) == ("'dist' must be either 'square', 'absolute' or "
-                      "callable (got {0}).".format('sqaure')):
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
 
-    try:
+    msg_error = re.escape("Calling dist(1, 1) did not work.")
+    with pytest.raises(ValueError, match=msg_error):
         @njit()
         def _dist(x):
             return x
         cost_matrix(x, y, dist=_dist)
-    except ValueError as e:
-        if str(e) == "Calling dist(1, 1) did not work.":
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
 
-    try:
+    msg_error = re.escape("Calling dist(1, 1) did not return a float or an "
+                          "integer.")
+    with pytest.raises(ValueError, match=msg_error):
         @njit()
         def _dist(x, y):
             return "abc"
         cost_matrix(x, y, dist=_dist)
-    except ValueError as e:
-        if str(e) == ("Calling dist(1, 1) did not return a float or an "
-                      "integer."):
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
 
-    try:
+    msg_error = re.escape(
+        "The shape of 'region' must be equal to "
+        "(2, n_timestamps) (got {0})".format((1, 2))
+    )
+    with pytest.raises(ValueError, match=msg_error):
         region = np.asarray([[1, 2]])
         cost_matrix(x, y, dist='square', region=region)
-    except ValueError as e:
-        if str(e) == ("The shape of 'region' must be equal to "
-                      "(2, n_timestamps) (got {0})".format((region.shape))):
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
 
     # Test 1
     arr_actual = cost_matrix(x, y, dist='square')
@@ -133,23 +96,17 @@ def test_cost_matrix():
 def test_accumulated_cost_matrix():
     """Test 'accumulated_cost_matrix' function."""
     # Parameter check
-    try:
+    msg_error = "'cost_mat' must be a square matrix."
+    with pytest.raises(ValueError, match=msg_error):
         accumulated_cost_matrix(np.ones((4, 3)))
-    except ValueError as e:
-        if str(e) == "'cost_mat' must be a square matrix.":
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
 
-    try:
+    msg_error = re.escape(
+        "The shape of 'region' must be equal to "
+        "(2, n_timestamps) (got {0})".format((1, 2))
+    )
+    with pytest.raises(ValueError, match=msg_error):
         region = np.asarray([[1, 2]])
         accumulated_cost_matrix(np.ones((4, 4)), region=region)
-    except ValueError as e:
-        if str(e) == ("The shape of 'region' must be equal to "
-                      "(2, n_timestamps) (got {0})".format(region.shape)):
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
 
     cost_mat = [[0, 2, 5], [2, 1, 4], [5, 4, 5]]
 
@@ -192,29 +149,17 @@ def test_check_input_dtw():
     x = np.arange(3)
     y = np.arange(3)[::-1]
 
-    try:
+    msg_error = "'x' must a one-dimensional array."
+    with pytest.raises(ValueError, match=msg_error):
         _check_input_dtw(x[:, None], y)
-    except ValueError as e:
-        if str(e) == "'x' must a one-dimensional array.":
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
 
-    try:
+    msg_error = "'y' must a one-dimensional array."
+    with pytest.raises(ValueError, match=msg_error):
         _check_input_dtw(x, y[:, None])
-    except ValueError as e:
-        if str(e) == "'y' must a one-dimensional array.":
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
 
-    try:
+    msg_error = "'x' and 'y' must have the same shape."
+    with pytest.raises(ValueError, match=msg_error):
         _check_input_dtw(x, y[:2])
-    except ValueError as e:
-        if str(e) == "'x' and 'y' must have the same shape.":
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
 
 
 def test_dtw_classic():
@@ -245,15 +190,21 @@ def test_dtw_region():
     y = np.arange(1, 4)
 
     # Region check
-    region = [[0, 1], [0, 1], [0, 1]]
-    try:
+    msg_error = re.escape(
+        "If 'region' is not None, it must be array-like "
+        "with shape (2, n_timestamps)."
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        region = {}
         dtw_region(x, y, dist='square', region=region)
-    except ValueError as e:
-        if str(e) == ("If 'region' is not None, it must be array-like "
-                      "with shape (2, n_timestamps)."):
-            pass
-        else:
-            raise ValueError("Unexpected ValueError: {}".format(e))
+
+    msg_error = re.escape(
+        "If 'region' is not None, it must be array-like "
+        "with shape (2, n_timestamps)."
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        region = [[0, 1], [0, 1], [0, 1]]
+        dtw_region(x, y, dist='square', region=region)
 
     # Test 1
     res = dtw_region(x, y, dist='square', region=None, return_cost=True,
@@ -294,30 +245,27 @@ def test_dtw_region():
 def test_sakoe_chiba_band():
     """Test 'sakoe_chiba_band' function."""
     # Parameter check
-    n_timestamps_list = [None, 6]
-    window_size_list = [None, -1, 2.]
-    for (n_timestamps, window_size) in product(
-        n_timestamps_list, window_size_list
-    ):
-        try:
-            sakoe_chiba_band(n_timestamps, window_size)
-        except ValueError as e:
-            if str(e) in [
-                "'n_timestamps' must be an integer greater than or "
-                "equal to 2.",
-                "If 'window_size' is an integer, it must be greater "
-                "than or equal to 0 and lower than 'n_timestamps'.",
-                "If 'window_size' is a float, it must be between 0 and 1."
-            ]:
-                pass
-            else:
-                raise ValueError("Unexpected ValueError: {}".format(e))
-        except TypeError as e:
-            if str(e) in ["'n_timestamps' must be an intger.",
-                          "'window_size' must be an integer or a float."]:
-                pass
-            else:
-                raise TypeError("Unexpected TypeError: {}".format(e))
+    msg_error = "'n_timestamps' must be an intger."
+    with pytest.raises(TypeError, match=msg_error):
+        sakoe_chiba_band(n_timestamps='1', window_size=0.1)
+
+    msg_error = "'window_size' must be an integer or a float."
+    with pytest.raises(TypeError, match=msg_error):
+        sakoe_chiba_band(n_timestamps=10, window_size=None)
+
+    msg_error = ("'n_timestamps' must be an integer greater than or "
+                 "equal to 2.")
+    with pytest.raises(ValueError, match=msg_error):
+        sakoe_chiba_band(n_timestamps=0, window_size=0.1)
+
+    msg_error = ("If 'window_size' is an integer, it must be greater "
+                 "than or equal to 0 and lower than 'n_timestamps'.")
+    with pytest.raises(ValueError, match=msg_error):
+        sakoe_chiba_band(n_timestamps=5, window_size=10)
+
+    msg_error = "If 'window_size' is a float, it must be between 0 and 1."
+    with pytest.raises(ValueError, match=msg_error):
+        sakoe_chiba_band(n_timestamps=5, window_size=2.)
 
     # Test 1
     n_timestamps, window_size = 4, 2
@@ -361,27 +309,23 @@ def test_dtw_sakoechiba():
 def test_itakura_parallelogram():
     """Test 'itakura_parallelogram' function."""
     # Parameter check
-    n_timestamps_list = [None, -1, 4]
-    max_slope_list = [None, 0, 2]
-    for (n_timestamps, max_slope) in product(
-        n_timestamps_list, max_slope_list
-    ):
-        try:
-            itakura_parallelogram(n_timestamps, max_slope)
-        except TypeError as e:
-            if str(e) in ["'n_timestamps' must be an intger.",
-                          "'max_slope' must be an integer or a float."]:
-                pass
-            else:
-                raise TypeError("Unexpected TypeError: {}".format(e))
-        except ValueError as e:
-            if str(e) in ["'n_timestamps' must be an integer greater than "
-                          "or equal to 2.",
-                          "'max_slope' must be a number greater "
-                          "than or equal to 1."]:
-                pass
-            else:
-                raise ValueError("Unexpected ValueError: {}".format(e))
+    msg_error = "'n_timestamps' must be an intger."
+    with pytest.raises(TypeError, match=msg_error):
+        itakura_parallelogram(n_timestamps=None, max_slope=2.)
+
+    msg_error = "'max_slope' must be an integer or a float."
+    with pytest.raises(TypeError, match=msg_error):
+        itakura_parallelogram(n_timestamps=10, max_slope="-2")
+
+    msg_error = ("'n_timestamps' must be an integer greater than "
+                 "or equal to 2.")
+    with pytest.raises(ValueError, match=msg_error):
+        itakura_parallelogram(n_timestamps=1, max_slope=2.)
+
+    msg_error = "'max_slope' must be a number greater than or equal to 1."
+    with pytest.raises(ValueError, match=msg_error):
+        itakura_parallelogram(n_timestamps=10, max_slope=0.5)
+
     # Test
     n_timestamps, max_slope = 4, 2
     arr_actual = itakura_parallelogram(n_timestamps, max_slope)
@@ -439,23 +383,21 @@ def test_dtw_multiscale():
     y = np.arange(1, 5)
 
     # Parameter check
-    resolution_list = [None, -1, 2]
-    radius_list = ["0", -1, 1]
-    for (resolution, radius) in product(resolution_list, radius_list):
-        try:
-            dtw_multiscale(x, y, resolution=resolution, radius=radius)
-        except TypeError as e:
-            if str(e) in ["'resolution' must be an integer.",
-                          "'radius' must be an integer."]:
-                pass
-            else:
-                raise TypeError("Unexpected TypeError: {}".format(e))
-        except ValueError as e:
-            if str(e) in ["'resolution' must be a positive integer.",
-                          "'radius' must be a non-negative integer."]:
-                pass
-            else:
-                raise ValueError("Unexpected ValueError: {}".format(e))
+    msg_error = "'resolution' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        dtw_multiscale(x, y, resolution='-1', radius=2)
+
+    msg_error = "'radius' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        dtw_multiscale(x, y, resolution=3, radius=None)
+
+    msg_error = "'resolution' must be a positive integer."
+    with pytest.raises(ValueError, match=msg_error):
+        dtw_multiscale(x, y, resolution=0, radius=2)
+
+    msg_error = "'radius' must be a non-negative integer."
+    with pytest.raises(ValueError, match=msg_error):
+        dtw_multiscale(x, y, resolution=3, radius=-3)
 
     # Test 1
     res = dtw_multiscale(x, y, resolution=2, radius=0, return_cost=True,

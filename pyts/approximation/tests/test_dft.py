@@ -1,7 +1,8 @@
 """Testing for Discrete Fourier Transform."""
 
-from itertools import product
 import numpy as np
+import pytest
+import re
 from ..dft import DiscreteFourierTransform
 
 
@@ -12,46 +13,40 @@ def test_DiscreteFourierTransform():
     y = [0, 0, 0, 1, 1]
 
     # Parameter check
-    def type_error_list():
-        type_error_list_ = ["'n_coefs' must be None, an integer or a float."]
-        return type_error_list_
-
-    def value_error_list():
-        value_error_list_ = [
-            "If 'n_coefs' is an integer, it must be greater than or "
-            "equal to 1 and lower than or equal to n_timestamps if "
-            "'drop_sum=False'.",
-            "If 'n_coefs' is an integer, it must be greater than or "
-            "equal to 1 and lower than or equal to (n_timestamps - 1) "
-            "if 'drop_sum=True'.",
-            "If 'n_coefs' is a float, it must be greater "
-            "than 0 and lower than or equal to 1."
-        ]
-        return value_error_list_
-
-    n_coefs_list = [-1, -1., 0.5, 2, None, "str"]
-    drop_sum_list = [True, False]
-    anova_list = [True, False]
-    norm_mean_list = [True, False]
-    norm_std_list = [True, False]
-    for (n_coefs, drop_sum, anova, norm_mean, norm_std) in product(
-        n_coefs_list, drop_sum_list, anova_list, norm_mean_list, norm_std_list
-    ):
+    msg_error = "'n_coefs' must be None, an integer or a float."
+    with pytest.raises(TypeError, match=msg_error):
         dft = DiscreteFourierTransform(
-            n_coefs, drop_sum, anova, norm_mean, norm_std)
-        try:
-            dft.fit(X, y).transform(X)
-            dft.fit_transform(X, y)
-        except ValueError as e:
-            if str(e) in value_error_list():
-                pass
-            else:
-                raise ValueError("Unexpected ValueError: {}".format(e))
-        except TypeError as e:
-            if str(e) in type_error_list():
-                pass
-            else:
-                raise TypeError("Unexpected TypeError: {}".format(e))
+            n_coefs='-1', drop_sum=False, anova=False, norm_mean=False,
+            norm_std=False)
+        dft.fit(X, y).transform(X)
+
+    msg_error = ("If 'n_coefs' is an integer, it must be greater than or "
+                 "equal to 1 and lower than or equal to n_timestamps if "
+                 "'drop_sum=False'.")
+    with pytest.raises(ValueError, match=msg_error):
+        dft = DiscreteFourierTransform(
+            n_coefs=0, drop_sum=False, anova=False, norm_mean=False,
+            norm_std=False)
+        dft.fit(X, y).transform(X)
+
+    msg_error = re.escape(
+        "If 'n_coefs' is an integer, it must be greater than or "
+        "equal to 1 and lower than or equal to (n_timestamps - 1) "
+        "if 'drop_sum=True'."
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        dft = DiscreteFourierTransform(
+            n_coefs=10, drop_sum=True, anova=False, norm_mean=False,
+            norm_std=False)
+        dft.fit(X, y).transform(X)
+
+    msg_error = ("If 'n_coefs' is a float, it must be greater "
+                 "than 0 and lower than or equal to 1.")
+    with pytest.raises(ValueError, match=msg_error):
+        dft = DiscreteFourierTransform(
+            n_coefs=2., drop_sum=False, anova=False, norm_mean=False,
+            norm_std=False)
+        dft.fit(X, y).transform(X)
 
     # Test 1
     X = rng.randn(5, 8)

@@ -1,7 +1,8 @@
 """Testing for Symbolic Aggregate Approximation."""
 
-from itertools import product
 import numpy as np
+import pytest
+import re
 from ..sax import SymbolicAggregateApproximation
 
 
@@ -16,7 +17,7 @@ def test_SymbolicAggregateApproximation():
             "value.",
             "'strategy' must be either 'uniform', 'quantile' "
             "or 'normal' (got {0})".format(strategy),
-            "'alphabet' must be None or array-like with shape (n_bins, ).",
+            "'alphabet' must be None or array-like with shape (n_bins,).",
             "If 'alphabet' is array-like, its shape must be equal to "
             "(n_bins, )."
         ]
@@ -31,22 +32,58 @@ def test_SymbolicAggregateApproximation():
         return type_error_list_
 
     X = np.arange(15).reshape(3, 5)
-    n_bins_list = ['0', 0, 2]
-    strategy_list = [0, 'uniform']
-    alphabet_list = [None, ['a'], ['a', 'b'], 'unexpected']
-    for (n_bins, strategy, alphabet) in product(
-        n_bins_list, strategy_list, alphabet_list
-    ):
+
+    # Parameter check
+    msg_error = "'n_bins' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
         sax = SymbolicAggregateApproximation(
-            n_bins=n_bins, strategy=strategy, alphabet=alphabet)
-        try:
-            sax.fit_transform(X)
-        except ValueError as e:
-            if str(e) not in value_error_list(n_bins, strategy):
-                raise ValueError("Unexpected ValueError: {}".format(e))
-        except TypeError as e:
-            if str(e) not in type_error_list(alphabet):
-                raise TypeError("Unexpected TypeError: {}".format(e))
+            n_bins=None, strategy='quantile', alphabet=None
+        )
+        sax.fit_transform(X)
+
+    msg_error = re.escape("'alphabet' must be None, 'ordinal' or array-like "
+                          "with shape (n_bins,) (got {0})".format('whoops'))
+    with pytest.raises(TypeError, match=msg_error):
+        sax = SymbolicAggregateApproximation(
+            n_bins=2, strategy='quantile', alphabet='whoops'
+        )
+        sax.fit_transform(X)
+
+    msg_error = re.escape(
+        "'n_bins' must be greater than or equal to 2 and lower than "
+        "or equal to n_timestamps (got {0}).".format(15)
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        sax = SymbolicAggregateApproximation(
+            n_bins=15, strategy='quantile', alphabet=None
+        )
+        sax.fit_transform(X)
+
+    msg_error = ("'n_bins' is unexpectedly high. You should try with a "
+                 "smaller value.")
+    with pytest.raises(ValueError, match=msg_error):
+        sax = SymbolicAggregateApproximation(
+            n_bins=10000000, strategy='quantile', alphabet=None
+        )
+        sax.fit_transform(np.c_[np.zeros((2, 10000000)),
+                                np.ones((2, 10000000))])
+
+    msg_error = re.escape("'strategy' must be either 'uniform', 'quantile' "
+                          "or 'normal' (got {0})".format('whoops'))
+    with pytest.raises(ValueError, match=msg_error):
+        sax = SymbolicAggregateApproximation(
+            n_bins=3, strategy='whoops', alphabet=None
+        )
+        sax.fit_transform(X)
+
+    msg_error = re.escape(
+        "If 'alphabet' is array-like, its shape must be equal to (n_bins,)."
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        sax = SymbolicAggregateApproximation(
+            n_bins=3, strategy='quantile', alphabet=[0, 1]
+        )
+        sax.fit_transform(X)
 
     # Test 1
     X = [[0, 1, 2, 3, 4]]

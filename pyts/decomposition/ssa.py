@@ -5,7 +5,7 @@ from math import ceil
 from numba import njit, prange
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_array
-from pyts.utils import windowed_view
+from ..utils import windowed_view
 
 
 @njit
@@ -156,9 +156,8 @@ class SingularSpectrumAnalysis(BaseEstimator, TransformerMixin):
             if not 2 <= self.window_size <= n_timestamps:
                 raise ValueError(
                     "If 'window_size' is an integer, it must be greater "
-                    "than or equal to 2 and lower than or equal to the "
-                    "size of each time series (i.e. the size of the last "
-                    "dimension of X) (got {0}).".format(self.window_size)
+                    "than or equal to 2 and lower than or equal to "
+                    "n_timestamps (got {0}).".format(self.window_size)
                 )
             window_size = self.window_size
         else:
@@ -175,8 +174,10 @@ class SingularSpectrumAnalysis(BaseEstimator, TransformerMixin):
                             "or array-like.")
         if isinstance(self.groups, (int, np.integer)):
             if not 1 <= self.groups <= self.window_size:
-                raise ValueError("If 'groups' is an integer, it must be "
-                                 "betwenn 1 and 'window_size'.")
+                raise ValueError(
+                    "If 'groups' is an integer, it must be greater than or "
+                    "equal to 1 and lower than or equal to 'window_size'."
+                )
         if isinstance(self.groups, (list, tuple, np.ndarray)):
             idx = np.concatenate(self.groups)
             diff = np.setdiff1d(idx, np.arange(self.window_size))

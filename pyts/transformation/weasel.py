@@ -297,7 +297,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
         if not isinstance(self.window_sizes, (list, tuple, np.ndarray)):
             raise TypeError("'window_sizes' must be array-like.")
         window_sizes = check_array(self.window_sizes, ensure_2d=False,
-                                   dtype='numeric')
+                                   dtype=None)
         if window_sizes.ndim != 1:
             raise ValueError("'window_sizes' must be one-dimensional.")
         if not issubclass(window_sizes.dtype.type, (np.integer, np.floating)):
@@ -332,13 +332,13 @@ class WEASEL(BaseEstimator, TransformerMixin):
             window_steps = window_sizes
         else:
             window_steps = check_array(self.window_steps, ensure_2d=False,
-                                       dtype='numeric')
+                                       dtype=None)
             if window_steps.ndim != 1:
                 raise ValueError("'window_steps' must be one-dimensional.")
             if window_steps.size != window_sizes.size:
                 raise ValueError("If 'window_steps' is not None, it must have "
                                  "the same size as 'window_sizes'.")
-            if not issubclass(window_sizes.dtype.type,
+            if not issubclass(window_steps.dtype.type,
                               (np.integer, np.floating)):
                 raise ValueError(
                     "If 'window_steps' is not None, the elements of "
@@ -358,7 +358,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
                     and (np.max(window_steps) <= n_timestamps)):
                 raise ValueError("All the elements in 'window_steps' must be "
                                  "greater than or equal to 1 and lower than "
-                                 "or equal to n_timestamps..")
+                                 "or equal to n_timestamps.")
 
         if not isinstance(self.chi2_threshold,
                           (int, np.integer, float, np.floating)):

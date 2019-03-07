@@ -1,8 +1,9 @@
 """Testing for Recurrence Plot."""
 
 import numpy as np
+import pytest
+import re
 from math import sqrt
-from itertools import product
 from ..recurrence import _trajectory_distances, RecurrencePlot
 
 
@@ -36,50 +37,68 @@ def test_ReccurencePlot():
                     [1, 0, 1, 1]])
 
     # Parameter check
-    def type_error_list():
-        type_error_list_ = [
-            "'dimension' must be an integer or a float.",
-            "'epsilon' must be either None, "
-            "'percentage_points', 'percentage_distance', "
-            "a float or an integer.",
-            "'percentage' must be a float or an integer."
-        ]
-        return type_error_list_
+    msg_error = "'dimension' must be an integer or a float."
+    with pytest.raises(TypeError, match=msg_error):
+        rp = RecurrencePlot(
+            dimension="3", epsilon=None, percentage=None
+        )
+        rp.fit_transform(X)
 
-    def value_error_list(dimension):
-        value_error_list_ = [
-            "If 'dimension' is an integer, it must be greater "
-            "than or equal to 1 and lower than or equal to the size "
-            "of each time series (i.e. the size of the last dimension "
-            "of X) (got {0}).".format(dimension),
-            "If 'dimension' is a float, it must be greater "
-            "than or equal to 0 and lower than or equal to 1 "
-            "(got {0}).".format(dimension),
-            "If 'epsilon' is a float or an integer,"
-            "'epsilon' must be greater than or equal to 0.",
-            "'percentage' must be between 0 and 100."
-        ]
-        return value_error_list_
+    msg_error = (
+        "'epsilon' must be either None, 'percentage_points', "
+        "'percentage_distance', a float or an integer."
+    )
+    with pytest.raises(TypeError, match=msg_error):
+        rp = RecurrencePlot(
+            dimension=2, epsilon="3", percentage=None
+        )
+        rp.fit_transform(X)
 
-    dimension_list = [-1, -1., 1, 0.5, None]
-    epsilon_list = [None, 'percentage_points', 'percentage_distance', 0, 1]
-    percentage_list = [50, 150, None]
-    for (dimension, epsilon, percentage) in product(
-        dimension_list, epsilon_list, percentage_list
-    ):
-        rp = RecurrencePlot(dimension, epsilon, percentage)
-        try:
-            rp.fit_transform(X)
-        except ValueError as e:
-            if str(e) in value_error_list(dimension):
-                pass
-            else:
-                raise ValueError("Unexpected ValueError: {}".format(e))
-        except TypeError as e:
-            if str(e) in type_error_list():
-                pass
-            else:
-                raise TypeError("Unexpected TypeError: {}".format(e))
+    msg_error = "'percentage' must be a float or an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        rp = RecurrencePlot(
+            dimension=2, epsilon=None, percentage="3"
+        )
+        rp.fit_transform(X)
+
+    msg_error = re.escape(
+        "If 'dimension' is an integer, it must be greater "
+        "than or equal to 1 and lower than or equal to "
+        "n_timestamps (got {0}).".format(10)
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        rp = RecurrencePlot(
+            dimension=10, epsilon=None, percentage=10
+        )
+        rp.fit_transform(X)
+
+    msg_error = re.escape(
+        "If 'dimension' is a float, it must be greater "
+        "than 0 and lower than or equal to 1 "
+        "(got {0}).".format(2.)
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        rp = RecurrencePlot(
+            dimension=2., epsilon=None, percentage=10
+        )
+        rp.fit_transform(X)
+
+    msg_error = (
+        "If 'epsilon' is a float or an integer,"
+        "it must be greater than or equal to 0."
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        rp = RecurrencePlot(
+            dimension=2, epsilon=-2, percentage=10
+        )
+        rp.fit_transform(X)
+
+    msg_error = "'percentage' must be between 0 and 100."
+    with pytest.raises(ValueError, match=msg_error):
+        rp = RecurrencePlot(
+            dimension=2, epsilon=None, percentage=200
+        )
+        rp.fit_transform(X)
 
     # Accurate result (dimension = 1) check
     dimension = 1

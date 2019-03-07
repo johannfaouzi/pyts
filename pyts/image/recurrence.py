@@ -1,7 +1,7 @@
 """Code for Reccurence Plot."""
 
 import numpy as np
-from math import sqrt
+from math import ceil, sqrt
 from numba import prange, njit
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_array
@@ -117,19 +117,18 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):
             if self.dimension < 1 or self.dimension > n_timestamps:
                 raise ValueError(
                     "If 'dimension' is an integer, it must be greater "
-                    "than or equal to 1 and lower than or equal to the size "
-                    "of each time series (i.e. the size of the last dimension "
-                    "of X) (got {0}).".format(self.dimension)
+                    "than or equal to 1 and lower than or equal to "
+                    "n_timestamps (got {0}).".format(self.dimension)
                 )
             dimension = self.dimension
         else:
-            if self.dimension < 0. or self.dimension > 1.:
+            if not 0 < self.dimension < 1.:
                 raise ValueError(
                     "If 'dimension' is a float, it must be greater "
-                    "than or equal to 0 and lower than or equal to 1 "
+                    "than 0 and lower than or equal to 1 "
                     "(got {0}).".format(self.dimension)
                 )
-            dimension = int(self.dimension * n_timestamps)
+            dimension = ceil(self.dimension * n_timestamps)
         if (self.epsilon is not None
             and self.epsilon not in ['percentage_points',
                                      'percentage_distance']
@@ -141,7 +140,7 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):
         if ((isinstance(self.epsilon, (int, np.integer, float, np.floating)))
             and (self.epsilon < 0)):
             raise ValueError("If 'epsilon' is a float or an integer,"
-                             "'epsilon' must be greater than or equal to 0.")
+                             "it must be greater than or equal to 0.")
         if not isinstance(self.percentage,
                           (int, np.integer, float, np.floating)):
             raise TypeError("'percentage' must be a float or an integer.")

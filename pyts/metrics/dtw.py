@@ -65,21 +65,14 @@ def cost_matrix(x, y, dist='square', region=None):
         Cost matrix.
 
     """
-    x = check_array(x, ensure_2d=False, dtype='float64')
-    y = check_array(y, ensure_2d=False, dtype='float64')
-    if x.ndim > 1:
-        raise ValueError("'x' must a one-dimensional array.")
-    if y.ndim > 1:
-        raise ValueError("'y' must a one-dimensional array.")
-    if x.shape != y.shape:
-        raise ValueError("'x' and 'y' must have the same shape.")
-    if not (dist in ['square', 'absolute'] or callable(dist)):
-        raise ValueError("'dist' must be either 'square', 'absolute' or "
-                         "callable (got {0}).".format(dist))
+    x, y, _ = _check_input_dtw(x, y)
     if dist == 'square':
         dist_ = _square
     elif dist == 'absolute':
         dist_ = _absolute
+    elif isinstance(dist, str):
+        raise ValueError("'dist' must be either 'square', 'absolute' or "
+                         "callable (got {0}).".format(dist))
     else:
         try:
             temp = dist(1, 1)
@@ -338,7 +331,7 @@ def dtw_region(x, y, dist='square', region=None, return_cost=False,
         region_ = None
     else:
         try:
-            region_ = np.asarray(region, dtype='int64')
+            region_ = check_array(region, dtype='int64', ensure_2d=True)
         except:
             raise ValueError("If 'region' is not None, it must be array-like "
                              "with shape (2, n_timestamps).")
