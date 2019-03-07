@@ -39,6 +39,7 @@ install:
 test_script:
   - mkdir for_test
   - cd for_test
+  - export NUMBA_DISABLE_JIT=1
   - pytest -v --cov=pyts --pyargs pyts
 
 after_test:
