@@ -127,5 +127,5 @@ class BagOfWwords(BaseEstimator, TransformerMixin):
                     "than 0 and lower than or equal to 1 "
                     "(got {0}).".format(self.window_step)
                 )
-                window_step = ceil(self.window_step * n_timestamps)
+            window_step = ceil(self.window_step * n_timestamps)
         return window_size, window_step

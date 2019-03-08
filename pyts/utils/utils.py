@@ -52,10 +52,11 @@ def segmentation(ts_size, window_size, overlapping, n_segments=None):
     if not (n_segments is None or isinstance(n_segments, (int, np.integer))):
         raise TypeError("'n_segments' must be None or an integer.")
     if isinstance(n_segments, (int, np.integer)):
-        if not n_segments <= ts_size:
+        if not 2 <= n_segments <= ts_size:
             raise ValueError(
-                "If 'n_segments' is an integer, it must be lower than or "
-                "equal to 'ts_size' ({0} > {1}).".format(n_segments, ts_size)
+                "If 'n_segments' is an integer, it must be greater than or "
+                "equal to 2 and lower than or equal to 'ts_size' "
+                "({0} > {1}).".format(n_segments, ts_size)
             )
 
     if n_segments is None:

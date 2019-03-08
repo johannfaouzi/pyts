@@ -9,31 +9,8 @@ from ..sax import SymbolicAggregateApproximation
 def test_SymbolicAggregateApproximation():
     """Test 'SymbolicAggregateApproximation' class."""
     # Parameter check
-    def value_error_list(n_bins, strategy):
-        value_error_list_ = [
-            "'n_bins' must be greater than or equal to 2 and lower than "
-            "or equal to n_timestamps (got {0}).".format(n_bins),
-            "'n_bins' is unexpectedly high. You should try with a smaller "
-            "value.",
-            "'strategy' must be either 'uniform', 'quantile' "
-            "or 'normal' (got {0})".format(strategy),
-            "'alphabet' must be None or array-like with shape (n_bins,).",
-            "If 'alphabet' is array-like, its shape must be equal to "
-            "(n_bins, )."
-        ]
-        return value_error_list_
-
-    def type_error_list(alphabet):
-        type_error_list_ = [
-            "'n_bins' must be an integer.",
-            "'alphabet' must be None, 'ordinal' or array-like "
-            "with shape (n_bins,) (got {0})".format(alphabet)
-        ]
-        return type_error_list_
-
     X = np.arange(15).reshape(3, 5)
 
-    # Parameter check
     msg_error = "'n_bins' must be an integer."
     with pytest.raises(TypeError, match=msg_error):
         sax = SymbolicAggregateApproximation(

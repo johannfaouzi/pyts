@@ -3,7 +3,6 @@
 import numpy as np
 import pytest
 import re
-from itertools import product
 from warnings import catch_warnings
 from ..discretizer import _uniform_bins, _digitize, KBinsDiscretizer
 

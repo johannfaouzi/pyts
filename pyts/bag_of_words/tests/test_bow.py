@@ -74,6 +74,15 @@ def test_BagOfWwords():
     np.testing.assert_array_equal(arr_actual, arr_desired)
 
     # Test 2
+    bow = BagOfWwords(window_size=0.4, window_step=0.2,
+                      numerosity_reduction=False)
+    arr_actual = bow.fit_transform(X)
+    arr_desired = ["aa aa ab ba",
+                   "aa ab bb ba",
+                   "bb bb bb ba"]
+    np.testing.assert_array_equal(arr_actual, arr_desired)
+
+    # Test 3
     bow = BagOfWwords(window_size=2, window_step=1, numerosity_reduction=True)
     arr_actual = bow.fit_transform(X)
     arr_desired = ["aa ab ba",
@@ -81,7 +90,7 @@ def test_BagOfWwords():
                    "bb ba"]
     np.testing.assert_array_equal(arr_actual, arr_desired)
 
-    # Test 3
+    # Test 4
     bow = BagOfWwords(window_size=3, window_step=2, numerosity_reduction=False)
     arr_actual = bow.fit_transform(X)
     arr_desired = ["aaa aba",
@@ -89,7 +98,7 @@ def test_BagOfWwords():
                    "bbb bba"]
     np.testing.assert_array_equal(arr_actual, arr_desired)
 
-    # Test 4
+    # Test 5
     bow = BagOfWwords(window_size=3, window_step=2, numerosity_reduction=True)
     arr_actual = bow.fit_transform(X)
     arr_desired = ["aaa aba",

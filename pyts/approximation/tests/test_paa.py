@@ -38,35 +38,6 @@ def test_PiecewiseAggregateApproximation():
     X = np.arange(9).reshape(1, 9)
 
     # Parameter check
-    def type_error_list():
-        type_error_list_ = [
-            "'window_size' and 'output_size' cannot be both None.",
-            "If specified, 'window_size' must be an integer "
-            "or a float.",
-            "If specified, 'output_size' must be an integer "
-            "or a float."
-        ]
-        return type_error_list_
-
-    def value_error_list(window_size, output_size):
-        value_error_list_ = [
-            "If 'window_size' is an integer, it must be greater "
-            "than or equal to 1 and lower than or equal to the size "
-            "of each time series (i.e. the size of the last dimension "
-            "of X) (got {0}).".format(window_size),
-            "If 'window_size' is a float, it must be greater "
-            "than 0 and lower than or equal to 1 "
-            "(got {0}).".format(window_size),
-            "If 'output_size' is an integer, it must be greater "
-            "than or equal to 1 and lower than or equal to the size "
-            "of each time series (i.e. the size of the last dimension "
-            "of X) (got {0}).".format(output_size),
-            "If 'output_size' is a float, it must be greater "
-            "than 0 and lower than or equal to 1 "
-            "(got {0}).".format(output_size)
-        ]
-        return value_error_list_
-
     msg_error = "'window_size' and 'output_size' cannot be both None."
     with pytest.raises(TypeError, match=msg_error):
         paa = PiecewiseAggregateApproximation(

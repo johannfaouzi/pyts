@@ -1,52 +1,61 @@
 """Testing for utility tools."""
 
 import numpy as np
-from itertools import product
+import pytest
+import re
 from ..utils import segmentation, windowed_view
 
 
 def test_segmentation():
     """Test 'segmentation' function."""
     # Parameters check
-    def type_error_list():
-        type_error_list_ = ["'ts_size' must be an integer.",
-                            "'window_size' must be an integer.",
-                            "'n_segments' must be None or an integer."]
-        return type_error_list_
+    msg_error = "'ts_size' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        segmentation(ts_size=None, window_size=2,
+                     overlapping=False, n_segments=None)
 
-    def value_error_list(ts_size, window_size, n_segments):
-        value_error_list_ = [
-            "'ts_size' must be an integer greater than or equal "
-            "to 2 (got {0}).".format(ts_size),
-            "'window_size' must be an integer greater than or "
-            "equal to 1 (got {0}).".format(window_size),
-            "'window_size' must be lower than or equal to "
-            "'ts_size' ({0} > {1}).".format(window_size, ts_size),
-            "If 'n_segments' is an integer, it must be lower than or "
-            "equal to 'ts_size' ({0} > {1}).".format(n_segments, ts_size)
-        ]
-        return value_error_list_
+    msg_error = "'window_size' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        segmentation(ts_size=10, window_size={},
+                     overlapping=False, n_segments=None)
 
-    ts_size_list = [-1, 2, 3, None]
-    window_size_list = [-1, 1, 2, 4, None]
-    overlapping_list = [True, False]
-    n_segments_list = [-1, 1, 2, 4, None]
+    msg_error = "'n_segments' must be None or an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        segmentation(ts_size=10, window_size=2,
+                     overlapping=False, n_segments="3")
 
-    for (ts_size, window_size, overlapping, n_segments) in product(
-        ts_size_list, window_size_list, overlapping_list, n_segments_list
-    ):
-        try:
-            segmentation(ts_size, window_size, overlapping, n_segments)
-        except ValueError as e:
-            if str(e) in value_error_list(ts_size, window_size, n_segments):
-                pass
-            else:
-                raise ValueError("Unexpected ValueError: {}".format(e))
-        except TypeError as e:
-            if str(e) in type_error_list():
-                pass
-            else:
-                raise TypeError("Unexpected TypeError: {}".format(e))
+    msg_error = re.escape(
+        "'ts_size' must be an integer greater than or equal "
+        "to 2 (got {0}).".format(1)
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        segmentation(ts_size=1, window_size=2,
+                     overlapping=False, n_segments=None)
+
+    msg_error = re.escape(
+        "'window_size' must be an integer greater than or "
+        "equal to 1 (got {0}).".format(0)
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        segmentation(ts_size=10, window_size=0,
+                     overlapping=False, n_segments=None)
+
+    msg_error = re.escape(
+        "'window_size' must be lower than or equal to "
+        "'ts_size' ({0} > {1}).".format(15, 10)
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        segmentation(ts_size=10, window_size=15,
+                     overlapping=False, n_segments=None)
+
+    msg_error = re.escape(
+        "If 'n_segments' is an integer, it must be greater than or "
+        "equal to 2 and lower than or equal to 'ts_size' "
+        "({0} > {1}).".format(12, 10)
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        segmentation(ts_size=10, window_size=3,
+                     overlapping=False, n_segments=12)
 
     # Test 1
     bounds = np.array([0, 4, 8, 12, 16, 20])
@@ -66,36 +75,21 @@ def test_windowed_view():
     X = np.arange(10).reshape(2, 5)
 
     # Parameters check
-    def type_error_list():
-        type_error_list_ = ["'window_size' must be an integer.",
-                            "'window_step' must be an integer."]
-        return type_error_list_
+    msg_error = "'window_size' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        windowed_view(X, window_size="3", window_step=1)
 
-    def value_error_list():
-        value_error_list_ = [
-            "'window_size' must be an integer between 1 and n_timestamps.",
-            "'window_step' must be an integer between 1 and n_timestamps."
-        ]
-        return value_error_list_
+    msg_error = "'window_step' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        windowed_view(X, window_size=2, window_step=None)
 
-    window_size_list = [-1, 1, 2, 4, None]
-    window_step_list = [-1, 1, 2, 4, None]
+    msg_error = "'window_size' must be an integer between 1 and n_timestamps."
+    with pytest.raises(ValueError, match=msg_error):
+        windowed_view(X, window_size=7, window_step=1)
 
-    for (window_size, window_step) in product(
-        window_size_list, window_step_list
-    ):
-        try:
-            windowed_view(X, window_size, window_step)
-        except ValueError as e:
-            if str(e) in value_error_list():
-                pass
-            else:
-                raise ValueError("Unexpected ValueError: {}".format(e))
-        except TypeError as e:
-            if str(e) in type_error_list():
-                pass
-            else:
-                raise TypeError("Unexpected TypeError: {}".format(e))
+    msg_error = "'window_step' must be an integer between 1 and n_timestamps."
+    with pytest.raises(ValueError, match=msg_error):
+        windowed_view(X, window_size=2, window_step=0)
 
     # Test 1
     arr_actual = windowed_view(X, window_size=3, window_step=1)
