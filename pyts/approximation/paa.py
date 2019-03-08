@@ -1,9 +1,10 @@
 """Code for Piecewise Aggregate Approximation."""
 
 import numpy as np
+from math import ceil
+from numba import njit, prange
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_array
-from numba import njit, prange
 from ..utils import segmentation
 
 
@@ -122,7 +123,7 @@ class PiecewiseAggregateApproximation(BaseEstimator, TransformerMixin):
                         "than 0 and lower than or equal to 1 "
                         "(got {0}).".format(self.window_size)
                     )
-                window_size = int(self.window_size * n_timestamps)
+                window_size = ceil(self.window_size * n_timestamps)
             output_size = None
         else:
             if not isinstance(self.output_size,
@@ -145,7 +146,7 @@ class PiecewiseAggregateApproximation(BaseEstimator, TransformerMixin):
                         "than 0 and lower than or equal to 1 "
                         "(got {0}).".format(self.output_size)
                     )
-                output_size = int(self.output_size * n_timestamps)
+                output_size = ceil(self.output_size * n_timestamps)
             window_size, remainder = divmod(n_timestamps, output_size)
             if remainder != 0:
                 window_size += 1

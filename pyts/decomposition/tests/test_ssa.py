@@ -128,3 +128,13 @@ def test_SingularSpectrumAnalysis():
     ssa = SingularSpectrumAnalysis(window_size=5, groups=groups)
     arr_actual = ssa.fit_transform(X).sum(axis=1)
     np.testing.assert_allclose(arr_actual, X, atol=1e-5, rtol=0.)
+
+    # Test 9: window_size (float)
+    ssa = SingularSpectrumAnalysis(window_size=0.2)
+    arr_actual = ssa.fit_transform(X).sum(axis=1)
+    np.testing.assert_allclose(arr_actual, X, atol=1e-5, rtol=0.)
+
+    # Test 10: window_size >= n_windows
+    ssa = SingularSpectrumAnalysis(window_size=30)
+    arr_actual = ssa.fit_transform(X).sum(axis=1)
+    np.testing.assert_allclose(arr_actual, X, atol=1e-5, rtol=0.)

@@ -116,10 +116,23 @@ def test_PiecewiseAggregateApproximation():
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
     # Test 3 (output_size specified check)
-    X = np.arange(9).reshape(1, 9)
     paa = PiecewiseAggregateApproximation(
         window_size=None, output_size=3, overlapping=False)
     arr_actual = paa.fit_transform(X)
     print(arr_actual)
+    arr_desired = np.array([1, 4, 7]).reshape(1, 3)
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+    # Test 4 (window_size float)
+    paa = PiecewiseAggregateApproximation(
+        window_size=0.33, output_size=None, overlapping=False)
+    arr_actual = paa.fit_transform(X)
+    arr_desired = np.array([1, 4, 7]).reshape(1, 3)
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+    # Test 5 (output_size float)
+    paa = PiecewiseAggregateApproximation(
+        window_size=None, output_size=0.33, overlapping=False)
+    arr_actual = paa.fit_transform(X)
     arr_desired = np.array([1, 4, 7]).reshape(1, 3)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)

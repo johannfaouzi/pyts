@@ -98,8 +98,7 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):
         elif self.epsilon == 'percentage_points':
             percents = np.percentile(
                 np.reshape(X_dist, (n_samples, image_size * image_size)),
-                self.percentage,
-                axis=1
+                self.percentage, axis=1
             )
             X_rp = X_dist < percents[:, None, None]
         elif self.epsilon == 'percentage_distance':

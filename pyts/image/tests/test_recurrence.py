@@ -123,3 +123,35 @@ def test_ReccurencePlot():
                               [[0, sqrt(2)],
                                [sqrt(2), 0]]])
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+    # Accurate result (dimension float) check
+    dimension = 0.75
+    rp = RecurrencePlot(dimension=dimension, epsilon=None, percentage=10)
+    arr_actual = rp.fit_transform(X)
+    arr_desired = np.asarray([[[0, sqrt(3)],
+                               [sqrt(3), 0]],
+                              [[0, sqrt(2)],
+                               [sqrt(2), 0]]])
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+    # Accurate result (epsilon='percentage_points') check
+    dimension = 3
+    rp = RecurrencePlot(dimension=dimension, epsilon='percentage_points',
+                        percentage=50)
+    arr_actual = rp.fit_transform(X)
+    arr_desired = np.asarray([[[1, 0],
+                               [0, 1]],
+                              [[1, 0],
+                               [0, 1]]])
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+    # Accurate result (epsilon='percentage_distance') check
+    dimension = 3
+    rp = RecurrencePlot(dimension=dimension, epsilon='percentage_distance',
+                        percentage=50)
+    arr_actual = rp.fit_transform(X)
+    arr_desired = np.asarray([[[1, 0],
+                               [0, 1]],
+                              [[1, 0],
+                               [0, 1]]])
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)

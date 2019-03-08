@@ -1,6 +1,7 @@
 """Code for Markov Transition Field."""
 
 import numpy as np
+from math import ceil
 from numba import njit, prange
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_array
@@ -168,7 +169,7 @@ class MarkovTransitionField(BaseEstimator, TransformerMixin):
                     "than or equal to 0 and lower than or equal to 1 "
                     "(got {0}).".format(self.image_size)
                 )
-            image_size = int(self.image_size * n_timestamps)
+            image_size = ceil(self.image_size * n_timestamps)
         if not isinstance(self.n_bins, (int, np.integer)):
             raise TypeError("'n_bins' must be an integer.")
         if not self.n_bins >= 2:

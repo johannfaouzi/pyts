@@ -62,12 +62,23 @@ def test_segmentation():
     window_size = 4
     overlapping = False
     res_actual = segmentation(20, window_size, overlapping)
-    res_start = bounds[:-1]
-    res_end = bounds[1:]
-    res_size = 5
-    np.testing.assert_array_equal(res_actual[0], res_start)
-    np.testing.assert_array_equal(res_actual[1], res_end)
-    np.testing.assert_equal(res_actual[2], res_size)
+    start_desired = bounds[:-1]
+    end_desired = bounds[1:]
+    size_desired = 5
+    np.testing.assert_array_equal(res_actual[0], start_desired)
+    np.testing.assert_array_equal(res_actual[1], end_desired)
+    np.testing.assert_equal(res_actual[2], size_desired)
+
+    # Test 2
+    window_size = 8
+    overlapping = True
+    res_actual = segmentation(20, window_size, overlapping)
+    start_desired = [0, 6, 12]
+    end_desired = [8, 14, 20]
+    size_desired = 3
+    np.testing.assert_array_equal(res_actual[0], start_desired)
+    np.testing.assert_array_equal(res_actual[1], end_desired)
+    np.testing.assert_equal(res_actual[2], size_desired)
 
 
 def test_windowed_view():

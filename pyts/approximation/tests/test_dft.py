@@ -62,18 +62,6 @@ def test_DiscreteFourierTransform():
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
     # Test 2
-    n_coefs, drop_sum, anova = None, True, False
-    norm_mean, norm_std = False, False
-    dft = DiscreteFourierTransform(n_coefs, drop_sum, anova,
-                                   norm_mean, norm_std)
-    arr_actual = dft.fit_transform(X)
-    X_fft = np.fft.rfft(X)
-    X_fft = np.vstack([np.real(X_fft), np.imag(X_fft)])
-    X_fft = X_fft.reshape(5, 10, order='F')
-    arr_desired = X_fft[:, 2:-1]
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
-
-    # Test 3
     n_coefs, drop_sum, anova = None, False, False
     norm_mean, norm_std = False, False
     dft = DiscreteFourierTransform(n_coefs, drop_sum, anova,
@@ -85,7 +73,31 @@ def test_DiscreteFourierTransform():
     arr_desired = np.hstack([X_fft[:, :1], X_fft[:, 2:-1]])
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
+    # Test 3
+    n_coefs, drop_sum, anova = 7, True, False
+    norm_mean, norm_std = False, False
+    dft = DiscreteFourierTransform(n_coefs, drop_sum, anova,
+                                   norm_mean, norm_std)
+    arr_actual = dft.fit_transform(X)
+    X_fft = np.fft.rfft(X)
+    X_fft = np.vstack([np.real(X_fft), np.imag(X_fft)])
+    X_fft = X_fft.reshape(5, 10, order='F')
+    arr_desired = X_fft[:, 2:-1]
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
     # Test 4
+    n_coefs, drop_sum, anova = 8, False, False
+    norm_mean, norm_std = False, False
+    dft = DiscreteFourierTransform(n_coefs, drop_sum, anova,
+                                   norm_mean, norm_std)
+    arr_actual = dft.fit_transform(X)
+    X_fft = np.fft.rfft(X)
+    X_fft = np.vstack([np.real(X_fft), np.imag(X_fft)])
+    X_fft = X_fft.reshape(5, 10, order='F')
+    arr_desired = np.hstack([X_fft[:, :1], X_fft[:, 2:-1]])
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+    # Test 5
     n_coefs, drop_sum, anova = None, False, False
     norm_mean, norm_std = True, False
     dft = DiscreteFourierTransform(n_coefs, drop_sum, anova,
@@ -98,7 +110,7 @@ def test_DiscreteFourierTransform():
     arr_desired = np.hstack([X_fft[:, :1], X_fft[:, 2:-1]])
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
-    # Test 5
+    # Test 6
     n_coefs, drop_sum, anova = None, False, False
     norm_mean, norm_std = True, True
     dft = DiscreteFourierTransform(n_coefs, drop_sum, anova,
@@ -111,7 +123,7 @@ def test_DiscreteFourierTransform():
     arr_desired = np.hstack([X_fft[:, :1], X_fft[:, 2:-1]])
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
-    # Test 6
+    # Test 7
     n_coefs, drop_sum, anova = 3, False, False
     norm_mean, norm_std = False, False
     dft = DiscreteFourierTransform(n_coefs, drop_sum, anova,
@@ -123,3 +135,10 @@ def test_DiscreteFourierTransform():
     X_fft = np.hstack([X_fft[:, :1], X_fft[:, 2:-1]])
     arr_desired = X_fft[:, :3]
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+    # Test 8
+    n_coefs, drop_sum, anova = 3, False, True
+    norm_mean, norm_std = False, False
+    dft = DiscreteFourierTransform(n_coefs, drop_sum, anova,
+                                   norm_mean, norm_std)
+    dft.fit_transform(X, y)

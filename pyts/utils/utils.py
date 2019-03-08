@@ -63,23 +63,22 @@ def segmentation(ts_size, window_size, overlapping, n_segments=None):
         quotient, remainder = divmod(ts_size, window_size)
         n_segments = quotient if remainder == 0 else quotient + 1
 
-    bounds = np.linspace(0, ts_size,
-                         n_segments + 1, endpoint=True).astype('int64')
-
-    start = bounds[:-1]
-    end = bounds[1:]
-    size = start.size
-
     if not overlapping:
+        bounds = np.linspace(0, ts_size, n_segments + 1).astype('int64')
+        start = bounds[:-1]
+        end = bounds[1:]
+        size = start.size
         return start, end, size
     else:
-        correction = window_size - end + start
-        half_size = size // 2
-        new_start = start.copy()
-        new_start[half_size:] = start[half_size:] - correction[half_size:]
-        new_end = end.copy()
-        new_end[:half_size] = end[:half_size] + correction[:half_size]
-        return new_start, new_end, size
+        n_overlapping = (n_segments * window_size) - ts_size
+        n_overlaps = n_segments - 1
+        overlaps = np.linspace(0, n_overlapping,
+                               n_overlaps + 1).astype('int64')
+        bounds = np.arange(0, (n_segments + 1) * window_size, window_size)
+        start = bounds[:-1] - overlaps
+        end = bounds[1:] - overlaps
+        size = start.size
+        return start, end, size
 
 
 def windowed_view(X, window_size, window_step=1):

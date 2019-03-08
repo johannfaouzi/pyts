@@ -154,7 +154,7 @@ class MultipleCoefficientBinning(BaseEstimator, TransformerMixin):
                 or (self.alphabet == 'ordinal')
                 or (isinstance(self.alphabet, (list, tuple, np.ndarray)))):
             raise TypeError("'alphabet' must be None, 'ordinal' or array-like "
-                            "with shape (n_bins,) (got {0})"
+                            "with shape (n_bins,) (got {0})."
                             .format(self.alphabet))
         if self.alphabet is None:
             if self.n_bins < 27:
@@ -169,15 +169,11 @@ class MultipleCoefficientBinning(BaseEstimator, TransformerMixin):
         elif self.alphabet == 'ordinal':
             alphabet = 'ordinal'
         else:
-            try:
-                alphabet = np.asarray(self.alphabet)
-            except:
-                raise ValueError("'alphabet' must be None or array-like "
-                                 "with shape (n_bins, ).")
-            else:
-                if alphabet.shape != (self.n_bins,):
-                    raise ValueError("If 'alphabet' is array-like, its shape "
-                                     "must be equal to (n_bins, ).")
+            alphabet = check_array(self.alphabet, ensure_2d=False,
+                                   dtype=None)
+            if alphabet.shape != (self.n_bins,):
+                raise ValueError("If 'alphabet' is array-like, its shape "
+                                 "must be equal to (n_bins,).")
         return alphabet
 
     def _check_constant(self, X):

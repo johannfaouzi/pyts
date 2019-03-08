@@ -64,6 +64,29 @@ def test_MultipleCoefficientBinning():
         mcb = MultipleCoefficientBinning(n_bins=2, strategy='whoops')
         mcb.fit_transform(X, y)
 
+    msg_error = re.escape(
+        "'alphabet' must be None, 'ordinal' or array-like with shape "
+        "(n_bins,) (got {0}).".format({})
+    )
+    with pytest.raises(TypeError, match=msg_error):
+        mcb = MultipleCoefficientBinning(n_bins=2, alphabet={})
+        mcb.fit_transform(X, y)
+
+    msg_error = re.escape(
+        "'n_bins' is unexpectedly high. You should try with a smaller value."
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        mcb = MultipleCoefficientBinning(n_bins=10000000, strategy='uniform')
+        mcb.fit_transform(np.r_[np.zeros((10000000, 2)),
+                                np.ones((10000000, 2))])
+
+    msg_error = re.escape(
+        "If 'alphabet' is array-like, its shape must be equal to (n_bins,)."
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        mcb = MultipleCoefficientBinning(n_bins=2, alphabet=['a', 'b', 'c'])
+        mcb.fit_transform(X, y)
+
     # Consistent lengths check
     msg_error = re.escape(
         "The number of timestamps in X must be the same as "
@@ -95,6 +118,12 @@ def test_MultipleCoefficientBinning():
     with pytest.raises(ValueError, match=msg_error):
         mcb = MultipleCoefficientBinning(n_bins=6, strategy='entropy')
         mcb.fit(X, y)
+
+    # y cannot be None if strategy='entropy'
+    msg_error = "y cannot be None if strategy='entropy'."
+    with pytest.raises(ValueError, match=msg_error):
+        mcb = MultipleCoefficientBinning(n_bins=2, strategy='entropy')
+        mcb.fit(X, None)
 
     # Test 1
     mcb = MultipleCoefficientBinning(
@@ -179,3 +208,8 @@ def test_MultipleCoefficientBinning():
                    ['b', 'b'],
                    ['b', 'b']]
     np.testing.assert_array_equal(arr_actual, arr_desired)
+
+    # Test 6
+    mcb = MultipleCoefficientBinning(n_bins=50, strategy='uniform')
+    arr_actual = mcb.fit_transform(np.r_[np.zeros((50, 2)), np.ones((50, 2))])
+    arr_desired = np.r_[np.zeros((50, 2)), 49 * np.ones((50, 2))]

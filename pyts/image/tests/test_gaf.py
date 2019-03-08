@@ -121,3 +121,19 @@ def test_GramianAngularField():
     arr_actual = gaf.fit_transform(X)[0]
     arr_desired = np.sin([[x - y for y in arccos] for x in arccos])
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+    # Accurate result for image_size float check
+    arccos = [np.pi, np.pi / 2, 0]
+    gaf = GramianAngularField(
+        image_size=0.33, sample_range=(-1, 1), method='s', overlapping=False)
+    arr_actual = gaf.fit_transform(X)[0]
+    arr_desired = np.cos([[x + y for x in arccos] for y in arccos])
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+    # Accurate result for sample_range=None check
+    arccos = [np.pi, np.pi / 2, 0]
+    gaf = GramianAngularField(
+        image_size=3, sample_range=None, method='s', overlapping=False)
+    arr_actual = gaf.fit_transform(np.linspace(-1, 1, 3).reshape(1, 3))[0]
+    arr_desired = np.cos([[x + y for x in arccos] for y in arccos])
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)

@@ -152,12 +152,10 @@ def test_MarkovTransitionField():
         )
         mtf.fit_transform(X)
 
-    # Accurate result check
+    # Accurate result check (image_size integer)
     image_size, n_bins, quantiles = 2, 4, 'quantile'
-
     mtf = MarkovTransitionField(image_size, n_bins, quantiles)
     arr_actual = mtf.fit_transform(X)
-
     # X_binned = np.array([0, 0, 1, 1, 2, 2, 3, 3])
     # X_mtm = np.asarray([[0.5, 0.5, 0.0, 0.0],
     #                    [0.0, 0.5, 0.5, 0.0],
@@ -173,5 +171,40 @@ def test_MarkovTransitionField():
     #                    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0]])
     arr_desired = np.asarray([[0.375, 0.125],
                               [0.000, 0.500]])
+
+    np.testing.assert_array_equal(arr_actual[0], arr_desired)
+
+    # Accurate result check (image_size float)
+    image_size, n_bins, quantiles = 0.25, 4, 'quantile'
+    mtf = MarkovTransitionField(image_size, n_bins, quantiles)
+    arr_actual = mtf.fit_transform(X)
+    arr_desired = np.asarray([[0.375, 0.125],
+                              [0.000, 0.500]])
+
+    np.testing.assert_array_equal(arr_actual[0], arr_desired)
+
+    # Accurate result check (image_size float)
+    image_size, n_bins, quantiles = 7, 2, 'quantile'
+    mtf = MarkovTransitionField(image_size, n_bins,
+                                quantiles, overlapping=True)
+    arr_actual = mtf.fit_transform(X)
+    # X_binned = np.array([0, 0, 0, 0, 1, 1, 1, 1])
+    # X_mtm = np.asarray([[0.75, 0.25],
+    #                     [0.00, 1.00]],
+    # X_mtf = np.asarray([[0.75, 0.75, 0.75, 0.75, 0.25, 0.25, 0.25, 0.25],
+    #                     [0.75, 0.75, 0.75, 0.75, 0.25, 0.25, 0.25, 0.25],
+    #                     [0.75, 0.75, 0.75, 0.75, 0.25, 0.25, 0.25, 0.25],
+    #                     [0.75, 0.75, 0.75, 0.75, 0.25, 0.25, 0.25, 0.25],
+    #                     [0.00, 0.00, 0.00, 0.00, 1.00, 1.00, 1.00, 1.00],
+    #                     [0.00, 0.00, 0.00, 0.00, 1.00, 1.00, 1.00, 1.00],
+    #                     [0.00, 0.00, 0.00, 0.00, 1.00, 1.00, 1.00, 1.00],
+    #                     [0.00, 0.00, 0.00, 0.00, 1.00, 1.00, 1.00, 1.00]])
+    arr_desired = np.asarray([[0.75, 0.75, 0.75, 0.50, 0.25, 0.25, 0.25],
+                              [0.75, 0.75, 0.75, 0.50, 0.25, 0.25, 0.25],
+                              [0.75, 0.75, 0.75, 0.50, 0.25, 0.25, 0.25],
+                              [0.375, 0.375, 0.375, 0.5, 0.625, 0.625, 0.625],
+                              [0, 0, 0, 0.5, 1, 1, 1],
+                              [0, 0, 0, 0.5, 1, 1, 1],
+                              [0, 0, 0, 0.5, 1, 1, 1]])
 
     np.testing.assert_array_equal(arr_actual[0], arr_desired)

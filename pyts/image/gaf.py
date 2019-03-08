@@ -1,6 +1,7 @@
 """Code for Gramian Angular Field."""
 
 import numpy as np
+from math import ceil
 from numba import njit, prange
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_array
@@ -137,7 +138,7 @@ class GramianAngularField(BaseEstimator, TransformerMixin):
                     "than or equal to 0 and lower than or equal to 1 "
                     "(got {0}).".format(self.image_size)
                 )
-            image_size = int(self.image_size * n_timestamps)
+            image_size = ceil(self.image_size * n_timestamps)
         if not ((self.sample_range is None)
                 or (isinstance(self.sample_range, tuple))):
             raise TypeError("'sample_range' must be None or a tuple.")
