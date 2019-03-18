@@ -53,7 +53,7 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):
 
     .. math::
 
-        \vec(x)_i = (x_i, x_{i + \tau}, \ldots, x_{i + (m - 1)\tau}),
+        \vec(x)_i = (x_i, x_{i + \tau}, \ldots, x_{i + (m - 1)\tau}), \quad
         \forall i \in \{1, \ldots, n - (m - 1)\tau \}
 
     where `m` is the `dimension` of the trajectories and :math:`\tau` is the
