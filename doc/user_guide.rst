@@ -12,9 +12,11 @@ don't work well on **raw time series of real numbers**. Most algorithms
 developed recently have been focusing on *transforming* the raw time series
 before applying a standard machine learning classification algorithm.
 
-In the following sections we'll present the algorithms implemented in pyts. If
+In the following sections we will present the algorithms implemented in pyts. If
 you want more information about the algorithms, you can have a look at the references
-and the :ref:`general_examples` section.
+and the :ref:`general_examples` section. If you want more information about
+their implementations in pyts, you can have a look at the :ref:`api` section.
+
 
 Preprocessing
 -------------
@@ -23,10 +25,20 @@ It is standard in machine learning to perform some preprocessing on raw data.
 Likewise it is standard to perform some preprocessing on time series. Implemented
 algorithms can be found in the :mod:`pyts.preprocessing` module.
 
-Currently the only preprocessing tool implemented is **StandardScaler**
-It performs standardization (z-normalization) for each time series: the preprocessed
-time series all have zero mean and unit variance.
-It is implemented as :class:`pyts.preprocessing.StandardScaler`.
+pyts provides most of the preprocessing tools from scikit-learn, but instead of
+applying them column-wise (i.e. independently to each feature), they are
+applied row-wise (i.e. independently to each sample). Available tools are
+:class:`pyts.preprocessing.StandardScaler`,
+:class:`pyts.preprocessing.MinMaxScaler`,
+:class:`pyts.preprocessing.MaxAbsScaler`,
+:class:`pyts.preprocessing.RobustScaler`,
+:class:`pyts.preprocessing.PowerTransformer`,
+:class:`pyts.preprocessing.QuantileTransformer` and
+:class:`pyts.preprocessing.KBinsDiscretizer`.
+
+pyts also provides a tool to impute missing values using interpolation:
+:class:`pyts.preprocessing.InterpolationImputer`.
+
 
 Approximation
 -------------
@@ -35,16 +47,33 @@ Time series can be of huge size or be very noisy. It can be useful to sum up
 the most important information of each time series. Implemented algorithms
 to approximate a time series can be found in the :mod:`pyts.approximation` module.
 
-The first algorithm implemented is **Piecewise Aggregate Approximation (PAA)**. The
+The first algorithm is **Piecewise Aggregate Approximation (PAA)**. The
 main idea of this algorithm is to apply windows along a time series and to
-take the mean value in each window. It is implemented as :class:`pyts.approximation.PAA`.
+take the mean value in each window. It is implemented as
+:class:`pyts.approximation.PiecewiseAggregateApproximation`.
 
-The second algorithm implemented is **Discrete Fourier Transform (DFT)**. The idea
+The second algorithm is **Symbolic Aggregate approXimation (SAX)**. For
+each time series, bins are computed using a given strategy. Then
+each datapoint is replaced by the index of the bin it belongs to. It is
+implemented as :class:`pyts.quantization.SymbolicAggregateApproximation`.
+It is similar to :class:`pyts.preprocessing.KBinsDiscretizer`.
+
+The third algorithm is **Discrete Fourier Transform (DFT)**. The idea
 is to approximate a time series with a subsample of its Fourier coefficients.
 The selected Fourier coefficients are either the first ones (as they represent
 the trend of the time series) or the ones that discriminate the different classes
 the most if a vector of class labels is provided.
-It is implemented as :class:`pyts.approximation.DFT`.
+It is implemented as :class:`pyts.approximation.DiscreteFourierTransform`.
+
+The fourth algorithm is **Multiple Coefficient Binning (MCB)**. The idea
+is very similar to SAX and the difference is that the discretization is done
+column-wise instead of row-wise. It is implemented as
+:class:`pyts.quantization.MultipleCoefficientBinning`.
+
+The fifth algorithm is **Symbolic Fourier Approximation (SFA)**.
+It performs DFT followed MCB, i.e. the selected Fourier coefficients
+of each time series are discretized. It is implemented as
+:class:`pyts.quantization.SymbolicFourierApproximation`.
 
 References
 ^^^^^^^^^^
@@ -53,34 +82,8 @@ References
   A simple dimensionality reduction technique for fast similarity search in
   large time series databases. *Knowledge Discovery and Data Mining* ,2000.
 
-
 - Christos Faloutsos, M. Ranganathan and Yannis Manolopoulos.
   Fast Subsequence Matching in Time-Series Databases. *ACM SIGMOD Record*, 2000.
-
-Quantization
-------------
-
-One of the most interesting parts in time series classification is that several
-state-of-the-art algorithms use text mining techniques for classification
-and thus transform time series into bag of words. But first a time series
-of real numbers needs to be transformed into a sequence of letters. Implemented
-algorithms that quantize time series can be found in the :mod:`pyts.quantization` module.
-
-The first algorithm implemented is **Symbolic Aggregate approXimation (SAX)**. For
-each time series, bins are computed using gaussian or empirical quantiles. Then
-each datapoint is replaced by the bin it is in. It is implemented as
-:class:`pyts.quantization.SAX`.
-
-The second algorithm implemented is **Multiple Coefficient Binning (MCB)**. The idea
-is very similar to SAX and the difference is that the quantization is applied
-at each timestamp. It is implemented as :class:`pyts.quantization.MCB`.
-
-The third algorithm implemented is **Symbolic Fourier Approximation (SFA)**.
-It performs DFT then MCB, i.e. MCB is applied to the selected Fourier coefficients
-of each time series. It is implemented as :class:`pyts.quantization.SFA`.
-
-References
-^^^^^^^^^^
 
 - Jessica Lin, Eamonn Keogh, Li Wei, and Stefano Lonardi. Experiencing SAX: a Novel
   Symbolic Representation of Time Series. *Data Mining and Knowledge Discovery*, 2007.
@@ -89,32 +92,66 @@ References
   and Index for Similarity Search in High Dimensional Datasets.
   *ACM International Conference Proceeding Series*, 2012.
 
+
 Bag of Words
 ------------
 
 Now that you know how you can transform a time series of real numbers into
 a sequence of letters, it's time to create bag of words. These algorithms are
-can be found in the :mod:`pyts.bow` module.
+can be found in the :mod:`pyts.bag_of_words` module.
 
-The only algorithm implemented for the moment is **Bag of Words (BOW)**. It
-applies a sliding window of fixed length along the sequence of letters to create
-words. It is implemented as :class:`pyts.bow.BOW`.
+The only algorithm is **Bag of Words (BOW)**. It applies a sliding window of
+fixed length along the sequence of letters to create words. It is implemented
+as :class:`pyts.bag_of_words.BagOfWords`.
+
+
+Metrics
+-------
+
+It is often of interest to be able to compare time series. However, standard
+metrics like the Euclidean distance are not always well-suited for time series.
+To tackle this issue, metrics specific to time series have been developed.
+pyts provides implementations for some of them in the :mod:`pyts.metrics` module.
+
+The most famous metric is **Dynamic Time Warping (DTW)**. It computes the Euclidean
+distance on the optimal path between two time series. This metric is
+computationally expensive, thus several variants of DTW have been developed.
+The ones available in pyts are DTW with a region constraint (Sakoe-Chiba band,
+Itakura parallelogram), MultiscaleDTW and FastDTW, as well as the classic DTW.
+Classic DTW and its variants can all be used with a single function:
+:function:`pyts.metrics.dtw`.
+
+Another metric available in this package is the **BOSS** metric. This metric
+has been introduced with the **BOSS** algorithm (see below) and computes the
+Euclidean distance between two time series, but only using the indices where
+the first time series is not equal to zero. This metric is usually not applied
+on time series directly, but after the transformation from the BOSS algorithm,
+where each time series is replaced with its histogram of words.
+
+References
+^^^^^^^^^^
+
+-
+
+
+
+
 
 Transformation
 --------------
 
 The :mod:`pyts.transformation` module consists of more complex algorithms that
-transform a dataset of raw time series with shape [n_samples, n_timestamps] into
-a more standard dataset of features with shape [n_samples, n_features] that
-can be used as input data for a standard machine learning classification
+transform a dataset of raw time series with shape `(n_samples, n_timestamps)`
+into a more standard dataset of features with shape `(n_samples, n_features)`
+that can be used as input data for a standard machine learning classification
 algorithm.
 
-The first algorithm implemented is **Bag-of-SFA Symbols (BOSS)**. Each time
-series is first transformed into a bag of words using SFA and BOW. After this
-transformation the features that are created are the frequencies of each word.
+The first algorithm is **Bag-of-SFA Symbols (BOSS)**. Each time
+series is first transformed into a bag of words using SFA and BOW. Then the
+frequencies of each word are computed.
 It is implemented as :class:`pyts.transformation.BOSS`.
 
-The second algorithm implemented is **Word ExtrAction for time SEries cLassification (WEASEL)**.
+The second algorithm is **Word ExtrAction for time SEries cLassification (WEASEL)**.
 The idea is similar to BOSS: first transform each time series into a bag of words
 then compute the frequencies of each word. WEASEL is more sophisticated in the sense
 that the selected Fourier coefficients are the most discrimative ones (based on the

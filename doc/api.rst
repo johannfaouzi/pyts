@@ -1,7 +1,7 @@
 API Documentation
 =================
 
-Here you can find the API documentation for the different modules.
+Here you can find the API documentation for the different modules:
 
 * :doc:`approximation`
 * :doc:`bow`
