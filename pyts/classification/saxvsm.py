@@ -7,7 +7,7 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from ..bag_of_words import BagOfWwords
+from ..bag_of_words import BagOfWords
 from ..approximation import SymbolicAggregateApproximation
 
 
@@ -124,8 +124,8 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
         sax = SymbolicAggregateApproximation(
             self.n_bins, self.strategy, self.alphabet)
         X_sax = sax.fit_transform(X)
-        bow = BagOfWwords(self.window_size, self.window_step,
-                          self.numerosity_reduction)
+        bow = BagOfWords(self.window_size, self.window_step,
+                         self.numerosity_reduction)
         X_bow = bow.fit_transform(X_sax)
 
         X_class = [' '.join(X_bow[y_ind == classe])

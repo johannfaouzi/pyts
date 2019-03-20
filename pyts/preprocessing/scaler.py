@@ -179,10 +179,10 @@ class RobustScaler(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    with_centering : bool (default=True)
+    with_centering : bool (default = True)
         If True, center the data before scaling.
 
-    with_scaling : boolean, True by default
+    with_scaling : bool (default = True)
         If True, scale the data to interquartile range.
 
     quantile_range : tuple (q_min, q_max), 0.0 < q_min < q_max < 100.0

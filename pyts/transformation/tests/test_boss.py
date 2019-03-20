@@ -118,11 +118,11 @@ def test_BOSS():
     vocabulary_desired = {value: key for key, value in
                           vectorizer.vocabulary_.items()}
 
-    arr_actual = boss.fit_transform(X, y)
+    arr_actual = boss.fit_transform(X, y).toarray()
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0)
     assert boss.vocabulary_ == vocabulary_desired
 
-    arr_actual = boss.fit(X, y).transform(X)
+    arr_actual = boss.fit(X, y).transform(X).toarray()
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0)
     assert boss.vocabulary_ == vocabulary_desired
 
@@ -150,10 +150,10 @@ def test_BOSS():
     vocabulary_desired = {value: key for key, value in
                           vectorizer.vocabulary_.items()}
 
-    arr_actual = boss.fit_transform(X, y)
+    arr_actual = boss.fit_transform(X, y).toarray()
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0)
     assert boss.vocabulary_ == vocabulary_desired
 
-    arr_actual = boss.fit(X, y).transform(X)
+    arr_actual = boss.fit(X, y).transform(X).toarray()
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0)
     assert boss.vocabulary_ == vocabulary_desired

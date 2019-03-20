@@ -1,5 +1,5 @@
-"""The :mod:`pyts.bop` module includes bag-of-patterns algorithms."""
+"""The :mod:`pyts.bag_of_words` module includes bag-of-patterns algorithms."""
 
-from .bow import BagOfWwords
+from .bow import BagOfWords
 
-__all__ = ['BagOfWwords']
+__all__ = ['BagOfWords']

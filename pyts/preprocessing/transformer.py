@@ -27,13 +27,13 @@ class PowerTransformer(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    method : 'yeo-johnson' or 'box-cox', (default='yeo-johnson')
+    method : 'yeo-johnson' or 'box-cox' (default = 'yeo-johnson')
         The power transform method. Available methods are:
 
         - 'yeo-johnson' [1]_, works with positive and negative values
         - 'box-cox' [2]_, only works with strictly positive values
 
-    standardize : boolean, default=True
+    standardize : boolean (default = True)
         Set to True to apply zero-mean, unit-variance normalization to the
         transformed output.
 
@@ -110,15 +110,15 @@ class QuantileTransformer(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    n_quantiles : int, optional (default=1000)
+    n_quantiles : int, optional (default = 1000)
         Number of quantiles to be computed. It corresponds to the number
         of landmarks used to discretize the cumulative distribution function.
 
-    output_distribution : 'uniform' or 'normal' (default='uniform')
+    output_distribution : 'uniform' or 'normal' (default = 'uniform')
         Marginal distribution for the transformed data. The choices are
         'uniform' (default) or 'normal'.
 
-    subsample : int, optional (default=1e5)
+    subsample : int, optional (default = 1e5)
         Maximum number of timestamps used to estimate the quantiles for
         computational efficiency.
 

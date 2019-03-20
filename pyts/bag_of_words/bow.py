@@ -7,7 +7,7 @@ from sklearn.utils.validation import check_array
 from ..utils import windowed_view
 
 
-class BagOfWwords(BaseEstimator, TransformerMixin):
+class BagOfWords(BaseEstimator, TransformerMixin):
     """Transform time series into bag of words.
 
     Parameters

@@ -954,15 +954,10 @@ def show_options(method=None, disp=True):
 
     text = """\n\n"""
     if method is None:
-        doc = textwrap.dedent(dtw_classic.__doc__).strip()
-        text += "classic\n=======\n\n" + doc + "\n"
-        doc = textwrap.dedent(dtw_sakoechiba.__doc__).strip()
+        text += "classic\n=======\n\n" + dtw_classic.__doc__ + "\n"
         text += "sakoechiba\n==========\n\n" + dtw_sakoechiba.__doc__ + "\n"
-        doc = textwrap.dedent(dtw_itakura.__doc__).strip()
         text += "itakura\n=======\n\n" + dtw_itakura.__doc__ + "\n"
-        doc = textwrap.dedent(dtw_multiscale.__doc__).strip()
         text += "multiscale\n==========\n\n" + dtw_multiscale.__doc__ + "\n"
-        doc = textwrap.dedent(dtw_fast.__doc__).strip()
         text += "fast\n====\n\n" + dtw_fast.__doc__ + "\n"
     elif method == 'classic':
         doc = textwrap.dedent(dtw_classic.__doc__).strip()

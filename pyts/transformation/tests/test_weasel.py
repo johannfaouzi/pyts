@@ -196,12 +196,10 @@ def test_WEASEL():
         X_features = hstack([X_features, X_counts[:, relevant_features]])
 
         old_length_vocab = len(vocabulary_)
-        if old_length_vocab == 0:
-            old_length_vocab = -1
         vocabulary = {value: key
                       for (key, value) in vectorizer.vocabulary_.items()}
         for i, idx in enumerate(relevant_features):
-            vocabulary_[i + 1 + old_length_vocab] = \
+            vocabulary_[i + old_length_vocab] = \
                 str(window_size) + " " + vocabulary[idx]
 
     arr_desired = X_features.toarray()

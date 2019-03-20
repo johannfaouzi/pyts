@@ -155,12 +155,10 @@ class WEASEL(BaseEstimator, TransformerMixin):
                 chi2_statistics > self.chi2_threshold)[0]
 
             old_length_vocab = len(self.vocabulary_)
-            if old_length_vocab == 0:
-                old_length_vocab = -1
             vocabulary = {value: key
                           for (key, value) in vectorizer.vocabulary_.items()}
             for i, idx in enumerate(relevant_features):
-                self.vocabulary_[i + 1 + old_length_vocab] = \
+                self.vocabulary_[i + old_length_vocab] = \
                     str(window_size) + " " + vocabulary[idx]
 
             self._relevant_features_list.append(relevant_features)
@@ -179,7 +177,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        X_new : sparse matrix, shape (n_samples, n_features)
+        X_new : sparse matrix, shape = (n_samples, n_features)
             Document-term matrix with relevant features only.
 
         """
@@ -274,12 +272,10 @@ class WEASEL(BaseEstimator, TransformerMixin):
             X_features = hstack([X_features, X_counts[:, relevant_features]])
 
             old_length_vocab = len(self.vocabulary_)
-            if old_length_vocab == 0:
-                old_length_vocab = -1
             vocabulary = {value: key
                           for (key, value) in vectorizer.vocabulary_.items()}
             for i, idx in enumerate(relevant_features):
-                self.vocabulary_[i + 1 + old_length_vocab] = \
+                self.vocabulary_[i + old_length_vocab] = \
                     str(window_size) + " " + vocabulary[idx]
 
             self._relevant_features_list.append(relevant_features)

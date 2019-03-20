@@ -165,7 +165,7 @@ class BOSS(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        X_new : array, shape = (n_samples, n_words)
+        X_new : sparse matrix, shape = (n_samples, n_words)
             Document-term matrix.
 
         """
@@ -190,7 +190,7 @@ class BOSS(BaseEstimator, TransformerMixin):
         else:
             X_bow = np.asarray([' '.join(X_word[i]) for i in range(n_samples)])
 
-        X_boss = self._vectorizer.transform(X_bow).toarray()
+        X_boss = self._vectorizer.transform(X_bow)
         return X_boss
 
     def fit_transform(self, X, y=None):
@@ -206,7 +206,7 @@ class BOSS(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        X_new : array, shape (n_samples, n_words)
+        X_new : sparse matrix, shape = (n_samples, n_words)
             Document-term matrix.
 
         """
@@ -244,7 +244,7 @@ class BOSS(BaseEstimator, TransformerMixin):
             X_bow = np.asarray([' '.join(X_word[i]) for i in range(n_samples)])
 
         vectorizer = CountVectorizer()
-        X_boss = vectorizer.fit_transform(X_bow).toarray()
+        X_boss = vectorizer.fit_transform(X_bow)
         self.vocabulary_ = {value: key for key, value in
                             vectorizer.vocabulary_.items()}
         self._window_size = window_size

@@ -183,7 +183,8 @@ class SingularSpectrumAnalysis(BaseEstimator, TransformerMixin):
             diff = np.setdiff1d(idx, np.arange(self.window_size))
             flat_list = [item for group in self.groups for item in group]
             if ((diff.size > 0)
-                or not (all(isinstance(x, int) for x in flat_list))):
+                or not (all(isinstance(x, (int, np.integer))
+                            for x in flat_list))):
                 raise ValueError(
                     "If 'groups' is array-like, all the values in 'groups' "
                     "must be integers between 0 and ('window_size' - 1)."
