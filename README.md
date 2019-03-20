@@ -6,7 +6,7 @@
 [![PyPI version](https://badge.fury.io/py/pyts.svg)](https://badge.fury.io/py/pyts)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1244152.svg)](https://doi.org/10.5281/zenodo.1244152)
 
-### pyts: a Python package for time series transformation and classification
+## pyts: a Python package for time series transformation and classification
 
 pyts is a Python package for time series transformation and classification. It
 aims to provide state-of-the-art as well as recently published algorithms
@@ -80,7 +80,7 @@ approximate time series. The available algorithms are
 [Multiple Coefficient Binning]() and
 [Symbolic Fourier Approximation]().
 - `bag_of_words`: This module consists of a class [BagOfWords]() that transforms
-time series into bag of words. This approach is quite common in time series
+time series into bags of words. This approach is quite common in time series
 classification.
 - `classification`: This module provides implementations of algorithms that
 can classify time series. The available algorithms are
@@ -102,9 +102,9 @@ to time series. The available metrics are
 - `preprocessing`: This module provides most of the scikit-learn preprocessing
 tools but applied sample-wise (i.e. to each time series independently) instead
 of feature-wise, as well as an [imputer]() of missing values using interpolation.
-- `transformation`: This module provides implementations of algorithms that a
-set of time series with shape `(n_samples, n_timestamps)` into a data set with
-shape `(n_samples, n_features)`. The available algorithms are
+- `transformation`: This module provides implementations of algorithms that
+transform a data set of time series with shape `(n_samples, n_timestamps)` into
+a data set with shape `(n_samples, n_features)`. The available algorithms are
 [BOSS]() and
 [WEASEL]().
 - `utils`: a simple module with utility functions.
