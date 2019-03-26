@@ -3,10 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Mac OS X files
+.DS_STORE
+
 # C extensions
 *.so
 
-# scikit-learn specific
+# pyts specific
 doc/_build/
 doc/auto_examples/
 doc/modules/generated/
