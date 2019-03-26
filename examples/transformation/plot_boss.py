@@ -21,7 +21,7 @@ X = rng.randn(n_samples, n_timestamps)
 
 # BOSS transformation
 boss = BOSS(word_size=2, n_bins=4, window_size=12)
-X_boss = boss.fit_transform(X)
+X_boss = boss.fit_transform(X).toarray()
 
 # Visualize the transformation for the first time series
 plt.figure(figsize=(12, 8))
