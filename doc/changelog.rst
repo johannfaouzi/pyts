@@ -1,3 +1,6 @@
+.. _changelog:
+
+==========
 Change Log
 ==========
 

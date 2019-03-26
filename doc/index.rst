@@ -51,7 +51,7 @@ algorithms and how to apply them.
 -------------------------------
 
 The exact API of all functions and classes, as given in the
-doctring. The API documents expected types and allowed features for
+docstrings. The API documents expected types and allowed features for
 all functions, and all parameters available for the algorithms.
 
 `Examples <auto_examples/index.html>`_
