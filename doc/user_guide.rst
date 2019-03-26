@@ -55,7 +55,7 @@ take the mean value in each window. It is implemented as
 The second algorithm is **Symbolic Aggregate approXimation (SAX)**. For
 each time series, bins are computed using a given strategy. Then
 each datapoint is replaced by the index of the bin it belongs to. It is
-implemented as :class:`pyts.quantization.SymbolicAggregateApproximation`.
+implemented as :class:`pyts.approximation.SymbolicAggregateApproximation`.
 It is similar to :class:`pyts.preprocessing.KBinsDiscretizer`.
 
 The third algorithm is **Discrete Fourier Transform (DFT)**. The idea
@@ -68,12 +68,12 @@ It is implemented as :class:`pyts.approximation.DiscreteFourierTransform`.
 The fourth algorithm is **Multiple Coefficient Binning (MCB)**. The idea
 is very similar to SAX and the difference is that the discretization is done
 column-wise instead of row-wise. It is implemented as
-:class:`pyts.quantization.MultipleCoefficientBinning`.
+:class:`pyts.approximation.MultipleCoefficientBinning`.
 
 The fifth algorithm is **Symbolic Fourier Approximation (SFA)**.
 It performs DFT followed MCB, i.e. the selected Fourier coefficients
 of each time series are discretized. It is implemented as
-:class:`pyts.quantization.SymbolicFourierApproximation`.
+:class:`pyts.approximation.SymbolicFourierApproximation`.
 
 References
 ^^^^^^^^^^
@@ -119,7 +119,7 @@ computationally expensive, thus several variants of DTW have been developed.
 The ones available in pyts are DTW with a region constraint (Sakoe-Chiba band,
 Itakura parallelogram), MultiscaleDTW and FastDTW, as well as the classic DTW.
 Classic DTW and its variants can all be used with a single function:
-:function:`pyts.metrics.dtw`.
+:func:`pyts.metrics.dtw`.
 
 Another metric available in this package is the **BOSS** metric. This metric
 has been introduced with the **BOSS** algorithm (see below) and computes the
@@ -131,10 +131,11 @@ where each time series is replaced with its histogram of words.
 References
 ^^^^^^^^^^
 
--
+- Meinard Müller. Dynamic Time Warping (DTW).
+  *Information Retrieval for Music and Motion*, 2007.
 
-
-
+- Patrick Schäfer. The BOSS is concerned with time series classification in
+  the presence of noise. *Data Mining and Knowledge Discovery*, 2015.
 
 
 Transformation
@@ -177,29 +178,27 @@ algorithms.
 The first algorithm implemented is **K-Nearest Neighbors (KNN)**. For time
 series classification it is the go-to algorithm for a good baseline. The most
 common metrics used for time series classification are the Euclidean distance
-and the Dynamic Time Warping distance.
-It is implemented as :class:`pyts.classification.KNNClassifier`.
+and the Dynamic Time Warping distance. It extends the implementation from
+scikit-learn with more metrics available.
+It is implemented as :class:`pyts.classification.KNeighborsClassifier`.
 
 The second algorithm implemented is **SAX-VSM**. The outline of this algorithm is
 to first transform raw time series into bags of words using SAX and BOW, then
 merge, for each class label, all bags of words for this class label into only
-one bag of words, and finally compute tf-idf for each bag of words. This leads
+one bag of words, and finally compute tf-idf statistics for each bag of words. This leads
 to a tf-idf vector for each class label. To predict an unlabeled time series,
 this time series if first transformed into a term frequency vector, then the
 predicted label is the one giving the highest cosine similarity among the tf-idf
 vectors learned in the training phase.
-It is implemented as :class:`pyts.classification.SAXVSMClassifier`.
+It is implemented as :class:`pyts.classification.SAXVSM`.
 
 The third algorithm implemented is **Bag-of-SFA Symbols in Vector Space (BOSSVS)**.
 The outline of this algorithm is quite similar to the one of SAX-VSM but words
 are created using SFA instead of SAX.
-It is implemented as :class:`pyts.classification.BOSSVSClassifier`.
+It is implemented as :class:`pyts.classification.BOSSVS`.
 
 References
 ^^^^^^^^^^
-
-- Meinard Müller. Dynamic Time Warping (DTW).
-  *Information Retrieval for Music and Motion*, 2007.
 
 - Senin Pavel and Malinchik Sergey. SAX-VSM: Interpretable Time Series
   Classification Using SAX and Vector Space Model. *Data Mining (ICDM),
@@ -218,26 +217,29 @@ The first algorithm implemented is **Recurrence Plot**. It transforms a time ser
 into a matrix where each value corresponds to the distance between two trajectories
 (a trajectory is a sub time series, i.e. a subsequence of back-to-back values
 of a time series). The matrix can be binarized using a threshold.
-It is implemented as :class:`pyts.image.RecurrencePlots`.
+It is implemented as :class:`pyts.image.RecurrencePlot`.
 
 The second algorithm implemented is **Gramian Angular Field (GAF)**. First a
 time series is represented as polar coordinates. Then the time series can be
 transformed into a **Gramian Angular Summation Field (GASF)** when the cosine
 of the sum of the angular coordinates is computed or a **Gramian Angular Difference
 Field (GADF)** when the sine of the difference of the angular coordinates is computed.
-It is implemented as :class:`pyts.image.GASF` and :class:`pyts.image.GADF`.
+It is implemented as :class:`pyts.image.GramianAngularField`
 
 The third algorithm implemented is **Markov Transition Field (MTF)**. The outline
 of the algorithm is to first quantize a time series using SAX, then to compute
 the Markov transition matrix (the quantized time series is seen as a Markov chain)
 and finally to compute the Markov transition field from the transition matrix.
-It is implemented as :class:`pyts.image.MTF`.
+It is implemented as :class:`pyts.image.MarkovTransitionField`.
 
 References
 ^^^^^^^^^^
 
-- J.-P. Eckmann, S. Oliffson Kamphorst and D. Ruelle.
+- Jean-Pierre Eckmann, Sylvie Oliffson Kamphorst and David Ruelle.
   Recurrence Plots of Dynamical Systems. *Europhysics Letters*, 1987.
+
+- Nima Hatami, Yann Gavet and Johan Debayle. Classification of Time-Series
+  Images Using Deep Convolutional Neural Networks. *arXiv:1710.00886 [cs]*, 2017.
 
 - Zhiguang Wang and Tim Oates. Imaging time-series to improve classification and imputation.
   *Proceedings of the 24th International Conference on Artificial Intelligence*, 2015.
@@ -254,7 +256,7 @@ The outline of the algorithm is to first compute a matrix from a time series usi
 vectors, then compute the eigenvalues and eigenvectors of this matrix multiplied by its
 transpose, after compute the eigenmatrices and finally compute the time series for each
 eigenmatrice.
-It is implemented as :class:`pyts.decomposition.SSA`.
+It is implemented as :class:`pyts.decomposition.SingularSpectrumAnalysis`.
 
 References
 ^^^^^^^^^^^

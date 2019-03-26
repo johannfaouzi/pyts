@@ -3,7 +3,7 @@ Citation
 
 pyts is registered on `Zenodo
 <https://doi.org/10.5281/zenodo.1244152>`_.
-If you use it in a scientific publication, please cite us::
+If you use it in a scientific publication, we would appreciate citations:
 
     @misc{johann_faouzi_2018_1244152,
     author       = {Johann Faouzi},

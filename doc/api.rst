@@ -4,11 +4,11 @@ API Documentation
 Here you can find the API documentation for the different modules:
 
 * :doc:`approximation`
-* :doc:`bow`
+* :doc:`bag_of_words`
 * :doc:`classification`
 * :doc:`decomposition`
 * :doc:`image`
+* :doc:`metrics`
 * :doc:`preprocessing`
-* :doc:`quantization`
 * :doc:`transformation`
 * :doc:`utils`

@@ -9,7 +9,7 @@ Welcome to pyts documentation!
    install
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :hidden:
    :caption: Documentation
 
@@ -63,15 +63,14 @@ complements the `User Guide <user_guide.html>`_.
 `Changelog <changelog.html>`_
 ------------------------------
 
-Log of the imbalanced-learn history.
-
+History of notable changes to the pyts.
 
 See the `README <https://github.com/johannfaouzi/pyts/README.md>`_
 for more information.
 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
