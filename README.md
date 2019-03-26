@@ -23,7 +23,7 @@ pyts requires:
 - Python (>= 3.5)
 - NumPy (>= 1.15.4)
 - SciPy (>= 1.1.0)
-- scikit-learn (>=0.20.1)
+- Scikit-Learn (>=0.20.1)
 - Numba (>0.41.0)
 
 To run the examples Matplotlib (>=2.0.0) is required.
@@ -53,7 +53,8 @@ directory using pytest:
 
 ### Changelog
 
-See the [changelog]() for a history of notable changes to pyts.
+See the [changelog](https://johannfaouzi.github.io/pyts/changelog.html)
+for a history of notable changes to pyts.
 
 ### Development
 
@@ -74,37 +75,78 @@ pyts consists of the following modules:
 
 - `approximation`: This module provides implementations of algorithms that
 approximate time series. The available algorithms are
-[Piecewise Aggregate Approximation](),
-[Symbolic Aggregate approXimation](),
-[Discrete Fourier Transform](),
-[Multiple Coefficient Binning]() and
-[Symbolic Fourier Approximation]().
-- `bag_of_words`: This module consists of a class [BagOfWords]() that transforms
+[Piecewise Aggregate Approximation]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation),
+[Symbolic Aggregate approXimation]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation),
+[Discrete Fourier Transform]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation),
+[Multiple Coefficient Binning]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation)
+and
+[Symbolic Fourier Approximation]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation)
+.
+
+- `bag_of_words`: This module consists of a class
+[BagOfWords]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation)
+that transforms
 time series into bags of words. This approach is quite common in time series
 classification.
+
 - `classification`: This module provides implementations of algorithms that
 can classify time series. The available algorithms are
-[kNN](),
-[SAX-VSM]() and
-[BOSSVS]().
+[kNN]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation),
+[SAX-VSM]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation)
+and
+[BOSSVS]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation)
+.
+
 - `decomposition`: This module provides implementations of algorithms that
 decompose a time series into several time series. The only available algorithm
-is [Singular Spectrum Analysis]().
+is
+[Singular Spectrum Analysis]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation)
+.
+
 - `image`: This module provides implementations of algorithms that transform
 time series into images. The available algorithms are
-[Recurrence Plot](),
-[Gramian Angular Field]() and
-[Markov Transition Field]().
+[Recurrence Plot]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation),
+[Gramian Angular Field]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation)
+and
+[Markov Transition Field]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation)
+.
+
 - `metrics`: This module provides implementations of metrics that are specific
 to time series. The available metrics are
-[Dynamic Time Warping]() with several variants and the
-[BOSS]() metric.
+[Dynamic Time Warping]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation)
+with several variants and the
+[BOSS](https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation)
+metric.
+
 - `preprocessing`: This module provides most of the scikit-learn preprocessing
 tools but applied sample-wise (i.e. to each time series independently) instead
-of feature-wise, as well as an [imputer]() of missing values using interpolation.
+of feature-wise, as well as an
+[imputer]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation)
+of missing values using interpolation.
+
 - `transformation`: This module provides implementations of algorithms that
 transform a data set of time series with shape `(n_samples, n_timestamps)` into
 a data set with shape `(n_samples, n_features)`. The available algorithms are
-[BOSS]() and
-[WEASEL]().
+[BOSS]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation)
+and
+[WEASEL]
+(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation)
+.
+
 - `utils`: a simple module with utility functions.
