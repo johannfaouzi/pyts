@@ -9,7 +9,7 @@ document-term matrix using tf-idf statistics. Each class is represented
 as a tfidf vector. For an unlabeled time series, the predicted label is
 the label of the tfidf vector giving the highest cosine similarity with
 the tf vector of the unlabeled time series. SAX-VSM algorithm is
-implemented as :class:`pyts.classification.SAXVSMClassifier`.
+implemented as :class:`pyts.classification.SAXVSM`.
 """
 
 import numpy as np
