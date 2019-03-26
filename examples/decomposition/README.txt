@@ -1,6 +1,6 @@
 .. _decomposition_examples:
 
-Examples using decomposition algorithms
----------------------------------------
+Decomposing time series
+-----------------------
 
 Decomposition algorithms decompose time series into several time series.

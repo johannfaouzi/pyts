@@ -29,15 +29,16 @@ words = np.asarray(X_bow[0].split(' '))
 different_words_idx = np.r_[True, words[1:] != words[:-1]]
 
 # Show the results
-plt.figure(figsize=(16, 4))
+plt.figure(figsize=(16, 8))
 plt.suptitle('Transforming a discretized time series into a bag of words',
-             fontsize=18, y=1.05)
+             fontsize=18, y=0.9)
 
 plt.subplot(121)
-plt.plot(X_ordinal[0], 'o')
+plt.plot(X_ordinal[0], 'o', scalex=0.2)
 plt.yticks(np.arange(4), alphabet)
 plt.xticks([], [])
 plt.title('Without numerosity reduction', fontsize=14)
+
 for i, word in enumerate(words):
     plt.text(i, - 0.4 - (i % 5) / 4, word, fontsize=17, color='C0')
 
@@ -46,6 +47,7 @@ plt.plot(X_ordinal[0], 'o')
 plt.yticks(np.arange(4), alphabet)
 plt.xticks([], [])
 plt.title('With numerosity reduction', fontsize=14)
+
 for i, (word, different_word) in enumerate(zip(words, different_words_idx)):
     if different_word:
         plt.text(i, - 0.4 - (i % 5) / 4, word, fontsize=17, color='C0')
@@ -53,4 +55,6 @@ for i, (word, different_word) in enumerate(zip(words, different_words_idx)):
         plt.text(i, - 0.4 - (i % 5) / 4, word, fontsize=17, color='C0',
                  alpha=0.2)
 
+plt.tight_layout()
+plt.subplots_adjust(bottom=0.3, top=0.8)
 plt.show()

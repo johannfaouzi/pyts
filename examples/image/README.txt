@@ -1,6 +1,6 @@
 .. _image_examples:
 
-Examples using imaging algorithms
----------------------------------------
+Imaging time series
+-------------------
 
 Imaging algorithms transform time series into images.
