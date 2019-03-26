@@ -1,7 +1,7 @@
 Utils
 =====
 
-The documentation of the approximation module.
+The documentation of the utils module.
 
 .. automodule:: pyts.utils
    :members:

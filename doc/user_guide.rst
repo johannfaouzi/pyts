@@ -210,7 +210,7 @@ Image
 -----
 
 Instead of transforming a time series into a bag of words, it is also possible
-to transform it into an image ! The :mod:`pyts.image` module consists of
+to transform it into an image. The :mod:`pyts.image` module consists of
 several algorithms that perform that kind of transformation.
 
 The first algorithm implemented is **Recurrence Plot**. It transforms a time series
