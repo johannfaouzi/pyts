@@ -94,6 +94,31 @@ Full API documentation of the `pyts` Python package.
   image.MarkovTransitionField
 
 
+:mod:`pyts.metrics`: Metrics
+============================
+
+  .. automodule:: pyts.metrics
+     :no-members:
+     :no-inherited-members:
+
+  .. currentmodule:: pyts
+
+  .. autosummary::
+    :toctree: generated/
+    :template: function.rst
+
+    metrics.boss_metric
+    metrics.dtw
+    metrics.dtw_classic
+    metrics.dtw_region
+    metrics.dtw_sakoechiba
+    metrics.dtw_itakura
+    metrics.dtw_multiscale
+    metrics.dtw_fast
+    metrics.itakura_parallelogram
+    metrics.sakoe_chiba_band
+    metrics.show_options
+
 :mod:`pyts.preprocessing`: Preprocessing tools
 ==============================================
 
