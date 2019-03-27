@@ -98,7 +98,7 @@ def windowed_view(X, window_size, window_step=1):
     Returns
     -------
     X_new : array, shape = (n_samples, n_windows, window_size)
-        Windowed view of the input data. ``n_windows``is computed as
+        Windowed view of the input data. ``n_windows`` is computed as
         ``(n_timestamps - window_size + window_step) // window_step``.
 
     """
@@ -117,8 +117,9 @@ def windowed_view(X, window_size, window_step=1):
                          "n_timestamps.")
 
     overlap = window_size - window_step
-    shape_new = (n_samples, ) + ((n_timestamps - overlap) // window_step,
-                                 window_size)
+    shape_new = (n_samples,
+                 (n_timestamps - overlap) // window_step,
+                 window_size)
     s0, s1 = X.strides
     strides_new = (s0, window_step * s1, s1)
     return as_strided(X, shape=shape_new, strides=strides_new)
