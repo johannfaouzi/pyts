@@ -1,7 +1,7 @@
 """
-==============================================
-Word ExtrAction for time SEries cLassification
-==============================================
+=======================================================
+Word ExtrAction for time SEries cLassification (WEASEL)
+=======================================================
 
 This example shows how the WEASEL algorithm transforms a time series of
 real numbers into a sequence of frequencies of words. It is implemented

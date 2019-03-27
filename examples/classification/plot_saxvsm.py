@@ -1,7 +1,7 @@
 """
-=======
-SAX-VSM
-=======
+================================================================
+Symbolic Aggregate approXimation in Vector Space Model (SAX-VSM)
+================================================================
 
 This example shows how the SAX-VSM algorithm transforms a dataset
 consisting of time series and their corresponding labels into a

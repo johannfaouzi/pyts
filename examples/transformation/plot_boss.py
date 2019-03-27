@@ -1,7 +1,7 @@
 """
-==================
-Bag-of-SFA Symbols
-==================
+=========================
+Bag-of-SFA Symbols (BOSS)
+=========================
 
 This example shows how the BOSS algorithm transforms a time series of real
 numbers into a sequence of frequencies of words. It is implemented as

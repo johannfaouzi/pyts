@@ -1,7 +1,7 @@
 """
-==========================
-Preprocessing transformers
-==========================
+============
+Transformers
+============
 
 This example shows the different transforming algorithms available in
 :mod:`pyts.preprocessing`.

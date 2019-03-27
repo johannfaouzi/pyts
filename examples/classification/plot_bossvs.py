@@ -1,7 +1,7 @@
 """
-==================================
-Bag-of-SFA Symbols in Vector Space
-==================================
+===========================================
+Bag-of-SFA Symbols in Vector Space (BOSSVS)
+===========================================
 
 This example shows how the BOSSVS algorithm transforms a dataset
 consisting of time series and their corresponding labels into a
