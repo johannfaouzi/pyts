@@ -22,11 +22,11 @@ User installation
 -----------------
 
 If you already have a working installation of numpy, scipy, scikit-learn and
-numba, you can easily install pyts using ``pip``
+numba, you can easily install pyts using ``pip``::
 
     pip install pyts
 
-You can also get the latest version of pyts by cloning the repository
+You can also get the latest version of pyts by cloning the repository::
 
     git clone https://github.com/johannfaouzi/pyts.git
     cd pyts
@@ -36,10 +36,10 @@ You can also get the latest version of pyts by cloning the repository
 Testing
 -------
 
-After installation, you can launch the test suite from the source
-directory using pytest:
+After installation, you can launch the test suite from outside the source
+directory using pytest::
 
-    pytest
+    pytest pyts
 
 
 Development
@@ -47,5 +47,5 @@ Development
 
 The development of this package is in line with the one of the scikit-learn
 community. Therefore, you can refer to their
-[Development Guide](https://scikit-learn.org/stable/developers/). A slight
-difference is the use of Numba instead of Cython for optimization.
+`Development Guide <https://scikit-learn.org/stable/developers/>`_.
+A slight difference is the use of Numba instead of Cython for optimization.

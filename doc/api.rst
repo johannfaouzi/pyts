@@ -4,31 +4,183 @@
 API Documentation
 =================
 
-Here you can find the API documentation for the different modules:
+Full API documentation of the `pyts` Python package.
 
-`approximation <approximation.html>`_
--------------------------------------
+:mod:`pyts.approximation`: Approximation algorithms
+===================================================
 
-`bag_of_words <bag_of_words.html>`_
------------------------------------
+.. automodule:: pyts.approximation
+    :no-members:
+    :no-inherited-members:
 
-`classification <classification.html>`_
----------------------------------------
+.. currentmodule:: pyts
 
-`decomposition <decomposition.html>`_
--------------------------------------
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
 
-`image <image.html>`_
----------------------
+   approximation.PiecewiseAggregateApproximation
+   approximation.SymbolicAggregateApproximation
+   approximation.DiscreteFourierTransform
+   approximation.MultipleCoefficientBinning
+   approximation.SymbolicFourierApproximation
 
-`metrics <metrics.html>`_
--------------------------
 
-`preprocessing <preprocessing.html>`_
--------------------------------------
+:mod:`pyts.bag_of_words`: Bag-of-words algorithms
+=================================================
 
-`transformation <transformation.html>`_
----------------------------------------
+.. automodule:: pyts.bag_of_words
+   :no-members:
+   :no-inherited-members:
 
-`utils <utils.html>`_
----------------------
+.. currentmodule:: pyts
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+  bag_of_words.BagOfWords
+
+
+:mod:`pyts.classification`: Classification algorithms
+=====================================================
+
+.. automodule:: pyts.classification
+   :no-members:
+   :no-inherited-members:
+
+.. currentmodule:: pyts
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+  classification.KNeighborsClassifier
+  classification.SAXVSM
+  classification.BOSSVS
+
+
+:mod:`pyts.decomposition`: Decomposition algorithms
+===================================================
+
+.. automodule:: pyts.decomposition
+   :no-members:
+   :no-inherited-members:
+
+.. currentmodule:: pyts
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+  decomposition.SingularSpectrumAnalysis
+
+
+:mod:`pyts.image`: Imaging algorithms
+=====================================
+
+.. automodule:: pyts.image
+   :no-members:
+   :no-inherited-members:
+
+.. currentmodule:: pyts
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+  image.RecurrencePlot
+  image.GramianAngularField
+  image.MarkovTransitionField
+
+
+:mod:`pyts.preprocessing`: Preprocessing tools
+==============================================
+
+.. automodule:: pyts.preprocessing
+   :no-members:
+   :no-inherited-members:
+
+.. currentmodule:: pyts
+
+Scaling
+-------
+
+.. currentmodule:: pyts
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+  preprocessing.StandardScaler
+  preprocessing.MinMaxScaler
+  preprocessing.MaxAbsScaler
+  preprocessing.RobustScaler
+
+Transformation
+--------------
+
+.. currentmodule:: pyts
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+  preprocessing.PowerTransformer
+  preprocessing.QuantileTransformer
+
+Discretizing
+------------
+
+.. currentmodule:: pyts
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+  preprocessing.KBinsDiscretizer
+
+Imputation
+----------
+
+.. currentmodule:: pyts
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+  preprocessing.InterpolationImputer
+
+
+:mod:`pyts.transformation`: Transformation algorithms
+=====================================================
+
+.. automodule:: pyts.transformation
+   :no-members:
+   :no-inherited-members:
+
+.. currentmodule:: pyts
+
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
+
+  transformation.BOSS
+  transformation.WEASEL
+
+
+:mod:`pyts.utils`: Utility tools
+================================
+
+.. automodule:: pyts.utils
+   :no-members:
+   :no-inherited-members:
+
+.. currentmodule:: pyts
+
+.. autosummary::
+  :toctree: generated/
+  :template: function.rst
+
+  utils.segmentation
+  utils.windowed_view

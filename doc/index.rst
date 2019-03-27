@@ -9,7 +9,7 @@ Welcome to pyts documentation!
    install
 
 .. toctree::
-   :maxdepth: 0
+   :maxdepth: 2
    :hidden:
    :caption: Documentation
 

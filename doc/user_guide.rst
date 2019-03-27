@@ -7,30 +7,47 @@ User guide
 Introduction
 ------------
 
-Time series are very common data and classifying them can be of interest in a
-lot of fields. However standard machine learning algorithms for classification,
-like Logistic Regression, Support Vector Machine or K-Nearest Neighbors with
-usual metrics, don't work very well. To be more precise, these algorithms
-don't work well on **raw time series of real numbers**. Most algorithms
-developed recently have been focusing on *transforming* the raw time series
-before applying a standard machine learning classification algorithm.
+A time series is a sequence of values indexed in time order. Given their
+nature, they are very common in many real-world applications. With the high
+availability of sensors and the development of Internet of things devices,
+the amount of time series data and the number of applications become bigger and
+bigger. Traditional domains using this type of data include finance and
+econometrics, and these domains have recently been joined by smart grid,
+earthquake prediction and weather forecasting.
 
-In the following sections we will present the algorithms implemented in pyts. If
-you want more information about the algorithms, you can have a look at the references
-and the :ref:`general_examples` section. If you want more information about
-their implementations in pyts, you can have a look at the :ref:`api` section.
+One specific analysis is time series classification: given a time series and
+a set of classes, one would like to classify this time series. Real-world
+problems include disease detection using electrocardiogram data, household
+device classification to reduce carbon footprint, and image classification.
+Standard machine learning classification is not always well suited for time
+series because of the possibly high correlation between back-to-back time
+points. One typical example is the Naive Bayes algorithm, which assumes a
+conditional independence between each feature given the class. For this reason,
+algorithms dedicated to time series classification have been developed.
+
+As the Python programming language is becoming more and more popular in
+the fields of machine learning and data science, the objective of the `pyts`
+Python package is to make time series classification easily accessible by
+providing preprocessing and utility tools, and implementations of
+state-of-the-art algorithms.
+
+In the following sections we will present the algorithms implemented in `pyts`.
+For more information about the algorithms, please have a look at the references
+and the :ref:`general_examples` section. For more information about
+their implementations in `pyts`, please have a look at the :ref:`api` section.
 
 
 Preprocessing
 -------------
 
-It is standard in machine learning to perform some preprocessing on raw data.
-Likewise it is standard to perform some preprocessing on time series. Implemented
-algorithms can be found in the :mod:`pyts.preprocessing` module.
+In machine learning, it is standard to perform some preprocessing on raw data.
+The :mod:`pyts.preprocessing` module consists of tools to preprocess raw time
+series.
 
-pyts provides most of the preprocessing tools from scikit-learn, but instead of
-applying them column-wise (i.e. independently to each feature), they are
-applied row-wise (i.e. independently to each sample). Available tools are
+`pyts` provides most of the preprocessing tools from `scikit-learn`, but
+instead of applying them column-wise (i.e. independently to each feature),
+they are applied row-wise (i.e. independently to each sample). Available tools
+are
 :class:`pyts.preprocessing.StandardScaler`,
 :class:`pyts.preprocessing.MinMaxScaler`,
 :class:`pyts.preprocessing.MaxAbsScaler`,
@@ -39,7 +56,7 @@ applied row-wise (i.e. independently to each sample). Available tools are
 :class:`pyts.preprocessing.QuantileTransformer` and
 :class:`pyts.preprocessing.KBinsDiscretizer`.
 
-pyts also provides a tool to impute missing values using interpolation:
+`pyts` also provides a tool to impute missing values using interpolation:
 :class:`pyts.preprocessing.InterpolationImputer`.
 
 
@@ -48,7 +65,8 @@ Approximation
 
 Time series can be of huge size or be very noisy. It can be useful to sum up
 the most important information of each time series. Implemented algorithms
-to approximate a time series can be found in the :mod:`pyts.approximation` module.
+to approximate a time series can be found in the :mod:`pyts.approximation`
+module.
 
 The first algorithm is **Piecewise Aggregate Approximation (PAA)**. The
 main idea of this algorithm is to apply windows along a time series and to
@@ -100,11 +118,11 @@ Bag of Words
 ------------
 
 Now that you know how you can transform a time series of real numbers into
-a sequence of letters, it's time to create bag of words. These algorithms are
+a sequence of symbols, it's time to create bag of words. These algorithms are
 can be found in the :mod:`pyts.bag_of_words` module.
 
 The only algorithm is **Bag of Words (BOW)**. It applies a sliding window of
-fixed length along the sequence of letters to create words. It is implemented
+fixed length along the sequence of symbols to create words. It is implemented
 as :class:`pyts.bag_of_words.BagOfWords`.
 
 
@@ -114,12 +132,12 @@ Metrics
 It is often of interest to be able to compare time series. However, standard
 metrics like the Euclidean distance are not always well-suited for time series.
 To tackle this issue, metrics specific to time series have been developed.
-pyts provides implementations for some of them in the :mod:`pyts.metrics` module.
+`pyts` provides implementations for some of them in the :mod:`pyts.metrics` module.
 
 The most famous metric is **Dynamic Time Warping (DTW)**. It computes the Euclidean
 distance on the optimal path between two time series. This metric is
 computationally expensive, thus several variants of DTW have been developed.
-The ones available in pyts are DTW with a region constraint (Sakoe-Chiba band,
+The ones available in `pyts` are DTW with a region constraint (Sakoe-Chiba band,
 Itakura parallelogram), MultiscaleDTW and FastDTW, as well as the classic DTW.
 Classic DTW and its variants can all be used with a single function:
 :func:`pyts.metrics.dtw`.
@@ -155,12 +173,13 @@ series is first transformed into a bag of words using SFA and BOW. Then the
 frequencies of each word are computed.
 It is implemented as :class:`pyts.transformation.BOSS`.
 
-The second algorithm is **Word ExtrAction for time SEries cLassification (WEASEL)**.
-The idea is similar to BOSS: first transform each time series into a bag of words
-then compute the frequencies of each word. WEASEL is more sophisticated in the sense
-that the selected Fourier coefficients are the most discrimative ones (based on the
-one-way ANOVA test), several lengths for the sliding window are used and the most
-discriminative features (i.e. words) are kept (based on the chi-2 test).
+The second algorithm is **Word ExtrAction for time SEries cLassification
+(WEASEL)**. The idea is similar to BOSS: first it transforms each time series
+into a bag of words, then it computes the frequencies of each word. WEASEL
+is more sophisticated in the sense that the selected Fourier coefficients are
+the most discriminative ones (based on the one-way ANOVA test), several
+lengths for the sliding window are used and the most discriminative features
+(i.e. words) are kept (based on the chi-2 test).
 It is implemented as :class:`pyts.transformation.WEASEL`.
 
 References
@@ -169,8 +188,8 @@ References
 - Patrick Schäfer. The BOSS is concerned with time series classification in
   the presence of noise. *Data Mining and Knowledge Discovery*, 2015.
 
-- Patrick Schäfer and Ulf Leser. Fast and Accurate Time Series Classification with WEASEL.
-  *CoRR*, 2017.
+- Patrick Schäfer and Ulf Leser. Fast and Accurate Time Series Classification
+  with WEASEL. *CoRR*, 2017.
 
 Classification
 --------------
@@ -178,26 +197,26 @@ Classification
 The :mod:`pyts.classification` module consists of several classification
 algorithms.
 
-The first algorithm implemented is **K-Nearest Neighbors (KNN)**. For time
+The first algorithm implemented is **K-Nearest Neighbors**. For time
 series classification it is the go-to algorithm for a good baseline. The most
 common metrics used for time series classification are the Euclidean distance
-and the Dynamic Time Warping distance. It extends the implementation from
-scikit-learn with more metrics available.
+and the Dynamic Time Warping metric. It extends the implementation from
+`scikit-learn` with the metrics available in the :mod:`pyts.metrics` module.
 It is implemented as :class:`pyts.classification.KNeighborsClassifier`.
 
-The second algorithm implemented is **SAX-VSM**. The outline of this algorithm is
-to first transform raw time series into bags of words using SAX and BOW, then
-merge, for each class label, all bags of words for this class label into only
-one bag of words, and finally compute tf-idf statistics for each bag of words. This leads
-to a tf-idf vector for each class label. To predict an unlabeled time series,
-this time series if first transformed into a term frequency vector, then the
-predicted label is the one giving the highest cosine similarity among the tf-idf
-vectors learned in the training phase.
+The second algorithm implemented is **SAX-VSM**. The outline of this algorithm
+is to first transform raw time series into bags of words using SAX and BOW,
+then merge, for each class label, all the bags of words for this class label
+into only one bag of words, and finally compute tf-idf statistics for each bag
+of words. This leads to a tf-idf vector for each class label. To predict an
+unlabeled time series, this time series if first transformed into a term
+frequency vector, then the predicted label is the one giving the highest cosine
+similarity among the tf-idf vectors learned in the training phase.
 It is implemented as :class:`pyts.classification.SAXVSM`.
 
-The third algorithm implemented is **Bag-of-SFA Symbols in Vector Space (BOSSVS)**.
-The outline of this algorithm is quite similar to the one of SAX-VSM but words
-are created using SFA instead of SAX.
+The third algorithm implemented is **Bag-of-SFA Symbols in Vector Space
+(BOSSVS)**. The outline of this algorithm is quite similar to the one of
+SAX-VSM but words are created using SFA instead of SAX.
 It is implemented as :class:`pyts.classification.BOSSVS`.
 
 References
@@ -207,7 +226,8 @@ References
   Classification Using SAX and Vector Space Model. *Data Mining (ICDM),
   2013 IEEE 13th International Conference on, pp.1175,1180*, 2013.
 
-- Patrick Schäfer. Scalable Time Series Classification. *DMKD* and *ECML/PKDD*, 2016.
+- Patrick Schäfer. Scalable Time Series Classification. *DMKD* and *ECML/PKDD*,
+  2016.
 
 Image
 -----
@@ -216,23 +236,25 @@ Instead of transforming a time series into a bag of words, it is also possible
 to transform it into an image. The :mod:`pyts.image` module consists of
 several algorithms that perform that kind of transformation.
 
-The first algorithm implemented is **Recurrence Plot**. It transforms a time series
-into a matrix where each value corresponds to the distance between two trajectories
-(a trajectory is a sub time series, i.e. a subsequence of back-to-back values
+The first algorithm implemented is **Recurrence Plot**. It transforms a time
+series into a matrix where each value corresponds to the distance between two
+trajectories (a trajectory is a subseries, i.e. a subsequence of values
 of a time series). The matrix can be binarized using a threshold.
 It is implemented as :class:`pyts.image.RecurrencePlot`.
 
 The second algorithm implemented is **Gramian Angular Field (GAF)**. First a
 time series is represented as polar coordinates. Then the time series can be
 transformed into a **Gramian Angular Summation Field (GASF)** when the cosine
-of the sum of the angular coordinates is computed or a **Gramian Angular Difference
-Field (GADF)** when the sine of the difference of the angular coordinates is computed.
+of the sum of the angular coordinates is computed or a **Gramian Angular
+Difference Field (GADF)** when the sine of the difference of the angular
+coordinates is computed.
 It is implemented as :class:`pyts.image.GramianAngularField`
 
-The third algorithm implemented is **Markov Transition Field (MTF)**. The outline
-of the algorithm is to first quantize a time series using SAX, then to compute
-the Markov transition matrix (the quantized time series is seen as a Markov chain)
-and finally to compute the Markov transition field from the transition matrix.
+The third algorithm implemented is **Markov Transition Field (MTF)**. The
+outline of the algorithm is to first quantize a time series using SAX, then to
+compute the Markov transition matrix (the quantized time series is seen as a
+Markov chain) and finally to compute the Markov transition field from the
+transition matrix.
 It is implemented as :class:`pyts.image.MarkovTransitionField`.
 
 References
@@ -251,14 +273,14 @@ Decomposition
 -------------
 
 The :mod:`pyts.decomposition` module consists of algorithms that decompose a
-time series into several time series. The idea is to distinguish the different parts
-of time series, such as the trend, the noise, etc.
+time series into several time series. The idea is to distinguish the different
+parts of time series, such as the trend, the noise, etc.
 
-The only algorithm implemented currently is **Singular Spectrum Analysis (SSA)**.
-The outline of the algorithm is to first compute a matrix from a time series using lagged
-vectors, then compute the eigenvalues and eigenvectors of this matrix multiplied by its
-transpose, after compute the eigenmatrices and finally compute the time series for each
-eigenmatrice.
+The only algorithm implemented currently is **Singular Spectrum Analysis
+(SSA)**. The outline of the algorithm is to first compute a matrix from a time
+series using lagged vectors, then compute the eigenvalues and eigenvectors of
+this matrix multiplied by its transpose, then compute the eigenmatrices and
+finally compute the time series for each eigenmatrice.
 It is implemented as :class:`pyts.decomposition.SingularSpectrumAnalysis`.
 
 References
