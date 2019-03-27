@@ -17,5 +17,5 @@ rng = np.random.RandomState(41)
 X = rng.randn(n_samples, n_timestamps)
 
 # Plot the first time series
-plt.plot(X[0])
+plt.plot(X[0], 'o-')
 plt.show()
