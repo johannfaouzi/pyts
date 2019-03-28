@@ -3,7 +3,7 @@
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.neighbors import KNeighborsClassifier as SklearnKNN
 from sklearn.utils.validation import check_X_y, check_is_fitted
-from ..metrics import (boss_metric, dtw, dtw_classic, dtw_region, dtw_fast,
+from ..metrics import (boss, dtw, dtw_classic, dtw_region, dtw_fast,
                        dtw_multiscale, sakoe_chiba_band, itakura_parallelogram)
 
 
@@ -164,7 +164,7 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
         elif self.metric == 'boss':
             self._clf = SklearnKNN(
                 n_neighbors=self.n_neighbors, weights=self.weights,
-                algorithm='brute', metric=boss_metric,
+                algorithm='brute', metric=boss,
                 metric_params=self.metric_params,
                 n_jobs=self.n_jobs, **self.kwargs
             )
