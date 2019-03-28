@@ -68,14 +68,14 @@ difference is the use of Numba instead of Cython for optimization.
 
 The section below gives some information about the implemented algorithms in pyts.
 For more information, please have a look at the
-[HTML documentation available via ReadTheDocs](https://johannfaouzi.github.io/pyts/)
+[HTML documentation available via ReadTheDocs](https://pyts.readthedocs.io/en/0.8dev/)
 
 ### Implemented features
 
 pyts consists of the following modules:
 
 - `approximation`: This module provides implementations of algorithms that
-approximate time series. The available algorithms are
+approximate time series. Implemented algorithms are
 [Piecewise Aggregate Approximation](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.approximation.PiecewiseAggregateApproximation.html#),
 [Symbolic Aggregate approXimation](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.approximation.SymbolicAggregateApproximation.html#),
 [Discrete Fourier Transform](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.approximation.DiscreteFourierTransform.html#),
@@ -88,28 +88,27 @@ that transforms time series into bags of words. This approach is quite common
 in time series classification.
 
 - `classification`: This module provides implementations of algorithms that
-can classify time series. The available algorithms are
-[KNeighborsClassifierN](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.classification.KNeighborsClassifier.html#),
+can classify time series. Implemented algorithms are
+[KNeighborsClassifier](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.classification.KNeighborsClassifier.html#),
 [SAXVSM](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.classification.SAXVSM.html#) and
 [BOSSVS](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.classification.BOSSVS.html#).
 
 - `decomposition`: This module provides implementations of algorithms that
-decompose a time series into several time series. The only available algorithm
+decompose a time series into several time series. The only implemented algorithm
 is
 [Singular Spectrum Analysis](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.decomposition.SingularSpectrumAnalysis.html#).
 
 - `image`: This module provides implementations of algorithms that transform
-time series into images. The available algorithms are
+time series into images. Implemented algorithms are
 [Recurrence Plot](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.image.RecurrencePlot.html#),
 [Gramian Angular Field](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.image.GramianAngularField.html#) and
 [Markov Transition Field](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.image.MarkovTransitionField.html#).
 
 - `metrics`: This module provides implementations of metrics that are specific
-to time series. The available metrics are
-[Dynamic Time Warping]
-(https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation)
+to time series. Implemented metrics are
+[Dynamic Time Warping](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.metrics.dtw.html#)
 with several variants and the
-[BOSS](https://johannfaouzi.github.io/pyts/approximation.html#pyts.approximation.PiecewiseAggregateApproximation)
+[BOSS](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.metrics.boss_metric.html#)
 metric.
 
 - `preprocessing`: This module provides most of the scikit-learn preprocessing
@@ -121,7 +120,7 @@ of missing values using interpolation. More information is available at the
 
 - `transformation`: This module provides implementations of algorithms that
 transform a data set of time series with shape `(n_samples, n_timestamps)` into
-a data set with shape `(n_samples, n_features)`. The available algorithms are
+a data set with shape `(n_samples, n_features)`. Implemented algorithms are
 [BOSS](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.transformation.BOSS.html#) and
 [WEASEL](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.transformation.WEASEL.html#).
 
