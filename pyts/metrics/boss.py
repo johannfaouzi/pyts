@@ -5,7 +5,7 @@ from math import sqrt
 from sklearn.utils import check_array
 
 
-def boss_metric(x, y):
+def boss(x, y):
     """Return the BOSS distance between two arrays.
 
     x : array-like, shape = (n_timestamps,)

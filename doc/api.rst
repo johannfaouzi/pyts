@@ -107,7 +107,7 @@ Full API documentation of the `pyts` Python package.
     :toctree: generated/
     :template: function.rst
 
-    metrics.boss_metric
+    metrics.boss
     metrics.dtw
     metrics.dtw_classic
     metrics.dtw_region

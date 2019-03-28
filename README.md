@@ -108,7 +108,7 @@ time series into images. Implemented algorithms are
 to time series. Implemented metrics are
 [Dynamic Time Warping](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.metrics.dtw.html#)
 with several variants and the
-[BOSS](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.metrics.boss_metric.html#)
+[BOSS](https://pyts.readthedocs.io/en/0.8dev/generated/pyts.metrics.boss.html#)
 metric.
 
 - `preprocessing`: This module provides most of the scikit-learn preprocessing
