@@ -1,114 +1,129 @@
-"""Tests for :mod:`pyts.utils` module."""
+"""Testing for utility tools."""
 
 import numpy as np
-from itertools import product
-from ..utils import segmentation, numerosity_reduction, dtw, fast_dtw
+import pytest
+import re
+from ..utils import segmentation, windowed_view
 
 
 def test_segmentation():
-    """Testing 'segmentation'."""
+    """Test 'segmentation' function."""
+    # Parameters check
+    msg_error = "'ts_size' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        segmentation(ts_size=None, window_size=2,
+                     overlapping=False, n_segments=None)
+
+    msg_error = "'window_size' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        segmentation(ts_size=10, window_size={},
+                     overlapping=False, n_segments=None)
+
+    msg_error = "'n_segments' must be None or an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        segmentation(ts_size=10, window_size=2,
+                     overlapping=False, n_segments="3")
+
+    msg_error = re.escape(
+        "'ts_size' must be an integer greater than or equal "
+        "to 2 (got {0}).".format(1)
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        segmentation(ts_size=1, window_size=2,
+                     overlapping=False, n_segments=None)
+
+    msg_error = re.escape(
+        "'window_size' must be an integer greater than or "
+        "equal to 1 (got {0}).".format(0)
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        segmentation(ts_size=10, window_size=0,
+                     overlapping=False, n_segments=None)
+
+    msg_error = re.escape(
+        "'window_size' must be lower than or equal to "
+        "'ts_size' ({0} > {1}).".format(15, 10)
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        segmentation(ts_size=10, window_size=15,
+                     overlapping=False, n_segments=None)
+
+    msg_error = re.escape(
+        "If 'n_segments' is an integer, it must be greater than or "
+        "equal to 2 and lower than or equal to 'ts_size' "
+        "({0} > {1}).".format(12, 10)
+    )
+    with pytest.raises(ValueError, match=msg_error):
+        segmentation(ts_size=10, window_size=3,
+                     overlapping=False, n_segments=12)
+
     # Test 1
     bounds = np.array([0, 4, 8, 12, 16, 20])
     window_size = 4
     overlapping = False
     res_actual = segmentation(20, window_size, overlapping)
-    res_start = bounds[:-1]
-    res_end = bounds[1:]
-    res_size = 5
-    np.testing.assert_array_equal(res_actual[0], res_start)
-    np.testing.assert_array_equal(res_actual[1], res_end)
-    np.testing.assert_equal(res_actual[2], res_size)
+    start_desired = bounds[:-1]
+    end_desired = bounds[1:]
+    size_desired = 5
+    np.testing.assert_array_equal(res_actual[0], start_desired)
+    np.testing.assert_array_equal(res_actual[1], end_desired)
+    np.testing.assert_equal(res_actual[2], size_desired)
 
-    # Test: loop
-    ts_size_list = [10, 13]
-    window_size_list = [4, 7]
-    overlapping_list = [True, False]
-    n_segments_list = [None, 3]
-    for (ts_size, window_size, overlapping,
-         n_segments) in product(*[ts_size_list,
-                                  window_size_list,
-                                  overlapping_list,
-                                  n_segments_list]):
-        segmentation(ts_size, window_size, overlapping, n_segments)
+    # Test 2
+    window_size = 8
+    overlapping = True
+    res_actual = segmentation(20, window_size, overlapping)
+    start_desired = [0, 6, 12]
+    end_desired = [8, 14, 20]
+    size_desired = 3
+    np.testing.assert_array_equal(res_actual[0], start_desired)
+    np.testing.assert_array_equal(res_actual[1], end_desired)
+    np.testing.assert_equal(res_actual[2], size_desired)
 
 
-def test_numerosity_reduction():
-    """Testing 'numerosity_reduction'."""
+def test_windowed_view():
+    """Test 'windowed_view' function."""
+    X = np.arange(10).reshape(2, 5)
+
+    # Parameters check
+    msg_error = "'window_size' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        windowed_view(X, window_size="3", window_step=1)
+
+    msg_error = "'window_step' must be an integer."
+    with pytest.raises(TypeError, match=msg_error):
+        windowed_view(X, window_size=2, window_step=None)
+
+    msg_error = "'window_size' must be an integer between 1 and n_timestamps."
+    with pytest.raises(ValueError, match=msg_error):
+        windowed_view(X, window_size=7, window_step=1)
+
+    msg_error = "'window_step' must be an integer between 1 and n_timestamps."
+    with pytest.raises(ValueError, match=msg_error):
+        windowed_view(X, window_size=2, window_step=0)
+
     # Test 1
-    array = np.array(["aaa", "aaa", "aaa", "bbb", "bbb", "ccc", "aaa"])
-    arr_actual = numerosity_reduction(array)
-    arr_desired = ' '.join(["aaa", "bbb", "ccc", "aaa"])
+    arr_actual = windowed_view(X, window_size=3, window_step=1)
+    arr_desired = [[[0, 1, 2],
+                    [1, 2, 3],
+                    [2, 3, 4]],
+                   [[5, 6, 7],
+                    [6, 7, 8],
+                    [7, 8, 9]]]
     np.testing.assert_array_equal(arr_actual, arr_desired)
 
-
-def test_dtw():
-    """Testing 'dtw'."""
-    # Parameter 1
-    x1 = np.array([1, -1, -1, 1, 1])
-    x2 = np.array([1, 1, -1, -1, 1])
-
-    # Test 1
-    cost_actual = dtw(x1, x2)
-    cost_desired = 0
-    np.testing.assert_equal(cost_actual, cost_desired)
-
-    # Parameter 2
-    x1 = np.array([1, -1, 1, 1, 1, -1])
-    x2 = np.ones(6)
-    x3 = - np.ones(6)
-
-    # Test 1
-    cost_actual = dtw(x1, x2)
-    cost_desired = 4
-    np.testing.assert_equal(cost_actual, cost_desired)
-
     # Test 2
-    cost_actual = dtw(x1, x3)
-    cost_desired = 8
-    np.testing.assert_equal(cost_actual, cost_desired)
+    arr_actual = windowed_view(X, window_size=3, window_step=2)
+    arr_desired = [[[0, 1, 2],
+                    [2, 3, 4]],
+                   [[5, 6, 7],
+                    [7, 8, 9]]]
+    np.testing.assert_array_equal(arr_actual, arr_desired)
 
     # Test 3
-    cost_actual = dtw(x2, x3)
-    cost_desired = 12
-    np.testing.assert_equal(cost_actual, cost_desired)
-
-    # Test: loop
-    dist_list = ['absolute', 'square', lambda x, y: (x - y)**4]
-    return_path_list = [True, False]
-    for (dist, return_path) in product(*[dist_list, return_path_list]):
-        dtw(x1, x2, dist, return_path)
-
-
-def test_fast_dtw():
-    """Testing 'fast_dtw'."""
-    # Parameter
-    x1 = np.array([1, -1, 1, 1, 1, -1])
-    x2 = np.ones(6)
-    x3 = - np.ones(6)
-
-    # Test 1
-    cost_actual = fast_dtw(x1, x2, window_size=2)
-    cost_desired = 2
-    np.testing.assert_equal(cost_actual, cost_desired)
-
-    # Test 2
-    cost_actual = fast_dtw(x1, x3, window_size=2)
-    cost_desired = 4
-    np.testing.assert_equal(cost_actual, cost_desired)
-
-    # Test 3
-    cost_actual = fast_dtw(x2, x3, window_size=2)
-    cost_desired = 6
-    np.testing.assert_equal(cost_actual, cost_desired)
-
-    # Test: loop
-    window_size_list = [2, 3]
-    approximation_list = [True, False]
-    dist_list = ['absolute', 'square', lambda x, y: (x - y)**4]
-    return_path_list = [True, False]
-    for (window_size, approximation, dist,
-         return_path) in product(*[window_size_list,
-                                   approximation_list,
-                                   dist_list,
-                                   return_path_list]):
-        fast_dtw(x1, x2, window_size, approximation, 'absolute', return_path)
+    arr_actual = windowed_view(X, window_size=2, window_step=3)
+    arr_desired = [[[0, 1],
+                    [3, 4]],
+                   [[5, 6],
+                    [8, 9]]]
+    np.testing.assert_array_equal(arr_actual, arr_desired)

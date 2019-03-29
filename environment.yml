@@ -1,0 +1,6 @@
+name: pyts
+dependencies:
+  - numpy
+  - scipy
+  - scikit-learn
+  - numba

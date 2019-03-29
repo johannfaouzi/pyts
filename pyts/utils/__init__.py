@@ -1,8 +1,6 @@
-"""The :mod:`pyts.utils` module includes utility functions."""
+"""The :mod:`pyts.utils` module includes utility tools."""
 
-from .utils import segmentation, numerosity_reduction, dtw, fast_dtw
+from .utils import segmentation, windowed_view
 
-__all__ = ['segmentation',
-           'numerosity_reduction',
-           'dtw',
-           'fast_dtw']
+
+__all__ = ['segmentation', 'windowed_view']

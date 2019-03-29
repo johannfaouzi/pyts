@@ -1,50 +1,100 @@
+.. _user_guide:
+
+==========
 User guide
 ==========
 
 Introduction
 ------------
 
-Time series are very common data and classifying them can be of interest in a
-lot of fields. However standard machine learning algorithms for classification,
-like Logistic Regression, Support Vector Machine or K-Nearest Neighbors with
-usual metrics, don't work very well. To be more precise, these algorithms
-don't work well on **raw time series of real numbers**. Most algorithms
-developed recently have been focusing on *transforming* the raw time series
-before applying a standard machine learning classification algorithm.
+A time series is a sequence of values indexed in time order. Given their
+nature, they are very common in many real-world applications. With the high
+availability of sensors and the development of Internet of things devices,
+the amount of time series data and the number of applications become bigger and
+bigger. Traditional domains using this type of data include finance and
+econometrics, and these domains have recently been joined by smart grid,
+earthquake prediction and weather forecasting.
 
-In the following sections we'll present the algorithms implemented in pyts. If
-you want more information about the algorithms, you can have a look at the references
-and the :ref:`general_examples` section.
+One specific analysis is time series classification: given a time series and
+a set of classes, one would like to classify this time series. Real-world
+problems include disease detection using electrocardiogram data, household
+device classification to reduce carbon footprint, and image classification.
+Standard machine learning classification is not always well suited for time
+series because of the possibly high correlation between back-to-back time
+points. One typical example is the Naive Bayes algorithm, which assumes a
+conditional independence between each feature given the class. For this reason,
+algorithms dedicated to time series classification have been developed.
+
+As the Python programming language is becoming more and more popular in
+the fields of machine learning and data science, the objective of the `pyts`
+Python package is to make time series classification easily accessible by
+providing preprocessing and utility tools, and implementations of
+state-of-the-art algorithms.
+
+In the following sections we will present the algorithms implemented in `pyts`.
+For more information about the algorithms, please have a look at the references
+and the :ref:`general_examples` section. For more information about
+their implementations in `pyts`, please have a look at the :ref:`api` section.
+
 
 Preprocessing
 -------------
 
-It is standard in machine learning to perform some preprocessing on raw data.
-Likewise it is standard to perform some preprocessing on time series. Implemented
-algorithms can be found in the :mod:`pyts.preprocessing` module.
+In machine learning, it is standard to perform some preprocessing on raw data.
+The :mod:`pyts.preprocessing` module consists of tools to preprocess raw time
+series.
 
-Currently the only preprocessing tool implemented is **StandardScaler**
-It performs standardization (z-normalization) for each time series: the preprocessed
-time series all have zero mean and unit variance.
-It is implemented as :class:`pyts.preprocessing.StandardScaler`.
+`pyts` provides most of the preprocessing tools from `scikit-learn`, but
+instead of applying them column-wise (i.e. independently to each feature),
+they are applied row-wise (i.e. independently to each sample). Available tools
+are
+:class:`pyts.preprocessing.StandardScaler`,
+:class:`pyts.preprocessing.MinMaxScaler`,
+:class:`pyts.preprocessing.MaxAbsScaler`,
+:class:`pyts.preprocessing.RobustScaler`,
+:class:`pyts.preprocessing.PowerTransformer`,
+:class:`pyts.preprocessing.QuantileTransformer` and
+:class:`pyts.preprocessing.KBinsDiscretizer`.
+
+`pyts` also provides a tool to impute missing values using interpolation:
+:class:`pyts.preprocessing.InterpolationImputer`.
+
 
 Approximation
 -------------
 
 Time series can be of huge size or be very noisy. It can be useful to sum up
 the most important information of each time series. Implemented algorithms
-to approximate a time series can be found in the :mod:`pyts.approximation` module.
+to approximate a time series can be found in the :mod:`pyts.approximation`
+module.
 
-The first algorithm implemented is **Piecewise Aggregate Approximation (PAA)**. The
+The first algorithm is **Piecewise Aggregate Approximation (PAA)**. The
 main idea of this algorithm is to apply windows along a time series and to
-take the mean value in each window. It is implemented as :class:`pyts.approximation.PAA`.
+take the mean value in each window. It is implemented as
+:class:`pyts.approximation.PiecewiseAggregateApproximation`.
 
-The second algorithm implemented is **Discrete Fourier Transform (DFT)**. The idea
+The second algorithm is **Symbolic Aggregate approXimation (SAX)**. For
+each time series, bins are computed using a given strategy. Then
+each datapoint is replaced by the index of the bin it belongs to. It is
+implemented as :class:`pyts.approximation.SymbolicAggregateApproximation`.
+It is similar to :class:`pyts.preprocessing.KBinsDiscretizer`.
+
+The third algorithm is **Discrete Fourier Transform (DFT)**. The idea
 is to approximate a time series with a subsample of its Fourier coefficients.
 The selected Fourier coefficients are either the first ones (as they represent
 the trend of the time series) or the ones that discriminate the different classes
 the most if a vector of class labels is provided.
-It is implemented as :class:`pyts.approximation.DFT`.
+It is implemented as :class:`pyts.approximation.DiscreteFourierTransform`.
+
+The fourth algorithm is **Multiple Coefficient Binning (MCB)**. The idea
+is very similar to SAX and the difference is that the discretization is done
+column-wise instead of row-wise. It is implemented as
+:class:`pyts.approximation.MultipleCoefficientBinning`.
+
+The fifth algorithm is **Symbolic Fourier Approximation (SFA)**.
+It performs DFT followed MCB, i.e. the selected Fourier coefficients
+of each time series are discretized. It is implemented as
+:class:`pyts.approximation.SymbolicFourierApproximation`.
 
 References
 ^^^^^^^^^^
@@ -53,34 +103,8 @@ References
   A simple dimensionality reduction technique for fast similarity search in
   large time series databases. *Knowledge Discovery and Data Mining* ,2000.
 
-
 - Christos Faloutsos, M. Ranganathan and Yannis Manolopoulos.
   Fast Subsequence Matching in Time-Series Databases. *ACM SIGMOD Record*, 2000.
-
-Quantization
-------------
-
-One of the most interesting parts in time series classification is that several
-state-of-the-art algorithms use text mining techniques for classification
-and thus transform time series into bag of words. But first a time series
-of real numbers needs to be transformed into a sequence of letters. Implemented
-algorithms that quantize time series can be found in the :mod:`pyts.quantization` module.
-
-The first algorithm implemented is **Symbolic Aggregate approXimation (SAX)**. For
-each time series, bins are computed using gaussian or empirical quantiles. Then
-each datapoint is replaced by the bin it is in. It is implemented as
-:class:`pyts.quantization.SAX`.
-
-The second algorithm implemented is **Multiple Coefficient Binning (MCB)**. The idea
-is very similar to SAX and the difference is that the quantization is applied
-at each timestamp. It is implemented as :class:`pyts.quantization.MCB`.
-
-The third algorithm implemented is **Symbolic Fourier Approximation (SFA)**.
-It performs DFT then MCB, i.e. MCB is applied to the selected Fourier coefficients
-of each time series. It is implemented as :class:`pyts.quantization.SFA`.
-
-References
-^^^^^^^^^^
 
 - Jessica Lin, Eamonn Keogh, Li Wei, and Stefano Lonardi. Experiencing SAX: a Novel
   Symbolic Representation of Time Series. *Data Mining and Knowledge Discovery*, 2007.
@@ -89,37 +113,73 @@ References
   and Index for Similarity Search in High Dimensional Datasets.
   *ACM International Conference Proceeding Series*, 2012.
 
+
 Bag of Words
 ------------
 
 Now that you know how you can transform a time series of real numbers into
-a sequence of letters, it's time to create bag of words. These algorithms are
-can be found in the :mod:`pyts.bow` module.
+a sequence of symbols, it's time to create bag of words. These algorithms are
+can be found in the :mod:`pyts.bag_of_words` module.
 
-The only algorithm implemented for the moment is **Bag of Words (BOW)**. It
-applies a sliding window of fixed length along the sequence of letters to create
-words. It is implemented as :class:`pyts.bow.BOW`.
+The only algorithm is **Bag of Words (BOW)**. It applies a sliding window of
+fixed length along the sequence of symbols to create words. It is implemented
+as :class:`pyts.bag_of_words.BagOfWords`.
+
+
+Metrics
+-------
+
+It is often of interest to be able to compare time series. However, standard
+metrics like the Euclidean distance are not always well-suited for time series.
+To tackle this issue, metrics specific to time series have been developed.
+`pyts` provides implementations for some of them in the :mod:`pyts.metrics` module.
+
+The most famous metric is **Dynamic Time Warping (DTW)**. It computes the Euclidean
+distance on the optimal path between two time series. This metric is
+computationally expensive, thus several variants of DTW have been developed.
+The ones available in `pyts` are DTW with a region constraint (Sakoe-Chiba band,
+Itakura parallelogram), MultiscaleDTW and FastDTW, as well as the classic DTW.
+Classic DTW and its variants can all be used with a single function:
+:func:`pyts.metrics.dtw`.
+
+Another metric available in this package is the **BOSS** metric. This metric
+has been introduced with the **BOSS** algorithm (see below) and computes the
+Euclidean distance between two time series, but only using the indices where
+the first time series is not equal to zero. This metric is usually not applied
+on time series directly, but after the transformation from the BOSS algorithm,
+where each time series is replaced with its histogram of words.
+
+References
+^^^^^^^^^^
+
+- Meinard Müller. Dynamic Time Warping (DTW).
+  *Information Retrieval for Music and Motion*, 2007.
+
+- Patrick Schäfer. The BOSS is concerned with time series classification in
+  the presence of noise. *Data Mining and Knowledge Discovery*, 2015.
+
 
 Transformation
 --------------
 
 The :mod:`pyts.transformation` module consists of more complex algorithms that
-transform a dataset of raw time series with shape [n_samples, n_timestamps] into
-a more standard dataset of features with shape [n_samples, n_features] that
-can be used as input data for a standard machine learning classification
+transform a dataset of raw time series with shape `(n_samples, n_timestamps)`
+into a more standard dataset of features with shape `(n_samples, n_features)`
+that can be used as input data for a standard machine learning classification
 algorithm.
 
-The first algorithm implemented is **Bag-of-SFA Symbols (BOSS)**. Each time
-series is first transformed into a bag of words using SFA and BOW. After this
-transformation the features that are created are the frequencies of each word.
+The first algorithm is **Bag-of-SFA Symbols (BOSS)**. Each time
+series is first transformed into a bag of words using SFA and BOW. Then the
+frequencies of each word are computed.
 It is implemented as :class:`pyts.transformation.BOSS`.
 
-The second algorithm implemented is **Word ExtrAction for time SEries cLassification (WEASEL)**.
-The idea is similar to BOSS: first transform each time series into a bag of words
-then compute the frequencies of each word. WEASEL is more sophisticated in the sense
-that the selected Fourier coefficients are the most discrimative ones (based on the
-one-way ANOVA test), several lengths for the sliding window are used and the most
-discriminative features (i.e. words) are kept (based on the chi-2 test).
+The second algorithm is **Word ExtrAction for time SEries cLassification
+(WEASEL)**. The idea is similar to BOSS: first it transforms each time series
+into a bag of words, then it computes the frequencies of each word. WEASEL
+is more sophisticated in the sense that the selected Fourier coefficients are
+the most discriminative ones (based on the one-way ANOVA test), several
+lengths for the sliding window are used and the most discriminative features
+(i.e. words) are kept (based on the chi-2 test).
 It is implemented as :class:`pyts.transformation.WEASEL`.
 
 References
@@ -128,8 +188,8 @@ References
 - Patrick Schäfer. The BOSS is concerned with time series classification in
   the presence of noise. *Data Mining and Knowledge Discovery*, 2015.
 
-- Patrick Schäfer and Ulf Leser. Fast and Accurate Time Series Classification with WEASEL.
-  *CoRR*, 2017.
+- Patrick Schäfer and Ulf Leser. Fast and Accurate Time Series Classification
+  with WEASEL. *CoRR*, 2017.
 
 Classification
 --------------
@@ -137,70 +197,74 @@ Classification
 The :mod:`pyts.classification` module consists of several classification
 algorithms.
 
-The first algorithm implemented is **K-Nearest Neighbors (KNN)**. For time
+The first algorithm implemented is **K-Nearest Neighbors**. For time
 series classification it is the go-to algorithm for a good baseline. The most
 common metrics used for time series classification are the Euclidean distance
-and the Dynamic Time Warping distance.
-It is implemented as :class:`pyts.classification.KNNClassifier`.
+and the Dynamic Time Warping metric. It extends the implementation from
+`scikit-learn` with the metrics available in the :mod:`pyts.metrics` module.
+It is implemented as :class:`pyts.classification.KNeighborsClassifier`.
 
-The second algorithm implemented is **SAX-VSM**. The outline of this algorithm is
-to first transform raw time series into bags of words using SAX and BOW, then
-merge, for each class label, all bags of words for this class label into only
-one bag of words, and finally compute tf-idf for each bag of words. This leads
-to a tf-idf vector for each class label. To predict an unlabeled time series,
-this time series if first transformed into a term frequency vector, then the
-predicted label is the one giving the highest cosine similarity among the tf-idf
-vectors learned in the training phase.
-It is implemented as :class:`pyts.classification.SAXVSMClassifier`.
+The second algorithm implemented is **SAX-VSM**. The outline of this algorithm
+is to first transform raw time series into bags of words using SAX and BOW,
+then merge, for each class label, all the bags of words for this class label
+into only one bag of words, and finally compute tf-idf statistics for each bag
+of words. This leads to a tf-idf vector for each class label. To predict an
+unlabeled time series, this time series if first transformed into a term
+frequency vector, then the predicted label is the one giving the highest cosine
+similarity among the tf-idf vectors learned in the training phase.
+It is implemented as :class:`pyts.classification.SAXVSM`.
 
-The third algorithm implemented is **Bag-of-SFA Symbols in Vector Space (BOSSVS)**.
-The outline of this algorithm is quite similar to the one of SAX-VSM but words
-are created using SFA instead of SAX.
-It is implemented as :class:`pyts.classification.BOSSVSClassifier`.
+The third algorithm implemented is **Bag-of-SFA Symbols in Vector Space
+(BOSSVS)**. The outline of this algorithm is quite similar to the one of
+SAX-VSM but words are created using SFA instead of SAX.
+It is implemented as :class:`pyts.classification.BOSSVS`.
 
 References
 ^^^^^^^^^^
-
-- Meinard Müller. Dynamic Time Warping (DTW).
-  *Information Retrieval for Music and Motion*, 2007.
 
 - Senin Pavel and Malinchik Sergey. SAX-VSM: Interpretable Time Series
   Classification Using SAX and Vector Space Model. *Data Mining (ICDM),
   2013 IEEE 13th International Conference on, pp.1175,1180*, 2013.
 
-- Patrick Schäfer. Scalable Time Series Classification. *DMKD* and *ECML/PKDD*, 2016.
+- Patrick Schäfer. Scalable Time Series Classification. *DMKD* and *ECML/PKDD*,
+  2016.
 
 Image
 -----
 
 Instead of transforming a time series into a bag of words, it is also possible
-to transform it into an image ! The :mod:`pyts.image` module consists of
+to transform it into an image. The :mod:`pyts.image` module consists of
 several algorithms that perform that kind of transformation.
 
-The first algorithm implemented is **Recurrence Plot**. It transforms a time series
-into a matrix where each value corresponds to the distance between two trajectories
-(a trajectory is a sub time series, i.e. a subsequence of back-to-back values
+The first algorithm implemented is **Recurrence Plot**. It transforms a time
+series into a matrix where each value corresponds to the distance between two
+trajectories (a trajectory is a subseries, i.e. a subsequence of values
 of a time series). The matrix can be binarized using a threshold.
-It is implemented as :class:`pyts.image.RecurrencePlots`.
+It is implemented as :class:`pyts.image.RecurrencePlot`.
 
 The second algorithm implemented is **Gramian Angular Field (GAF)**. First a
 time series is represented as polar coordinates. Then the time series can be
 transformed into a **Gramian Angular Summation Field (GASF)** when the cosine
-of the sum of the angular coordinates is computed or a **Gramian Angular Difference
-Field (GADF)** when the sine of the difference of the angular coordinates is computed.
-It is implemented as :class:`pyts.image.GASF` and :class:`pyts.image.GADF`.
+of the sum of the angular coordinates is computed or a **Gramian Angular
+Difference Field (GADF)** when the sine of the difference of the angular
+coordinates is computed.
+It is implemented as :class:`pyts.image.GramianAngularField`
 
-The third algorithm implemented is **Markov Transition Field (MTF)**. The outline
-of the algorithm is to first quantize a time series using SAX, then to compute
-the Markov transition matrix (the quantized time series is seen as a Markov chain)
-and finally to compute the Markov transition field from the transition matrix.
-It is implemented as :class:`pyts.image.MTF`.
+The third algorithm implemented is **Markov Transition Field (MTF)**. The
+outline of the algorithm is to first quantize a time series using SAX, then to
+compute the Markov transition matrix (the quantized time series is seen as a
+Markov chain) and finally to compute the Markov transition field from the
+transition matrix.
+It is implemented as :class:`pyts.image.MarkovTransitionField`.
 
 References
 ^^^^^^^^^^
 
-- J.-P. Eckmann, S. Oliffson Kamphorst and D. Ruelle.
+- Jean-Pierre Eckmann, Sylvie Oliffson Kamphorst and David Ruelle.
   Recurrence Plots of Dynamical Systems. *Europhysics Letters*, 1987.
+
+- Nima Hatami, Yann Gavet and Johan Debayle. Classification of Time-Series
+  Images Using Deep Convolutional Neural Networks. *arXiv:1710.00886 [cs]*, 2017.
 
 - Zhiguang Wang and Tim Oates. Imaging time-series to improve classification and imputation.
   *Proceedings of the 24th International Conference on Artificial Intelligence*, 2015.
@@ -209,15 +273,15 @@ Decomposition
 -------------
 
 The :mod:`pyts.decomposition` module consists of algorithms that decompose a
-time series into several time series. The idea is to distinguish the different parts
-of time series, such as the trend, the noise, etc.
+time series into several time series. The idea is to distinguish the different
+parts of time series, such as the trend, the noise, etc.
 
-The only algorithm implemented currently is **Singular Spectrum Analysis (SSA)**.
-The outline of the algorithm is to first compute a matrix from a time series using lagged
-vectors, then compute the eigenvalues and eigenvectors of this matrix multiplied by its
-transpose, after compute the eigenmatrices and finally compute the time series for each
-eigenmatrice.
-It is implemented as :class:`pyts.decomposition.SSA`.
+The only algorithm implemented currently is **Singular Spectrum Analysis
+(SSA)**. The outline of the algorithm is to first compute a matrix from a time
+series using lagged vectors, then compute the eigenvalues and eigenvectors of
+this matrix multiplied by its transpose, then compute the eigenmatrices and
+finally compute the time series for each eigenmatrice.
+It is implemented as :class:`pyts.decomposition.SingularSpectrumAnalysis`.
 
 References
 ^^^^^^^^^^^
