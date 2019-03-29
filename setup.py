@@ -9,6 +9,7 @@ DESCRIPTION = ('A python package for time series transformation '
                'and classification')
 with open('README.md') as f:
     LONG_DESCRIPTION = f.read()
+LONG_DESCRIPTION_CONTENT_TYPE = 'text/markdown'
 MAINTAINER = 'Johann Faouzi'
 MAINTAINER_EMAIL = 'johann.faouzi@gmail.com'
 URL = 'https://github.com/johannfaouzi/pyts'
@@ -55,6 +56,7 @@ setup(name=DISTNAME,
       version=VERSION,
       download_url=DOWNLOAD_URL,
       long_description=LONG_DESCRIPTION,
+      long_description_content_type=LONG_DESCRIPTION_CONTENT_TYPE,
       zip_safe=False,
       classifiers=CLASSIFIERS,
       packages=find_packages(),
