@@ -7,6 +7,8 @@ Change Log
 Version 0.8.0
 -------------
 
+- No more Python 2 support
+
 - New package required: numba
 
 - Updated required versions of packages
