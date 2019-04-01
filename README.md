@@ -26,7 +26,7 @@ pyts requires:
 - NumPy (>= 1.15.4)
 - SciPy (>= 1.1.0)
 - Scikit-Learn (>=0.20.1)
-- Numba (>0.41.0)
+- Numba (>=0.41.0)
 
 To run the examples Matplotlib (>=2.0.0) is required.
 
@@ -117,7 +117,7 @@ tools but applied sample-wise (i.e. to each time series independently) instead
 of feature-wise, as well as an
 [imputer](https://pyts.readthedocs.io/en/latest/generated/pyts.preprocessing.InterpolationImputer.html#)
 of missing values using interpolation. More information is available at the
-[pyts.preprocessing API documentation](https://pyts.readthedocs.io/en/latest/api.html#module-pyts.preprocessing)
+[pyts.preprocessing API documentation](https://pyts.readthedocs.io/en/latest/api.html#module-pyts.preprocessing).
 
 - `transformation`: This module provides implementations of algorithms that
 transform a data set of time series with shape `(n_samples, n_timestamps)` into
