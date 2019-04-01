@@ -69,7 +69,7 @@ difference is the use of Numba instead of Cython for optimization.
 
 The section below gives some information about the implemented algorithms in pyts.
 For more information, please have a look at the
-[HTML documentation available via ReadTheDocs](https://pyts.readthedocs.io/en/latest/)
+[HTML documentation available via ReadTheDocs](https://pyts.readthedocs.io/en/latest/).
 
 ### Implemented features
 
