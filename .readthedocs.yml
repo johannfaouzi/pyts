@@ -6,7 +6,6 @@ python:
   pip_install: true
   install:
     - requirements: docs/requirements.txt
-    - requirements: requirements.txt
   extra_requirements:
     - tests
     - docs
