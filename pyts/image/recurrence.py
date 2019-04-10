@@ -17,7 +17,7 @@ def _trajectories(X, dimension, time_delay):
     return as_strided(X, shape=shape_new, strides=strides_new)
 
 
-class RecurrencePlot(BaseEstimator, TransformerMixin):
+class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
     r"""Recurrence Plot.
 
     A recurrence plot is an image representing the distances between
@@ -35,8 +35,8 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):
         float, If float, it represents a percentage of the size of each
         time series and must be between 0 and 1.
 
-    threshold : float, 'percentage_points', 'percentage_distance' or None
-    (default = None)
+    threshold : float, 'percentage_points', 'percentage_distance' or None \
+(default = None)
         Threshold for the minimum distance. If None, the recurrence plot
         is not binarized.
 
