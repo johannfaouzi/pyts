@@ -39,7 +39,7 @@ EXTRAS_REQUIRE = {
         'pytest',
         'pytest-cov'],
     'docs': [
-        'sphinx',
+        'sphinx == 1.8.2',
         'sphinx-gallery',
         'sphinx_rtd_theme',
         'numpydoc',
