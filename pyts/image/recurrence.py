@@ -53,7 +53,7 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):
 
     .. math::
 
-        \vec(x)_i = (x_i, x_{i + \tau}, \ldots, x_{i + (m - 1)\tau}), \quad
+        \vec{x}_i = (x_i, x_{i + \tau}, \ldots, x_{i + (m - 1)\tau}), \quad
         \forall i \in \{1, \ldots, n - (m - 1)\tau \}
 
     where `m` is the `dimension` of the trajectories and :math:`\tau` is the
@@ -62,7 +62,8 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):
 
     .. math::
 
-        R_{i, j} = \Theta(\varepsilon - \| \vec(x)_i - \vec(x)_j \|)
+        R_{i, j} = \Theta(\varepsilon - \| \vec{x}_i - \vec{x}_j \|), \quad
+        \forall i,j \in \{1, \ldots, n - (m - 1)\tau \}
 
     where :math:`\Theta` is the Heaviside function and :math:`\varepsilon`
     is the `threshold`.
