@@ -6,6 +6,7 @@
 .. autoclass:: {{ objname }}
 
    {% block methods %}
+   .. rubric:: Methods
    .. automethod:: __init__
    {% endblock %}
 

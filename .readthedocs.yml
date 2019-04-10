@@ -1,11 +1,12 @@
 formats:
   - none
-requirements_file: requirements.txt
-build:
-  image: latest
+
 python:
-  version: 3.6
+  version: 3.7
   pip_install: true
+  install:
+    - requirements: docs/requirements.txt
+    - requirements: requirements.txt
   extra_requirements:
     - tests
     - docs
