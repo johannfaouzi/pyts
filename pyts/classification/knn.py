@@ -207,7 +207,7 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
 
         Returns
         -------
-        y : array-like, shape = (n_samples,)
+        y_pred : array-like, shape = (n_samples,)
             Class labels for each data sample.
 
         """

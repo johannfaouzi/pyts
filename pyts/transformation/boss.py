@@ -162,6 +162,7 @@ class BOSS(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         X : array-like, shape = (n_samples, n_timestamps)
+            Test samples.
 
         Returns
         -------
@@ -199,7 +200,7 @@ class BOSS(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         X : array-like, shape = (n_samples, n_timestamps)
-            Train samples.
+            Training vector.
 
         y : None or array-like, shape = (n_samples,)
             Class labels for each data sample.

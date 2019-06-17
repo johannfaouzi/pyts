@@ -153,7 +153,7 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
         Parameters
         ----------
         X : array-like, shape (n_samples, n_timestamps)
-            Testing vector.
+            Test samples.
 
         Returns
         -------

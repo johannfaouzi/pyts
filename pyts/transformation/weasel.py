@@ -103,8 +103,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         X : array-like, shape = (n_samples, n_timestamps)
-            Training vector, where n_samples in the number of samples and
-            n_features is the number of features.
+            Training vector.
 
         y : array-like, shape = (n_samples,)
             Class labels for each data sample.
