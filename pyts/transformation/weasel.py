@@ -92,7 +92,6 @@ class WEASEL(BaseEstimator, TransformerMixin):
         self.drop_sum = drop_sum
         self.norm_mean = norm_mean
         self.norm_std = norm_std
-        self.n_bins = n_bins
         self.strategy = strategy
         self.chi2_threshold = chi2_threshold
         self.alphabet = alphabet
