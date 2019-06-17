@@ -872,6 +872,9 @@ def dtw(x, y, dist='square', method='classic', options=None, return_cost=False,
 
             - 'classic': None
             - 'sakoechiba': window_size (int or float)
+            - 'itakura': max_slope (float)
+            - 'multiscale': resolution (int) and radius (int)
+            - 'fast': radius (int)
 
     return_cost : bool (default = False)
         If True, the cost matrix is returned.
