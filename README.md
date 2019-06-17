@@ -5,6 +5,7 @@
 [![Codecov](https://codecov.io/gh/johannfaouzi/pyts/branch/master/graph/badge.svg)](https://codecov.io/gh/johannfaouzi/pyts)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyts.svg)](https://img.shields.io/pypi/pyversions/pyts.svg)
 [![PyPI version](https://badge.fury.io/py/pyts.svg)](https://badge.fury.io/py/pyts)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/johannfaouzi/pyts.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/johannfaouzi/pyts/context:python)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1244152.svg)](https://doi.org/10.5281/zenodo.1244152)
 
 ## pyts: a Python package for time series transformation and classification
