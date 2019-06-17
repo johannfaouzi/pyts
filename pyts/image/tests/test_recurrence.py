@@ -21,8 +21,8 @@ def test_trajectories():
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
 
-def test_ReccurencePlot():
-    """Test 'ReccurencePlot' class."""
+def test_RecurrencePlot():
+    """Test 'RecurrencePlot' class."""
     X = np.asarray([[0, 1, 2, 3],
                     [1, 0, 1, 1]])
 
