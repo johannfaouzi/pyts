@@ -217,7 +217,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
         X : array-like, shape = (n_samples, n_timestamps)
             Train samples.
 
-        y : None or array-like, shape = (n_samples,)
+        y : array-like, shape = (n_samples,)
             Class labels for each data sample.
 
         Returns
