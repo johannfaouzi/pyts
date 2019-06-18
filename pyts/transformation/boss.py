@@ -130,7 +130,10 @@ class BOSS(BaseEstimator, TransformerMixin):
             norm_mean=self.norm_mean, norm_std=self.norm_std,
             n_bins=self.n_bins, strategy=self.strategy, alphabet=self.alphabet
         )
-        y_repeated = np.repeat(y, n_windows)
+        if y is None:
+            y_repeated = None
+        else:
+            y_repeated = np.repeat(y, n_windows)
         X_sfa = sfa.fit_transform(X_windowed, y_repeated)
 
         X_word = np.asarray([''.join(X_sfa[i])
@@ -229,7 +232,10 @@ class BOSS(BaseEstimator, TransformerMixin):
             norm_mean=self.norm_mean, norm_std=self.norm_std,
             n_bins=self.n_bins, strategy=self.strategy, alphabet=self.alphabet
         )
-        y_repeated = np.repeat(y, n_windows)
+        if y is None:
+            y_repeated = None
+        else:
+            y_repeated = np.repeat(y, n_windows)
         X_sfa = sfa.fit_transform(X_windowed, y_repeated)
 
         X_word = np.asarray([''.join(X_sfa[i])
