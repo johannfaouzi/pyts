@@ -73,8 +73,8 @@ def test_aggregated_markov_transition_field():
     n_samples = 2
     n_timestamps = 4
     image_size = 2
-    start = [0, 2]
-    end = [2, 4]
+    start = np.array([0, 2])
+    end = np.array([2, 4])
     X_mtf = np.empty((n_samples, n_timestamps, n_timestamps))
     X_mtf[0] = np.asarray([[0, 1, 2, 0],
                            [1, 0, 2, 0],

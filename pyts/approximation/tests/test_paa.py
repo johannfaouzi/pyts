@@ -10,7 +10,7 @@ def test_paa():
     """Test '_paa' function."""
     # Test 1
     n_samples, n_timestamps, n_timestamps_new = 3, 4, 2
-    start, end = [0, 2], [2, 4]
+    start, end = np.array([0, 2]), np.array([2, 4])
     X = np.asarray([[0, 1, 2, 3],
                     [1, 3, 0, 2],
                     [4, 8, 2, 6]])
@@ -22,7 +22,7 @@ def test_paa():
 
     # Test 2
     n_samples, n_timestamps, n_timestamps_new = 3, 4, 3
-    start, end = [0, 1, 2], [2, 3, 4]
+    start, end = np.array([0, 1, 2]), np.array([2, 3, 4])
     X = np.asarray([[0, 1, 2, 3],
                     [1, 3, 0, 2],
                     [4, 8, 2, 6]])
