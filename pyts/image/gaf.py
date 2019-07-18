@@ -126,17 +126,16 @@ class GramianAngularField(BaseEstimator, TransformerMixin):
             if self.image_size < 1 or self.image_size > n_timestamps:
                 raise ValueError(
                     "If 'image_size' is an integer, it must be greater "
-                    "than or equal to 1 and lower than or equal to the size "
-                    "of each time series (i.e. the size of the last dimension "
-                    "of X) (got {0}).".format(self.image_size)
+                    "than or equal to 1 and lower than or equal to "
+                    "n_timestamps (got {0}).".format(self.image_size)
                 )
             image_size = self.image_size
         else:
-            if self.image_size < 0. or self.image_size > 1.:
+            if not (0 < self.image_size <= 1.):
                 raise ValueError(
                     "If 'image_size' is a float, it must be greater "
-                    "than or equal to 0 and lower than or equal to 1 "
-                    "(got {0}).".format(self.image_size)
+                    "than 0 and lower than or equal to 1 (got {0})."
+                    .format(self.image_size)
                 )
             image_size = ceil(self.image_size * n_timestamps)
         if not ((self.sample_range is None)

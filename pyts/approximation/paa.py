@@ -22,7 +22,7 @@ class PiecewiseAggregateApproximation(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    window_size : int, float or None (default = 1.)
+    window_size : int, float or None (default = 1)
         Length of the sliding window. If float, it represents
         a percentage of the size of each time series and must be
         between 0 and 1.
@@ -49,7 +49,7 @@ class PiecewiseAggregateApproximation(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, window_size=1., output_size=None, overlapping=True):
+    def __init__(self, window_size=1, output_size=None, overlapping=True):
         self.window_size = window_size
         self.output_size = output_size
         self.overlapping = overlapping
@@ -111,9 +111,8 @@ class PiecewiseAggregateApproximation(BaseEstimator, TransformerMixin):
                 if not 1 <= self.window_size <= n_timestamps:
                     raise ValueError(
                         "If 'window_size' is an integer, it must be greater "
-                        "than or equal to 1 and lower than or equal to the "
-                        "size of each time series (i.e. the size of the last "
-                        "dimension of X) (got {0}).".format(self.window_size)
+                        "than or equal to 1 and lower than or equal to "
+                        "n_timestamps (got {0}).".format(self.window_size)
                     )
                 window_size = self.window_size
             else:
@@ -134,9 +133,8 @@ class PiecewiseAggregateApproximation(BaseEstimator, TransformerMixin):
                 if not 1 <= self.output_size <= n_timestamps:
                     raise ValueError(
                         "If 'output_size' is an integer, it must be greater "
-                        "than or equal to 1 and lower than or equal to the "
-                        "size of each time series (i.e. the size of the last "
-                        "dimension of X) (got {0}).".format(self.output_size)
+                        "than or equal to 1 and lower than or equal to "
+                        "n_timestamps (got {0}).".format(self.output_size)
                     )
                 output_size = self.output_size
             else:

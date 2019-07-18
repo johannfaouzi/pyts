@@ -23,9 +23,8 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
     Parameters
     ----------
     n_bins : int (default = 4)
-        The number of bins to produce. The intervals for the bins are
-        determined by the minimum and maximum of the input data. It must
-        be between 2 and 26.
+        The number of bins to produce. It must be between 2 and
+        ``min(n_timestamps, 26)``.
 
     strategy : 'uniform', 'quantile' or 'normal' (default = 'quantile')
         Strategy used to define the widths of the bins:
@@ -33,10 +32,6 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
         - 'uniform': All bins in each sample have identical widths
         - 'quantile': All bins in each sample have the same number of points
         - 'normal': Bin edges are quantiles from a standard normal distribution
-
-    alphabet : None or array-like, shape = (n_bins,)
-        Alphabet to use. If None, the first `n_bins` letters of the Latin
-        alphabet are used.
 
     window_size : int or float (default = 4)
         Size of the sliding window (i.e. the size of each word). If float, it
@@ -64,6 +59,10 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
     sublinear_tf : bool (default = True)
         Apply sublinear tf scaling, i.e. replace tf with 1 + log(tf).
 
+    alphabet : None or array-like, shape = (n_bins,)
+        Alphabet to use. If None, the first `n_bins` letters of the Latin
+        alphabet are used.
+
     Attributes
     ----------
     vocabulary_ : dict
@@ -84,18 +83,18 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
 
     """
 
-    def __init__(self, n_bins=4, strategy='quantile', alphabet=None,
-                 window_size=4, window_step=1, numerosity_reduction=True,
-                 use_idf=True, smooth_idf=False, sublinear_tf=True):
+    def __init__(self, n_bins=4, strategy='quantile', window_size=4,
+                 window_step=1, numerosity_reduction=True, use_idf=True,
+                 smooth_idf=False, sublinear_tf=True, alphabet=None):
         self.n_bins = n_bins
         self.strategy = strategy
-        self.alphabet = alphabet
         self.window_size = window_size
         self.window_step = window_step
         self.numerosity_reduction = numerosity_reduction
         self.use_idf = use_idf
         self.smooth_idf = smooth_idf
         self.sublinear_tf = sublinear_tf
+        self.alphabet = alphabet
 
     def fit(self, X, y):
         """Fit the model according to the given training data.

@@ -127,7 +127,7 @@ class MarkovTransitionField(BaseEstimator, TransformerMixin):
                                           n_timestamps, self.n_bins)
         sum_mtm = X_mtm.sum(axis=2)
         np.place(sum_mtm, sum_mtm == 0, 1)
-        X_mtm = X_mtm / sum_mtm[:, :, None]
+        X_mtm /= sum_mtm[:, :, None]
 
         X_mtf = _markov_transition_field(
             X_binned, X_mtm, n_samples, n_timestamps, self.n_bins
@@ -157,17 +157,16 @@ class MarkovTransitionField(BaseEstimator, TransformerMixin):
             if self.image_size < 1 or self.image_size > n_timestamps:
                 raise ValueError(
                     "If 'image_size' is an integer, it must be greater "
-                    "than or equal to 1 and lower than or equal to the size "
-                    "of each time series (i.e. the size of the last dimension "
-                    "of X) (got {0}).".format(self.image_size)
+                    "than or equal to 1 and lower than or equal to "
+                    "n_timestamps (got {0}).".format(self.image_size)
                 )
             image_size = self.image_size
         else:
             if self.image_size < 0. or self.image_size > 1.:
                 raise ValueError(
                     "If 'image_size' is a float, it must be greater "
-                    "than or equal to 0 and lower than or equal to 1 "
-                    "(got {0}).".format(self.image_size)
+                    "than 0 and lower than or equal to 1 (got {0})."
+                    .format(self.image_size)
                 )
             image_size = ceil(self.image_size * n_timestamps)
         if not isinstance(self.n_bins, (int, np.integer)):

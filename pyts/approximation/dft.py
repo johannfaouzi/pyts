@@ -14,7 +14,7 @@ class DiscreteFourierTransform(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    n_coefs : None, int or float (default = 1.)
+    n_coefs : None, int or float (default = None)
         The number of Fourier coefficients to keep. If None, all the Fourier
         coeeficients are kept. If an integer, the ``n_coefs`` most significant
         Fourier coefficients are returned if ``anova=True``, otherwise the

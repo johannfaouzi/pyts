@@ -12,7 +12,7 @@ class SymbolicFourierApproximation(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    n_coefs : None, int or float (default = 1.)
+    n_coefs : None, int or float (default = None)
         The number of Fourier coefficients to keep. If None, all the Fourier
         coeeficients are kept. If an integer, the ``n_coefs`` most significant
         Fourier coefficients are returned if ``anova=True``, otherwise the
@@ -21,6 +21,19 @@ class SymbolicFourierApproximation(BaseEstimator, TransformerMixin):
         between 0 and 1. The number of coefficients will be computed as
         ``ceil(n_coefs * (n_timestamps - 1))`` if ``drop_sum=True`` and
         ``ceil(n_coefs * n_timestamps)`` if ``drop_sum=False``.
+
+    n_bins : int (default = 4)
+        The number of bins to produce. The intervals for the bins are
+        determined by the minimum and maximum of the input data. It must
+        be between 2 and 26.
+
+    strategy : str (default = 'quantile')
+        Strategy used to define the widths of the bins:
+
+        - 'uniform': All bins in each sample have identical widths
+        - 'quantile': All bins in each sample have the same number of points
+        - 'normal': Bin edges are quantiles from a standard normal distribution
+        - 'entropy': Bin edges are computed using information gain
 
     drop_sum : bool (default = False)
         If True, the first Fourier coefficient (i.e. the sum of the time
@@ -37,19 +50,6 @@ class SymbolicFourierApproximation(BaseEstimator, TransformerMixin):
 
     norm_std : bool (default = False)
         If True, scale the data to unit variance.
-
-    n_bins : int (default = 5)
-        The number of bins to produce. The intervals for the bins are
-        determined by the minimum and maximum of the input data. It must
-        be between 2 and 26.
-
-    strategy : str (default = 'quantile')
-        Strategy used to define the widths of the bins:
-
-        - 'uniform': All bins in each sample have identical widths
-        - 'quantile': All bins in each sample have the same number of points
-        - 'normal': Bin edges are quantiles from a standard normal distribution
-        - 'entropy': Bin edges are computed using information gain
 
     alphabet : None, 'ordinal' or array-like, shape = (n_bins,)
         Alphabet to use. If None, the first `n_bins` letters of the Latin
@@ -75,9 +75,9 @@ class SymbolicFourierApproximation(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, n_coefs=None, drop_sum=False, anova=False,
-                 norm_mean=False, norm_std=False, n_bins=4,
-                 strategy='quantile', alphabet=None):
+    def __init__(self, n_coefs=None, n_bins=4, strategy='quantile',
+                 drop_sum=False, anova=False, norm_mean=False, norm_std=False,
+                 alphabet=None):
         self.n_coefs = n_coefs
         self.drop_sum = drop_sum
         self.anova = anova

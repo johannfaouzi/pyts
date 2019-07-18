@@ -50,9 +50,8 @@ class MultipleCoefficientBinning(BaseEstimator, TransformerMixin):
     Parameters
     ----------
     n_bins : int (default = 4)
-        The number of bins to produce. The intervals for the bins are
-        determined by the minimum and maximum of the input data. It must
-        be greater than or equal to 2.
+        The number of bins to produce. It must be between 2 and
+        ``min(n_samples, 26)``.
 
     strategy : str (default = 'quantile')
         Strategy used to define the widths of the bins:
@@ -141,10 +140,10 @@ class MultipleCoefficientBinning(BaseEstimator, TransformerMixin):
     def _check_params(self, n_samples):
         if not isinstance(self.n_bins, (int, np.integer)):
             raise TypeError("'n_bins' must be an integer.")
-        if not 2 <= self.n_bins <= n_samples:
+        if not 2 <= self.n_bins <= min(n_samples, 26):
             raise ValueError(
                 "'n_bins' must be greater than or equal to 2 and lower than "
-                "or equal to n_samples (got {0}).".format(self.n_bins)
+                "or equal to min(n_samples, 26) (got {0}).".format(self.n_bins)
             )
         if self.strategy not in ['uniform', 'quantile', 'normal', 'entropy']:
             raise ValueError("'strategy' must be either 'uniform', 'quantile',"
@@ -157,20 +156,11 @@ class MultipleCoefficientBinning(BaseEstimator, TransformerMixin):
                             "with shape (n_bins,) (got {0})."
                             .format(self.alphabet))
         if self.alphabet is None:
-            if self.n_bins < 27:
-                alphabet = np.array(
-                    [chr(i) for i in range(97, 97 + self.n_bins)])
-            else:
-                try:
-                    alphabet = np.asarray([chr(i) for i in range(self.n_bins)])
-                except:
-                    raise ValueError("'n_bins' is unexpectedly high. You "
-                                     "should try with a smaller value.")
+            alphabet = np.array([chr(i) for i in range(97, 97 + self.n_bins)])
         elif self.alphabet == 'ordinal':
             alphabet = 'ordinal'
         else:
-            alphabet = check_array(self.alphabet, ensure_2d=False,
-                                   dtype=None)
+            alphabet = check_array(self.alphabet, ensure_2d=False, dtype=None)
             if alphabet.shape != (self.n_bins,):
                 raise ValueError("If 'alphabet' is array-like, its shape "
                                  "must be equal to (n_bins,).")
@@ -202,8 +192,8 @@ class MultipleCoefficientBinning(BaseEstimator, TransformerMixin):
             if np.any(np.diff(bins_edges, axis=0) == 0):
                 raise ValueError(
                     "At least two consecutive quantiles are equal. "
-                    "You should try with a smaller number of bins or "
-                    "remove features with low variation."
+                    "Consider trying with a smaller number of bins or "
+                    "removing timestamps with low variation."
                 )
         else:
             bins_edges = self._entropy_bins(X, y, n_timestamps, n_bins)
@@ -218,9 +208,9 @@ class MultipleCoefficientBinning(BaseEstimator, TransformerMixin):
             threshold = clf.tree_.threshold[clf.tree_.children_left != -1]
             if threshold.size < (n_bins - 1):
                 raise ValueError(
-                    "The number of bins is too high for feature {0}. "
-                    "Try with a smaller number of bins or remove "
-                    "this feature.".format(i)
+                    "The number of bins is too high for timestamp {0}. "
+                    "Consider trying with a smaller number of bins or "
+                    "removing this timestamp.".format(i)
                 )
             bins[i] = threshold
         return np.sort(bins, axis=1)

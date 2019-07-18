@@ -36,6 +36,18 @@ def _cost_matrix_no_region(x, y, dist):
     return cost_mat
 
 
+def _check_input_dtw(x, y):
+    x = check_array(x, ensure_2d=False, dtype='float64')
+    y = check_array(y, ensure_2d=False, dtype='float64')
+    if x.ndim != 1:
+        raise ValueError("'x' must be a one-dimensional array.")
+    if y.ndim != 1:
+        raise ValueError("'y' must be a one-dimensional array.")
+    if x.shape != y.shape:
+        raise ValueError("'x' and 'y' must have the same shape.")
+    return x, y, x.size
+
+
 def cost_matrix(x, y, dist='square', region=None):
     """Compute the cost matrix between two samples.
 
@@ -87,9 +99,10 @@ def cost_matrix(x, y, dist='square', region=None):
         region = check_array(region)
         region_shape = region.shape
         if region_shape != (2, x.size):
-            raise ValueError("The shape of 'region' must be equal to "
-                             "(2, n_timestamps) (got {0})".format(region_shape)
-                             )
+            raise ValueError(
+                "The shape of 'region' must be equal to (2, n_timestamps) "
+                "(got {0}).".format(region_shape)
+            )
     if region is None:
         cost_mat = _cost_matrix_no_region(x, y, dist_)
     else:
@@ -197,16 +210,22 @@ def _return_path(acc_cost_mat):
     return np.transpose(np.array(path)[::-1])
 
 
-def _check_input_dtw(x, y):
-    x = check_array(x, ensure_2d=False, dtype='float64')
-    y = check_array(y, ensure_2d=False, dtype='float64')
-    if x.ndim != 1:
-        raise ValueError("'x' must a one-dimensional array.")
-    if y.ndim != 1:
-        raise ValueError("'y' must a one-dimensional array.")
-    if x.shape != y.shape:
-        raise ValueError("'x' and 'y' must have the same shape.")
-    return x, y, x.size
+def _return_results(dtw_dist, cost_mat, acc_cost_mat,
+                    return_cost=False, return_accumulated=False,
+                    return_path=False):
+    """Return the results according to the parameters."""
+    res = (dtw_dist, )
+    if return_cost:
+        res += (cost_mat, )
+    if return_accumulated:
+        res += (acc_cost_mat, )
+    if return_path:
+        path = _return_path(acc_cost_mat)
+        res += (path, )
+    if len(res) == 1:
+        return res[0]
+    else:
+        return res
 
 
 def dtw_classic(x, y, dist='square', return_cost=False,
@@ -260,18 +279,9 @@ def dtw_classic(x, y, dist='square', return_cost=False,
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
 
-    res = (dtw_dist, )
-    if return_cost:
-        res += (cost_mat, )
-    if return_accumulated:
-        res += (acc_cost_mat, )
-    if return_path:
-        path = _return_path(acc_cost_mat)
-        res += (path, )
-    if len(res) == 1:
-        return res[0]
-    else:
-        return res
+    res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
+                          return_cost, return_accumulated, return_path)
+    return res
 
 
 def dtw_region(x, y, dist='square', region=None, return_cost=False,
@@ -327,34 +337,19 @@ def dtw_region(x, y, dist='square', region=None, return_cost=False,
     """
     x, y, n_timestamps = _check_input_dtw(x, y)
 
-    if region is None:
-        region_ = None
-    else:
-        try:
-            region_ = check_array(region, dtype='int64', ensure_2d=True)
-        except:
-            raise ValueError("If 'region' is not None, it must be array-like "
-                             "with shape (2, n_timestamps).")
-        if region_.shape != (2, n_timestamps):
+    if region is not None:
+        region = check_array(region, dtype='int64')
+        if region.shape != (2, n_timestamps):
             raise ValueError("If 'region' is not None, it must be array-like "
                              "with shape (2, n_timestamps).")
 
-    cost_mat = cost_matrix(x, y, dist=dist, region=region_)
+    cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
 
-    res = (dtw_dist, )
-    if return_cost:
-        res += (cost_mat, )
-    if return_accumulated:
-        res += (acc_cost_mat, )
-    if return_path:
-        path = _return_path(acc_cost_mat)
-        res += (path, )
-    if len(res) == 1:
-        return res[0]
-    else:
-        return res
+    res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
+                          return_cost, return_accumulated, return_path)
+    return res
 
 
 def sakoe_chiba_band(n_timestamps, window_size=0.1):
@@ -365,7 +360,7 @@ def sakoe_chiba_band(n_timestamps, window_size=0.1):
     n_timestamps : int
         The size of both time series.
 
-    window_size : int or float
+    window_size : int or float (default = 0.1)
         The window above and below the diagonale. If float, it must be between
         0 and 1, and the actual window size will be computed as
         ``ceil(window_size * (n_timestamps - 1))``. Each cell whose distance
@@ -425,7 +420,7 @@ def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
 
-    window_size : int or float
+    window_size : int or float (default = 0.1)
         The window above and below the diagonale. If float, it must be between
         0 and 1, and the actual window size will be computed as
         ``int(window_size * (n_timestamps - 1))``. Each cell whose distance
@@ -466,18 +461,9 @@ def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
 
-    res = (dtw_dist, )
-    if return_cost:
-        res += (cost_mat, )
-    if return_accumulated:
-        res += (acc_cost_mat, )
-    if return_path:
-        path = _return_path(acc_cost_mat)
-        res += (path, )
-    if len(res) == 1:
-        return res[0]
-    else:
-        return res
+    res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
+                          return_cost, return_accumulated, return_path)
+    return res
 
 
 def itakura_parallelogram(n_timestamps, max_slope=2.):
@@ -488,7 +474,7 @@ def itakura_parallelogram(n_timestamps, max_slope=2.):
     n_timestamps : int
         The size of both time series.
 
-    max_slope : float
+    max_slope : float (default = 2.)
         Maximum slope for the parallelogram.
 
     Returns
@@ -550,7 +536,7 @@ def dtw_itakura(x, y, dist='square', max_slope=2., return_cost=False,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
 
-    max_slope : float
+    max_slope : float (default = 2.)
         Maximum slope for the parallelogram.
 
     return_cost : bool (default = False)
@@ -587,18 +573,9 @@ def dtw_itakura(x, y, dist='square', max_slope=2., return_cost=False,
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
 
-    res = (dtw_dist, )
-    if return_cost:
-        res += (cost_mat, )
-    if return_accumulated:
-        res += (acc_cost_mat, )
-    if return_path:
-        path = _return_path(acc_cost_mat)
-        res += (path, )
-    if len(res) == 1:
-        return res[0]
-    else:
-        return res
+    res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
+                          return_cost, return_accumulated, return_path)
+    return res
 
 
 def _multiscale_region(n_timestamps, resolution_level, n_timestamps_reduced,
@@ -723,18 +700,9 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
 
-    res = (dtw_dist, )
-    if return_cost:
-        res += (cost_mat, )
-    if return_accumulated:
-        res += (acc_cost_mat, )
-    if return_path:
-        path = _return_path(acc_cost_mat)
-        res += (path, )
-    if len(res) == 1:
-        return res[0]
-    else:
-        return res
+    res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
+                          return_cost, return_accumulated, return_path)
+    return res
 
 
 def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
@@ -826,18 +794,9 @@ def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
 
-    res = (dtw_dist, )
-    if return_cost:
-        res += (cost_mat, )
-    if return_accumulated:
-        res += (acc_cost_mat, )
-    if return_path:
-        path = _return_path(acc_cost_mat)
-        res += (path, )
-    if len(res) == 1:
-        return res[0]
-    else:
-        return res
+    res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
+                          return_cost, return_accumulated, return_path)
+    return res
 
 
 def dtw(x, y, dist='square', method='classic', options=None, return_cost=False,

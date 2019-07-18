@@ -19,10 +19,9 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         ``ceil(window_size * n_timestamps)``.
 
     window_step : int or float (default = 1)
-        Step of the sliding window. If float, it
-        represents the percentage of the size of each time series and must be
-        between 0 and 1. The window size will be computed as
-        ``ceil(window_step * n_timestamps)``.
+        Step of the sliding window. If float, it represents the percentage of
+        the size of each time series and must be between 0 and 1. The window
+        size will be computed as ``ceil(window_step * n_timestamps)``.
 
     numerosity_reduction : bool (default = True)
         If True, delete sample-wise all but one occurence of back to back
@@ -63,7 +62,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        X_new : array, shape = (n_samples, )
+        X_new : array, shape = (n_samples,)
             Transformed data. Each row is a string consisting of words
             separated by a whitespace.
 
@@ -95,17 +94,16 @@ class BagOfWords(BaseEstimator, TransformerMixin):
             if not 1 <= self.window_size <= n_timestamps:
                 raise ValueError(
                     "If 'window_size' is an integer, it must be greater "
-                    "than or equal to 1 and lower than or equal to the "
-                    "size of each time series (i.e. the size of the last "
-                    "dimension of X) (got {0}).".format(self.window_size)
+                    "than or equal to 1 and lower than or equal to "
+                    "n_timestamps (got {0}).".format(self.window_size)
                 )
             window_size = self.window_size
         else:
             if not 0 < self.window_size <= 1:
                 raise ValueError(
                     "If 'window_size' is a float, it must be greater "
-                    "than 0 and lower than or equal to 1 "
-                    "(got {0}).".format(self.window_size)
+                    "than 0 and lower than or equal to 1 (got {0})."
+                    .format(self.window_size)
                 )
             window_size = ceil(self.window_size * n_timestamps)
         if not isinstance(self.window_step,
@@ -115,17 +113,16 @@ class BagOfWords(BaseEstimator, TransformerMixin):
             if not 1 <= self.window_step <= n_timestamps:
                 raise ValueError(
                     "If 'window_step' is an integer, it must be greater "
-                    "than or equal to 1 and lower than or equal to the "
-                    "size of each time series (i.e. the size of the last "
-                    "dimension of X) (got {0}).".format(self.window_step)
+                    "than or equal to 1 and lower than or equal to "
+                    "n_timestamps (got {0}).".format(self.window_step)
                 )
             window_step = self.window_step
         else:
             if not 0 < self.window_step <= 1:
                 raise ValueError(
                     "If 'window_step' is a float, it must be greater "
-                    "than 0 and lower than or equal to 1 "
-                    "(got {0}).".format(self.window_step)
+                    "than 0 and lower than or equal to 1 (got {0})."
+                    .format(self.window_step)
                 )
             window_step = ceil(self.window_step * n_timestamps)
         return window_size, window_step

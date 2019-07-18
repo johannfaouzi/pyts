@@ -198,7 +198,7 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
                             "a float or an integer.")
         if ((isinstance(self.threshold, (int, np.integer, float, np.floating)))
             and (self.threshold <= 0)):
-            raise ValueError("If 'threshold' is a float or an integer,"
+            raise ValueError("If 'threshold' is a float or an integer, "
                              "it must be greater than or equal to 0.")
 
         if not isinstance(self.percentage,

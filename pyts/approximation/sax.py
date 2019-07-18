@@ -12,9 +12,8 @@ class SymbolicAggregateApproximation(BaseEstimator, TransformerMixin):
     Parameters
     ----------
     n_bins : int (default = 4)
-        The number of bins to produce. The intervals for the bins are
-        determined by the minimum and maximum of the input data. It must
-        be greater than or equal to 2.
+        The number of bins to produce. It must be between 2 and
+        ``min(n_timestamps, 26)``.
 
     strategy : 'uniform', 'quantile' or 'normal' (default = 'quantile')
         Strategy used to define the widths of the bins:
@@ -25,9 +24,7 @@ class SymbolicAggregateApproximation(BaseEstimator, TransformerMixin):
 
     alphabet : None or array-like, shape = (n_bins,)
         Alphabet to use. If None, the first `n_bins` letters of the Latin
-        alphabet are used if `n_bins` is lower than 27, otherwise the alphabet
-        will be defined to [chr(i) for i in range(n_bins)]. If 'ordinal',
-        integers are used.
+        alphabet are used. If 'ordinal', integers are used.
 
     References
     ----------
@@ -86,10 +83,11 @@ class SymbolicAggregateApproximation(BaseEstimator, TransformerMixin):
     def _check_params(self, n_timestamps):
         if not isinstance(self.n_bins, (int, np.integer)):
             raise TypeError("'n_bins' must be an integer.")
-        if not 2 <= self.n_bins <= n_timestamps:
+        if not 2 <= self.n_bins <= min(n_timestamps, 26):
             raise ValueError(
                 "'n_bins' must be greater than or equal to 2 and lower than "
-                "or equal to n_timestamps (got {0}).".format(self.n_bins)
+                "or equal to min(n_timestamps, 26) (got {0})."
+                .format(self.n_bins)
             )
         if self.strategy not in ['uniform', 'quantile', 'normal']:
             raise ValueError("'strategy' must be either 'uniform', 'quantile' "
@@ -101,20 +99,12 @@ class SymbolicAggregateApproximation(BaseEstimator, TransformerMixin):
                             "with shape (n_bins,) (got {0})"
                             .format(self.alphabet))
         if self.alphabet is None:
-            if self.n_bins < 27:
-                alphabet = np.array(
-                    [chr(i) for i in range(97, 97 + self.n_bins)])
-            else:
-                try:
-                    alphabet = np.asarray([chr(i) for i in range(self.n_bins)])
-                except:
-                    raise ValueError("'n_bins' is unexpectedly high. You "
-                                     "should try with a smaller value.")
+            alphabet = np.array([chr(i) for i in range(97, 97 + self.n_bins)])
         elif self.alphabet == 'ordinal':
             alphabet = 'ordinal'
         else:
-            alphabet = np.asarray(self.alphabet)
-            if alphabet.shape != (self.n_bins, ):
+            alphabet = check_array(self.alphabet, ensure_2d=False, dtype=None)
+            if alphabet.shape != (self.n_bins,):
                 raise ValueError("If 'alphabet' is array-like, its shape "
                                  "must be equal to (n_bins,).")
         return alphabet

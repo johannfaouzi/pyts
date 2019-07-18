@@ -5,7 +5,7 @@ from numpy.lib.stride_tricks import as_strided
 from sklearn.utils import check_array
 
 
-def segmentation(ts_size, window_size, overlapping, n_segments=None):
+def segmentation(ts_size, window_size, overlapping=False, n_segments=None):
     """Compute the indices for Piecewise Agrgegate Approximation.
 
     Parameters
@@ -16,7 +16,7 @@ def segmentation(ts_size, window_size, overlapping, n_segments=None):
     window_size : int
         The size of the window.
 
-    overlapping : bool
+    overlapping : bool (default = False)
         If True, overlapping windows may be used. If False, non-overlapping
         are used.
 
@@ -52,11 +52,15 @@ def segmentation(ts_size, window_size, overlapping, n_segments=None):
     if not (n_segments is None or isinstance(n_segments, (int, np.integer))):
         raise TypeError("'n_segments' must be None or an integer.")
     if isinstance(n_segments, (int, np.integer)):
-        if not 2 <= n_segments <= ts_size:
+        if not n_segments >= 2:
             raise ValueError(
                 "If 'n_segments' is an integer, it must be greater than or "
-                "equal to 2 and lower than or equal to 'ts_size' "
-                "({0} > {1}).".format(n_segments, ts_size)
+                "equal to 2 (got {0}).".format(n_segments)
+            )
+        if not n_segments <= ts_size:
+            raise ValueError(
+                "If 'n_segments' is an integer, it must be lower than or "
+                "equal to 'ts_size' ({0} > {1}).".format(n_segments, ts_size)
             )
 
     if n_segments is None:
