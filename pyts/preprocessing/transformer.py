@@ -88,7 +88,7 @@ class PowerTransformer(BaseEstimator, TransformerMixin):
             Transformed data.
 
         """
-        X = check_array(X, dtype='float64')
+        X = check_array(X, dtype='float64', force_all_finite='allow-nan')
         transformer = SklearnPowerTransformer(
             method=self.method, standardize=self.standardize
         )
