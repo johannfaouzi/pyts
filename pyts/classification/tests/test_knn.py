@@ -2,7 +2,7 @@
 
 import numpy as np
 import pytest
-from ..knn import KNeighborsClassifier
+from pyts.classification import KNeighborsClassifier
 
 
 X = np.arange(40).reshape(8, 5)

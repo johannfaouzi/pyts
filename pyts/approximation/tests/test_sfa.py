@@ -3,8 +3,8 @@
 import numpy as np
 import pytest
 from sklearn.feature_selection import f_classif
-from ..mcb import MultipleCoefficientBinning
-from ..sfa import SymbolicFourierApproximation
+from pyts.approximation import MultipleCoefficientBinning
+from pyts.approximation import SymbolicFourierApproximation
 
 
 rng = np.random.RandomState(42)

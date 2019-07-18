@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 import re
-from ..utils import windowed_view
+from pyts.utils import windowed_view
 
 
 X = np.arange(10).reshape(2, 5)

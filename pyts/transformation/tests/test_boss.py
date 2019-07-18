@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 import re
 from sklearn.feature_extraction.text import CountVectorizer
-from ..boss import BOSS
-from ...approximation import SymbolicFourierApproximation
+from pyts.transformation import BOSS
+from pyts.approximation import SymbolicFourierApproximation
 
 
 n_samples, n_timestamps, n_classes = 8, 200, 2

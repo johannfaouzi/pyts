@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 import re
-from ..imputer import InterpolationImputer
+from pyts.preprocessing import InterpolationImputer
 
 
 X = [[np.nan, 1, 2, 3, np.nan, 5, 6, np.nan]]

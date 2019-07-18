@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import re
 from sklearn.feature_selection import f_classif
-from ..dft import DiscreteFourierTransform
+from pyts.approximation import DiscreteFourierTransform
 
 
 rng = np.random.RandomState(42)

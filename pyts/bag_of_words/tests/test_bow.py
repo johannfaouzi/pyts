@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 import re
-from ..bow import BagOfWords
+from pyts.bag_of_words import BagOfWords
 
 
 X = [['a', 'a', 'a', 'b', 'a'],

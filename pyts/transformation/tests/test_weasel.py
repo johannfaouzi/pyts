@@ -6,8 +6,8 @@ import re
 from scipy.sparse import csc_matrix, hstack
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_selection import chi2
-from ...approximation import SymbolicFourierApproximation
-from ..weasel import WEASEL
+from pyts.approximation import SymbolicFourierApproximation
+from pyts.transformation import WEASEL
 
 
 n_samples, n_timestamps, n_classes = 8, 200, 2

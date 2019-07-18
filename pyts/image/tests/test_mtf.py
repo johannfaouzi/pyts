@@ -3,10 +3,10 @@
 import numpy as np
 import pytest
 import re
-from ..mtf import (_markov_transition_matrix,
-                   _markov_transition_field,
-                   _aggregated_markov_transition_field,
-                   MarkovTransitionField)
+from pyts.image.mtf import (_markov_transition_matrix,
+                            _markov_transition_field,
+                            _aggregated_markov_transition_field)
+from pyts.image import MarkovTransitionField
 
 
 X = [[0, 1, 2, 3], [1, 0, 1, 1]]

@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import re
 from math import sqrt
-from ..boss import boss
+from pyts.metrics import boss
 
 
 x = np.arange(1, 6)

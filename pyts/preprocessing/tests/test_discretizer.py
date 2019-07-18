@@ -3,7 +3,8 @@
 import numpy as np
 import pytest
 import re
-from ..discretizer import _uniform_bins, _digitize, KBinsDiscretizer
+from pyts.preprocessing.discretizer import _uniform_bins, _digitize
+from pyts.preprocessing import KBinsDiscretizer
 
 
 n_samples, n_timestamps = 3, 10

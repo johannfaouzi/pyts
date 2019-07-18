@@ -3,7 +3,8 @@
 import numpy as np
 import pytest
 import re
-from ..ssa import _outer_dot, _diagonal_averaging, SingularSpectrumAnalysis
+from pyts.decomposition.ssa import _outer_dot, _diagonal_averaging
+from pyts.decomposition import SingularSpectrumAnalysis
 
 
 rng = np.random.RandomState(42)

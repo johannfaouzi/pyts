@@ -3,7 +3,8 @@
 import numpy as np
 import pytest
 import re
-from ..recurrence import _trajectories, RecurrencePlot
+from pyts.image.recurrence import _trajectories
+from pyts.image import RecurrencePlot
 
 
 X = np.asarray([[0, 1, 1, 0, 2, 3],

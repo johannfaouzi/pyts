@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 import re
-from ..sax import SymbolicAggregateApproximation
+from pyts.approximation import SymbolicAggregateApproximation
 
 
 X = np.arange(30).reshape(3, 10)

@@ -3,7 +3,8 @@
 import numpy as np
 import pytest
 import re
-from ..gaf import _gasf, _gadf, GramianAngularField
+from pyts.image.gaf import _gasf, _gadf
+from pyts.image import GramianAngularField
 
 
 X = np.arange(9).reshape(1, 9)

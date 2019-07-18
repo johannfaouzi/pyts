@@ -3,7 +3,8 @@
 import numpy as np
 import pytest
 import re
-from ..paa import _paa, PiecewiseAggregateApproximation
+from pyts.approximation.paa import _paa
+from pyts.approximation import PiecewiseAggregateApproximation
 
 
 X = [np.arange(6), [0, 5, 1, 2, 4, 3]]

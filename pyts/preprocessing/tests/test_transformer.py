@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.stats import boxcox, norm, yeojohnson
 from pyts.preprocessing import StandardScaler
-from ..transformer import PowerTransformer, QuantileTransformer
+from pyts.preprocessing import PowerTransformer, QuantileTransformer
 
 
 X = np.arange(1, 34).reshape(3, 11)

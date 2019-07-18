@@ -4,11 +4,14 @@ import numpy as np
 import pytest
 import re
 from numba import njit
-from ..dtw import (
+from pyts.metrics.dtw import (
     _square, _absolute, _check_input_dtw, _multiscale_region, _return_path,
-    _return_results, cost_matrix, accumulated_cost_matrix, dtw_classic,
-    dtw_region, sakoe_chiba_band, dtw_sakoechiba, itakura_parallelogram,
-    dtw_itakura, dtw_multiscale, dtw_fast, dtw, show_options
+    _return_results, cost_matrix, accumulated_cost_matrix
+)
+from pyts.metrics import (
+    dtw_classic, dtw_region, sakoe_chiba_band, dtw_sakoechiba,
+    itakura_parallelogram, dtw_itakura, dtw_multiscale, dtw_fast, dtw,
+    show_options
 )
 
 

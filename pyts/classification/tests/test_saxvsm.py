@@ -5,7 +5,7 @@ import pytest
 import re
 from math import log
 from sklearn.metrics.pairwise import cosine_similarity
-from ..saxvsm import SAXVSM
+from pyts.classification import SAXVSM
 
 
 X = [[0, 0, 0, 1, 0, 0, 1, 1, 1],

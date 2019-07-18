@@ -2,7 +2,8 @@
 
 import numpy as np
 import pytest
-from ..scaler import StandardScaler, MinMaxScaler, MaxAbsScaler, RobustScaler
+from pyts.preprocessing import (StandardScaler, MinMaxScaler,
+                                MaxAbsScaler, RobustScaler)
 
 
 X = np.arange(10).reshape(2, 5)

@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 import re
-from ..utils import segmentation
+from pyts.utils import segmentation
 
 
 @pytest.mark.parametrize(

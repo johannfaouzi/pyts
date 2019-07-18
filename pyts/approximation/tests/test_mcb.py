@@ -3,7 +3,8 @@
 import numpy as np
 import pytest
 import re
-from ..mcb import _uniform_bins, _digitize, MultipleCoefficientBinning
+from pyts.approximation.mcb import _uniform_bins, _digitize
+from pyts.approximation import MultipleCoefficientBinning
 
 
 X = np.arange(30).reshape(10, 3)
