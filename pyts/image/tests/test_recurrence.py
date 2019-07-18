@@ -69,6 +69,10 @@ def test_actual_results_trajectories(params, arr_desired):
       "If 'time_delay' is a float, it must be greater than 0 and lower than "
       "or equal to 1 (got {0}).".format(2.)),
 
+     ({'time_delay': 3, 'dimension': 3}, ValueError,
+      "The number of trajectories must be positive. Consider trying with "
+      "smaller values for 'dimension' and 'time_delay'."),
+
      ({'threshold': -1}, ValueError,
       "If 'threshold' is a float or an integer, it must be greater than or "
       "equal to 0."),
@@ -95,6 +99,17 @@ def test_parameter_check(params, error, err_msg):
 
      ({'dimension': 3, 'time_delay': 2},
       [[[0, 3], [3, 0]], [[0, 3], [3, 0]]]),
+
+     ({'dimension': 0.5, 'time_delay': 0.3},
+      [[[0, 3], [3, 0]], [[0, 3], [3, 0]]]),
+
+     ({'dimension': 0.5, 'time_delay': 0.3,
+       'threshold': 'percentage_points', 'percentage': 50},
+      [[[1, 0], [0, 1]], [[1, 0], [0, 1]]]),
+
+     ({'dimension': 0.5, 'time_delay': 0.3,
+       'threshold': 'percentage_distance', 'percentage': 50},
+      [[[1, 0], [0, 1]], [[1, 0], [0, 1]]]),
 
      ({'dimension': 1, 'time_delay': 1},
       [[[0, 1, 1, 0, 4, 9], [1, 0, 0, 1, 1, 4], [1, 0, 0, 1, 1, 4],

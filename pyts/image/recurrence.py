@@ -185,8 +185,8 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
 
         if n_timestamps - (dimension - 1) * time_delay < 1:
             raise ValueError("The number of trajectories must be positive. "
-                             "Try with smaller values for 'dimension' and "
-                             "'time_delay'.")
+                             "Consider trying with smaller values for "
+                             "'dimension' and 'time_delay'.")
 
         if (self.threshold is not None
             and self.threshold not in ['percentage_points',
