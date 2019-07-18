@@ -27,6 +27,14 @@ class BOSS(BaseEstimator, TransformerMixin):
     n_bins : int (default = 4)
         The number of bins to produce. It must be between 2 and 26.
 
+    strategy : str (default = 'quantile')
+        Strategy used to define the widths of the bins:
+
+        - 'uniform': All bins in each sample have identical widths
+        - 'quantile': All bins in each sample have the same number of points
+        - 'normal': Bin edges are quantiles from a standard normal distribution
+        - 'entropy': Bin edges are computed using information gain
+
     window_size : int or float (default = 10)
         Size of the sliding window. If float, it represents the percentage of
         the size of each time series and must be between 0 and 1. The window
@@ -51,14 +59,6 @@ class BOSS(BaseEstimator, TransformerMixin):
     norm_std : bool (default = False)
         If True, scale each subseries to unit variance.
 
-    strategy : str (default = 'quantile')
-        Strategy used to define the widths of the bins:
-
-        - 'uniform': All bins in each sample have identical widths
-        - 'quantile': All bins in each sample have the same number of points
-        - 'normal': Bin edges are quantiles from a standard normal distribution
-        - 'entropy': Bin edges are computed using information gain
-
     alphabet : None, 'ordinal' or array-like, shape = (n_bins,)
         Alphabet to use. If None, the first `n_bins` letters of the Latin
         alphabet are used.
@@ -80,21 +80,21 @@ class BOSS(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, word_size=4, n_bins=4, window_size=10, window_step=1,
-                 anova=False, drop_sum=False, norm_mean=False,
-                 norm_std=False, strategy='quantile', alphabet=None,
-                 numerosity_reduction=True):
+    def __init__(self, word_size=4, n_bins=4, strategy='quantile',
+                 window_size=10, window_step=1, anova=False, drop_sum=False,
+                 norm_mean=False, norm_std=False, numerosity_reduction=True,
+                 alphabet=None):
         self.word_size = word_size
         self.n_bins = n_bins
+        self.strategy = strategy
         self.window_size = window_size
         self.window_step = window_step
         self.anova = anova
         self.drop_sum = drop_sum
         self.norm_mean = norm_mean
         self.norm_std = norm_std
-        self.strategy = strategy
-        self.alphabet = alphabet
         self.numerosity_reduction = numerosity_reduction
+        self.alphabet = alphabet
 
     def fit(self, X, y=None):
         """Fit the model according to the given training data.
