@@ -6,7 +6,6 @@ source = pyts
 parallel = True
 omit =
     */setup.py
-    *test_*
     *__init__*
 
 [report]
