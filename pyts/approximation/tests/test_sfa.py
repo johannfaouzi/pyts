@@ -1,51 +1,83 @@
 """Testing for Symbolic Fourier Approximation."""
 
 import numpy as np
+import pytest
+from sklearn.feature_selection import f_classif
+from ..mcb import MultipleCoefficientBinning
 from ..sfa import SymbolicFourierApproximation
 
 
-def test_SymbolicFourierApproximation():
-    """Test 'SymbolicFourierApproximation' class."""
-    # Test 1
-    rng = np.random.RandomState(41)
-    X = rng.randn(5, 8)
+rng = np.random.RandomState(42)
+n_samples, n_timestamps = 5, 8
+X = rng.randn(n_samples, n_timestamps)
+y = rng.randint(2, size=n_samples)
 
-    sfa = SymbolicFourierApproximation(
-        n_coefs=4, drop_sum=True, anova=False, norm_mean=False, norm_std=False,
-        n_bins=2, strategy='uniform', alphabet='ordinal')
+
+def _compute_expected_results(X, y=None, n_coefs=None, n_bins=4,
+                              strategy='quantile', drop_sum=False, anova=False,
+                              norm_mean=False, norm_std=False, alphabet=None):
+    """Compute the expected results."""
+    X = np.asarray(X)
+    if norm_mean:
+        X -= X.mean(axis=1)[:, None]
+    if norm_std:
+        X /= X.std(axis=1)[:, None]
     X_fft = np.fft.rfft(X)
     X_fft = np.vstack([np.real(X_fft), np.imag(X_fft)])
-    X_fft = X_fft.reshape(5, 10, order='F')
-    X_fft = X_fft[:, 2:6]
+    X_fft = X_fft.reshape(n_samples, -1, order='F')
+    if drop_sum:
+        X_fft = X_fft[:, 2:-1]
+    else:
+        X_fft = np.hstack([X_fft[:, :1], X_fft[:, 2:-1]])
+    if n_coefs is not None:
+        if anova:
+            _, p = f_classif(X_fft, y)
+            support = np.argsort(p)[:n_coefs]
+            X_fft = X_fft[:, support]
+        else:
+            X_fft = X_fft[:, :n_coefs]
 
-    feature_min, feature_max = np.min(X_fft, axis=0), np.max(X_fft, axis=0)
-    bin_edges = np.empty((4, 1))
-    for i in range(4):
-        bin_edges[i] = np.linspace(feature_min[i], feature_max[i], 3)[1:-1]
-    arr_desired = np.empty((5, 4))
-    for i in range(4):
-        arr_desired[:, i] = np.digitize(X_fft[:, i], bin_edges[i])
-    np.testing.assert_array_equal(sfa.fit_transform(X), arr_desired)
-    np.testing.assert_array_equal(sfa.fit(X).transform(X), arr_desired)
+    mcb = MultipleCoefficientBinning(n_bins=n_bins, strategy=strategy,
+                                     alphabet=alphabet)
+    arr_desired = mcb.fit_transform(X_fft)
+    return arr_desired
 
-    # Test 2
-    rng = np.random.RandomState(41)
-    X = rng.randn(5, 8)
 
-    sfa = SymbolicFourierApproximation(
-        n_coefs=4, drop_sum=True, anova=False, norm_mean=False, norm_std=False,
-        n_bins=4, strategy='uniform', alphabet='ordinal')
-    X_fft = np.fft.rfft(X)
-    X_fft = np.vstack([np.real(X_fft), np.imag(X_fft)])
-    X_fft = X_fft.reshape(5, 10, order='F')
-    X_fft = X_fft[:, 2:6]
+@pytest.mark.parametrize(
+    'params',
+    [({}),
+     ({'n_coefs': 3}),
+     ({'n_bins': 2}),
+     ({'strategy': 'uniform'}),
+     ({'drop_sum': True}),
+     ({'anova': True}),
+     ({'norm_mean': True, 'drop_sum': True}),
+     ({'norm_std': True}),
+     ({'norm_mean': True, 'norm_std': True, 'drop_sum': True}),
+     ({'n_coefs': 2, 'drop_sum': True, 'anova': True})]
+)
+def test_actual_results(params):
+    """Test that the actual results are the expected ones."""
+    arr_actual = SymbolicFourierApproximation(**params).fit_transform(X, y)
+    arr_desired = _compute_expected_results(X, y, **params)
+    np.testing.assert_array_equal(arr_actual, arr_desired)
 
-    feature_min, feature_max = np.min(X_fft, axis=0), np.max(X_fft, axis=0)
-    bin_edges = np.empty((4, 3))
-    for i in range(4):
-        bin_edges[i] = np.linspace(feature_min[i], feature_max[i], 5)[1:-1]
-    arr_desired = np.empty((5, 4))
-    for i in range(4):
-        arr_desired[:, i] = np.digitize(X_fft[:, i], bin_edges[i])
-    np.testing.assert_array_equal(sfa.fit_transform(X), arr_desired)
-    np.testing.assert_array_equal(sfa.fit(X).transform(X), arr_desired)
+
+@pytest.mark.parametrize(
+    'params',
+    [({}),
+     ({'n_coefs': 3}),
+     ({'n_bins': 2}),
+     ({'strategy': 'uniform'}),
+     ({'drop_sum': True}),
+     ({'anova': True}),
+     ({'norm_mean': True, 'drop_sum': True}),
+     ({'norm_std': True}),
+     ({'norm_mean': True, 'norm_std': True, 'drop_sum': True}),
+     ({'n_coefs': 2, 'drop_sum': True, 'anova': True})]
+)
+def test_fit_transform(params):
+    """Test that fit and transform yield the same results as fit_transform."""
+    arr_1 = SymbolicFourierApproximation(**params).fit(X, y).transform(X)
+    arr_2 = SymbolicFourierApproximation(**params).fit_transform(X, y)
+    np.testing.assert_array_equal(arr_1, arr_2)

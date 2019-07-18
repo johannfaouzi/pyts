@@ -6,133 +6,79 @@ import re
 from ..paa import _paa, PiecewiseAggregateApproximation
 
 
-def test_paa():
-    """Test '_paa' function."""
-    # Test 1
-    n_samples, n_timestamps, n_timestamps_new = 3, 4, 2
-    start, end = np.array([0, 2]), np.array([2, 4])
-    X = np.asarray([[0, 1, 2, 3],
-                    [1, 3, 0, 2],
-                    [4, 8, 2, 6]])
+X = [np.arange(6), [0, 5, 1, 2, 4, 3]]
+
+
+@pytest.mark.parametrize(
+    'X, start, end, arr_desired',
+    [([[0, 1, 2, 3], [1, 3, 0, 2], [4, 8, 2, 6]], [0, 2], [2, 4],
+      [[0.5, 2.5], [2.0, 1.0], [6.0, 4.0]]),
+
+     ([[0, 1, 2, 3], [1, 3, 0, 2], [4, 8, 2, 6]], [0, 1, 2], [2, 3, 4],
+      [[0.5, 1.5, 2.5], [2.0, 1.5, 1.0], [6.0, 5.0, 4.0]]),
+
+     ([[0, 1, 2, 3], [1, 3, 0, 2], [4, 8, 2, 6]], [0, 1, 2, 3], [1, 2, 3, 4],
+      [[0, 1, 2, 3], [1, 3, 0, 2], [4, 8, 2, 6]])]
+)
+def test_actual_results_paa(X, start, end, arr_desired):
+    """Test that the actual results are the expected ones."""
+    X = np.asarray(X)
+    start = np.asarray(start)
+    end = np.asarray(end)
+    n_timestamps_new = start.size
+    n_samples, n_timestamps = X.shape
     arr_actual = _paa(X, n_samples, n_timestamps, start, end, n_timestamps_new)
-    arr_desired = np.asarray([[0.5, 2.5],
-                              [2.0, 1.0],
-                              [6.0, 4.0]])
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
-
-    # Test 2
-    n_samples, n_timestamps, n_timestamps_new = 3, 4, 3
-    start, end = np.array([0, 1, 2]), np.array([2, 3, 4])
-    X = np.asarray([[0, 1, 2, 3],
-                    [1, 3, 0, 2],
-                    [4, 8, 2, 6]])
-    arr_actual = _paa(X, n_samples, n_timestamps, start, end, n_timestamps_new)
-    arr_desired = np.asarray([[0.5, 1.5, 2.5],
-                              [2.0, 1.5, 1.0],
-                              [6.0, 5.0, 4.0]])
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
 
-def test_PiecewiseAggregateApproximation():
-    """Test 'PiecewiseAggregateApproximation' class."""
-    X = np.arange(9).reshape(1, 9)
+@pytest.mark.parametrize(
+    'params, error, err_msg',
+    [({'window_size': None, 'output_size': None}, TypeError,
+      "'window_size' and 'output_size' cannot be both None."),
 
-    # Parameter check
-    msg_error = "'window_size' and 'output_size' cannot be both None."
-    with pytest.raises(TypeError, match=msg_error):
-        paa = PiecewiseAggregateApproximation(
-            window_size=None, output_size=None, overlapping=False
-        )
-        paa.fit_transform(X)
+     ({'window_size': '3'}, TypeError,
+      "If specified, 'window_size' must be an integer or a float."),
 
-    msg_error = "If specified, 'window_size' must be an integer or a float."
-    with pytest.raises(TypeError, match=msg_error):
-        paa = PiecewiseAggregateApproximation(
-            window_size="3", output_size=None, overlapping=False
-        )
-        paa.fit_transform(X)
+     ({'window_size': None, 'output_size': '3'}, TypeError,
+      "If specified, 'output_size' must be an integer or a float."),
 
-    msg_error = "If specified, 'output_size' must be an integer or a float."
-    with pytest.raises(TypeError, match=msg_error):
-        paa = PiecewiseAggregateApproximation(
-            window_size=None, output_size="3", overlapping=False
-        )
-        paa.fit_transform(X)
+     ({'window_size': 0}, ValueError,
+      "If 'window_size' is an integer, it must be greater than or equal to 1 "
+      "and lower than or equal to n_timestamps (got 0)."),
 
-    msg_error = re.escape(
-        "If 'window_size' is an integer, it must be greater "
-        "than or equal to 1 and lower than or equal to the size "
-        "of each time series (i.e. the size of the last dimension "
-        "of X) (got {0}).".format(0)
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        paa = PiecewiseAggregateApproximation(
-            window_size=0, output_size=None, overlapping=False
-        )
-        paa.fit_transform(X)
+     ({'window_size': 2.}, ValueError,
+      "If 'window_size' is a float, it must be greater than 0 and lower than "
+      "or equal to 1 (got {0}).".format(2.)),
 
-    msg_error = re.escape("If 'window_size' is a float, it must be greater "
-                          "than 0 and lower than or equal to 1 "
-                          "(got {0}).".format(2.))
-    with pytest.raises(ValueError, match=msg_error):
-        paa = PiecewiseAggregateApproximation(
-            window_size=2., output_size=None, overlapping=False
-        )
-        paa.fit_transform(X)
+     ({'window_size': None, 'output_size': 0}, ValueError,
+      "If 'output_size' is an integer, it must be greater than or equal to 1 "
+      "and lower than or equal to n_timestamps (got 0)."),
 
-    msg_error = re.escape(
-        "If 'output_size' is an integer, it must be greater "
-        "than or equal to 1 and lower than or equal to the size "
-        "of each time series (i.e. the size of the last dimension "
-        "of X) (got {0}).".format(0)
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        paa = PiecewiseAggregateApproximation(
-            window_size=None, output_size=0, overlapping=False
-        )
-        paa.fit_transform(X)
+     ({'window_size': None, 'output_size': 2.}, ValueError,
+      "If 'output_size' is a float, it must be greater than 0 and lower than "
+      "or equal to 1 (got {0}).".format(2.))]
+)
+def test_parameter_check(params, error, err_msg):
+    """Test parameter validation."""
+    paa = PiecewiseAggregateApproximation(**params)
+    with pytest.raises(error, match=re.escape(err_msg)):
+        paa.transform(X)
 
-    msg_error = re.escape("If 'output_size' is a float, it must be greater "
-                          "than 0 and lower than or equal to 1 "
-                          "(got {0}).".format(2.))
-    with pytest.raises(ValueError, match=msg_error):
-        paa = PiecewiseAggregateApproximation(
-            window_size=None, output_size=2., overlapping=False
-        )
-        paa.fit_transform(X)
 
-    # Test 1 (window_size = 1 check)
-    paa = PiecewiseAggregateApproximation(
-        window_size=1, output_size=None, overlapping=False)
-    arr_actual = paa.fit_transform(X)
-    arr_desired = X
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+@pytest.mark.parametrize(
+    'params, arr_desired',
+    [({}, X),
+     ({'window_size': 2}, [[0.5, 2.5, 4.5], [2.5, 1.5, 3.5]]),
 
-    # Test 2 (window_size > 1 check)
-    paa = PiecewiseAggregateApproximation(
-        window_size=3, output_size=None, overlapping=False)
-    arr_actual = paa.fit_transform(X)
-    arr_desired = np.array([1, 4, 7]).reshape(1, 3)
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+     ({'window_size': None, 'output_size': 3},
+      [[0.5, 2.5, 4.5], [2.5, 1.5, 3.5]]),
 
-    # Test 3 (output_size specified check)
-    paa = PiecewiseAggregateApproximation(
-        window_size=None, output_size=3, overlapping=False)
-    arr_actual = paa.fit_transform(X)
-    print(arr_actual)
-    arr_desired = np.array([1, 4, 7]).reshape(1, 3)
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+     ({'window_size': None, 'output_size': 0.5},
+      [[0.5, 2.5, 4.5], [2.5, 1.5, 3.5]]),
 
-    # Test 4 (window_size float)
-    paa = PiecewiseAggregateApproximation(
-        window_size=0.33, output_size=None, overlapping=False)
-    arr_actual = paa.fit_transform(X)
-    arr_desired = np.array([1, 4, 7]).reshape(1, 3)
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
-
-    # Test 5 (output_size float)
-    paa = PiecewiseAggregateApproximation(
-        window_size=None, output_size=0.33, overlapping=False)
-    arr_actual = paa.fit_transform(X)
-    arr_desired = np.array([1, 4, 7]).reshape(1, 3)
+     ({'window_size': 0.5}, [[1, 4], [2, 3]])]
+)
+def test_actual_results(params, arr_desired):
+    """Test that the actual results are the expected ones."""
+    arr_actual = PiecewiseAggregateApproximation(**params).transform(X)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)

@@ -2,6 +2,7 @@
 
 import numpy as np
 import pytest
+import re
 from scipy.sparse import csc_matrix, hstack
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_selection import chi2
@@ -9,161 +10,83 @@ from ...approximation import SymbolicFourierApproximation
 from ..weasel import WEASEL
 
 
-def test_WEASEL():
-    """Test 'WEASEL' class."""
-    rng = np.random.RandomState(42)
-    X = rng.randn(8, 20)
-    y = np.asarray([0, 0, 0, 0, 1, 1, 1, 1])
-    n_samples = 8
+n_samples, n_timestamps, n_classes = 8, 200, 2
+rng = np.random.RandomState(42)
+X = rng.randn(n_samples, n_timestamps)
+y = rng.randint(n_classes, size=n_samples)
 
-    # Parameter check
-    msg_error = "'word_size' must be an integer."
-    with pytest.raises(TypeError, match=msg_error):
-        weasel = WEASEL(word_size="3", window_sizes=[0.5],
-                        window_steps=[1], drop_sum=False)
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
 
-    msg_error = "'window_sizes' must be array-like."
-    with pytest.raises(TypeError, match=msg_error):
-        weasel = WEASEL(word_size=4, window_sizes={},
-                        window_steps=[1], drop_sum=False)
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+@pytest.mark.parametrize(
+    'params, error, err_msg',
+    [({'word_size': "3"}, TypeError, "'word_size' must be an integer."),
 
-    msg_error = "'window_steps' must be None or array-like."
-    with pytest.raises(TypeError, match=msg_error):
-        weasel = WEASEL(word_size=4, window_sizes=[6],
-                        window_steps="3", drop_sum=False)
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'window_sizes': {}}, TypeError, "'window_sizes' must be array-like."),
 
-    msg_error = "'chi2_threshold' must be a float or an integer."
-    with pytest.raises(TypeError, match=msg_error):
-        weasel = WEASEL(word_size=4, window_sizes=[6],
-                        window_steps=[1], chi2_threshold="3")
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'window_steps': "3"}, TypeError,
+      "'window_steps' must be None or array-like."),
 
-    msg_error = "'word_size' must be a positive integer."
-    with pytest.raises(ValueError, match=msg_error):
-        weasel = WEASEL(word_size=0)
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'chi2_threshold': "3"}, TypeError,
+      "'chi2_threshold' must be a float or an integer."),
 
-    msg_error = "'window_sizes' must be one-dimensional."
-    with pytest.raises(ValueError, match=msg_error):
-        weasel = WEASEL(word_size=4, window_sizes=np.ones((2, 4)))
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'word_size': 0}, ValueError, "'word_size' must be a positive integer."),
 
-    msg_error = "The elements of 'window_sizes' must be integers or floats."
-    with pytest.raises(ValueError, match=msg_error):
-        weasel = WEASEL(word_size=4, window_sizes=['a', 'b', 'c'])
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'window_sizes': np.ones((2, 4))}, ValueError,
+      "'window_sizes' must be one-dimensional."),
 
-    msg_error = (
-        "If the elements of 'window_sizes' are floats, they all "
-        "must be greater than 0 and lower than or equal to 1."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        weasel = WEASEL(word_size=4, window_sizes=[0.5, 2.])
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'window_sizes': ['a', 'b', 'c']}, ValueError,
+      "The elements of 'window_sizes' must be integers or floats."),
 
-    msg_error = (
-        "All the elements in 'window_sizes' must be "
-        "lower than or equal to n_timestamps."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        weasel = WEASEL(word_size=4, window_sizes=[30])
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'window_sizes': [0.5, 2.]}, ValueError,
+      "If the elements of 'window_sizes' are floats, they all must be greater "
+      "than 0 and lower than or equal to 1."),
 
-    msg_error = (
-        "If 'drop_sum=True', 'word_size' must be lower than "
-        "the minimum value in 'window_sizes'."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        weasel = WEASEL(word_size=4, window_sizes=[4, 6], drop_sum=True)
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'window_sizes': [300]}, ValueError,
+      "All the elements in 'window_sizes' must be lower than or equal to "
+      "n_timestamps."),
 
-    msg_error = (
-        "If 'drop_sum=False', 'word_size' must be lower than or "
-        "equal to the minimum value in 'window_sizes'."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        weasel = WEASEL(word_size=5, window_sizes=[4, 6], drop_sum=False)
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'word_size': 4, 'window_sizes': [4, 6], 'drop_sum': True}, ValueError,
+      "If 'drop_sum=True', 'word_size' must be lower than the minimum value "
+      "in 'window_sizes'."),
 
-    msg_error = "'window_steps' must be one-dimensional."
-    with pytest.raises(ValueError, match=msg_error):
-        weasel = WEASEL(word_size=5, window_sizes=[8, 10],
-                        window_steps=np.ones((2, 4)))
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'word_size': 5, 'window_sizes': [4, 6], 'drop_sum': False}, ValueError,
+      "If 'drop_sum=False', 'word_size' must be lower than or equal to the "
+      "minimum value in 'window_sizes'."),
 
-    msg_error = (
-        "If 'window_steps' is not None, it must have "
-        "the same size as 'window_sizes'."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        weasel = WEASEL(word_size=5, window_sizes=[8, 10],
-                        window_steps=[1, 2, 3])
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'window_steps': np.ones((2, 4))}, ValueError,
+      "'window_steps' must be one-dimensional."),
 
-    msg_error = (
-        "If 'window_steps' is not None, the elements of 'window_steps' "
-        "must be integers or floats."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        weasel = WEASEL(word_size=5, window_sizes=[8, 10],
-                        window_steps=['a', 'b'])
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'window_sizes': [8, 10], 'window_steps': [1, 2, 3]}, ValueError,
+      "If 'window_steps' is not None, it must have the same size as "
+      "'window_sizes'."),
 
-    msg_error = (
-        "If the elements of 'window_steps' are floats, they "
-        "all must be greater than 0 and lower than or equal to 1."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        weasel = WEASEL(word_size=5, window_sizes=[8, 10],
-                        window_steps=[0.5, 2.])
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'window_sizes': [8, 10], 'window_steps': ['a', 'b']}, ValueError,
+      "If 'window_steps' is not None, the elements of 'window_steps' must be "
+      "integers or floats."),
 
-    msg_error = (
-        "All the elements in 'window_steps' must be greater than or equal "
-        "to 1 and lower than or equal to n_timestamps."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        weasel = WEASEL(word_size=5, window_sizes=[8, 10],
-                        window_steps=[0, 2])
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'window_sizes': [8, 10], 'window_steps': [0.5, 2.]}, ValueError,
+      "If the elements of 'window_steps' are floats, they all must be greater "
+      "than 0 and lower than or equal to 1."),
 
-    msg_error = (
-        "All the elements in 'window_steps' must be greater than or equal "
-        "to 1 and lower than or equal to n_timestamps."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        weasel = WEASEL(word_size=5, window_sizes=[8, 10],
-                        window_steps=[2, 25])
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'window_sizes': [8], 'window_steps': [0]}, ValueError,
+      "All the elements in 'window_steps' must be greater than or equal to 1 "
+      "and lower than or equal to n_timestamps."),
 
-    msg_error = "'chi2_threshold' must be positive."
-    with pytest.raises(ValueError, match=msg_error):
-        weasel = WEASEL(word_size=5, window_sizes=[8, 10],
-                        chi2_threshold=-1)
-        weasel.fit_transform(X, y)
-        weasel.fit(X, y).transform(X)
+     ({'window_sizes': [8], 'window_steps': [250]}, ValueError,
+      "All the elements in 'window_steps' must be greater than or equal to 1 "
+      "and lower than or equal to n_timestamps."),
 
-    # Test 1:
+     ({'chi2_threshold': -1}, ValueError,
+      "'chi2_threshold' must be positive.")]
+)
+def test_parameter_check(params, error, err_msg):
+    """Test parameter validation."""
+    weasel = WEASEL(**params)
+    with pytest.raises(error, match=re.escape(err_msg)):
+        weasel.fit(X, y)
+
+
+def test_accurate_results():
+    """Test that the actual results are the expected ones."""
     X_features = csc_matrix((n_samples, 0), dtype=np.int64)
     vocabulary_ = {}
 
@@ -173,7 +96,7 @@ def test_WEASEL():
         norm_std=True, strategy='entropy', chi2_threshold=2, alphabet=None
     )
 
-    for window_size, n_windows in zip([5, 10], [4, 2]):
+    for window_size, n_windows in zip([5, 10], [40, 20]):
         X_windowed = X.reshape(n_samples, n_windows, window_size)
         X_windowed = X_windowed.reshape(n_samples * n_windows, window_size)
 
@@ -204,10 +127,12 @@ def test_WEASEL():
 
     arr_desired = X_features.toarray()
 
-    arr_actual = weasel.fit_transform(X, y).toarray()
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0)
+    # Accuracte results for fit followed by transform
+    arr_actual_1 = weasel.fit_transform(X, y).toarray()
+    np.testing.assert_allclose(arr_actual_1, arr_desired, atol=1e-5, rtol=0)
     assert weasel.vocabulary_ == vocabulary_
 
-    arr_actual = weasel.fit(X, y).transform(X).toarray()
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0)
+    # Accuracte results for fit_transform
+    arr_actual_2 = weasel.fit(X, y).transform(X).toarray()
+    np.testing.assert_allclose(arr_actual_2, arr_desired, atol=1e-5, rtol=0)
     assert weasel.vocabulary_ == vocabulary_

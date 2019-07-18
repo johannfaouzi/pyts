@@ -2,27 +2,33 @@
 
 import numpy as np
 import pytest
+import re
 from math import log
 from sklearn.metrics.pairwise import cosine_similarity
 from ..saxvsm import SAXVSM
 
 
-def test_SAXVSM():
-    """Test 'SAXVSM' class."""
-    # Parameter check
-    msg_error = "'n_bins' must be an integer."
-    with pytest.raises(TypeError, match=msg_error):
-        clf = SAXVSM(n_bins="3", strategy='uniform', window_size=2,
-                     numerosity_reduction=False, sublinear_tf=False)
-        clf.fit(np.c_[np.ones((4, 5)), np.zeros((4, 6))], [0, 0, 1, 1])
+X = [[0, 0, 0, 1, 0, 0, 1, 1, 1],
+     [0, 1, 1, 1, 0, 0, 1, 1, 1],
+     [0, 0, 0, 1, 0, 0, 0, 1, 0]]
+y = [0, 0, 1]
 
-    msg_error = "'n_bins' must be between 2 and 26."
-    with pytest.raises(ValueError, match=msg_error):
-        clf = SAXVSM(n_bins=30, strategy='uniform', window_size=2,
-                     numerosity_reduction=False, sublinear_tf=False)
-        clf.fit(np.c_[np.ones((4, 5)), np.zeros((4, 6))], [0, 0, 1, 1])
 
-    # Test 1
+@pytest.mark.parametrize(
+    'params, error, err_msg',
+    [({'n_bins': '3'}, TypeError, "'n_bins' must be an integer."),
+     ({'n_bins': 1}, ValueError, "'n_bins' must be between 2 and 26.")]
+)
+def test_parameter_check(params, error, err_msg):
+    """Test parameter validation."""
+    clf = SAXVSM(**params)
+    with pytest.raises(error, match=re.escape(err_msg)):
+        clf.fit(X, y)
+
+
+def test_actual_results_strategy_uniform():
+    """Test that the actual results are the expected ones."""
+    # Data
     X = [[0, 0, 0, 1, 0, 0, 1, 1, 1],
          [0, 1, 1, 1, 0, 0, 1, 1, 1],
          [0, 0, 0, 1, 0, 0, 0, 1, 0]]
@@ -30,7 +36,7 @@ def test_SAXVSM():
 
     clf = SAXVSM(n_bins=2, strategy='uniform', window_size=2,
                  numerosity_reduction=False, sublinear_tf=False)
-    arr_actual = clf.fit(X, y).decision_function(X)
+    decision_function_actual = clf.fit(X, y).decision_function(X)
 
     # X_sax = np.array(['a', 'b'])[np.asarray(X)]
     # X_bow = ["aa aa ab ba aa ab bb bb",
@@ -42,21 +48,26 @@ def test_SAXVSM():
     tf = np.asarray([[4, 4, 2, 6],
                      [4, 2, 2, 0]])
     idf = np.asarray([1, 1, 1, log(2) + 1])
-    arr_desired = cosine_similarity(freq, tf * idf[None, :])
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+    decision_function_desired = cosine_similarity(freq, tf * idf[None, :])
+    np.testing.assert_allclose(decision_function_actual,
+                               decision_function_desired, atol=1e-5, rtol=0.)
 
-    arr_actual = clf.fit(X, y).predict(X)
-    arr_desired = cosine_similarity(freq, tf * idf[None, :]).argmax(axis=1)
-    np.testing.assert_array_equal(arr_actual, arr_desired)
+    pred_actual = clf.predict(X)
+    pred_desired = cosine_similarity(freq, tf * idf[None, :]).argmax(axis=1)
+    np.testing.assert_array_equal(pred_actual, pred_desired)
 
-    # Test 2
+
+def test_actual_results_strategy_quantile():
+    """Test that the actual results are the expected ones."""
+    # Data
     X = [[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
          [0.0, 0.3, 0.2, 0.4, 0.1, 0.5, 0.6, 0.7, 0.8, 0.9],
          [0.0, 0.9, 0.1, 0.8, 0.2, 0.7, 0.3, 0.6, 0.4, 0.5]]
     y = [0, 0, 1]
+
     clf = SAXVSM(n_bins=2, strategy='quantile', window_size=2,
                  numerosity_reduction=False, sublinear_tf=False)
-    arr_actual = clf.fit(X, y).decision_function(X)
+    decision_function_actual = clf.fit(X, y).decision_function(X)
 
     # X_sax = [['a', 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b', 'b'],
     #          ['a', 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b', 'b'],
@@ -70,9 +81,10 @@ def test_SAXVSM():
     tf = np.asarray([[8, 2, 0, 8],
                      [0, 5, 4, 0]])
     idf = np.asarray([log(2) + 1, 1, log(2) + 1, log(2) + 1])
-    arr_desired = cosine_similarity(freq, tf * idf[None, :])
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+    decision_function_desired = cosine_similarity(freq, tf * idf[None, :])
+    np.testing.assert_allclose(decision_function_actual,
+                               decision_function_desired, atol=1e-5, rtol=0.)
 
-    arr_actual = clf.fit(X, y).predict(X)
-    arr_desired = cosine_similarity(freq, tf * idf[None, :]).argmax(axis=1)
-    np.testing.assert_array_equal(arr_actual, arr_desired)
+    pred_actual = clf.fit(X, y).predict(X)
+    pred_desired = cosine_similarity(freq, tf * idf[None, :]).argmax(axis=1)
+    np.testing.assert_array_equal(pred_actual, pred_desired)

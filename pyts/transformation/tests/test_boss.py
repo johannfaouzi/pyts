@@ -8,101 +8,84 @@ from ..boss import BOSS
 from ...approximation import SymbolicFourierApproximation
 
 
-def test_BOSS():
-    """Test 'BOSS' class."""
-    rng = np.random.RandomState(42)
-    X = rng.randn(8, 20)
-    y = np.asarray([0, 0, 0, 0, 1, 1, 1, 1])
+n_samples, n_timestamps, n_classes = 8, 200, 2
+rng = np.random.RandomState(42)
+X = rng.randn(n_samples, n_timestamps)
+y = rng.randint(n_classes, size=n_samples)
 
-    # Parameter check
-    msg_error = "'word_size' must be an integer."
-    with pytest.raises(TypeError, match=msg_error):
-        boss = BOSS(word_size="3", window_size=4,
-                    window_step=1, drop_sum=False)
-        boss.fit(X, y).transform(X)
 
-    msg_error = "'window_size' must be an integer or a float."
-    with pytest.raises(TypeError, match=msg_error):
-        boss = BOSS(word_size=2, window_size="3",
-                    window_step=1, drop_sum=False)
-        boss.fit(X, y).predict(X)
+@pytest.mark.parametrize(
+    'params, error, err_msg',
+    [({'word_size': "3"}, TypeError, "'word_size' must be an integer."),
 
-    msg_error = "'window_step' must be an integer or a float."
-    with pytest.raises(TypeError, match=msg_error):
-        boss = BOSS(word_size=2, window_size=4,
-                    window_step=None, drop_sum=False)
-        boss.fit(X, y).predict(X)
+     ({'window_size': {}}, TypeError,
+      "'window_size' must be an integer or a float."),
 
-    msg_error = "'word_size' must be a positive integer."
-    with pytest.raises(ValueError, match=msg_error):
-        boss = BOSS(word_size=0, window_size=4,
-                    window_step=1, drop_sum=False)
-        boss.fit(X, y).predict(X)
+     ({'window_step': {}}, TypeError,
+      "'window_step' must be an integer or a float."),
 
-    msg_error = re.escape(
-        "If 'window_size' is an integer, it must be greater "
-        "than or equal to 1 and lower than or equal to "
-        "(n_timestamps - 1) if 'drop_sum=True'."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        boss = BOSS(word_size=2, window_size=0,
-                    window_step=1, drop_sum=True)
-        boss.fit(X, y).predict(X)
+     ({'word_size': 0}, ValueError, "'word_size' must be a positive integer."),
 
-    msg_error = (
-        "If 'window_size' is a float, it must be greater "
-        "than 0 and lower than or equal to 1."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        boss = BOSS(word_size=2, window_size=2.,
-                    window_step=1, drop_sum=False)
-        boss.fit(X, y).predict(X)
+     ({'window_size': 0, 'drop_sum': True}, ValueError,
+      "If 'window_size' is an integer, it must be greater than or equal to 1 "
+      "and lower than or equal to (n_timestamps - 1) if 'drop_sum=True'."),
 
-    msg_error = (
-        "If 'window_step' is an integer, it must be greater "
-        "than or equal to 1 and lower than or equal to "
-        "n_timestamps."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        boss = BOSS(word_size=2, window_size=4,
-                    window_step=0, drop_sum=False)
-        boss.fit(X, y).predict(X)
+     ({'window_size': n_timestamps, 'drop_sum': True}, ValueError,
+      "If 'window_size' is an integer, it must be greater than or equal to 1 "
+      "and lower than or equal to (n_timestamps - 1) if 'drop_sum=True'."),
 
-    msg_error = (
-        "If 'window_step' is a float, it must be greater "
-        "than 0 and lower than or equal to 1."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        boss = BOSS(word_size=2, window_size=4,
-                    window_step=2., drop_sum=False)
-        boss.fit(X, y).predict(X)
+     ({'window_size': 0}, ValueError,
+      "If 'window_size' is an integer, it must be greater than or equal to 1 "
+      "and lower than or equal to n_timestamps if 'drop_sum=False'."),
 
-    msg_error = re.escape(
-        "'word_size' must be lower than or equal to "
-        "(window_size - 1) if 'drop_sum=True'."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        boss = BOSS(word_size=4, window_size=4,
-                    window_step=1, drop_sum=True)
-        boss.fit(X, y).predict(X)
+     ({'window_size': n_timestamps + 1}, ValueError,
+      "If 'window_size' is an integer, it must be greater than or equal to 1 "
+      "and lower than or equal to n_timestamps if 'drop_sum=False'."),
 
-    msg_error = (
-        "'word_size' must be lower than or equal to "
-        "window_size if 'drop_sum=False'."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        boss = BOSS(word_size=5, window_size=4,
-                    window_step=1, drop_sum=False)
-        boss.fit(X, y).predict(X)
+     ({'window_size': 1.5}, ValueError,
+      "If 'window_size' is a float, it must be greater than 0 and lower than "
+      "or equal to 1."),
 
-    # Test 1: numerosity_reduction=False
+     ({'window_step': 0}, ValueError,
+      "If 'window_step' is an integer, it must be greater than or equal to 1 "
+      "and lower than or equal to n_timestamps."),
+
+     ({'window_step': n_timestamps + 1}, ValueError,
+      "If 'window_step' is an integer, it must be greater than or equal to 1 "
+      "and lower than or equal to n_timestamps."),
+
+     ({'window_step': 0.}, ValueError,
+      "If 'window_step' is a float, it must be greater than 0 and lower than "
+      "or equal to 1."),
+
+     ({'window_step': 1.2}, ValueError,
+      "If 'window_step' is a float, it must be greater than 0 and lower than "
+      "or equal to 1."),
+
+     ({'window_size': 4, 'drop_sum': True}, ValueError,
+      "'word_size' must be lower than or equal to (window_size - 1) if "
+      "'drop_sum=True'."),
+
+     ({'window_size': 3}, ValueError,
+      "'word_size' must be lower than or equal to window_size if "
+      "'drop_sum=False'.")]
+)
+def test_parameter_check(params, error, err_msg):
+    """Test parameter validation."""
+    boss = BOSS(**params)
+    with pytest.raises(error, match=re.escape(err_msg)):
+        boss.fit(X, y)
+
+
+def test_accurate_results_without_numerosity_reduction():
+    """Test that the actual results are the expected ones."""
     boss = BOSS(
-        word_size=4, n_bins=3, window_size=10, window_step=10,
+        word_size=4, n_bins=3, window_size=100, window_step=100,
         anova=False, drop_sum=False, norm_mean=False, norm_std=False,
         strategy='quantile', alphabet=None, numerosity_reduction=False
     )
 
-    X_windowed = X.reshape(8, 2, 10).reshape(16, 10)
+    X_windowed = X.reshape(8, 2, 100).reshape(16, 100)
     sfa = SymbolicFourierApproximation(
         n_coefs=4, drop_sum=False, anova=False, norm_mean=False,
         norm_std=False, n_bins=3, strategy='quantile', alphabet=None
@@ -126,14 +109,16 @@ def test_BOSS():
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0)
     assert boss.vocabulary_ == vocabulary_desired
 
-    # Test 2: numerosity_reduction=True
+
+def test_accurate_results_with_numerosity_reduction():
+    """Test that the actual results are the expected ones."""
     boss = BOSS(
-        word_size=4, n_bins=3, window_size=10, window_step=10,
+        word_size=4, n_bins=3, window_size=100, window_step=100,
         anova=False, drop_sum=False, norm_mean=False, norm_std=False,
         strategy='quantile', alphabet=None, numerosity_reduction=True
     )
 
-    X_windowed = X.reshape(8, 2, 10).reshape(16, 10)
+    X_windowed = X.reshape(8, 2, 100).reshape(16, 100)
     sfa = SymbolicFourierApproximation(
         n_coefs=4, drop_sum=False, anova=False, norm_mean=False,
         norm_std=False, n_bins=3, strategy='quantile', alphabet=None
@@ -150,10 +135,10 @@ def test_BOSS():
     vocabulary_desired = {value: key for key, value in
                           vectorizer.vocabulary_.items()}
 
-    arr_actual = boss.fit_transform(X, y).toarray()
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0)
+    arr_actual_1 = boss.fit_transform(X, y).toarray()
+    np.testing.assert_allclose(arr_actual_1, arr_desired, atol=1e-5, rtol=0)
     assert boss.vocabulary_ == vocabulary_desired
 
-    arr_actual = boss.fit(X, y).transform(X).toarray()
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0)
+    arr_actual_2 = boss.fit(X, y).transform(X).toarray()
+    np.testing.assert_allclose(arr_actual_2, arr_desired, atol=1e-5, rtol=0)
     assert boss.vocabulary_ == vocabulary_desired

@@ -1,59 +1,32 @@
 """Testing for k-nearest-neighbors."""
 
 import numpy as np
+import pytest
 from ..knn import KNeighborsClassifier
 
 
-def test_KNeighborsClassifier():
-    """Test 'KNeighborsClassifier' class."""
-    X = np.arange(40).reshape(8, 5)
-    y = [0, 0, 0, 1, 1, 0, 1, 1]
-    X_test = X + 0.1
+X = np.arange(40).reshape(8, 5)
+y = np.array([0, 0, 0, 1, 1, 0, 1, 1])
+y_proba = np.vstack([1 - y, y]).T
+X_test = X + 0.1
 
-    # Test 1: metric='euclidean'
-    knn = KNeighborsClassifier(n_neighbors=1, metric='euclidean')
-    arr_actual = knn.fit(X, y).predict(X_test)
-    arr_desired = y
-    np.testing.assert_array_equal(arr_actual, arr_desired)
 
-    # Test 2: metric='dtw'
-    knn = KNeighborsClassifier(n_neighbors=1, metric='dtw')
-    arr_actual = knn.fit(X, y).predict(X_test)
-    arr_desired = y
-    np.testing.assert_array_equal(arr_actual, arr_desired)
-
-    # Test 3: metric='dtw_classic'
-    knn = KNeighborsClassifier(n_neighbors=1, metric='dtw_classic')
-    arr_actual = knn.fit(X, y).predict(X_test)
-    arr_desired = y
-    np.testing.assert_array_equal(arr_actual, arr_desired)
-
-    # Test 4: metric='dtw_sakoechiba'
-    knn = KNeighborsClassifier(n_neighbors=1, metric='dtw_sakoechiba')
-    arr_actual = knn.fit(X, y).predict(X_test)
-    arr_desired = y
-    np.testing.assert_array_equal(arr_actual, arr_desired)
-
-    # Test 5: metric='dtw_itakura'
-    knn = KNeighborsClassifier(n_neighbors=1, metric='dtw_itakura')
-    arr_actual = knn.fit(X, y).predict(X_test)
-    arr_desired = y
-    np.testing.assert_array_equal(arr_actual, arr_desired)
-
-    # Test 6: metric='dtw_multiscale'
-    knn = KNeighborsClassifier(n_neighbors=1, metric='dtw_multiscale')
-    arr_actual = knn.fit(X, y).predict(X_test)
-    arr_desired = y
-    np.testing.assert_array_equal(arr_actual, arr_desired)
-
-    # Test 6: metric='dtw_fast'
-    knn = KNeighborsClassifier(n_neighbors=1, metric='dtw_fast')
-    arr_actual = knn.fit(X, y).predict(X_test)
-    arr_desired = y
-    np.testing.assert_array_equal(arr_actual, arr_desired)
-
-    # Test 6: metric='boss'
-    knn = KNeighborsClassifier(n_neighbors=1, metric='boss')
-    arr_actual = knn.fit(X, y).predict(X_test)
-    arr_desired = y
-    np.testing.assert_array_equal(arr_actual, arr_desired)
+@pytest.mark.parametrize(
+    'params',
+    [({'metric': 'euclidean'}),
+     ({'metric': 'manhattan'}),
+     ({'metric': 'dtw'}),
+     ({'metric': 'dtw_classic'}),
+     ({'metric': 'dtw_sakoechiba'}),
+     ({'metric': 'dtw_itakura'}),
+     ({'metric': 'dtw_multiscale'}),
+     ({'metric': 'dtw_fast'}),
+     ({'metric': 'boss'})]
+)
+def test_actual_results(params):
+    """Test that the actual results are the expected ones."""
+    knn = KNeighborsClassifier(n_neighbors=1, **params)
+    proba_actual = knn.fit(X, y).predict_proba(X_test)
+    pred_actual = knn.predict(X_test)
+    np.testing.assert_array_equal(proba_actual, y_proba)
+    np.testing.assert_array_equal(pred_actual, y)

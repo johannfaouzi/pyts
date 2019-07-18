@@ -6,134 +6,114 @@ import re
 from ..gaf import _gasf, _gadf, GramianAngularField
 
 
-def test_gasf():
-    """Test '_gasf' function."""
-    X_cos = np.asarray([[-1, 0, 1]])
-    X_sin = np.asarray([[1, 0, 1]])
-    arr_actual = _gasf(X_cos, X_sin, n_samples=1, image_size=3)
-    arr_desired = np.asarray([[[1, 0, -1], [0, 0, 0], [-1, 0, 1]]])
-    arr_desired = arr_desired - np.asarray([[[1, 0, 1], [0, 0, 0], [1, 0, 1]]])
+X = np.arange(9).reshape(1, 9)
+pi_6 = np.cos(np.pi / 6).item()
+
+
+@pytest.mark.parametrize(
+    'X_cos, X_sin, arr_desired',
+    [([[-1, 0, 1]], [[-1, 0, 1]], [[[0, 0, 0], [0, 0, 0], [0, 0, 0]]]),
+
+     ([[-1, 0, 1]], [[1, 0, 1]], [[[0, 0, -2], [0, 0, 0], [-2, 0, 0]]]),
+
+     ([[-1, 0, 1], [-1, 0, 1]], [[1, 0, 1], [1, 0, 1]],
+      [[[0, 0, -2], [0, 0, 0], [-2, 0, 0]],
+       [[0, 0, -2], [0, 0, 0], [-2, 0, 0]]])]
+)
+def test_actual_results_gasf(X_cos, X_sin, arr_desired):
+    """Test that the actual results are the expected ones."""
+    X_cos = np.asarray(X_cos)
+    X_sin = np.asarray(X_sin)
+    arr_actual = _gasf(X_cos, X_sin,
+                       n_samples=X_cos.shape[0], image_size=X_cos.shape[1])
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
 
-def test_gadf():
-    """Test '_gadf' function."""
-    X_cos = np.asarray([[-1, 0, 1]])
-    X_sin = np.asarray([[1, 0, 1]])
-    arr_actual = _gadf(X_cos, X_sin, n_samples=1, image_size=3)
-    arr_desired = np.asarray([[[-1, 0, 1], [0, 0, 0], [-1, 0, 1]]])
-    arr_desired -= np.asarray([[[-1, 0, -1], [0, 0, 0], [1, 0, 1]]])
+@pytest.mark.parametrize(
+    'X_cos, X_sin, arr_desired',
+    [([[-1, 0, 1]], [[-1, 0, 1]], [[[0, 0, 0], [0, 0, 0], [0, 0, 0]]]),
+
+     ([[-1, 0, 1]], [[1, 0, 1]], [[[0, 0, 2], [0, 0, 0], [-2, 0, 0]]]),
+
+     ([[-1, 0, 1], [-1, 0, 1]], [[1, 0, 1], [1, 0, 1]],
+      [[[0, 0, 2], [0, 0, 0], [-2, 0, 0]],
+       [[0, 0, 2], [0, 0, 0], [-2, 0, 0]]])]
+)
+def test_actual_results_gadf(X_cos, X_sin, arr_desired):
+    """Test that the actual results are the expected ones."""
+    X_cos = np.asarray(X_cos)
+    X_sin = np.asarray(X_sin)
+    arr_actual = _gadf(X_cos, X_sin,
+                       n_samples=X_cos.shape[0], image_size=X_cos.shape[1])
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
 
-def test_GramianAngularField():
-    """Test 'GramianAngularField' class."""
-    X = np.arange(9).reshape(1, 9)
+@pytest.mark.parametrize(
+    'params, error, err_msg',
+    [({'image_size': '4'}, TypeError,
+      "'image_size' must be an integer or a float."),
 
-    # Parameter check
-    msg_error = "'image_size' must be an integer or a float."
-    with pytest.raises(TypeError, match=msg_error):
-        gaf = GramianAngularField(
-            image_size="4", sample_range=(-1, 1), method='s', overlapping=False
-        )
-        gaf.fit_transform(X)
+     ({'sample_range': [0, 1]}, TypeError,
+      "'sample_range' must be None or a tuple."),
 
-    msg_error = "'sample_range' must be None or a tuple."
-    with pytest.raises(TypeError, match=msg_error):
-        gaf = GramianAngularField(
-            image_size=4, sample_range=[0, 1], method='s', overlapping=False
-        )
-        gaf.fit_transform(X)
+     ({'image_size': 0}, ValueError,
+      "If 'image_size' is an integer, it must be greater than or equal to 1 "
+      "and lower than or equal to n_timestamps (got 0)."),
 
-    msg_error = re.escape(
-        "If 'image_size' is an integer, it must be greater "
-        "than or equal to 1 and lower than or equal to the size "
-        "of each time series (i.e. the size of the last dimension "
-        "of X) (got {0}).".format(0)
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        gaf = GramianAngularField(
-            image_size=0, sample_range=(-1, 1), method='s', overlapping=False
-        )
-        gaf.fit_transform(X)
+     ({'image_size': 2.}, ValueError,
+      "If 'image_size' is a float, it must be greater than 0 and lower than "
+      "or equal to 1 (got {0}).".format(2.)),
 
-    msg_error = re.escape(
-        "If 'image_size' is a float, it must be greater "
-        "than or equal to 0 and lower than or equal to 1 "
-        "(got {0}).".format(2.)
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        gaf = GramianAngularField(
-            image_size=2., sample_range=(-1, 1), method='s', overlapping=False
-        )
-        gaf.fit_transform(X)
+     ({'sample_range': (-1, 0, 1)}, ValueError,
+      "If 'sample_range' is a tuple, its length must be equal to 2."),
 
-    msg_error = (
-        "If 'sample_range' is a tuple, its length must be equal to 2."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        gaf = GramianAngularField(
-            image_size=4, sample_range=(-1, 0, 1),
-            method='s', overlapping=False
-        )
-        gaf.fit_transform(X)
+     ({'sample_range': (-2, 2)}, ValueError,
+      "If 'sample_range' is a tuple, it must satisfy "
+      "-1 <= sample_range[0] < sample_range[1] <= 1."),
 
-    msg_error = re.escape(
-        "If 'sample_range' is a tuple, it must satisfy "
-        "-1 <= sample_range[0] < sample_range[1] <= 1."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        gaf = GramianAngularField(
-            image_size=4, sample_range=(-2, 2), method='s', overlapping=False
-        )
-        gaf.fit_transform(X)
+     ({'method': 'a'}, ValueError,
+      "'method' must be either 'summation', 's', 'difference' or 'd'."),
 
-    msg_error = (
-        "'method' must be either 'summation', 's', 'difference' or 'd'."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        gaf = GramianAngularField(
-            image_size=4, sample_range=(-1, 1), method='a', overlapping=False
-        )
-        gaf.fit_transform(X)
+     ({'sample_range': None}, ValueError,
+      "If 'sample_range' is None, all the values of X must be between "
+      "-1 and 1.")]
+)
+def test_parameter_check(params, error, err_msg):
+    """Test parameter validation."""
+    gaf = GramianAngularField(**params)
+    with pytest.raises(error, match=re.escape(err_msg)):
+        gaf.transform(X)
 
-    msg_error = (
-        "If 'sample_range' is None, all the values of X must be between "
-        "-1 and 1."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        gaf = GramianAngularField(
-            image_size=4, sample_range=None, method='s', overlapping=False
-        )
-        gaf.fit_transform(X)
 
-    # Accurate result for method='s' check
-    arccos = [np.pi, np.pi / 2, 0]
-    gaf = GramianAngularField(
-        image_size=3, sample_range=(-1, 1), method='s', overlapping=False)
-    arr_actual = gaf.fit_transform(X)[0]
-    arr_desired = np.cos([[x + y for x in arccos] for y in arccos])
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+@pytest.mark.parametrize(
+    'params, X, arr_desired',
+    [({}, [[-1, 0, 1]], [[[1,  0, -1], [0, -1,  0], [-1,  0,  1]]]),
 
-    # Accurate result for method='d' check
-    gaf = GramianAngularField(
-        image_size=3, sample_range=(-1, 1), method='d', overlapping=False)
-    arr_actual = gaf.fit_transform(X)[0]
-    arr_desired = np.sin([[x - y for y in arccos] for x in arccos])
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+     ({'sample_range': None}, [[-1, 0, 1]],
+      [[[1,  0, -1], [0, -1,  0], [-1,  0,  1]]]),
 
-    # Accurate result for image_size float check
-    arccos = [np.pi, np.pi / 2, 0]
-    gaf = GramianAngularField(
-        image_size=0.33, sample_range=(-1, 1), method='s', overlapping=False)
-    arr_actual = gaf.fit_transform(X)[0]
-    arr_desired = np.cos([[x + y for x in arccos] for y in arccos])
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+     ({'image_size': 3}, [[-1, 0, 1]],
+      [[[1,  0, -1], [0, -1,  0], [-1,  0,  1]]]),
 
-    # Accurate result for sample_range=None check
-    arccos = [np.pi, np.pi / 2, 0]
-    gaf = GramianAngularField(
-        image_size=3, sample_range=None, method='s', overlapping=False)
-    arr_actual = gaf.fit_transform(np.linspace(-1, 1, 3).reshape(1, 3))[0]
-    arr_desired = np.cos([[x + y for x in arccos] for y in arccos])
+     ({'image_size': 3}, [np.arange(9)],
+      [[[1,  0, -1], [0, -1,  0], [-1,  0,  1]]]),
+
+     ({'image_size': 3, 'overlapping': True}, [np.arange(9)],
+      [[[1,  0, -1], [0, -1,  0], [-1,  0,  1]]]),
+
+     ({'method': 'd'}, [[-1, 0, 1]],
+      [[[0,  1,  0], [-1,  0,  1], [0, -1,  0]]]),
+
+     ({'image_size': 3, 'method': 'd'}, [np.arange(9)],
+      [[[0,  1,  0], [-1,  0,  1], [0, -1,  0]]]),
+
+     ({'sample_range': (0, 1)}, [[-1, 0, 1]],
+      [[[-1, -pi_6, 0], [-pi_6, -0.5, 0.5], [0, 0.5, 1]]]),
+
+     ({'sample_range': (0, 1), 'method': 'd'}, [[-1, 0, 1]],
+      [[[0, 0.5, 1], [-0.5, 0, pi_6], [-1, -pi_6, 0]]])]
+)
+def test_actual_results(params, X, arr_desired):
+    """Test that the actual results are the expected ones."""
+    arr_actual = GramianAngularField(**params).transform(X)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)

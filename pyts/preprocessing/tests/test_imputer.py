@@ -6,63 +6,55 @@ import re
 from ..imputer import InterpolationImputer
 
 
-def test_InterpolationImputer():
-    """Test 'InterpolationImputer' class."""
-    # Parameter check
-    X = [[None, 0, 1, 2, None, 4],
-         [0, 2, 4, None, 8, np.nan]]
+X = [[np.nan, 1, 2, 3, np.nan, 5, 6, np.nan]]
 
-    msg_error = "'missing_values' cannot be infinity."
-    with pytest.raises(ValueError, match=msg_error):
-        imputer = InterpolationImputer(
-            missing_values=np.inf, strategy='linear'
-        )
-        imputer.fit_transform(X)
 
-    msg_error = re.escape(
-        "'missing_values' must be an integer, a float, None or "
-        "np.nan (got {0!s})".format("3")
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        imputer = InterpolationImputer(
-            missing_values="3", strategy='linear'
-        )
-        imputer.fit_transform(X)
+@pytest.mark.parametrize(
+    'params, error, err_msg',
+    [({'missing_values': np.inf}, ValueError,
+      "'missing_values' cannot be infinity."),
 
-    msg_error = re.escape(
-        "'strategy' must be an integer or one of 'linear', 'nearest', "
-        "'zero', 'slinear', 'quadratic', 'cubic', 'previous', 'next' "
-        "(got {0})".format('whoops')
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        imputer = InterpolationImputer(
-            missing_values=np.nan, strategy='whoops'
-        )
-        imputer.fit_transform(X)
+     ({'missing_values': "3"}, ValueError,
+      "'missing_values' must be an integer, a float, None or np.nan "
+      "(got {0!s})".format("3")),
 
-    # Test 1
-    X = [[None, 0, 1, 2, None, 4],
-         [0, 2, 4, None, 8, np.nan]]
-    imputer = InterpolationImputer(missing_values=None, strategy='linear')
+     ({'strategy': 'whoops'}, ValueError,
+      "'strategy' must be an integer or one of 'linear', 'nearest', "
+      "'zero', 'slinear', 'quadratic', 'cubic', 'previous', 'next' "
+      "(got {0})".format('whoops'))]
+)
+def test_parameter_check(params, error, err_msg):
+    """Test parameter validation."""
+    imputer = InterpolationImputer(**params)
+    with pytest.raises(error, match=re.escape(err_msg)):
+        imputer.transform(X)
+
+
+@pytest.mark.parametrize(
+    'params, X, arr_desired',
+    [({'missing_values': None}, [[None, 10, 8, None, 4, 2, None]],
+      [[12, 10, 8, 6, 4, 2, 0]]),
+
+     ({'missing_values': np.nan}, [[np.nan, 10, 8, np.nan, 4, 2, np.nan]],
+      [[12, 10, 8, 6, 4, 2, 0]]),
+
+     ({'missing_values': 45.}, [[45., 10, 8, 45., 4, 2, 45.]],
+      [[12, 10, 8, 6, 4, 2, 0]]),
+
+     ({'missing_values': 78}, [[78, 10, 8, 78, 4, 2, 78]],
+      [[12, 10, 8, 6, 4, 2, 0]]),
+
+     ({'missing_values': None, 'strategy': 'quadratic'},
+      [[None, 9, 4, None, 0, 1, None]], [[16, 9, 4, 1, 0, 1, 4]]),
+
+     ({'missing_values': None, 'strategy': 'previous'},
+      [[5, 9, 4, None, 0, 1, None]], [[5, 9, 4, 4, 0, 1, 1]]),
+
+     ({'missing_values': None, 'strategy': 'next'},
+      [[None, 9, 4, None, 0, 1, 8]], [[9, 9, 4, 0, 0, 1, 8]])]
+)
+def test_actual_results(params, X, arr_desired):
+    """Test that the actual results are the expected ones."""
+    imputer = InterpolationImputer(**params)
     arr_actual = imputer.fit_transform(X)
-    arr_desired = [[-1, 0, 1, 2, 3, 4],
-                   [0, 2, 4, 6, 8, 10]]
-    np.testing.assert_array_equal(arr_actual, arr_desired)
-
-    # Test 2
-    X = [[None, 0, 1, 2, None, 4],
-         [0, 2, 4, None, 8, np.nan]]
-    imputer = InterpolationImputer(missing_values=np.nan, strategy='linear')
-    arr_actual = imputer.fit_transform(X)
-    arr_desired = [[-1, 0, 1, 2, 3, 4],
-                   [0, 2, 4, 6, 8, 10]]
-    np.testing.assert_array_equal(arr_actual, arr_desired)
-
-    # Test 3
-    X = [[-10, 0, 1, 2, -10, 4],
-         [0, 2, 4, -10, 8, -10]]
-    imputer = InterpolationImputer(missing_values=-10, strategy='linear')
-    arr_actual = imputer.fit_transform(X)
-    arr_desired = [[-1, 0, 1, 2, 3, 4],
-                   [0, 2, 4, 6, 8, 10]]
-    np.testing.assert_array_equal(arr_actual, arr_desired)
+    np.testing.assert_allclose(arr_actual, arr_desired, rtol=0, atol=1e-5)

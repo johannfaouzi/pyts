@@ -9,94 +9,60 @@ from ..bossvs import BOSSVS
 from ...approximation import SymbolicFourierApproximation
 
 
-def test_BOSSVS():
-    """Test 'BOSSVS' class."""
-    rng = np.random.RandomState(42)
-    X = rng.randn(8, 20)
-    y = np.asarray([0, 0, 0, 0, 1, 1, 1, 1])
+rng = np.random.RandomState(42)
+X = rng.randn(8, 20)
+y = np.asarray([0, 0, 0, 0, 1, 1, 1, 1])
 
-    # Parameter check
-    msg_error = "'word_size' must be an integer."
-    with pytest.raises(TypeError, match=msg_error):
-        bossvs = BOSSVS(word_size="3", window_size=4,
-                        window_step=1, drop_sum=False)
-        bossvs.fit(X, y).predict(X)
 
-    msg_error = "'window_size' must be an integer or a float."
-    with pytest.raises(TypeError, match=msg_error):
-        bossvs = BOSSVS(word_size=2, window_size="3",
-                        window_step=1, drop_sum=False)
-        bossvs.fit(X, y).predict(X)
+@pytest.mark.parametrize(
+    'params, error, err_msg',
+    [({'word_size': '4'}, TypeError, "'word_size' must be an integer."),
 
-    msg_error = "'window_step' must be an integer or a float."
-    with pytest.raises(TypeError, match=msg_error):
-        bossvs = BOSSVS(word_size=2, window_size=4,
-                        window_step=None, drop_sum=False)
-        bossvs.fit(X, y).predict(X)
+     ({'window_size': None}, TypeError,
+      "'window_size' must be an integer or a float."),
 
-    msg_error = "'word_size' must be a positive integer."
-    with pytest.raises(ValueError, match=msg_error):
-        bossvs = BOSSVS(word_size=0, window_size=4,
-                        window_step=1, drop_sum=False)
-        bossvs.fit(X, y).predict(X)
+     ({'window_step': '2'}, TypeError,
+      "'window_step' must be an integer or a float."),
 
-    msg_error = re.escape(
-        "If 'window_size' is an integer, it must be greater "
-        "than or equal to 1 and lower than or equal to "
-        "(n_timestamps - 1) if 'drop_sum=True'."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        bossvs = BOSSVS(word_size=2, window_size=0,
-                        window_step=1, drop_sum=True)
-        bossvs.fit(X, y).predict(X)
+     ({'word_size': 0}, ValueError, "'word_size' must be a positive integer."),
 
-    msg_error = (
-        "If 'window_size' is a float, it must be greater "
-        "than 0 and lower than or equal to 1."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        bossvs = BOSSVS(word_size=2, window_size=2.,
-                        window_step=1, drop_sum=False)
-        bossvs.fit(X, y).predict(X)
+     ({'window_size': 0}, ValueError,
+      "If 'window_size' is an integer, it must be greater than or equal to 1 "
+      "and lower than or equal to n_timestamps if 'drop_sum=False'."),
 
-    msg_error = (
-        "If 'window_step' is an integer, it must be greater "
-        "than or equal to 1 and lower than or equal to "
-        "n_timestamps."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        bossvs = BOSSVS(word_size=2, window_size=4,
-                        window_step=0, drop_sum=False)
-        bossvs.fit(X, y).predict(X)
+     ({'window_size': 0, 'drop_sum': True}, ValueError,
+      "If 'window_size' is an integer, it must be greater than or equal to 1 "
+      "and lower than or equal to (n_timestamps - 1) if 'drop_sum=True'."),
 
-    msg_error = (
-        "If 'window_step' is a float, it must be greater "
-        "than 0 and lower than or equal to 1."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        bossvs = BOSSVS(word_size=2, window_size=4,
-                        window_step=2., drop_sum=False)
-        bossvs.fit(X, y).predict(X)
+     ({'window_size': 2.}, ValueError,
+      "If 'window_size' is a float, it must be greater than 0 and lower than "
+      "or equal to 1."),
 
-    msg_error = re.escape(
-        "'word_size' must be lower than or equal to "
-        "(window_size - 1) if 'drop_sum=True'."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        bossvs = BOSSVS(word_size=4, window_size=4,
-                        window_step=1, drop_sum=True)
-        bossvs.fit(X, y).predict(X)
+     ({'window_step': 0}, ValueError,
+      "If 'window_step' is an integer, it must be greater than or equal to 1 "
+      "and lower than or equal to n_timestamps."),
 
-    msg_error = (
-        "'word_size' must be lower than or equal to "
-        "window_size if 'drop_sum=False'."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        bossvs = BOSSVS(word_size=5, window_size=4,
-                        window_step=1, drop_sum=False)
-        bossvs.fit(X, y).predict(X)
+     ({'window_step': 2.}, ValueError,
+      "If 'window_step' is a float, it must be greater than 0 and lower than "
+      "or equal to 1."),
 
-    # Test 1: numerosity_reduction=False
+     ({'window_size': 4, 'word_size': 4, 'drop_sum': True}, ValueError,
+      "'word_size' must be lower than or equal to (window_size - 1) if "
+      "'drop_sum=True'."),
+
+     ({'window_size': 4, 'word_size': 5}, ValueError,
+      "'word_size' must be lower than or equal to window_size if "
+      "'drop_sum=False'.")]
+)
+def test_parameter_check(params, error, err_msg):
+    """Test parameter validation."""
+    clf = BOSSVS(**params)
+    with pytest.raises(error, match=re.escape(err_msg)):
+        clf.fit(X, y)
+
+
+def test_actual_results_no_numerosity_reduction():
+    """Test that the actual results are the expected ones."""
     bossvs = BOSSVS(
         word_size=4, n_bins=3, window_size=10, window_step=10,
         anova=False, drop_sum=False, norm_mean=False, norm_std=False,
@@ -121,30 +87,34 @@ def test_BOSSVS():
         norm=None, use_idf=True, smooth_idf=False, sublinear_tf=True
     )
     tfidf_desired = tfidf.fit_transform(X_class).toarray()
+
+    # Vocabulary
     vocabulary_desired = {value: key for key, value in
                           tfidf.vocabulary_.items()}
 
-    # Testing for tfidf_
+    # Tf-idf
     tfidf_actual = bossvs.fit(X, y).tfidf_
-    np.testing.assert_allclose(tfidf_actual, tfidf_desired, atol=1e-5, rtol=0)
 
-    # Testing for vocabulary_
-    assert bossvs.vocabulary_ == vocabulary_desired
-
-    # Testing for decision_function
+    # Decision function
     decision_function_actual = bossvs.decision_function(X)
     decision_function_desired = cosine_similarity(
         tfidf.transform(X_bow), tfidf_desired)
-    np.testing.assert_allclose(
-        decision_function_actual, decision_function_desired, atol=1e-5, rtol=0)
 
-    # Testing for predict
+    # Predictions
     y_pred_actual = bossvs.predict(X)
     y_pred_desired = decision_function_desired.argmax(axis=1)
+
+    # Testing
+    assert bossvs.vocabulary_ == vocabulary_desired
+    np.testing.assert_allclose(tfidf_actual, tfidf_desired, atol=1e-5, rtol=0)
+    np.testing.assert_allclose(
+        decision_function_actual, decision_function_desired, atol=1e-5, rtol=0)
     np.testing.assert_allclose(
         y_pred_actual, y_pred_desired, atol=1e-5, rtol=0)
 
-    # Test 2: numerosity_reduction=True
+
+def test_actual_results_numerosity_reduction():
+    """Test that the actual results are the expected ones."""
     bossvs = BOSSVS(
         word_size=4, n_bins=3, window_size=10, window_step=10,
         anova=False, drop_sum=False, norm_mean=False, norm_std=False,
@@ -173,22 +143,22 @@ def test_BOSSVS():
     vocabulary_desired = {value: key for key, value in
                           tfidf.vocabulary_.items()}
 
-    # Testing for tfidf_
+    # Tf-idf
     tfidf_actual = bossvs.fit(X, y).tfidf_
-    np.testing.assert_allclose(tfidf_actual, tfidf_desired, atol=1e-5, rtol=0)
 
-    # Testing for vocabulary_
-    assert bossvs.vocabulary_ == vocabulary_desired
-
-    # Testing for decision_function
+    # Decision function
     decision_function_actual = bossvs.decision_function(X)
     decision_function_desired = cosine_similarity(
         tfidf.transform(X_bow), tfidf_desired)
-    np.testing.assert_allclose(
-        decision_function_actual, decision_function_desired, atol=1e-5, rtol=0)
 
-    # Testing for predict
+    # Predictions
     y_pred_actual = bossvs.predict(X)
     y_pred_desired = decision_function_desired.argmax(axis=1)
+
+    # Testing
+    assert bossvs.vocabulary_ == vocabulary_desired
+    np.testing.assert_allclose(tfidf_actual, tfidf_desired, atol=1e-5, rtol=0)
+    np.testing.assert_allclose(
+        decision_function_actual, decision_function_desired, atol=1e-5, rtol=0)
     np.testing.assert_allclose(
         y_pred_actual, y_pred_desired, atol=1e-5, rtol=0)

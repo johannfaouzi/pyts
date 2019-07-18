@@ -6,104 +6,58 @@ import re
 from ..sax import SymbolicAggregateApproximation
 
 
-def test_SymbolicAggregateApproximation():
-    """Test 'SymbolicAggregateApproximation' class."""
-    # Parameter check
-    X = np.arange(15).reshape(3, 5)
+X = np.arange(30).reshape(3, 10)
 
-    msg_error = "'n_bins' must be an integer."
-    with pytest.raises(TypeError, match=msg_error):
-        sax = SymbolicAggregateApproximation(
-            n_bins=None, strategy='quantile', alphabet=None
-        )
-        sax.fit_transform(X)
 
-    msg_error = re.escape("'alphabet' must be None, 'ordinal' or array-like "
-                          "with shape (n_bins,) (got {0})".format('whoops'))
-    with pytest.raises(TypeError, match=msg_error):
-        sax = SymbolicAggregateApproximation(
-            n_bins=2, strategy='quantile', alphabet='whoops'
-        )
-        sax.fit_transform(X)
+@pytest.mark.parametrize(
+    'params, error, err_msg',
+    [({'n_bins': '3'}, TypeError, "'n_bins' must be an integer."),
 
-    msg_error = re.escape(
-        "'n_bins' must be greater than or equal to 2 and lower than "
-        "or equal to n_timestamps (got {0}).".format(15)
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        sax = SymbolicAggregateApproximation(
-            n_bins=15, strategy='quantile', alphabet=None
-        )
-        sax.fit_transform(X)
+     ({'alphabet': 'whoops'}, TypeError,
+      "'alphabet' must be None, 'ordinal' or array-like with shape (n_bins,) "
+      "(got {0})".format('whoops')),
 
-    msg_error = ("'n_bins' is unexpectedly high. You should try with a "
-                 "smaller value.")
-    with pytest.raises(ValueError, match=msg_error):
-        sax = SymbolicAggregateApproximation(
-            n_bins=10000000, strategy='quantile', alphabet=None
-        )
-        sax.fit_transform(np.c_[np.zeros((2, 10000000)),
-                                np.ones((2, 10000000))])
+     ({'n_bins': 1}, ValueError,
+      "'n_bins' must be greater than or equal to 2 and lower than "
+      "or equal to min(n_timestamps, 26) (got 1)."),
 
-    msg_error = re.escape("'strategy' must be either 'uniform', 'quantile' "
-                          "or 'normal' (got {0})".format('whoops'))
-    with pytest.raises(ValueError, match=msg_error):
-        sax = SymbolicAggregateApproximation(
-            n_bins=3, strategy='whoops', alphabet=None
-        )
-        sax.fit_transform(X)
+     ({'n_bins': 15}, ValueError,
+      "'n_bins' must be greater than or equal to 2 and lower than "
+      "or equal to min(n_timestamps, 26) (got 15)."),
 
-    msg_error = re.escape(
-        "If 'alphabet' is array-like, its shape must be equal to (n_bins,)."
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        sax = SymbolicAggregateApproximation(
-            n_bins=3, strategy='quantile', alphabet=[0, 1]
-        )
-        sax.fit_transform(X)
+     ({'strategy': 'whoops'}, ValueError,
+      "'strategy' must be either 'uniform', 'quantile' or 'normal' "
+      "(got {0})".format('whoops')),
 
-    # Test 1
-    X = [[0, 1, 2, 3, 4]]
-    arr_actual = SymbolicAggregateApproximation(
-        n_bins=5, strategy='quantile').fit_transform(X)
-    arr_desired = [['a', 'b', 'c', 'd', 'e']]
-    np.testing.assert_array_equal(arr_actual, arr_desired)
+     ({'alphabet': ['a', 'b', 'c']}, ValueError,
+      "If 'alphabet' is array-like, its shape must be equal to (n_bins,).")]
+)
+def test_parameter_check(params, error, err_msg):
+    """Test parameter validation."""
+    sax = SymbolicAggregateApproximation(**params)
+    with pytest.raises(error, match=re.escape(err_msg)):
+        sax.transform(X)
 
-    # Test 2
-    X = [[0, 1, 2, 3, 4]]
-    arr_actual = SymbolicAggregateApproximation(
-        n_bins=5, strategy='quantile', alphabet=['e', 'd', 'c', 'b', 'a']
-    ).fit_transform(X)
-    arr_desired = [['e', 'd', 'c', 'b', 'a']]
-    np.testing.assert_array_equal(arr_actual, arr_desired)
 
-    # Test 3
-    X = [[0, 1, 2, 3, 4, 5]]
-    arr_actual = SymbolicAggregateApproximation(
-        n_bins=3, strategy='quantile').fit_transform(X)
-    arr_desired = [['a', 'a', 'b', 'b', 'c', 'c']]
-    np.testing.assert_array_equal(arr_actual, arr_desired)
+@pytest.mark.parametrize(
+    'params, X, arr_desired',
+    [({}, [[0, 1, 2, 3]], [['a', 'b', 'c', 'd']]),
 
-    # Test 4
-    X = [[0, 1, 2, 3, 4, 5]]
-    arr_actual = SymbolicAggregateApproximation(
-        n_bins=3, strategy='quantile', alphabet=('a', 'b', 'c')
-    ).fit_transform(X)
-    arr_desired = [['a', 'a', 'b', 'b', 'c', 'c']]
-    np.testing.assert_array_equal(arr_actual, arr_desired)
+     ({'strategy': 'uniform'}, [[0, 1, 2, 3]], [['a', 'b', 'c', 'd']]),
 
-    # Test 5
-    X = [[0, 1, 2, 3, 4, 5]]
-    arr_actual = SymbolicAggregateApproximation(
-        n_bins=3, strategy='quantile', alphabet=['0', '1', '2']
-    ).fit_transform(X)
-    arr_desired = [['0', '0', '1', '1', '2', '2']]
-    np.testing.assert_array_equal(arr_actual, arr_desired)
+     ({}, [[0, 4, 2, 6]], [['a', 'c', 'b', 'd']]),
 
-    # Test 6
-    X = [[0, 1, 2, 3, 4, 5]]
-    arr_actual = SymbolicAggregateApproximation(
-        n_bins=3, strategy='quantile', alphabet='ordinal'
-    ).fit_transform(X)
-    arr_desired = [[0, 0, 1, 1, 2, 2]]
+     ({}, [[-5, -8, -7, -6]], [['d', 'a', 'b', 'c']]),
+
+     ({'alphabet': 'ordinal'}, [[0, 1, 2, 3]], [[0, 1, 2, 3]]),
+
+     ({'alphabet': ['d', 'c', 'b', 'a']}, [[0, 1, 2, 3]],
+      [['d', 'c', 'b', 'a']]),
+
+     ({'alphabet': ['0', '1', '2', '3']}, [[0, 3, 2, 1]],
+      [['0', '3', '2', '1']])]
+)
+def test_actual_results(params, X, arr_desired):
+    """Test that the actual results are the expected ones."""
+    arr_actual = SymbolicAggregateApproximation(**params).transform(X)
     np.testing.assert_array_equal(arr_actual, arr_desired)

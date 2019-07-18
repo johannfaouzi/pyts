@@ -2,55 +2,38 @@
 
 import numpy as np
 import pytest
+import re
 from math import sqrt
 from ..boss import boss
 
 
-def test_boss():
-    """Test 'boss' function."""
-    x = np.arange(1, 6)
-    y = np.arange(1, 6)[::-1]
-    z = [0, 0, 0, 10, 0]
+x = np.arange(1, 6)
+y = np.arange(1, 6)[::-1]
+z = [0, 0, 0, 10, 0]
 
-    # Parameter check
-    msg_error = "'x' must a one-dimensional array."
-    with pytest.raises(ValueError, match=msg_error):
-        boss(x.reshape(1, 5), y)
 
-    msg_error = "'y' must a one-dimensional array."
-    with pytest.raises(ValueError, match=msg_error):
-        boss(x, y.reshape(1, 5))
+@pytest.mark.parametrize(
+    'x, y, err_msg',
+    [(x.reshape(1, -1), y, "'x' must a one-dimensional array."),
+     (x, y.reshape(1, -1), "'y' must a one-dimensional array."),
+     (x[:2], y, "'x' and 'y' must have the same shape.")]
+)
+def test_parameter_check(x, y, err_msg):
+    """Test parameter validation."""
+    with pytest.raises(ValueError, match=re.escape(err_msg)):
+        boss(x, y)
 
-    msg_error = "'x' and 'y' must have the same shape."
-    with pytest.raises(ValueError, match=msg_error):
-        boss(x[:2], y)
 
-    # Test 1
-    scalar_actual = boss(x, y)
-    scalar_desired = sqrt(np.sum((x - y) ** 2))
-    np.testing.assert_allclose([scalar_actual], [scalar_desired])
-
-    # Test 2
-    scalar_actual = boss(y, x)
-    scalar_desired = sqrt(np.sum((x - y) ** 2))
-    np.testing.assert_allclose([scalar_actual], [scalar_desired])
-
-    # Test 3
-    scalar_actual = boss(x, z)
-    scalar_desired = sqrt(np.sum((x - z) ** 2))
-    np.testing.assert_allclose([scalar_actual], [scalar_desired])
-
-    # Test 4
-    scalar_actual = boss(z, x)
-    scalar_desired = sqrt((10 - 4) ** 2)
-    np.testing.assert_allclose([scalar_actual], [scalar_desired])
-
-    # Test 5
-    scalar_actual = boss(y, z)
-    scalar_desired = sqrt(np.sum((y - z) ** 2))
-    np.testing.assert_allclose([scalar_actual], [scalar_desired])
-
-    # Test 6
-    scalar_actual = boss(z, y)
-    scalar_desired = sqrt((10 - 2) ** 2)
-    np.testing.assert_allclose([scalar_actual], [scalar_desired])
+@pytest.mark.parametrize(
+    'x, y, arr_desired',
+    [(x, y, sqrt(np.sum((x - y) ** 2))),
+     (y, x, sqrt(np.sum((x - y) ** 2))),
+     (x, z, sqrt(np.sum((x - z) ** 2))),
+     (z, x, 6),
+     (y, z, sqrt(np.sum((y - z) ** 2))),
+     (z, y, 8)]
+)
+def test_actual_results(x, y, arr_desired):
+    """Test that the actual results are the expected ones."""
+    arr_actual = boss(x, y)
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)

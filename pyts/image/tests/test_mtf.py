@@ -9,202 +9,155 @@ from ..mtf import (_markov_transition_matrix,
                    MarkovTransitionField)
 
 
-def test_markov_transition_matrix():
-    """Test '_markov_transition_matrix' function."""
-    X_binned = np.asarray([[0, 1, 2, 3],
-                           [0, 2, 1, 3]])
-    n_samples = 2
-    n_timestamps = 4
-    n_bins = 5
+X = [[0, 1, 2, 3], [1, 0, 1, 1]]
 
+
+@pytest.mark.parametrize(
+    'X_binned, n_bins, arr_desired',
+    [([[0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0]], 2, [[[3, 3], [3, 1]]]),
+
+     ([[0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0]], 3,
+      [[[3, 3, 0], [3, 1, 0], [0, 0, 0]]]),
+
+     ([[0, 1, 2, 3], [0, 2, 1, 3]], 4,
+      [[[0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1], [0, 0, 0, 0]],
+       [[0, 0, 1, 0], [0, 0, 0, 1], [0, 1, 0, 0], [0, 0, 0, 0]]])]
+)
+def test_markov_transition_matrix(X_binned, n_bins, arr_desired):
+    """Test that the actual results are the expected ones."""
+    X_binned = np.asarray(X_binned)
+    n_samples, n_timestamps = X_binned.shape
     arr_actual = _markov_transition_matrix(
-        X_binned, n_samples, n_timestamps, n_bins
-    )
-    arr_desired = np.empty((n_samples, n_bins, n_bins))
-    arr_desired[0] = [[0, 1, 0, 0, 0],
-                      [0, 0, 1, 0, 0],
-                      [0, 0, 0, 1, 0],
-                      [0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0]]
-    arr_desired[1] = [[0, 0, 1, 0, 0],
-                      [0, 0, 0, 1, 0],
-                      [0, 1, 0, 0, 0],
-                      [0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0]]
-    np.testing.assert_array_equal(arr_actual, arr_desired)
+        X_binned, n_samples, n_timestamps, n_bins)
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
 
-def test_markov_transition_field():
-    """Test '_markov_transition_field' function."""
-    n_samples = 2
-    n_timestamps = 5
-    n_bins = 3
+@pytest.mark.parametrize(
+    'X_binned, X_mtm, n_bins, arr_desired',
+    [([[1, 0, 1, 0, 0, 1, 0]], [[[1, 2], [3, 0]]], 2,
+      [[[0, 3, 0, 3, 3, 0, 3],
+        [2, 1, 2, 1, 1, 2, 1],
+        [0, 3, 0, 3, 3, 0, 3],
+        [2, 1, 2, 1, 1, 2, 1],
+        [2, 1, 2, 1, 1, 2, 1],
+        [0, 3, 0, 3, 3, 0, 3],
+        [2, 1, 2, 1, 1, 2, 1]]]),
 
-    X_binned = np.asarray([[0, 1, 2, 0, 1],
-                           [0, 2, 0, 1, 1]])
-
-    X_mtm = np.empty((n_samples, n_bins, n_bins))
-    X_mtm[0] = [[0, 1, 0],
-                [0, 0, 1],
-                [1, 0, 0]]
-    X_mtm[1] = [[0.0, 0.5, 0.5],
-                [0.0, 1.0, 0.0],
-                [1.0, 0.0, 0.0]]
-
+     ([[0, 1, 2, 0, 1], [0, 2, 0, 1, 1]],
+      [[[0, 1, 0], [0, 0, 1], [1, 0, 0]], [[0, .5, .5], [0, 1, 0], [1, 0, 0]]],
+      3,
+      [[[0, 1, 0, 0, 1],
+        [0, 0, 1, 0, 0],
+        [1, 0, 0, 1, 0],
+        [0, 1, 0, 0, 1],
+        [0, 0, 1, 0, 0]],
+       [[0.0, 0.5, 0.0, 0.5, 0.5],
+        [1.0, 0.0, 1.0, 0.0, 0.0],
+        [0.0, 0.5, 0.0, 0.5, 0.5],
+        [0.0, 0.0, 0.0, 1.0, 1.0],
+        [0.0, 0.0, 0.0, 1.0, 1.0]]])]
+)
+def test_markov_transition_field(X_binned, X_mtm, n_bins, arr_desired):
+    """Test that the actual results are the expected ones."""
+    X_binned = np.asarray(X_binned)
+    X_mtm = np.asarray(X_mtm)
+    n_samples, n_timestamps = X_binned.shape
     arr_actual = _markov_transition_field(
         X_binned, X_mtm, n_samples, n_timestamps, n_bins
     )
-    arr_desired = np.empty((n_samples, n_timestamps, n_timestamps))
-    arr_desired[0] = [[0, 1, 0, 0, 1],
-                      [0, 0, 1, 0, 0],
-                      [1, 0, 0, 1, 0],
-                      [0, 1, 0, 0, 1],
-                      [0, 0, 1, 0, 0]]
-    arr_desired[1] = [[0.0, 0.5, 0.0, 0.5, 0.5],
-                      [1.0, 0.0, 1.0, 0.0, 0.0],
-                      [0.0, 0.5, 0.0, 0.5, 0.5],
-                      [0.0, 0.0, 0.0, 1.0, 1.0],
-                      [0.0, 0.0, 0.0, 1.0, 1.0]]
-    np.testing.assert_array_equal(arr_actual, arr_desired)
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
 
-def test_aggregated_markov_transition_field():
-    """Test 'aggregated_markov_transition_field' function."""
-    n_samples = 2
-    n_timestamps = 4
-    image_size = 2
-    start = np.array([0, 2])
-    end = np.array([2, 4])
-    X_mtf = np.empty((n_samples, n_timestamps, n_timestamps))
-    X_mtf[0] = np.asarray([[0, 1, 2, 0],
-                           [1, 0, 2, 0],
-                           [1, 1, 0, 0],
-                           [0, 1, 2, 2]])
-    X_mtf[1] = np.asarray([[2, 1, 2, 0],
-                           [0, 1, 3, 0],
-                           [0, 1, 2, 0],
-                           [0, 0, 0, 0]])
+@pytest.mark.parametrize(
+    'image_size, start, end, X_mtf, arr_desired',
+    [(2, [0, 2], [2, 4],
+      [[[0, 1, 2, 0], [1, 0, 2, 0], [1, 1, 0, 0], [0, 1, 2, 2]],
+       [[2, 1, 2, 0], [0, 1, 3, 0], [0, 1, 2, 0], [0, 0, 0, 0]]],
+      [[[0.5, 1.0], [0.75, 1.0]], [[1.0, 1.25], [0.25, 0.5]]]),
 
+     (3, [0, 1, 2], [2, 3, 4],
+      [[[0, 1, 2, 0], [1, 0, 2, 0], [1, 1, 0, 0], [0, 1, 2, 2]],
+       [[2, 1, 2, 0], [0, 1, 3, 0], [0, 1, 2, 0], [0, 0, 0, 0]]],
+      [[[0.5, 1.25, 1.0], [0.75, 0.75, 0.5], [0.75, 1, 1.0]],
+       [[1.0, 1.75, 1.25], [0.5, 1.75, 1.25], [0.25, 0.75, 0.5]]])]
+)
+def test_aggregated_markov_transition_field(
+    image_size, start, end, X_mtf, arr_desired
+):
+    """Test that the actual results are the expected ones."""
+    X_mtf = np.asarray(X_mtf)
+    start = np.asarray(start)
+    end = np.asarray(end)
+    n_samples, _ = X_mtf.shape[:2]
     arr_actual = _aggregated_markov_transition_field(
-        X_mtf, n_samples, image_size, start, end
-    )
-    arr_desired = np.empty((n_samples, image_size, image_size))
-    arr_desired[0] = np.asarray([[0.5, 1.0],
-                                 [0.75, 1.0]])
-    arr_desired[1] = np.asarray([[1.0, 1.25],
-                                 [0.25, 0.5]])
-    np.testing.assert_array_equal(arr_actual, arr_desired)
+        X_mtf, n_samples, image_size, start, end)
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
 
-def test_MarkovTransitionField():
-    """Test 'MarkovTransitionField' class."""
-    X = np.tile(np.arange(8), 2).reshape(2, 8)
+@pytest.mark.parametrize(
+    'params, error, err_msg',
+    [({'image_size': '4'}, TypeError,
+      "'image_size' must be an integer or a float."),
 
-    # Parameter check
-    msg_error = "'image_size' must be an integer or a float."
-    with pytest.raises(TypeError, match=msg_error):
-        mtf = MarkovTransitionField(
-            image_size="3", n_bins=2, strategy='quantile', overlapping=False
-        )
-        mtf.fit_transform(X)
+     ({'n_bins': [0, 1]}, TypeError,
+      "'n_bins' must be an integer."),
 
-    msg_error = "'n_bins' must be an integer."
-    with pytest.raises(TypeError, match=msg_error):
-        mtf = MarkovTransitionField(
-            image_size=3, n_bins="4", strategy='quantile', overlapping=False
-        )
-        mtf.fit_transform(X)
+     ({'image_size': 0}, ValueError,
+      "If 'image_size' is an integer, it must be greater than or equal to 1 "
+      "and lower than or equal to n_timestamps (got 0)."),
 
-    msg_error = re.escape(
-        "If 'image_size' is an integer, it must be greater "
-        "than or equal to 1 and lower than or equal to the size "
-        "of each time series (i.e. the size of the last dimension "
-        "of X) (got {0}).".format(0)
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        mtf = MarkovTransitionField(
-            image_size=0, n_bins=2, strategy='quantile', overlapping=False
-        )
-        mtf.fit_transform(X)
+     ({'image_size': 2.}, ValueError,
+      "If 'image_size' is a float, it must be greater than 0 and lower than "
+      "or equal to 1 (got {0}).".format(2.)),
 
-    msg_error = re.escape(
-        "If 'image_size' is a float, it must be greater "
-        "than or equal to 0 and lower than or equal to 1 "
-        "(got {0}).".format(2.),
-    )
-    with pytest.raises(ValueError, match=msg_error):
-        mtf = MarkovTransitionField(
-            image_size=2., n_bins=2, strategy='quantile', overlapping=False
-        )
-        mtf.fit_transform(X)
+     ({'n_bins': 1}, ValueError,
+      "'n_bins' must be greater than or equal to 2."),
 
-    msg_error = "'n_bins' must be greater than or equal to 2."
-    with pytest.raises(ValueError, match=msg_error):
-        mtf = MarkovTransitionField(
-            image_size=3, n_bins=1, strategy='quantile', overlapping=False
-        )
-        mtf.fit_transform(X)
+     ({'strategy': 'whoops'}, ValueError,
+      "'strategy' must be 'uniform', 'quantile' or 'normal'.")]
+)
+def test_parameter_check(params, error, err_msg):
+    """Test parameter validation."""
+    mtf = MarkovTransitionField(**params)
+    with pytest.raises(error, match=re.escape(err_msg)):
+        mtf.transform(X)
 
-    msg_error = "'strategy' must be 'uniform', 'quantile' or 'normal'."
-    with pytest.raises(ValueError, match=msg_error):
-        mtf = MarkovTransitionField(
-            image_size=3, n_bins=2, strategy='whoops', overlapping=False
-        )
-        mtf.fit_transform(X)
 
-    # Accurate result check (image_size integer)
-    image_size, n_bins, quantiles = 2, 4, 'quantile'
-    mtf = MarkovTransitionField(image_size, n_bins, quantiles)
-    arr_actual = mtf.fit_transform(X)
-    # X_binned = np.array([0, 0, 1, 1, 2, 2, 3, 3])
-    # X_mtm = np.asarray([[0.5, 0.5, 0.0, 0.0],
-    #                    [0.0, 0.5, 0.5, 0.0],
-    #                    [0.0, 0.0, 0.5, 0.5],
-    #                    [0.0, 0.0, 0.0, 1.0]])
-    # X_mtf = np.asarray([[0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0],
-    #                    [0.5, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0],
-    #                    [0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0],
-    #                    [0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0],
-    #                    [0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5],
-    #                    [0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5],
-    #                    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0],
-    #                    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0]])
-    arr_desired = np.asarray([[0.375, 0.125],
-                              [0.000, 0.500]])
+@pytest.mark.parametrize(
+    'params, X, arr_desired',
+    [({'image_size': 2, 'n_bins': 4},
+      [np.arange(8)], [[[0.375, 0.125], [0.000, 0.500]]]),
 
-    np.testing.assert_array_equal(arr_actual[0], arr_desired)
+     ({'image_size': 2, 'n_bins': 4, 'strategy': 'uniform'},
+      [np.arange(8)], [[[0.375, 0.125], [0.000, 0.500]]]),
 
-    # Accurate result check (image_size float)
-    image_size, n_bins, quantiles = 0.25, 4, 'quantile'
-    mtf = MarkovTransitionField(image_size, n_bins, quantiles)
-    arr_actual = mtf.fit_transform(X)
-    arr_desired = np.asarray([[0.375, 0.125],
-                              [0.000, 0.500]])
+     ({'image_size': 0.25, 'n_bins': 4},
+      [np.arange(8)], [[[0.375, 0.125], [0.000, 0.500]]]),
 
-    np.testing.assert_array_equal(arr_actual[0], arr_desired)
+     ({'image_size': 7, 'n_bins': 2, 'overlapping': True},
+      [np.arange(8)],
+      [[[0.75, 0.75, 0.75, 0.50, 0.25, 0.25, 0.25],
+        [0.75, 0.75, 0.75, 0.50, 0.25, 0.25, 0.25],
+        [0.75, 0.75, 0.75, 0.50, 0.25, 0.25, 0.25],
+        [0.375, 0.375, 0.375, 0.5, 0.625, 0.625, 0.625],
+        [0, 0, 0, 0.5, 1, 1, 1],
+        [0, 0, 0, 0.5, 1, 1, 1],
+        [0, 0, 0, 0.5, 1, 1, 1]]]),
 
-    # Accurate result check (image_size float)
-    image_size, n_bins, quantiles = 7, 2, 'quantile'
-    mtf = MarkovTransitionField(image_size, n_bins,
-                                quantiles, overlapping=True)
-    arr_actual = mtf.fit_transform(X)
-    # X_binned = np.array([0, 0, 0, 0, 1, 1, 1, 1])
-    # X_mtm = np.asarray([[0.75, 0.25],
-    #                     [0.00, 1.00]],
-    # X_mtf = np.asarray([[0.75, 0.75, 0.75, 0.75, 0.25, 0.25, 0.25, 0.25],
-    #                     [0.75, 0.75, 0.75, 0.75, 0.25, 0.25, 0.25, 0.25],
-    #                     [0.75, 0.75, 0.75, 0.75, 0.25, 0.25, 0.25, 0.25],
-    #                     [0.75, 0.75, 0.75, 0.75, 0.25, 0.25, 0.25, 0.25],
-    #                     [0.00, 0.00, 0.00, 0.00, 1.00, 1.00, 1.00, 1.00],
-    #                     [0.00, 0.00, 0.00, 0.00, 1.00, 1.00, 1.00, 1.00],
-    #                     [0.00, 0.00, 0.00, 0.00, 1.00, 1.00, 1.00, 1.00],
-    #                     [0.00, 0.00, 0.00, 0.00, 1.00, 1.00, 1.00, 1.00]])
-    arr_desired = np.asarray([[0.75, 0.75, 0.75, 0.50, 0.25, 0.25, 0.25],
-                              [0.75, 0.75, 0.75, 0.50, 0.25, 0.25, 0.25],
-                              [0.75, 0.75, 0.75, 0.50, 0.25, 0.25, 0.25],
-                              [0.375, 0.375, 0.375, 0.5, 0.625, 0.625, 0.625],
-                              [0, 0, 0, 0.5, 1, 1, 1],
-                              [0, 0, 0, 0.5, 1, 1, 1],
-                              [0, 0, 0, 0.5, 1, 1, 1]])
+     ({'image_size': 7, 'n_bins': 2, 'overlapping': True,
+       'strategy': 'uniform'}, [np.arange(8)],
+      [[[0.75, 0.75, 0.75, 0.50, 0.25, 0.25, 0.25],
+        [0.75, 0.75, 0.75, 0.50, 0.25, 0.25, 0.25],
+        [0.75, 0.75, 0.75, 0.50, 0.25, 0.25, 0.25],
+        [0.375, 0.375, 0.375, 0.5, 0.625, 0.625, 0.625],
+        [0, 0, 0, 0.5, 1, 1, 1],
+        [0, 0, 0, 0.5, 1, 1, 1],
+        [0, 0, 0, 0.5, 1, 1, 1]]]),
 
-    np.testing.assert_array_equal(arr_actual[0], arr_desired)
+     ({'image_size': 2, 'n_bins': 2, 'strategy': 'uniform'}, X,
+      [[[0.5, 0.5], [0, 1]], [[0.5, 0.75], [0.5, 0.5]]])]
+)
+def test_actual_results(params, X, arr_desired):
+    """Test that the actual results are the expected ones."""
+    arr_actual = MarkovTransitionField(**params).transform(X)
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
