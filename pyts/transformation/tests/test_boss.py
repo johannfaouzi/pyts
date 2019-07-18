@@ -110,10 +110,10 @@ def test_accurate_results_without_numerosity_reduction():
     assert boss.vocabulary_ == vocabulary_desired
 
 
-def test_accurate_results_with_numerosity_reduction():
+def test_accurate_results_floats():
     """Test that the actual results are the expected ones."""
     boss = BOSS(
-        word_size=4, n_bins=3, window_size=100, window_step=100,
+        word_size=4, n_bins=3, window_size=0.5, window_step=0.5,
         anova=False, drop_sum=False, norm_mean=False, norm_std=False,
         strategy='quantile', alphabet=None, numerosity_reduction=True
     )
@@ -135,10 +135,10 @@ def test_accurate_results_with_numerosity_reduction():
     vocabulary_desired = {value: key for key, value in
                           vectorizer.vocabulary_.items()}
 
-    arr_actual_1 = boss.fit_transform(X, y).toarray()
+    arr_actual_1 = boss.fit_transform(X, None).toarray()
     np.testing.assert_allclose(arr_actual_1, arr_desired, atol=1e-5, rtol=0)
     assert boss.vocabulary_ == vocabulary_desired
 
-    arr_actual_2 = boss.fit(X, y).transform(X).toarray()
+    arr_actual_2 = boss.fit(X, None).transform(X).toarray()
     np.testing.assert_allclose(arr_actual_2, arr_desired, atol=1e-5, rtol=0)
     assert boss.vocabulary_ == vocabulary_desired
