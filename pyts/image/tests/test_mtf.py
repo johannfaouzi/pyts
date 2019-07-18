@@ -159,5 +159,5 @@ def test_parameter_check(params, error, err_msg):
 )
 def test_actual_results(params, X, arr_desired):
     """Test that the actual results are the expected ones."""
-    arr_actual = MarkovTransitionField(**params).transform(X)
+    arr_actual = MarkovTransitionField(**params).fit_transform(X)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)

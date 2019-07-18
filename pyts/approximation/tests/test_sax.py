@@ -59,5 +59,5 @@ def test_parameter_check(params, error, err_msg):
 )
 def test_actual_results(params, X, arr_desired):
     """Test that the actual results are the expected ones."""
-    arr_actual = SymbolicAggregateApproximation(**params).transform(X)
+    arr_actual = SymbolicAggregateApproximation(**params).fit_transform(X)
     np.testing.assert_array_equal(arr_actual, arr_desired)

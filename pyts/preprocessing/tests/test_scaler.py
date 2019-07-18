@@ -64,5 +64,5 @@ def test_actual_results_max_abs_scaler():
 )
 def test_actual_results_robust_scaler(params, arr_desired):
     """Test that the actual results are the expected ones."""
-    arr_actual = RobustScaler(**params).transform(X)
+    arr_actual = RobustScaler(**params).fit_transform(X)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)

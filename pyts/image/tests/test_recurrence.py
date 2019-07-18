@@ -111,5 +111,5 @@ def test_parameter_check(params, error, err_msg):
 def test_actual_results_recurrence_plot(params, arr_desired):
     """Test that the actual results are the expected ones."""
     recurrence = RecurrencePlot(**params)
-    arr_actual = recurrence.transform(X) ** 2
+    arr_actual = recurrence.fit_transform(X) ** 2
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)

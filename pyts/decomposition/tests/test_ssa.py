@@ -102,5 +102,5 @@ def test_parameter_check(params, error, err_msg):
 def test_actual_results(params):
     """Test that the actual results are the expected ones."""
     ssa = SingularSpectrumAnalysis(**params)
-    arr_actual = ssa.transform(X).sum(axis=1)
+    arr_actual = ssa.fit_transform(X).sum(axis=1)
     np.testing.assert_allclose(arr_actual, X, atol=1e-5, rtol=0.)

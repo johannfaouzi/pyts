@@ -34,7 +34,7 @@ def test_actual_results_power_transformer_yeo_johnson():
 def test_actual_results_quantile_transformer_uniform():
     """Test that the actual results are the expected ones."""
     transformer = QuantileTransformer(n_quantiles=11)
-    arr_actual = transformer.transform(X)
+    arr_actual = transformer.fit_transform(X)
     arr_desired = [np.linspace(0, 1, 11) for _ in range(3)]
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
