@@ -6,7 +6,7 @@ environment:
       PYTHON_VERSION: "3.5.x"
       PYTHON_ARCH: "64"
       NUMPY_VERSION: "1.15.4"
-      SCIPY_VERSION: "1.1.0"
+      SCIPY_VERSION: "1.3.0"
       SKLEARN_VERSION: "0.20.1"
       NUMBA_VERSION: "0.41.0"
 
@@ -14,7 +14,7 @@ environment:
       PYTHON_VERSION: "3.6.x"
       PYTHON_ARCH: "64"
       NUMPY_VERSION: "1.15.4"
-      SCIPY_VERSION: "1.1.0"
+      SCIPY_VERSION: "1.3.0"
       SKLEARN_VERSION: "0.20.1"
       NUMBA_VERSION: "0.41.0"
 
@@ -22,7 +22,7 @@ environment:
       PYTHON_VERSION: "3.7.x"
       PYTHON_ARCH: "64"
       NUMPY_VERSION: "1.15.4"
-      SCIPY_VERSION: "1.1.0"
+      SCIPY_VERSION: "1.3.0"
       SKLEARN_VERSION: "0.20.1"
       NUMBA_VERSION: "0.41.0"
 
