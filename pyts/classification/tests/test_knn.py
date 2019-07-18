@@ -18,7 +18,11 @@ X_test = X + 0.1
      ({'metric': 'dtw'}),
      ({'metric': 'dtw_classic'}),
      ({'metric': 'dtw_sakoechiba'}),
+     ({'metric': 'dtw_sakoechiba', 'metric_params': {}}),
+     ({'metric': 'dtw_sakoechiba', 'metric_params': {'window_size': 2}}),
      ({'metric': 'dtw_itakura'}),
+     ({'metric': 'dtw_itakura', 'metric_params': {}}),
+     ({'metric': 'dtw_itakura', 'metric_params': {'max_slope': 3.}}),
      ({'metric': 'dtw_multiscale'}),
      ({'metric': 'dtw_fast'}),
      ({'metric': 'boss'})]
