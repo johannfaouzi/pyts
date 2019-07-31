@@ -17,7 +17,7 @@ LICENSE = 'new BSD'
 DOWNLOAD_URL = 'https://github.com/johannfaouzi/pyts'
 VERSION = pyts.__version__
 INSTALL_REQUIRES = ['numpy>=1.15.4'
-                    'scipy>=1.2.1'
+                    'scipy>=1.3.0'
                     'scikit-learn>=0.20.1'
                     'numba>=0.41.0']
 CLASSIFIERS = ['Development Status :: 3 - Alpha',
@@ -39,7 +39,7 @@ EXTRAS_REQUIRE = {
         'pytest',
         'pytest-cov'],
     'docs': [
-        'sphinx == 1.8.2',
+        'sphinx==1.8.2',
         'sphinx-gallery',
         'sphinx_rtd_theme',
         'numpydoc',
