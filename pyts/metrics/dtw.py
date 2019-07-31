@@ -1,7 +1,7 @@
 """Code for Dynamic Time Warping and its variants."""
 
 import numpy as np
-from math import ceil, log2
+from math import ceil, log2, sqrt
 from numba import njit, prange
 from sklearn.utils import check_array
 
@@ -278,6 +278,8 @@ def dtw_classic(x, y, dist='square', return_cost=False,
     cost_mat = cost_matrix(x, y, dist=dist, region=None)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
+    if dist == 'square':
+        dtw_dist = sqrt(dtw_dist)
 
     res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
                           return_cost, return_accumulated, return_path)
@@ -346,6 +348,8 @@ def dtw_region(x, y, dist='square', region=None, return_cost=False,
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
+    if dist == 'square':
+        dtw_dist = sqrt(dtw_dist)
 
     res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
                           return_cost, return_accumulated, return_path)
@@ -460,6 +464,8 @@ def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
+    if dist == 'square':
+        dtw_dist = sqrt(dtw_dist)
 
     res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
                           return_cost, return_accumulated, return_path)
@@ -572,6 +578,8 @@ def dtw_itakura(x, y, dist='square', max_slope=2., return_cost=False,
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
+    if dist == 'square':
+        dtw_dist = sqrt(dtw_dist)
 
     res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
                           return_cost, return_accumulated, return_path)
@@ -699,6 +707,8 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
+    if dist == 'square':
+        dtw_dist = sqrt(dtw_dist)
 
     res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
                           return_cost, return_accumulated, return_path)
@@ -793,6 +803,8 @@ def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
+    if dist == 'square':
+        dtw_dist = sqrt(dtw_dist)
 
     res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
                           return_cost, return_accumulated, return_path)

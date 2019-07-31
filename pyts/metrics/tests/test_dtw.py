@@ -3,6 +3,7 @@
 import numpy as np
 import pytest
 import re
+from math import sqrt
 from numba import njit
 from pyts.metrics.dtw import (
     _square, _absolute, _check_input_dtw, _multiscale_region, _return_path,
@@ -185,7 +186,7 @@ def test_actual_results_return_results(params, res_desired):
       {'cost_mat': [[4, 0, 1], [1, 1, 0], [0, 4, 1]],
        'acc_cost_mat': [[4, 4, 5], [5, 5, 4], [5, 9, 5]],
        'path': [[0, 0, 1, 2], [0, 1, 2, 2]],
-       'dtw': 5}),
+       'dtw': sqrt(5)}),
 
      ({'dist': 'absolute'},
       {'cost_mat': [[2, 0, 1], [1, 1, 0], [0, 2, 1]],
@@ -224,7 +225,7 @@ def test_parameter_check_dtw_region(params, err_msg):
       {'cost_mat': [[4, 0, 1], [1, 1, 0], [0, 4, 1]],
        'acc_cost_mat': [[4, 4, 5], [5, 5, 4], [5, 9, 5]],
        'path': [[0, 0, 1, 2], [0, 1, 2, 2]],
-       'dtw': 5}),
+       'dtw': sqrt(5)}),
 
      ({'dist': 'absolute'},
       {'cost_mat': [[2, 0, 1], [1, 1, 0], [0, 2, 1]],
@@ -236,7 +237,7 @@ def test_parameter_check_dtw_region(params, err_msg):
       {'cost_mat': [[4, 0, np.inf], [1, 1, 0], [np.inf, 4, 1]],
        'acc_cost_mat': [[4, 4, np.inf], [5, 5, 4], [np.inf, 9, 5]],
        'path': [[0, 0, 1, 2], [0, 1, 2, 2]],
-       'dtw': 5}),
+       'dtw': sqrt(5)}),
 
      ({'dist': 'absolute', 'region': [[0, 0, 1], [2, 3, 3]]},
       {'cost_mat': [[2, 0, np.inf], [1, 1, 0], [np.inf, 2, 1]],
@@ -301,7 +302,7 @@ def test_actual_results_sakoe_chiba_band(params, arr_desired):
       {'cost_mat': [[4, 0, 1], [1, 1, 0], [0, 4, 1]],
        'acc_cost_mat': [[4, 4, 5], [5, 5, 4], [5, 9, 5]],
        'path': [[0, 0, 1, 2], [0, 1, 2, 2]],
-       'dtw': 5}),
+       'dtw': sqrt(5)}),
 
      ({'window_size': 2, 'dist': 'absolute'},
       {'cost_mat': [[2, 0, 1], [1, 1, 0], [0, 2, 1]],
@@ -313,7 +314,7 @@ def test_actual_results_sakoe_chiba_band(params, arr_desired):
       {'cost_mat': [[4, 0, np.inf], [1, 1, 0], [np.inf, 4, 1]],
        'acc_cost_mat': [[4, 4, np.inf], [5, 5, 4], [np.inf, 9, 5]],
        'path': [[0, 0, 1, 2], [0, 1, 2, 2]],
-       'dtw': 5}),
+       'dtw': sqrt(5)}),
 
      ({'window_size': 1, 'dist': 'absolute'},
       {'cost_mat': [[2, 0, np.inf], [1, 1, 0], [np.inf, 2, 1]],
@@ -327,7 +328,7 @@ def test_actual_results_sakoe_chiba_band(params, arr_desired):
        'acc_cost_mat':
            [[4, np.inf, np.inf], [np.inf, 5, np.inf], [np.inf, np.inf, 6]],
        'path': [[0, 1, 2], [0, 1, 2]],
-       'dtw': 6})]
+       'dtw': sqrt(6)})]
 )
 def test_actual_results_dtw_sakoechiba(params, res_desired):
     """Test that the actual results are the expected ones."""
@@ -382,7 +383,7 @@ def test_actual_results_itakura_parallelogram(params, arr_desired):
        'acc_cost_mat':
            [[4, np.inf, np.inf], [np.inf, 5, np.inf], [np.inf, np.inf, 6]],
        'path': [[0, 1, 2], [0, 1, 2]],
-       'dtw': 6}),
+       'dtw': sqrt(6)}),
 
      ({'dist': 'absolute'},
       {'cost_mat':
@@ -398,7 +399,7 @@ def test_actual_results_itakura_parallelogram(params, arr_desired):
        'acc_cost_mat':
           [[4, np.inf, np.inf], [np.inf, 5, np.inf], [np.inf, np.inf, 6]],
        'path': [[0, 1, 2], [0, 1, 2]],
-       'dtw': 6}),
+       'dtw': sqrt(6)}),
 
      ({'max_slope': 8, 'dist': 'absolute'},
       {'cost_mat':
@@ -461,7 +462,7 @@ def test_parameter_check_dtw_multiscale(params, error, err_msg):
            [[1, 5, np.inf, np.inf], [1, 2, np.inf, np.inf],
             [np.inf, np.inf, 3, 7], [np.inf, np.inf, 3, 4]],
        'path': [[0, 1, 2, 3], [0, 1, 2, 3]],
-       'dtw': 4}),
+       'dtw': 2}),
 
      ({'radius': 1},
       {'cost_mat':
@@ -471,7 +472,7 @@ def test_parameter_check_dtw_multiscale(params, error, err_msg):
            [[1, 5, 14, 30], [1, 2, 6, 15],
             [2, 1, 2, 6], [6, 2, 1, 2]],
        'path': [[0, 1, 2, 3, 3], [0, 0, 1, 2, 3]],
-       'dtw': 2}),
+       'dtw': sqrt(2)}),
 
      ({'radius': 2},
       {'cost_mat':
@@ -481,7 +482,7 @@ def test_parameter_check_dtw_multiscale(params, error, err_msg):
            [[1, 5, 14, 30], [1, 2, 6, 15],
             [2, 1, 2, 6], [6, 2, 1, 2]],
        'path': [[0, 1, 2, 3, 3], [0, 0, 1, 2, 3]],
-       'dtw': 2})]
+       'dtw': sqrt(2)})]
 )
 def test_actual_results_dtw_multiscale(params, res_desired):
     """Test that the actual results are the expected ones."""
