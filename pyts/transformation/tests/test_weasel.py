@@ -85,6 +85,15 @@ def test_parameter_check(params, error, err_msg):
         weasel.fit(X, y)
 
 
+@pytest.mark.parametrize(
+    'sparse, instance', [(True, csc_matrix), (False, np.ndarray)])
+def test_sparse_dense(sparse, instance):
+    """Test that the expected type is returned."""
+    weasel = WEASEL(strategy='quantile', sparse=sparse)
+    assert isinstance(weasel.fit(X, y).transform(X), instance)
+    assert isinstance(weasel.fit_transform(X, y), instance)
+
+
 def test_accurate_results():
     """Test that the actual results are the expected ones."""
     X_features = csc_matrix((n_samples, 0), dtype=np.int64)

@@ -1,7 +1,7 @@
 """Code for Word ExtrAction for time SEries cLassification."""
 
 import numpy as np
-from scipy.sparse import csc_matrix, hstack
+from scipy.sparse import coo_matrix, csc_matrix, hstack
 from sklearn.utils.validation import check_array, check_X_y, check_is_fitted
 from sklearn.utils.multiclass import check_classification_targets
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -63,6 +63,9 @@ class WEASEL(BaseEstimator, TransformerMixin):
         The threshold used to perform feature selection. Only the words with
         a chi2 statistic above this threshold will be kept.
 
+    sparse : bool (default = True)
+        Return a sparse matrix if True, else return an array.
+
     alphabet : None, 'ordinal' or array-like, shape = (n_bins,)
         Alphabet to use. If None, the first `n_bins` letters of the Latin
         alphabet are used.
@@ -83,7 +86,8 @@ class WEASEL(BaseEstimator, TransformerMixin):
     def __init__(self, word_size=4, n_bins=4,
                  window_sizes=[0.1, 0.3, 0.5, 0.7, 0.9], window_steps=None,
                  anova=True, drop_sum=True, norm_mean=True, norm_std=True,
-                 strategy='entropy', chi2_threshold=2, alphabet=None):
+                 strategy='entropy', chi2_threshold=2, sparse=True,
+                 alphabet=None):
         self.word_size = word_size
         self.n_bins = n_bins
         self.window_sizes = window_sizes
@@ -94,6 +98,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
         self.norm_std = norm_std
         self.strategy = strategy
         self.chi2_threshold = chi2_threshold
+        self.sparse = sparse
         self.alphabet = alphabet
 
     def fit(self, X, y):
@@ -185,7 +190,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
         X = check_array(X)
         n_samples, n_timestamps = X.shape
 
-        X_features = csc_matrix((n_samples, 0), dtype=np.int64)
+        X_features = coo_matrix((n_samples, 0), dtype=np.int64)
 
         for (window_size, window_step, sfa,
              vectorizer, relevant_features) in zip(
@@ -207,7 +212,9 @@ class WEASEL(BaseEstimator, TransformerMixin):
             X_counts = vectorizer.transform(X_bow)[:, relevant_features]
             X_features = hstack([X_features, X_counts])
 
-        return X_features
+        if not self.sparse:
+            return X_features.A
+        return csc_matrix(X_features)
 
     def fit_transform(self, X, y):
         """Fit the data then transform it.
@@ -238,7 +245,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
         self._relevant_features_list = []
         self.vocabulary_ = {}
 
-        X_features = csc_matrix((n_samples, 0), dtype=np.int64)
+        X_features = coo_matrix((n_samples, 0), dtype=np.int64)
 
         for (window_size, window_step) in zip(window_sizes, window_steps):
             n_windows = ((n_timestamps - window_size + window_step)
@@ -280,7 +287,9 @@ class WEASEL(BaseEstimator, TransformerMixin):
             self._sfa_list.append(sfa)
             self._vectorizer_list.append(vectorizer)
 
-        return X_features
+        if not self.sparse:
+            return X_features.A
+        return csc_matrix(X_features)
 
     def _check_params(self, n_timestamps):
         if not isinstance(self.word_size, (int, np.integer)):

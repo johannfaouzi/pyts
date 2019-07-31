@@ -2,6 +2,7 @@
 
 import numpy as np
 from math import ceil
+from scipy.sparse import csc_matrix
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.utils.validation import check_array, check_is_fitted
@@ -59,13 +60,16 @@ class BOSS(BaseEstimator, TransformerMixin):
     norm_std : bool (default = False)
         If True, scale each subseries to unit variance.
 
-    alphabet : None, 'ordinal' or array-like, shape = (n_bins,)
-        Alphabet to use. If None, the first `n_bins` letters of the Latin
-        alphabet are used.
-
     numerosity_reduction : bool (default = True)
         If True, delete sample-wise all but one occurence of back to back
         identical occurences of the same words.
+
+    sparse : bool (default = True)
+        Return a sparse matrix if True, else return an array.
+
+    alphabet : None, 'ordinal' or array-like, shape = (n_bins,)
+        Alphabet to use. If None, the first `n_bins` letters of the Latin
+        alphabet are used.
 
     Attributes
     ----------
@@ -83,7 +87,7 @@ class BOSS(BaseEstimator, TransformerMixin):
     def __init__(self, word_size=4, n_bins=4, strategy='quantile',
                  window_size=10, window_step=1, anova=False, drop_sum=False,
                  norm_mean=False, norm_std=False, numerosity_reduction=True,
-                 alphabet=None):
+                 sparse=True, alphabet=None):
         self.word_size = word_size
         self.n_bins = n_bins
         self.strategy = strategy
@@ -94,6 +98,7 @@ class BOSS(BaseEstimator, TransformerMixin):
         self.norm_mean = norm_mean
         self.norm_std = norm_std
         self.numerosity_reduction = numerosity_reduction
+        self.sparse = sparse
         self.alphabet = alphabet
 
     def fit(self, X, y=None):
@@ -195,7 +200,9 @@ class BOSS(BaseEstimator, TransformerMixin):
             X_bow = np.asarray([' '.join(X_word[i]) for i in range(n_samples)])
 
         X_boss = self._vectorizer.transform(X_bow)
-        return X_boss
+        if not self.sparse:
+            return X_boss.A
+        return csc_matrix(X_boss)
 
     def fit_transform(self, X, y=None):
         """Fit the data then transform it.
@@ -259,7 +266,9 @@ class BOSS(BaseEstimator, TransformerMixin):
         self._n_windows = n_windows
         self._sfa = sfa
         self._vectorizer = vectorizer
-        return X_boss
+        if not self.sparse:
+            return X_boss.A
+        return csc_matrix(X_boss)
 
     def _check_params(self, n_timestamps):
         if not isinstance(self.word_size, (int, np.integer)):
