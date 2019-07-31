@@ -2,7 +2,7 @@
 
 import numpy as np
 from math import ceil
-from scipy.sparse import csc_matrix
+from scipy.sparse import csr_matrix
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.utils.validation import check_array, check_is_fitted
@@ -202,7 +202,7 @@ class BOSS(BaseEstimator, TransformerMixin):
         X_boss = self._vectorizer.transform(X_bow)
         if not self.sparse:
             return X_boss.A
-        return csc_matrix(X_boss)
+        return csr_matrix(X_boss)
 
     def fit_transform(self, X, y=None):
         """Fit the data then transform it.
@@ -268,7 +268,7 @@ class BOSS(BaseEstimator, TransformerMixin):
         self._vectorizer = vectorizer
         if not self.sparse:
             return X_boss.A
-        return csc_matrix(X_boss)
+        return csr_matrix(X_boss)
 
     def _check_params(self, n_timestamps):
         if not isinstance(self.word_size, (int, np.integer)):

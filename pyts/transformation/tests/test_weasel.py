@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 import re
-from scipy.sparse import csc_matrix, hstack
+from scipy.sparse import csr_matrix, hstack
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_selection import chi2
 from pyts.approximation import SymbolicFourierApproximation
@@ -86,7 +86,7 @@ def test_parameter_check(params, error, err_msg):
 
 
 @pytest.mark.parametrize(
-    'sparse, instance', [(True, csc_matrix), (False, np.ndarray)])
+    'sparse, instance', [(True, csr_matrix), (False, np.ndarray)])
 def test_sparse_dense(sparse, instance):
     """Test that the expected type is returned."""
     weasel = WEASEL(strategy='quantile', sparse=sparse)
@@ -96,7 +96,7 @@ def test_sparse_dense(sparse, instance):
 
 def test_accurate_results():
     """Test that the actual results are the expected ones."""
-    X_features = csc_matrix((n_samples, 0), dtype=np.int64)
+    X_features = csr_matrix((n_samples, 0), dtype=np.int64)
     vocabulary_ = {}
 
     weasel = WEASEL(

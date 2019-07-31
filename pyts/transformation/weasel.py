@@ -1,7 +1,7 @@
 """Code for Word ExtrAction for time SEries cLassification."""
 
 import numpy as np
-from scipy.sparse import coo_matrix, csc_matrix, hstack
+from scipy.sparse import coo_matrix, csr_matrix, hstack
 from sklearn.utils.validation import check_array, check_X_y, check_is_fitted
 from sklearn.utils.multiclass import check_classification_targets
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -214,7 +214,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
 
         if not self.sparse:
             return X_features.A
-        return csc_matrix(X_features)
+        return csr_matrix(X_features)
 
     def fit_transform(self, X, y):
         """Fit the data then transform it.
@@ -289,7 +289,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
 
         if not self.sparse:
             return X_features.A
-        return csc_matrix(X_features)
+        return csr_matrix(X_features)
 
     def _check_params(self, n_timestamps):
         if not isinstance(self.word_size, (int, np.integer)):

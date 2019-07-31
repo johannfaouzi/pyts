@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 import re
-from scipy.sparse import csc_matrix
+from scipy.sparse import csr_matrix
 from sklearn.feature_extraction.text import CountVectorizer
 from pyts.transformation import BOSS
 from pyts.approximation import SymbolicFourierApproximation
@@ -79,7 +79,7 @@ def test_parameter_check(params, error, err_msg):
 
 
 @pytest.mark.parametrize(
-    'sparse, instance', [(True, csc_matrix), (False, np.ndarray)])
+    'sparse, instance', [(True, csr_matrix), (False, np.ndarray)])
 def test_sparse_dense(sparse, instance):
     """Test that the expected type is returned."""
     weasel = BOSS(sparse=sparse)
