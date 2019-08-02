@@ -65,15 +65,18 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
 
     Attributes
     ----------
-    vocabulary_ : dict
-        A mapping of feature indices to terms.
-
-    tfidf_ : array, shape = (n_classes, n_words)
-        Term-document matrix.
+    classes_ : array, shape = (n_classes,)
+        An array of class labels known to the classifier.
 
     idf_ : array, shape = (n_features,) , or None
         The learned idf vector (global term weights) when ``use_idf=True``,
         None otherwise.
+
+    tfidf_ : array, shape = (n_classes, n_words)
+        Term-document matrix.
+
+    vocabulary_ : dict
+        A mapping of feature indices to terms.
 
     References
     ----------

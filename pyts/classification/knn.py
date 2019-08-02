@@ -2,6 +2,7 @@
 
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.neighbors import KNeighborsClassifier as SklearnKNN
+from sklearn.preprocessing import LabelEncoder
 from sklearn.utils.validation import check_X_y, check_is_fitted
 from ..metrics import (boss, dtw, dtw_classic, dtw_region, dtw_fast,
                        dtw_multiscale, sakoe_chiba_band, itakura_parallelogram)
@@ -62,6 +63,11 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
         If ``n_jobs=-1``, then the number of jobs is set to the number of CPU
         cores. Doesn't affect :meth:`fit` method.
 
+    Attributes
+    ----------
+    classes_ : array, shape = (n_classes,)
+        An array of class labels known to the classifier.
+
     """
 
     def __init__(self, n_neighbors=1, weights='uniform', algorithm='auto',
@@ -94,6 +100,8 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
 
         """
         X, y = check_X_y(X, y)
+        self._le = LabelEncoder().fit(y)
+        self.classes_ = self._le.classes_
 
         if self.metric == 'dtw':
             self._clf = SklearnKNN(
