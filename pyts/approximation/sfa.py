@@ -59,12 +59,12 @@ class SymbolicFourierApproximation(BaseEstimator, TransformerMixin):
 
     Attributes
     ----------
-    support_ : array, shape (n_coefs, )
-        Indices of the kept Fourier coefficients.
-
     bin_edges_ : array, shape = (n_bins - 1,) or (n_timestamps, n_bins - 1)
         Bin edges with shape = (n_bins - 1,) if ``strategy='normal'`` or
         (n_timestamps, n_bins - 1) otherwise.
+
+    support_ : array, shape (n_coefs, )
+        Indices of the kept Fourier coefficients.
 
     References
     ----------
@@ -95,7 +95,7 @@ class SymbolicFourierApproximation(BaseEstimator, TransformerMixin):
         X : array-like, shape = (n_samples, n_timestamps)
             Data to transform.
 
-        y : None or array-like, shape = (n_samples,)
+        y : None or array-like, shape = (n_samples,) (default = None)
             Class labels for each sample. Only used if ``anova=True`` or
             ``strategy='entropy'.``
 
