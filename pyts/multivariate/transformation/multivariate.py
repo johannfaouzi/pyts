@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.sparse import csr_matrix, hstack
 from sklearn.base import BaseEstimator, TransformerMixin, clone
-from sklearn.utils.validation import check_array, check_is_fitted
+from sklearn.utils.validation import check_is_fitted
 from ..utils import check_3d_array
 
 
