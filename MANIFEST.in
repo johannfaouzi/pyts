@@ -1,2 +1,3 @@
 include requirements.txt
-include *.pickle
+recursive-include pyts/datasets
+include README.md
