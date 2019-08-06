@@ -52,10 +52,9 @@ def ucr_dataset_list():
         Classification Archive.
 
     """
-    import pyts
-    home = '/'.join(pyts.__file__.split('/')[:-2]) + '/'
-    relative_path = 'pyts/datasets/info/ucr.p'
-    dictionary = pickle.load(open(home + relative_path, 'rb'))
+    module_path = os.path.dirname(__file__)
+    finfo = os.path.join(module_path, 'info', 'ucr.p')
+    dictionary = pickle.load(open(finfo, 'rb'))
     datasets = list(dictionary.keys())
     return datasets
 
@@ -75,10 +74,9 @@ def ucr_dataset_info(dataset=None):
         DataFrame with the information for each dataset.
 
     """
-    import pyts
-    home = '/'.join(pyts.__file__.split('/')[:-2]) + '/'
-    relative_path = 'pyts/datasets/info/ucr.p'
-    dictionary = pickle.load(open(home + relative_path, 'rb'))
+    module_path = os.path.dirname(__file__)
+    finfo = os.path.join(module_path, 'info', 'ucr.p')
+    dictionary = pickle.load(open(finfo, 'rb'))
     datasets = list(dictionary.keys())
 
     if dataset is None:
