@@ -53,7 +53,7 @@ def ucr_dataset_list():
 
     """
     module_path = os.path.dirname(__file__)
-    finfo = os.path.join(module_path, 'info', 'ucr.p')
+    finfo = os.path.join(module_path, 'info', 'ucr.pickle')
     dictionary = pickle.load(open(finfo, 'rb'))
     datasets = list(dictionary.keys())
     return datasets
@@ -75,7 +75,7 @@ def ucr_dataset_info(dataset=None):
 
     """
     module_path = os.path.dirname(__file__)
-    finfo = os.path.join(module_path, 'info', 'ucr.p')
+    finfo = os.path.join(module_path, 'info', 'ucr.pickle')
     dictionary = pickle.load(open(finfo, 'rb'))
     datasets = list(dictionary.keys())
 
