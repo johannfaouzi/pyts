@@ -1,3 +1,1 @@
 include requirements.txt
-recursive-include pyts/datasets
-include README.md

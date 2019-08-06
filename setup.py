@@ -46,6 +46,7 @@ EXTRAS_REQUIRE = {
         'matplotlib'
     ]
 }
+PACKAGE_DATA = {'': ['*.pickle']}
 
 setup(name=DISTNAME,
       maintainer=MAINTAINER,
@@ -62,4 +63,4 @@ setup(name=DISTNAME,
       packages=find_packages(),
       install_requires=INSTALL_REQUIRES,
       extras_require=EXTRAS_REQUIRE,
-      include_package_data=True)
+      package_data=PACKAGE_DATA)
