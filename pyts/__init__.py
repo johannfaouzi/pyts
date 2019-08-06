@@ -9,5 +9,6 @@ several tools to perform these transformations.
 
 __version__ = '0.9.dev0'
 
-__all__ = ['approximation', 'bag_of_words', 'classification', 'decomposition',
-           'image', 'metrics', 'preprocessing', 'transformation', 'utils']
+__all__ = ['approximation', 'bag_of_words', 'classification', 'datasets',
+           'decomposition', 'image', 'metrics', 'preprocessing',
+           'transformation', 'utils']
