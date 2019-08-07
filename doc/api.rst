@@ -73,13 +73,13 @@ Full API documentation of the `pyts` Python package.
   :toctree: generated/
   :template: function.rst
 
+  datasets.fetch_ucr_dataset
+  datasets.fetch_uea_dataset
   datasets.make_cylinder_bell_funnel
   datasets.ucr_dataset_info
   datasets.ucr_dataset_list
-  datasets.fetch_ucr_dataset
   datasets.uea_dataset_info
   datasets.uea_dataset_list
-  datasets.fetch_uea_dataset
 
 
 :mod:`pyts.decomposition`: Decomposition algorithms
