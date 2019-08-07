@@ -46,7 +46,11 @@ EXTRAS_REQUIRE = {
         'matplotlib'
     ]
 }
-PACKAGE_DATA = {'pyts': ['datasets/info/*.pickle']}
+PACKAGE_DATA = {
+    'pyts': ['datasets/info/*.pickle',
+             'datasets/cached_datasets/UEA/BasicMotions/*.arff',
+             'datasets/cached_datasets/UEA/BasicMotions/*.txt']
+}
 
 setup(name=DISTNAME,
       maintainer=MAINTAINER,
