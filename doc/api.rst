@@ -71,7 +71,7 @@ Full API documentation of the `pyts` Python package.
 
   .. autosummary::
     :toctree: generated/
-    :template: class.rst
+    :template: function.rst
 
     datasets.make_cylinder_bell_funnel
     datasets.ucr_dataset_info
@@ -142,59 +142,59 @@ Full API documentation of the `pyts` Python package.
     metrics.show_options
 
 
-  :mod:`pyts.multivariate`: Multivariate time series tools
-  ========================================================
+:mod:`pyts.multivariate`: Multivariate time series tools
+========================================================
 
-  .. automodule:: pyts.multivariate
-     :no-members:
-     :no-inherited-members:
+.. automodule:: pyts.multivariate
+   :no-members:
+   :no-inherited-members:
 
-  .. currentmodule:: pyts
+.. currentmodule:: pyts
 
-  Classification
-  --------------
+Classification
+--------------
 
-  .. currentmodule:: pyts
+.. currentmodule:: pyts
 
-  .. autosummary::
-    :toctree: generated/
-    :template: class.rst
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
 
-    multivariate.classification.MultivariateClassifier
+  multivariate.classification.MultivariateClassifier
 
-  Image
-  -----
+Image
+-----
 
-  .. currentmodule:: pyts
+.. currentmodule:: pyts
 
-  .. autosummary::
-    :toctree: generated/
-    :template: class.rst
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
 
-    multivariate.image.JointRecurrencePlot
+  multivariate.image.JointRecurrencePlot
 
-  Transformation
-  --------------
+Transformation
+--------------
 
-  .. currentmodule:: pyts
+.. currentmodule:: pyts
 
-  .. autosummary::
-    :toctree: generated/
-    :template: class.rst
+.. autosummary::
+  :toctree: generated/
+  :template: class.rst
 
-    multivariate.transformation.MultivariateTransformer
-    multivariate.transformation.WEASELMUSE
+  multivariate.transformation.MultivariateTransformer
+  multivariate.transformation.WEASELMUSE
 
-  Utils
-  -----
+Utils
+-----
 
-  .. currentmodule:: pyts
+.. currentmodule:: pyts
 
-  .. autosummary::
-    :toctree: generated/
-    :template: class.rst
+.. autosummary::
+  :toctree: generated/
+  :template: function.rst
 
-    multivariate.utils.check_3d_array
+  multivariate.utils.check_3d_array
 
 
 :mod:`pyts.preprocessing`: Preprocessing tools
