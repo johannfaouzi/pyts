@@ -47,7 +47,7 @@ def uea_dataset_info(dataset=None):
 
     Returns
     -------
-    df : dict
+    dictionary : dict
         Dictionary with the information for each dataset.
 
     """
@@ -122,17 +122,17 @@ def fetch_uea_dataset(dataset, use_cache=True, data_home=None,
     data : Bunch
         Dictionary-like object, with attributes:
 
-        - data_train : array of floats
+        data_train : array of floats
             The time series in the training set.
-        - data_test : array of floats
+        data_test : array of floats
             The time series in the test set.
-        - target_train : array of integers
+        target_train : array of integers
             The classification labels in the training set.
-        - target_test : array of integers
+        target_test : array of integers
             The classification labels in the test set.
-        - DESCR : str
+        DESCR : str
             The full description of the dataset.
-        - url : str
+        url : str
             The url of the dataset.
 
     (data_train, data_test, target_train, target_test) : tuple if \

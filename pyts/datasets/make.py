@@ -69,11 +69,11 @@ def make_cylinder_bell_funnel(
 
     .. math::
 
-        c(t) = (6 + \eta) \cdot \mathds{1}_{[a, b]}(t) + \epsilon(t)
-        b(t) = (6 + \eta) \cdot \mathds{1}_{[a, b]}(t) \cdot (t - a) / \
-(b - a) + \epsilon(t)
-        f(t) = (6 + \eta) \cdot \mathds{1}_{[a, b]}(t) \cdot (b - t) / \
-(b - a) + \epsilon(t)
+        c(t) = (6 + \eta) \cdot 1_{[a, b]}(t) + \epsilon(t)
+
+        b(t) = (6 + \eta) \cdot 1_{[a, b]}(t) \cdot (t - a) / (b - a) + \epsilon(t)
+
+        f(t) = (6 + \eta) \cdot 1_{[a, b]}(t) \cdot (b - t) / (b - a) + \epsilon(t)
 
     where :math:`t=1,\ldots,128`, :math:`a` is an integer-valued uniform random
     variable on the inverval :math:`[16, 32]`, :math:`b-a` is an integer-valued

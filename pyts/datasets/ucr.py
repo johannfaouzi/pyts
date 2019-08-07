@@ -70,8 +70,8 @@ def ucr_dataset_info(dataset=None):
 
     Returns
     -------
-    df : DataFrame
-        DataFrame with the information for each dataset.
+    dictionary : dict
+        Dictionary with the information for each dataset.
 
     """
     module_path = os.path.dirname(__file__)
@@ -157,6 +157,9 @@ def fetch_ucr_dataset(dataset, use_cache=True, data_home=None,
             The full description of the dataset.
         url : str
             The url of the dataset.
+
+    (data_train, data_test, target_train, target_test) : tuple if \
+``return_X_y`` is True
 
     Notes
     -----
