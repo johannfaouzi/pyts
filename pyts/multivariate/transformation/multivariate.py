@@ -8,7 +8,7 @@ from ..utils import check_3d_array
 
 
 class MultivariateTransformer(BaseEstimator, TransformerMixin):
-    """Transformer for multivariate time series.
+    r"""Transformer for multivariate time series.
 
     It provides a convenient class to transform multivariate time series with
     transformers that can only deal with univariate time series.
@@ -22,9 +22,9 @@ class MultivariateTransformer(BaseEstimator, TransformerMixin):
 
     flatten : bool (default = True)
         Affect shape of transform output. If True, ``transform``
-        returns an array with shape (n_samples, *). If False, the output of
+        returns an array with shape (n_samples, \*). If False, the output of
         ``transform`` from each estimator must have the same shape and
-        ``transform`` returns an array with shape (n_samples, n_features, *).
+        ``transform`` returns an array with shape (n_samples, n_features, \*).
         Ignored if the transformers return sparse matrices.
 
     Attributes
@@ -62,7 +62,7 @@ class MultivariateTransformer(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        """Apply transform to each feature.
+        r"""Apply transform to each feature.
 
         Parameters
         ----------
@@ -71,7 +71,7 @@ class MultivariateTransformer(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        X_new : array, shape = (n_samples, n_features, *)
+        X_new : array, shape = (n_samples, *) or (n_samples, n_features, *)
             Transformed time series.
 
         """

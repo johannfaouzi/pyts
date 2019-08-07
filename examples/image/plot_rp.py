@@ -20,8 +20,7 @@ X = rng.randn(n_samples, n_timestamps)
 
 # Recurrence plot transformation
 rp = RecurrencePlot(dimension=7, time_delay=3,
-                    threshold='percentage_points',
-                    percentage=30)
+                    threshold='point', percentage=30)
 X_rp = rp.fit_transform(X)
 
 # Show the results for the first time series

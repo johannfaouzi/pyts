@@ -35,16 +35,17 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
         float, If float, it represents a percentage of the size of each
         time series and must be between 0 and 1.
 
-    threshold : float, 'percentage_points', 'percentage_distance' or None \
-(default = None)
-        Threshold for the minimum distance. If None, the recurrence plot
-        is not binarized.
+    threshold : float, 'point', 'distance' or None (default = None)
+        Threshold for the minimum distance. If None, the recurrence plots
+        are not binarized. If 'point', the threshold is computed such as
+        `percentage` percents of the points are smaller than the threshold.
+        If 'distance', the threshold is computed as the `percentage` of the
+        maximum distance.
 
     percentage : int or float (default = 10)
-        Percentage of black points if ``threshold='percentage_points'``
-        or percentage of maximum distance for threshold if
-        ``threshold='percentage_distance'``. Ignored if ``threshold``
-        is a float or None.
+        Percentage of black points if ``threshold='point'`` or percentage of
+        maximum distance for threshold if ``threshold='distance'``.
+        Ignored if ``threshold`` is a float or None.
 
     Notes
     -----
@@ -128,14 +129,14 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
             )
         if self.threshold is None:
             X_rp = X_dist
-        elif self.threshold == 'percentage_points':
+        elif self.threshold == 'point':
             image_size = n_timestamps - (dimension - 1) * time_delay
             percents = np.percentile(
                 np.reshape(X_dist, (n_samples, image_size * image_size)),
                 self.percentage, axis=1
             )
             X_rp = X_dist < percents[:, None, None]
-        elif self.threshold == 'percentage_distance':
+        elif self.threshold == 'distance':
             percents = self.percentage / 100 * np.max(X_dist, axis=(1, 2))
             X_rp = X_dist < percents[:, None, None]
         else:
@@ -189,13 +190,11 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
                              "'dimension' and 'time_delay'.")
 
         if (self.threshold is not None
-            and self.threshold not in ['percentage_points',
-                                       'percentage_distance']
+            and self.threshold not in ['point', 'distance']
             and not isinstance(self.threshold,
                                (int, np.integer, float, np.floating))):
-            raise TypeError("'threshold' must be either None, "
-                            "'percentage_points', 'percentage_distance', "
-                            "a float or an integer.")
+            raise TypeError("'threshold' must be either None, 'point', "
+                            "'distance', a float or an integer.")
         if ((isinstance(self.threshold, (int, np.integer, float, np.floating)))
             and (self.threshold <= 0)):
             raise ValueError("If 'threshold' is a float or an integer, "

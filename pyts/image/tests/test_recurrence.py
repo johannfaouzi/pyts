@@ -47,8 +47,8 @@ def test_actual_results_trajectories(params, arr_desired):
       "'time_delay' must be an integer or a float."),
 
      ({'threshold': '3'}, TypeError,
-      "'threshold' must be either None, 'percentage_points', "
-      "'percentage_distance', a float or an integer."),
+      "'threshold' must be either None, 'point', 'distance', a float or an "
+      "integer."),
 
      ({'percentage': '3'}, TypeError,
       "'percentage' must be a float or an integer."),
@@ -77,7 +77,7 @@ def test_actual_results_trajectories(params, arr_desired):
       "If 'threshold' is a float or an integer, it must be greater than or "
       "equal to 0."),
 
-     ({'percentage': 200, 'threshold': 'percentage_points'}, ValueError,
+     ({'percentage': 200, 'threshold': 'point'}, ValueError,
       "'percentage' must be between 0 and 100.")]
 )
 def test_parameter_check(params, error, err_msg):
@@ -104,11 +104,11 @@ def test_parameter_check(params, error, err_msg):
       [[[0, 3], [3, 0]], [[0, 3], [3, 0]]]),
 
      ({'dimension': 0.5, 'time_delay': 0.3,
-       'threshold': 'percentage_points', 'percentage': 50},
+       'threshold': 'point', 'percentage': 50},
       [[[1, 0], [0, 1]], [[1, 0], [0, 1]]]),
 
      ({'dimension': 0.5, 'time_delay': 0.3,
-       'threshold': 'percentage_distance', 'percentage': 50},
+       'threshold': 'distance', 'percentage': 50},
       [[[1, 0], [0, 1]], [[1, 0], [0, 1]]]),
 
      ({'dimension': 1, 'time_delay': 1},

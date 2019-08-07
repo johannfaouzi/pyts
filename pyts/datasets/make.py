@@ -57,12 +57,6 @@ def make_cylinder_bell_funnel(
         'b', 'eta' and 'epsilon' and the values are the corresponding
         values. Only returned if ``return_params=True``.
 
-    References
-    ----------
-    .. [1] N. Saito, "Local feature extraction and its application
-           using a library of bases". Ph.D. thesis, Department of
-           Mathematics, Yale University, 1994.
-
     Notes
     -----
     The time series are generated from the following distributions:
@@ -71,17 +65,25 @@ def make_cylinder_bell_funnel(
 
         c(t) = (6 + \eta) \cdot 1_{[a, b]}(t) + \epsilon(t)
 
-        b(t) = (6 + \eta) \cdot 1_{[a, b]}(t) \cdot (t - a) / (b - a) + \epsilon(t)
+        b(t) = (6 + \eta) \cdot 1_{[a, b]}(t) \cdot (t - a) / (b - a) +
+        \epsilon(t)
 
-        f(t) = (6 + \eta) \cdot 1_{[a, b]}(t) \cdot (b - t) / (b - a) + \epsilon(t)
+        f(t) = (6 + \eta) \cdot 1_{[a, b]}(t) \cdot (b - t) / (b - a) +
+        \epsilon(t)
 
     where :math:`t=1,\ldots,128`, :math:`a` is an integer-valued uniform random
     variable on the inverval :math:`[16, 32]`, :math:`b-a` is an integer-valued
     uniform distribution on the inveral :math:`[32, 96]`, :math:`\eta` and
     :math:`\epsilon(t)` are standard normal variables,
-    :math:`\mathds{1}_{[a, b]}` is the characteristic function on the interval
+    :math:`{1}_{[a, b]}` is the characteristic function on the interval
     :math:`[a, b]`. :math:`c`, :math:`b`, and :math:`f` stand for "cylinder",
     "bell", and "funnel" respectively.
+
+    References
+    ----------
+    .. [1] N. Saito, "Local feature extraction and its application
+           using a library of bases". Ph.D. thesis, Department of
+           Mathematics, Yale University, 1994.
 
     """
     if not isinstance(n_samples, (int, np.integer)):

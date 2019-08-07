@@ -28,16 +28,17 @@ class JointRecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
         float, If float, it represents a percentage of the size of each
         time series and must be between 0 and 1.
 
-    threshold : float, 'percentage_points', 'percentage_distance', None \
-or list thereof (default = None)
-        Thresholds for the minimum distance. If None, the recurrence plots
-        for each feature are not binarized.
+    threshold : float, 'point', 'distance' or None or list thereof (default = None)
+        Threshold for the minimum distance. If None, the recurrence plots
+        are not binarized. If 'point', the threshold is computed such as
+        `percentage` percents of the points are smaller than the threshold.
+        If 'distance', the threshold is computed as the `percentage` of the
+        maximum distance.
 
     percentage : int, float or list thereof (default = 10)
-        Percentage of black points if ``threshold='percentage_points'``
-        or percentage of maximum distance for threshold if
-        ``threshold='percentage_distance'`` for each recurrence plot.
-        Ignored if ``thresholds`` is a float, None or a list thereof.
+        Percentage of black points if ``threshold='point'`` or percentage of
+        maximum distance for threshold if ``threshold='distance'``.
+        Ignored if ``threshold`` is a float or None.
 
     References
     ----------
@@ -47,12 +48,11 @@ or list thereof (default = None)
     """
 
     def __init__(self, dimension=1, time_delay=1, threshold=None,
-                 percentage=10, n_jobs=None):
+                 percentage=10):
         self.dimension = dimension
         self.time_delay = time_delay
         self.threshold = threshold
         self.percentage = percentage
-        self.n_jobs = n_jobs
 
     def fit(self, X=None, y=None):
         """Pass.

@@ -68,8 +68,7 @@ def test_actual_results_single_value(params):
 @pytest.mark.parametrize(
     'params',
     [{'threshold': [0.5, 0.9, 2], 'percentage': [10, 30, 50]},
-     {'threshold': [None, 'percentage_distance', 'percentage_points'],
-      'percentage': [10, 30, 50]},
+     {'threshold': [None, 'distance', 'point'], 'percentage': [10, 30, 50]},
      {'threshold': [0.5, 0.9, None], 'percentage': [10., 30., 90.]}]
 )
 def test_actual_results_lists(params):

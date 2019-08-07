@@ -60,26 +60,26 @@ Full API documentation of the `pyts` Python package.
   classification.BOSSVS
 
 
-  :mod:`pyts.datasets`: Dataset loading utilities
-  ===============================================
+:mod:`pyts.datasets`: Dataset loading utilities
+===============================================
 
-  .. automodule:: pyts.datasets
-     :no-members:
-     :no-inherited-members:
+.. automodule:: pyts.datasets
+   :no-members:
+   :no-inherited-members:
 
-  .. currentmodule:: pyts
+.. currentmodule:: pyts
 
-  .. autosummary::
-    :toctree: generated/
-    :template: function.rst
+.. autosummary::
+  :toctree: generated/
+  :template: function.rst
 
-    datasets.make_cylinder_bell_funnel
-    datasets.ucr_dataset_info
-    datasets.ucr_dataset_list
-    datasets.fetch_ucr_dataset
-    datasets.uea_dataset_info
-    datasets.uea_dataset_list
-    datasets.fetch_uea_dataset
+  datasets.make_cylinder_bell_funnel
+  datasets.ucr_dataset_info
+  datasets.ucr_dataset_list
+  datasets.fetch_ucr_dataset
+  datasets.uea_dataset_info
+  datasets.uea_dataset_list
+  datasets.fetch_uea_dataset
 
 
 :mod:`pyts.decomposition`: Decomposition algorithms

@@ -76,11 +76,12 @@ class WEASELMUSE(BaseEstimator, TransformerMixin):
         A mapping of features indices to terms. Each value is a string with
         4 values separated by a whitespace:
 
-            - 'o' or 'd': whether the word is extracted from the original
-            time series ('orig') or from the derivates ('diff')
+            - 'o' or 'd': whether the word is extracted from the original \
+                time series ('orig') or from the derivates ('diff')
             - int : feature index
             - int : window size
             - str : word
+
 
     References
     ----------
