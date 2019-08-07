@@ -60,6 +60,28 @@ Full API documentation of the `pyts` Python package.
   classification.BOSSVS
 
 
+  :mod:`pyts.datasets`: Dataset loading utilities
+  ===============================================
+
+  .. automodule:: pyts.datasets
+     :no-members:
+     :no-inherited-members:
+
+  .. currentmodule:: pyts
+
+  .. autosummary::
+    :toctree: generated/
+    :template: class.rst
+
+    datasets.make_cylinder_bell_funnel
+    datasets.ucr_dataset_info
+    datasets.ucr_dataset_list
+    datasets.fetch_ucr_dataset
+    datasets.uea_dataset_info
+    datasets.uea_dataset_list
+    datasets.fetch_uea_dataset
+
+
 :mod:`pyts.decomposition`: Decomposition algorithms
 ===================================================
 
@@ -118,6 +140,62 @@ Full API documentation of the `pyts` Python package.
     metrics.itakura_parallelogram
     metrics.sakoe_chiba_band
     metrics.show_options
+
+
+  :mod:`pyts.multivariate`: Multivariate time series tools
+  ========================================================
+
+  .. automodule:: pyts.multivariate
+     :no-members:
+     :no-inherited-members:
+
+  .. currentmodule:: pyts
+
+  Classification
+  --------------
+
+  .. currentmodule:: pyts
+
+  .. autosummary::
+    :toctree: generated/
+    :template: class.rst
+
+    multivariate.classification.MultivariateClassifier
+
+  Image
+  -----
+
+  .. currentmodule:: pyts
+
+  .. autosummary::
+    :toctree: generated/
+    :template: class.rst
+
+    multivariate.image.JointRecurrencePlot
+
+  Transformation
+  --------------
+
+  .. currentmodule:: pyts
+
+  .. autosummary::
+    :toctree: generated/
+    :template: class.rst
+
+    multivariate.transformation.MultivariateTransformer
+    multivariate.transformation.WEASELMUSE
+
+  Utils
+  -----
+
+  .. currentmodule:: pyts
+
+  .. autosummary::
+    :toctree: generated/
+    :template: class.rst
+
+    multivariate.utils.check_3d_array
+
 
 :mod:`pyts.preprocessing`: Preprocessing tools
 ==============================================
