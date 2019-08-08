@@ -75,6 +75,10 @@ Full API documentation of the `pyts` Python package.
 
   datasets.fetch_ucr_dataset
   datasets.fetch_uea_dataset
+  datasets.load_basic_motions
+  datasets.load_coffee
+  datasets.load_gunpoint
+  datasets.load_pig_central_venous_pressure
   datasets.make_cylinder_bell_funnel
   datasets.ucr_dataset_info
   datasets.ucr_dataset_list
