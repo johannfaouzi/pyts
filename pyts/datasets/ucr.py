@@ -51,6 +51,11 @@ def ucr_dataset_list():
         List of available datasets from the UCR Time Series
         Classification Archive.
 
+    References
+    ----------
+    .. [1] `List of datasets on the UEA & UCR archive
+           <http://www.timeseriesclassification.com/dataset.php>`_
+
     """
     module_path = os.path.dirname(__file__)
     finfo = os.path.join(module_path, 'info', 'ucr.pickle')
@@ -72,6 +77,11 @@ def ucr_dataset_info(dataset=None):
     -------
     dictionary : dict
         Dictionary with the information for each dataset.
+
+    References
+    ----------
+    .. [1] `List of datasets on the UEA & UCR archive
+           <http://www.timeseriesclassification.com/dataset.php>`_
 
     """
     module_path = os.path.dirname(__file__)
@@ -110,7 +120,7 @@ def ucr_dataset_info(dataset=None):
 
 def fetch_ucr_dataset(dataset, use_cache=True, data_home=None,
                       return_X_y=False):
-    """Fetch dataset from UCR TSC Archive by name.
+    r"""Fetch dataset from UCR TSC Archive by name.
 
     Fetched data sets are automatically saved in the
     ``pyts/datasets/_cached_datasets`` folder. To avoid
@@ -158,8 +168,7 @@ def fetch_ucr_dataset(dataset, use_cache=True, data_home=None,
         url : str
             The url of the dataset.
 
-    (data_train, data_test, target_train, target_test) : tuple if \
-``return_X_y`` is True
+    (data_train, data_test, target_train, target_test) : tuple if ``return_X_y`` is True
 
     Notes
     -----
@@ -173,7 +182,7 @@ def fetch_ucr_dataset(dataset, use_cache=True, data_home=None,
     .. [2] A. Bagnall et al, "The UEA & UCR Time Series Classification
            Repository", www.timeseriesclassification.com.
 
-    """
+    """  # noqa: E501
     if dataset not in ucr_dataset_list():
         raise ValueError(
             "{0} is not a valid name. The list of available names "

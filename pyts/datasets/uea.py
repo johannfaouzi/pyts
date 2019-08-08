@@ -28,6 +28,11 @@ def uea_dataset_list():
         List of available datasets from the UEA Time Series
         Classification Archive.
 
+    References
+    ----------
+    .. [1] `List of datasets on the UEA & UCR archive
+           <http://www.timeseriesclassification.com/dataset.php>`_
+
     """
     module_path = os.path.dirname(__file__)
     finfo = os.path.join(module_path, 'info', 'uea.pickle')
@@ -49,6 +54,11 @@ def uea_dataset_info(dataset=None):
     -------
     dictionary : dict
         Dictionary with the information for each dataset.
+
+    References
+    ----------
+    .. [1] `List of datasets on the UEA & UCR archive
+           <http://www.timeseriesclassification.com/dataset.php>`_
 
     """
     module_path = os.path.dirname(__file__)
