@@ -12,7 +12,7 @@ from ..utils import check_3d_array
 
 
 class WEASELMUSE(BaseEstimator, TransformerMixin):
-    """WEASEL+MUSE algorithm.
+    r"""WEASEL+MUSE algorithm.
 
     Parameters
     ----------

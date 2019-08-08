@@ -6,7 +6,7 @@ from ...image import RecurrencePlot
 from ..utils import check_3d_array
 
 
-class JointRecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
+class JointRecurrencePlot(BaseEstimator, TransformerMixin):
     r"""Joint Recurrence Plot.
 
     A recurrence plot is an image representing the distances between
@@ -45,7 +45,7 @@ class JointRecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
     .. [1] M. Romano, M. Thiel, J. Kurths and W. con Bloh, "Multivariate
            Recurrence Plots". Physics Letters A (2004)
 
-    """
+    """  # noqa: E501
 
     def __init__(self, dimension=1, time_delay=1, threshold=None,
                  percentage=10):
