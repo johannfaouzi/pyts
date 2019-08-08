@@ -47,9 +47,12 @@ EXTRAS_REQUIRE = {
     ]
 }
 PACKAGE_DATA = {
-    'pyts': ['datasets/info/*.pickle',
+    'pyts': ['datasets/cached_datasets/UCR/Coffee/*.txt',
+             'datasets/cached_datasets/UCR/GunPoint/*.txt',
+             'datasets/cached_datasets/UCR/PigCVP/*.txt',
              'datasets/cached_datasets/UEA/BasicMotions/*.arff',
-             'datasets/cached_datasets/UEA/BasicMotions/*.txt']
+             'datasets/cached_datasets/UEA/BasicMotions/*.txt',
+             'datasets/info/*.pickle']
 }
 
 setup(name=DISTNAME,
