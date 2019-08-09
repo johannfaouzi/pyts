@@ -38,7 +38,10 @@ class JointRecurrencePlot(BaseEstimator, TransformerMixin):
     percentage : int, float or list thereof (default = 10)
         Percentage of black points if ``threshold='point'`` or percentage of
         maximum distance for threshold if ``threshold='distance'``.
-        Ignored if ``threshold`` is a float or None.
+        Ignored if ``threshold`` is a float or None. Note that the percentage
+        is calculated for each recurrence plot independently, which implies
+        that there will probably be less than `percentage` percents of black
+        points in the joint recurrence plot.
 
     References
     ----------
