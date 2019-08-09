@@ -527,7 +527,7 @@ def itakura_parallelogram(n_timestamps, max_slope=2.):
     >>> from pyts.metrics import itakura_parallelogram
     >>> print(itakura_parallelogram(5))
     [[0 1 1 2 4]
-     [1 3 4 4 5]])
+     [1 3 4 4 5]]
 
     """
     if not isinstance(n_timestamps, (int, np.integer)):
