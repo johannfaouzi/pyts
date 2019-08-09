@@ -58,7 +58,7 @@ class SingularSpectrumAnalysis(BaseEstimator, TransformerMixin):
            Time Series". Springer-Verlag Berlin Heidelberg (2013).
 
     Examples
-    ----------
+    --------
     >>> from pyts.datasets import load_gunpoint
     >>> from pyts.decomposition import SingularSpectrumAnalysis
     >>> X, _, _, _ = load_gunpoint(return_X_y=True)
