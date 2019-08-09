@@ -398,9 +398,9 @@ def sakoe_chiba_band(n_timestamps, window_size=0.1):
     Examples
     --------
     >>> from pyts.metrics import sakoe_chiba_band
-    >>> sakoe_chiba_band(5, window_size=2)
-    array([[0, 0, 0, 1, 2],
-           [3, 4, 5, 5, 5]])
+    >>> print(sakoe_chiba_band(5, window_size=2))
+    [[0 0 0 1 2]
+     [3 4 5 5 5]]
 
     """
     if not isinstance(n_timestamps, (int, np.integer)):
@@ -525,9 +525,9 @@ def itakura_parallelogram(n_timestamps, max_slope=2.):
     Examples
     --------
     >>> from pyts.metrics import itakura_parallelogram
-    >>> itakura_parallelogram(5)
-    array([[0, 1, 1, 2, 4],
-           [1, 3, 4, 4, 5]])
+    >>> print(itakura_parallelogram(5))
+    [[0 1 1 2 4]
+     [1 3 4 4 5]])
 
     """
     if not isinstance(n_timestamps, (int, np.integer)):

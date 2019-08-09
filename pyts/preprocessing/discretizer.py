@@ -68,9 +68,9 @@ class KBinsDiscretizer(BaseEstimator, TransformerMixin):
     >>> X = [[0, 1, 0, 2, 3, 3, 2, 1],
     ...      [7, 0, 6, 1, 5, 3, 4, 2]]
     >>> discretizer = KBinsDiscretizer(n_bins=2)
-    >>> discretizer.transform(X)
-    array([[0, 0, 0, 1, 1, 1, 1, 0],
-           [1, 0, 1, 0, 1, 0, 1, 0]])
+    >>> print(discretizer.transform(X))
+    [[0 0 0 1 1 1 1 0]
+     [1 0 1 0 1 0 1 0]]
 
     """
 

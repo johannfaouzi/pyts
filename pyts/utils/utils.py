@@ -39,10 +39,10 @@ def segmentation(ts_size, window_size, overlapping=False, n_segments=None):
     --------
     >>> from pyts.utils import segmentation
     >>> start, end, size = segmentation(ts_size=12, window_size=3)
-    >>> start
-    array([0, 3, 6, 9])
-    >>> end
-    array([ 3,  6,  9, 12])
+    >>> print(start)
+    [0, 3, 6, 9]
+    >>> print(end)
+    [ 3,  6,  9, 12]
     >>> size
     4
 

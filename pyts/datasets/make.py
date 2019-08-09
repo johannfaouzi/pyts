@@ -92,8 +92,8 @@ def make_cylinder_bell_funnel(
     >>> X, y = make_cylinder_bell_funnel()
     >>> X.shape
     (30, 128)
-    >>> np.bincount(y)
-    array([10, 10, 10])
+    >>> print(np.bincount(y))
+    [10 10 10]
 
     """
     if not isinstance(n_samples, (int, np.integer)):

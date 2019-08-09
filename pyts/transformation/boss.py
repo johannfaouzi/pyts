@@ -93,7 +93,7 @@ class BOSS(BaseEstimator, TransformerMixin):
     >>> sorted(boss.vocabulary_.values())
     ['aa', 'ab', 'ba', 'bb']
     >>> boss.transform(X_test) # doctest: +ELLIPSIS
-    array([...])
+    array(...)
 
     """
 
