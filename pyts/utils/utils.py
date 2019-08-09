@@ -42,7 +42,7 @@ def segmentation(ts_size, window_size, overlapping=False, n_segments=None):
     >>> print(start)
     [0 3 6 9]
     >>> print(end)
-    [3 6 9 12]
+    [ 3  6  9 12]
     >>> size
     4
 
