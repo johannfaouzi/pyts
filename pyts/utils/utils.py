@@ -35,6 +35,17 @@ def segmentation(ts_size, window_size, overlapping=False, n_segments=None):
     size : int
         The size of ``start``.
 
+    Examples
+    --------
+    >>> from pyts.utils import segmentation
+    >>> start, end, size = segmentation(ts_size=12, window_size=3)
+    >>> start
+    array([0, 3, 6, 9])
+    >>> end
+    array([ 3,  6,  9, 12])
+    >>> size
+    4
+
     """
     if not isinstance(ts_size, (int, np.integer)):
         raise TypeError("'ts_size' must be an integer.")
@@ -104,6 +115,17 @@ def windowed_view(X, window_size, window_step=1):
     X_new : array, shape = (n_samples, n_windows, window_size)
         Windowed view of the input data. ``n_windows`` is computed as
         ``(n_timestamps - window_size + window_step) // window_step``.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyts.utils import windowed_view
+    >>> windowed_view(np.arange(6).reshape(1, -1), window_size=2)
+    array([[[0, 1],
+            [1, 2],
+            [2, 3],
+            [3, 4],
+            [4, 5]]])
 
     """
     X = check_array(X, dtype=None)

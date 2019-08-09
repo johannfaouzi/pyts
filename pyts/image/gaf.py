@@ -55,6 +55,16 @@ class GramianAngularField(BaseEstimator, TransformerMixin):
            Inspection and Classification Using Tiled Convolutional Neural
            Networks." AAAI Workshop (2015).
 
+    Examples
+    --------
+    >>> from pyts.datasets import load_gunpoint
+    >>> from pyts.image import GramianAngularField
+    >>> X, _, _, _ = load_gunpoint(return_X_y=True)
+    >>> transformer = GramianAngularField()
+    >>> X_new = transformer.transform(X)
+    >>> X_new.shape
+    (50, 150, 150)
+
     """
 
     def __init__(self, image_size=1., sample_range=(-1, 1),

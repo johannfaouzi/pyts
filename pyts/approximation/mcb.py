@@ -80,6 +80,20 @@ class MultipleCoefficientBinning(BaseEstimator, TransformerMixin):
            International Conference on Extending Database Technology,
            15, 516-527 (2012).
 
+    Examples
+    --------
+    >>> from pyts.approximation import MultipleCoefficientBinning
+    >>> X = [[0, 4],
+    ...      [2, 7],
+    ...      [1, 6],
+    ...      [3, 5]]
+    >>> transformer = MultipleCoefficientBinning(n_bins=2)
+    >>> print(transformer.fit_transform(X))
+    [['a' 'a']
+     ['b' 'b']
+     ['a' 'b']
+     ['b' 'a']]
+
     """
 
     def __init__(self, n_bins=4, strategy='quantile', alphabet=None):

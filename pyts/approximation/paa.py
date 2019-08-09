@@ -47,6 +47,16 @@ class PiecewiseAggregateApproximation(BaseEstimator, TransformerMixin):
            time series databases". Knowledge and information Systems,
            3(3), 263-286 (2001).
 
+    Examples
+    --------
+    >>> from pyts.approximation import PiecewiseAggregateApproximation
+    >>> X = [[0, 4, 2, 1, 7, 6, 3, 5],
+    ...      [2, 5, 4, 5, 3, 4, 2, 3]]
+    >>> transformer = PiecewiseAggregateApproximation(window_size=2)
+    >>> transformer.transform(X)
+    array([[2. , 1.5, 6.5, 4. ],
+           [3.5, 4.5, 3.5, 2.5]])
+
     """
 
     def __init__(self, window_size=1, output_size=None, overlapping=True):

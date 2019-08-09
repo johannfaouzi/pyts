@@ -32,6 +32,16 @@ class SymbolicAggregateApproximation(BaseEstimator, TransformerMixin):
            novel symbolic representation of time series". Data Mining and
            Knowledge Discovery, 15(2), 107-144 (2007).
 
+    Examples
+    --------
+    >>> from pyts.approximation import SymbolicAggregateApproximation
+    >>> X = [[0, 4, 2, 1, 7, 6, 3, 5],
+    ...      [2, 5, 4, 5, 3, 4, 2, 3]]
+    >>> transformer = SymbolicAggregateApproximation()
+    >>> print(transformer.transform(X))
+    [['a' 'c' 'b' 'a' 'd' 'd' 'b' 'c']
+     ['a' 'd' 'c' 'd' 'b' 'c' 'a' 'b']]
+
     """
 
     def __init__(self, n_bins=4, strategy='quantile', alphabet=None):

@@ -25,6 +25,16 @@ def boss(x, y):
            in the presence of noise". Data Mining and Knowledge Discovery,
            29(6), 1505-1530 (2015).
 
+    Examples
+    --------
+    >>> from pyts.metrics import boss
+    >>> x = [0, 5, 5, 3, 4, 5]
+    >>> y = [3, 0, 0, 0, 8, 0]
+    >>> boss(x, y)
+    10.0
+    >>> boss(y, x)
+    5.0
+
     """
     x = check_array(x, ensure_2d=False, dtype='float64')
     y = check_array(y, ensure_2d=False, dtype='float64')

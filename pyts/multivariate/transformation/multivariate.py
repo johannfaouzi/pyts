@@ -32,6 +32,18 @@ class MultivariateTransformer(BaseEstimator, TransformerMixin):
     estimators_ : list of estimator objects
         The collection of fitted transformers.
 
+    Examples
+    --------
+    >>> from pyts.datasets import load_basic_motions
+    >>> from pyts.multivariate.transformation import MultivariateTransformer
+    >>> from pyts.image import GramianAngularField
+    >>> X, _, _, _ = load_basic_motions(return_X_y=True)
+    >>> transformer = MultivariateTransformer(GramianAngularField(),
+    ...                                       flatten=False)
+    >>> X_new = transformer.fit_transform(X)
+    >>> X_new.shape
+    (40, 6, 100, 100)
+
     """
 
     def __init__(self, estimator, flatten=True):
@@ -90,7 +102,6 @@ class MultivariateTransformer(BaseEstimator, TransformerMixin):
                      for X_transformed_i in X_transformed]
             ndims = [X_new_i.ndim for X_new_i in X_new]
             shapes = [X_new_i.shape for X_new_i in X_new]
-            print(shapes)
             one_dim = (np.unique(ndims).size == 1)
             if one_dim:
                 one_shape = np.unique(shapes, axis=0).shape[0] == 1

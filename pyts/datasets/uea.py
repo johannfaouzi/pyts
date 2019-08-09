@@ -33,6 +33,12 @@ def uea_dataset_list():
     .. [1] `List of datasets on the UEA & UCR archive
            <http://www.timeseriesclassification.com/dataset.php>`_
 
+    Examples
+    --------
+    >>> from pyts.datasets import uea_dataset_list
+    >>> uea_dataset_list()[:3]
+    ['ArticularyWordRecognition', 'AtrialFibrillation', 'BasicMotions']
+
     """
     module_path = os.path.dirname(__file__)
     finfo = os.path.join(module_path, 'info', 'uea.pickle')
@@ -59,6 +65,12 @@ def uea_dataset_info(dataset=None):
     ----------
     .. [1] `List of datasets on the UEA & UCR archive
            <http://www.timeseriesclassification.com/dataset.php>`_
+
+    Examples
+    --------
+    >>> from pyts.datasets import uea_dataset_info
+    >>> uea_dataset_info('AtrialFibrillation')['n_timestamps']
+    640
 
     """
     module_path = os.path.dirname(__file__)

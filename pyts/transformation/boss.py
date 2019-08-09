@@ -82,6 +82,21 @@ class BOSS(BaseEstimator, TransformerMixin):
            in the presence of noise". Data Mining and Knowledge Discovery,
            29(6), 1505-1530 (2015).
 
+    Examples
+    --------
+    >>> from pyts.datasets import load_gunpoint
+    >>> from pyts.transformation import BOSS
+    >>> X_train, X_test, _, _ = load_gunpoint(return_X_y=True)
+    >>> boss = BOSS(word_size=2, n_bins=2, sparse=False)
+    >>> boss.fit(X_train)
+    BOSS(alphabet=None, anova=False, drop_sum=False, n_bins=2, norm_mean=False,
+         norm_std=False, numerosity_reduction=True, sparse=False,
+         strategy='quantile', window_size=10, window_step=1, word_size=2)
+    >>> sorted(boss.vocabulary_.values())
+    ['aa', 'ab', 'ba', 'bb']
+    >>> boss.transform(X_test) # doctest: +ELLIPSIS
+    array([...])
+
     """
 
     def __init__(self, word_size=4, n_bins=4, strategy='quantile',

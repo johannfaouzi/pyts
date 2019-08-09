@@ -8,7 +8,7 @@ from sklearn.utils import shuffle as utils_shuffle
 def make_cylinder_bell_funnel(
     n_samples=30, weights=None, shuffle=True, random_state=None,
     return_params=False
-):  # noqa: D207
+):
     r"""Make a Cylinder-Bell-Funnel dataset.
 
     The classes are coded with the following meaning:
@@ -84,6 +84,16 @@ def make_cylinder_bell_funnel(
     .. [1] N. Saito, "Local feature extraction and its application
            using a library of bases". Ph.D. thesis, Department of
            Mathematics, Yale University, 1994.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyts.datasets import make_cylinder_bell_funnel
+    >>> X, y = make_cylinder_bell_funnel()
+    >>> X.shape
+    (30, 128)
+    >>> np.bincount(y)
+    array([10, 10, 10])
 
     """
     if not isinstance(n_samples, (int, np.integer)):

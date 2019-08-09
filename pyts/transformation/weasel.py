@@ -81,6 +81,17 @@ class WEASEL(BaseEstimator, TransformerMixin):
            Classification with WEASEL". Conference on Information and Knowledge
            Management, 637-646 (2017).
 
+    Examples
+    --------
+    >>> from pyts.datasets import load_gunpoint
+    >>> from pyts.transformation import WEASEL
+    >>> X_train, _, y_train, _ = load_gunpoint(return_X_y=True)
+    >>> weasel = WEASEL(sparse=False)
+    >>> weasel.fit(X_train, y_train) # doctest: +ELLIPSIS
+    WEASEL(...)
+    >>> weasel.transform(X_train) # doctest: +ELLIPSIS
+    array(...)
+
     """
 
     def __init__(self, word_size=4, n_bins=4,

@@ -57,6 +57,16 @@ class SingularSpectrumAnalysis(BaseEstimator, TransformerMixin):
     .. [1] N. Golyandina, and A. Zhigljavsky, "Singular Spectrum Analysis for
            Time Series". Springer-Verlag Berlin Heidelberg (2013).
 
+    Examples
+    ----------
+    >>> from pyts.datasets import load_gunpoint
+    >>> from pyts.decomposition import SingularSpectrumAnalysis
+    >>> X, _, _, _ = load_gunpoint(return_X_y=True)
+    >>> transformer = SingularSpectrumAnalysis(window_size=5)
+    >>> X_new = transformer.transform(X)
+    >>> X_new.shape
+    (50, 5, 150)
+
     """
 
     def __init__(self, window_size=4, groups=None):

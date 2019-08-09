@@ -62,6 +62,16 @@ class KBinsDiscretizer(BaseEstimator, TransformerMixin):
         - 'quantile': All bins in each sample have the same number of points
         - 'normal': Bin edges are quantiles from a standard normal distribution
 
+    Examples
+    --------
+    >>> from pyts.preprocessing import KBinsDiscretizer
+    >>> X = [[0, 1, 0, 2, 3, 3, 2, 1],
+    ...      [7, 0, 6, 1, 5, 3, 4, 2]]
+    >>> discretizer = KBinsDiscretizer(n_bins=2)
+    >>> discretizer.transform(X)
+    array([[0, 0, 0, 1, 1, 1, 1, 0],
+           [1, 0, 1, 0, 1, 0, 1, 0]])
+
     """
 
     def __init__(self, n_bins=5, strategy='quantile'):

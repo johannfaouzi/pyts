@@ -74,6 +74,16 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
     .. [1] J.-P Eckmann and S. Oliffson Kamphorst and D Ruelle, "Recurrence
            Plots of Dynamical Systems". Europhysics Letters (1987).
 
+    Examples
+    --------
+    >>> from pyts.datasets import load_gunpoint
+    >>> from pyts.image import RecurrencePlot
+    >>> X, _, _, _ = load_gunpoint(return_X_y=True)
+    >>> transformer = RecurrencePlot()
+    >>> X_new = transformer.transform(X)
+    >>> X_new.shape
+    (50, 150, 150)
+
     """
 
     def __init__(self, dimension=1, time_delay=1,

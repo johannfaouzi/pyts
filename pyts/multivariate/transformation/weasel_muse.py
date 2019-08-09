@@ -88,6 +88,16 @@ class WEASELMUSE(BaseEstimator, TransformerMixin):
     .. [1] P. Schäfer, and U. Leser, "Multivariate Time Series Classification
            with WEASEL+MUSE". Proceedings of ACM Conference, (2017).
 
+    Examples
+    --------
+    >>> from pyts.datasets import load_basic_motions
+    >>> from pyts.multivariate.transformation import WEASELMUSE
+    >>> X_train, X_test, y_train, y_test = load_basic_motions(return_X_y=True)
+    >>> transformer = WEASELMUSE()
+    >>> X_new = transformer.fit_transform(X_train, y_train)
+    >>> X_new.shape
+    (40, 9086)
+
     """
 
     def __init__(self, word_size=4, n_bins=4,

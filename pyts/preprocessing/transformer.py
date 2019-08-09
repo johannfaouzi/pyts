@@ -50,6 +50,16 @@ class PowerTransformer(BaseEstimator, TransformerMixin):
     .. [2] G.E.P. Box and D.R. Cox, "An Analysis of Transformations", Journal
            of the Royal Statistical Society B, 26, 211-252 (1964).
 
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyts.preprocessing import PowerTransformer
+    >>> X = [[1, 3, 4], [2, 2, 5]]
+    >>> pt = PowerTransformer()
+    >>> print(pt.transform(X))
+    [[-1.316...  0.209...  1.106...]
+     [-0.707... -0.707...  1.414...]]
+
     """
 
     def __init__(self, method='yeo-johnson', standardize=True):
@@ -128,6 +138,15 @@ class QuantileTransformer(BaseEstimator, TransformerMixin):
         If None, the random number generator is the RandomState instance used
         by np.random. Note that this is used by subsampling and smoothing
         noise.
+
+    Examples
+    --------
+    >>> from pyts.datasets import load_gunpoint
+    >>> from pyts.preprocessing import QuantileTransformer
+    >>> X, _, _, _  = load_gunpoint(return_X_y=True)
+    >>> qt = QuantileTransformer(n_quantiles=10)
+    >>> qt.transform(X) # doctest: +ELLIPSIS
+    array([...])
 
     """
 

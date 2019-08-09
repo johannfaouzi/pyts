@@ -56,6 +56,12 @@ def ucr_dataset_list():
     .. [1] `List of datasets on the UEA & UCR archive
            <http://www.timeseriesclassification.com/dataset.php>`_
 
+    Examples
+    --------
+    >>> from pyts.datasets import ucr_dataset_list
+    >>> ucr_dataset_list()[:3]
+    ['ACSF1', 'Adiac', 'AllGestureWiimoteX']
+
     """
     module_path = os.path.dirname(__file__)
     finfo = os.path.join(module_path, 'info', 'ucr.pickle')
@@ -82,6 +88,12 @@ def ucr_dataset_info(dataset=None):
     ----------
     .. [1] `List of datasets on the UEA & UCR archive
            <http://www.timeseriesclassification.com/dataset.php>`_
+
+    Examples
+    --------
+    >>> from pyts.datasets import ucr_dataset_info
+    >>> ucr_dataset_info('Adiac')['n_classes']
+    37
 
     """
     module_path = os.path.dirname(__file__)

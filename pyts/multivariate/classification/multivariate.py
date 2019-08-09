@@ -44,6 +44,18 @@ class MultivariateClassifier(BaseEstimator, ClassifierMixin):
     estimators_ : list of estimator objects
         The collection of fitted classifiers.
 
+    Examples
+    --------
+    >>> from pyts.classification import BOSSVS
+    >>> from pyts.datasets import load_basic_motions
+    >>> from pyts.multivariate.classification import MultivariateClassifier
+    >>> X_train, X_test, y_train, y_test = load_basic_motions(return_X_y=True)
+    >>> clf = MultivariateClassifier(BOSSVS())
+    >>> clf.fit(X_train, y_train) # doctest: +ELLIPSIS
+    MultivariateClassifier(...)
+    >>> clf.score(X_test, y_test)
+    1.0
+
     """
 
     def __init__(self, estimator, weights=None):

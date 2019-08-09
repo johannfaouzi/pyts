@@ -26,6 +26,16 @@ class InterpolationImputer(BaseEstimator, TransformerMixin):
         of the point) or as an integer specifying the order of the spline
         interpolator to use. Default is 'linear'.
 
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pyts.preprocessing import InterpolationImputer
+    >>> X = [[1, None, 3, 4], [8, None, 4, None]]
+    >>> imputer = InterpolationImputer()
+    >>> imputer.transform(X)
+    array([[1., 2., 3., 4.],
+           [8., 6., 4., 2.]])
+
     """
 
     def __init__(self, missing_values=np.nan, strategy='linear'):

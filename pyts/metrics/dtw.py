@@ -272,6 +272,14 @@ def dtw_classic(x, y, dist='square', return_cost=False,
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
 
+    Examples
+    --------
+    >>> from pyts.metrics import dtw_classic
+    >>> x = [0, 1, 1]
+    >>> y = [2, 0, 1]
+    >>> dtw_classic(x, y)
+    2.0
+
     """
     x, y, n_timestamps = _check_input_dtw(x, y)
 
@@ -336,6 +344,15 @@ def dtw_region(x, y, dist='square', region=None, return_cost=False,
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
 
+    Examples
+    --------
+    >>> from pyts.metrics import dtw_region
+    >>> x = [0, 1, 1]
+    >>> y = [2, 0, 1]
+    >>> region = [[0, 1, 1], [2, 2, 3]]
+    >>> dtw_region(x, y, region=region)
+    2.23...
+
     """
     x, y, n_timestamps = _check_input_dtw(x, y)
 
@@ -377,6 +394,13 @@ def sakoe_chiba_band(n_timestamps, window_size=0.1):
         Constraint region. The first row consists of the starting indices
         (included) and the second row consists of the ending indices (excluded)
         of the valid rows for each column.
+
+    Examples
+    --------
+    >>> from pyts.metrics import sakoe_chiba_band
+    >>> sakoe_chiba_band(5, window_size=2)
+    array([[0, 0, 0, 1, 2],
+           [3, 4, 5, 5, 5]])
 
     """
     if not isinstance(n_timestamps, (int, np.integer)):
@@ -457,6 +481,14 @@ def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
 
+    Examples
+    --------
+    >>> from pyts.metrics import dtw_sakoechiba
+    >>> x = [0, 1, 1]
+    >>> y = [2, 0, 1]
+    >>> dtw_sakoechiba(x, y, window_size=1)
+    2.0
+
     """
     x, y, n_timestamps = _check_input_dtw(x, y)
 
@@ -489,6 +521,13 @@ def itakura_parallelogram(n_timestamps, max_slope=2.):
         Constraint region. The first row consists of the starting indices
         (included) and the second row consists of the ending indices (excluded)
         of the valid rows for each column.
+
+    Examples
+    --------
+    >>> from pyts.metrics import itakura_parallelogram
+    >>> itakura_parallelogram(5)
+    array([[0, 1, 1, 2, 4],
+           [1, 3, 4, 4, 5]])
 
     """
     if not isinstance(n_timestamps, (int, np.integer)):
@@ -570,6 +609,14 @@ def dtw_itakura(x, y, dist='square', max_slope=2., return_cost=False,
         of the indices of the optimal path for x while the second row
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
+
+    Examples
+    --------
+    >>> from pyts.metrics import dtw_itakura
+    >>> x = [0, 1, 1]
+    >>> y = [2, 0, 1]
+    >>> dtw_itakura(x, y, max_slope=1.5)
+    2.23...
 
     """
     x, y, n_timestamps = _check_input_dtw(x, y)
@@ -674,6 +721,14 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
 
+    Examples
+    --------
+    >>> from pyts.metrics import dtw_multiscale
+    >>> x = [0, 1, 1]
+    >>> y = [2, 0, 1]
+    >>> dtw_multiscale(x, y, resolution=2)
+    2.23...
+
     """
     x, y, n_timestamps = _check_input_dtw(x, y)
     if not isinstance(resolution, (int, np.integer)):
@@ -764,6 +819,14 @@ def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
         of the indices of the optimal path for x while the second row
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
+
+    Examples
+    --------
+    >>> from pyts.metrics import dtw_fast
+    >>> x = [0, 1, 1]
+    >>> y = [2, 0, 1]
+    >>> dtw_multiscale(x, y, resolution=2, radius=1)
+    2.0
 
     """
     x, y, n_timestamps = _check_input_dtw(x, y)
@@ -872,6 +935,14 @@ def dtw(x, y, dist='square', method='classic', options=None, return_cost=False,
         of the indices of the optimal path for x while the second row
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
+
+    Examples
+    --------
+    >>> from pyts.metrics import dtw
+    >>> x = [0, 1, 1]
+    >>> y = [2, 0, 1]
+    >>> dtw(x, y, method='sakoechiba', options={'window_size': 2})
+    2.0
 
     """
     if options is None:

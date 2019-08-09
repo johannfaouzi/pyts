@@ -43,7 +43,7 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
         nature of the problem.
 
     metric : string or DistanceMetric object (default = 'minkowski')
-        the distance metric to use for the tree.  The default metric is
+        The distance metric to use for the tree.  The default metric is
         minkowski, and with p=2 is equivalent to the standard Euclidean
         metric. See the documentation of the DistanceMetric class from
         scikit-learn for a list of available metrics. For Dynamic Time
@@ -67,6 +67,22 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
     ----------
     classes_ : array, shape = (n_classes,)
         An array of class labels known to the classifier.
+
+    Examples
+    --------
+    >>> from pyts.classification import KNeighborsClassifier
+    >>> from pyts.datasets import load_gunpoint
+    >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
+    >>> clf = KNeighborsClassifier()
+    >>> clf.fit(X_train, y_train) # doctest: +ELLIPSIS
+    KNeighborsClassifier(...)
+    >>> clf.score(X_test, y_test)
+    0.91...
+    >>> clf = KNeighborsClassifier(metric='dtw_sakoechiba')
+    >>> clf.fit(X_train, y_train) # doctest: +ELLIPSIS
+    KNeighborsClassifier(...)
+    >>> clf.score(X_test, y_test)
+    0.94
 
     """
 

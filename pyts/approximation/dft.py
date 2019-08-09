@@ -40,7 +40,7 @@ class DiscreteFourierTransform(BaseEstimator, TransformerMixin):
 
     Attributes
     ----------
-    support_ : array, shape (n_coefs, )
+    support_ : array, shape = (n_coefs,)
         Indices of the kept Fourier coefficients.
 
     References
@@ -50,6 +50,15 @@ class DiscreteFourierTransform(BaseEstimator, TransformerMixin):
            International Conference on Extending Database Technology,
            15, 516-527 (2012).
 
+    Examples
+    --------
+    >>> from pyts.approximation import DiscreteFourierTransform
+    >>> from pyts.datasets import load_gunpoint
+    >>> X, _, _, _ = load_gunpoint(return_X_y=True)
+    >>> transformer = DiscreteFourierTransform(n_coefs=4)
+    >>> X_new = transformer.fit_transform(X)
+    >>> X_new.shape
+    (50, 4)
 
     """
 

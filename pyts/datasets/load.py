@@ -104,6 +104,16 @@ def load_basic_motions(return_X_y=False):
     .. [1] `UCR archive entry for the PigCVP dataset
            <http://www.timeseriesclassification.com/description.php?Dataset=BasicMotions>`_
 
+    Examples
+    --------
+    >>> from pyts.datasets import load_basic_motions
+    >>> bunch = load_basic_motions()
+    >>> bunch.data_train.shape
+    (40, 6, 100)
+    >>> X_train, X_test, y_train, y_test = load_basic_motions(return_X_y=True)
+    >>> X_train.shape
+    (40, 6, 100)
+
     """  # noqa: E501
     return _load_dataset('BasicMotions', 'UEA', return_X_y)
 
@@ -163,6 +173,16 @@ def load_coffee(return_X_y=False):
     .. [3] `UCR archive entry for the PigCVP dataset
            <http://www.timeseriesclassification.com/description.php?Dataset=Coffee>`_
 
+    Examples
+    --------
+    >>> from pyts.datasets import load_coffee
+    >>> bunch = load_coffee()
+    >>> bunch.data_train.shape
+    (28, 286)
+    >>> X_train, X_test, y_train, y_test = load_coffee(return_X_y=True)
+    >>> X_train.shape
+    (28, 286)
+
     """  # noqa: E501
     return _load_dataset('Coffee', 'UCR', return_X_y)
 
@@ -220,6 +240,16 @@ def load_gunpoint(return_X_y=False):
     .. [1] `UCR archive entry for the PigCVP dataset
            <http://www.timeseriesclassification.com/description.php?Dataset=GunPoint>`_
 
+    Examples
+    --------
+    >>> from pyts.datasets import load_gunpoint
+    >>> bunch = load_gunpoint()
+    >>> bunch.data_train.shape
+    (50, 150)
+    >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
+    >>> X_train.shape
+    (50, 150)
+
     """  # noqa: E501
     return _load_dataset('GunPoint', 'UCR', return_X_y)
 
@@ -274,6 +304,17 @@ def load_pig_central_venous_pressure(return_X_y=False):
 
     .. [2] `UCR archive entry for the PigCVP dataset
            <http://www.timeseriesclassification.com/description.php?Dataset=PigCVP>`_
+
+    Examples
+    --------
+    >>> from pyts.datasets import load_pig_central_venous_pressure
+    >>> bunch = load_pig_central_venous_pressure()
+    >>> bunch.data_train.shape
+    (104, 2000)
+    >>> X_train, X_test, y_train, y_test = load_pig_central_venous_pressure(
+    ...    return_X_y=True)
+    >>> X_train.shape
+    (104, 2000)
 
     """  # noqa: E501
     return _load_dataset('PigCVP', 'UCR', return_X_y)

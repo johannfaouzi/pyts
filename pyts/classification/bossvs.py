@@ -100,6 +100,17 @@ class BOSSVS(BaseEstimator, ClassifierMixin):
     .. [1] P. Schäfer, "Scalable Time Series Classification". Data Mining and
            Knowledge Discovery, 30(5), 1273-1298 (2016).
 
+    Examples
+    --------
+    >>> from pyts.classification import BOSSVS
+    >>> from pyts.datasets import load_gunpoint
+    >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
+    >>> clf = BOSSVS(window_size=28)
+    >>> clf.fit(X_train, y_train) # doctest: +ELLIPSIS
+    BOSSVS(...)
+    >>> clf.score(X_test, y_test)
+    0.98
+
     """
 
     def __init__(self, word_size=4, n_bins=4, window_size=10, window_step=1,

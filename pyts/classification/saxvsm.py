@@ -84,6 +84,17 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
            Classification Using SAX and Vector Space Model". International
            Conference on Data Mining, 13, 1175-1180 (2013).
 
+    Examples
+    --------
+    >>> from pyts.classification import SAXVSM
+    >>> from pyts.datasets import load_gunpoint
+    >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
+    >>> clf = SAXVSM(window_size=34, sublinear_tf=False, use_idf=False)
+    >>> clf.fit(X_train, y_train) # doctest: +ELLIPSIS
+    SAXVSM(...)
+    >>> clf.score(X_test, y_test)
+    0.76
+
     """
 
     def __init__(self, n_bins=4, strategy='quantile', window_size=4,

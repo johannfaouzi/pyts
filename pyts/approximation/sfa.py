@@ -63,7 +63,7 @@ class SymbolicFourierApproximation(BaseEstimator, TransformerMixin):
         Bin edges with shape = (n_bins - 1,) if ``strategy='normal'`` or
         (n_timestamps, n_bins - 1) otherwise.
 
-    support_ : array, shape (n_coefs, )
+    support_ : array, shape = (n_coefs,)
         Indices of the kept Fourier coefficients.
 
     References
@@ -72,6 +72,16 @@ class SymbolicFourierApproximation(BaseEstimator, TransformerMixin):
            and Index for Similarity Search in High Dimensional Datasets",
            International Conference on Extending Database Technology,
            15, 516-527 (2012).
+
+    Examples
+    --------
+    >>> from pyts.approximation import SymbolicFourierApproximation
+    >>> from pyts.datasets import load_gunpoint
+    >>> X, _, _, _ = load_gunpoint(return_X_y=True)
+    >>> transformer = SymbolicFourierApproximation(n_coefs=4)
+    >>> X_new = transformer.fit_transform(X)
+    >>> X_new.shape
+    (50, 4)
 
     """
 

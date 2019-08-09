@@ -8,7 +8,7 @@ from ..utils import windowed_view
 
 
 class BagOfWords(BaseEstimator, TransformerMixin):
-    """Transform time series into bag of words.
+    r"""Transform time series into bag of words.
 
     Parameters
     ----------
@@ -26,6 +26,18 @@ class BagOfWords(BaseEstimator, TransformerMixin):
     numerosity_reduction : bool (default = True)
         If True, delete sample-wise all but one occurence of back to back
         identical occurences of the same words.
+
+    Examples
+    --------
+    >>> from pyts.bag_of_words import BagOfWords
+    >>> X = [['a', 'a', 'b', 'a', 'b', 'b', 'b', 'b', 'a'],
+    ...      ['a', 'b', 'c', 'c', 'c', 'c', 'a', 'a', 'c']]
+    >>> bow = BagOfWords(window_size=2)
+    >>> print(bow.transform(X))
+    ['aa ab ba ab bb ba' 'ab bc cc ca aa ac']
+    >>> bow = BagOfWords(window_size=2, numerosity_reduction=False)
+    >>> print(bow.transform(X))
+    ['aa ab ba ab bb bb bb ba' 'ab bc cc cc cc ca aa ac']
 
     """
 

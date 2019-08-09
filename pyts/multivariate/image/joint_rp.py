@@ -48,6 +48,16 @@ class JointRecurrencePlot(BaseEstimator, TransformerMixin):
     .. [1] M. Romano, M. Thiel, J. Kurths and W. con Bloh, "Multivariate
            Recurrence Plots". Physics Letters A (2004)
 
+    Examples
+    --------
+    >>> from pyts.datasets import load_basic_motions
+    >>> from pyts.multivariate.image import JointRecurrencePlot
+    >>> X, _, _, _ = load_basic_motions(return_X_y=True)
+    >>> transformer = JointRecurrencePlot()
+    >>> X_new = transformer.transform(X)
+    >>> X_new.shape
+    (40, 100, 100)
+
     """  # noqa: E501
 
     def __init__(self, dimension=1, time_delay=1, threshold=None,
