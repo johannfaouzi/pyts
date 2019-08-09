@@ -78,11 +78,6 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
     KNeighborsClassifier(...)
     >>> clf.score(X_test, y_test)
     0.91...
-    >>> clf = KNeighborsClassifier(metric='dtw_sakoechiba')
-    >>> clf.fit(X_train, y_train) # doctest: +ELLIPSIS
-    KNeighborsClassifier(...)
-    >>> clf.score(X_test, y_test)
-    0.94
 
     """
 
