@@ -29,7 +29,11 @@ for i, strategy in enumerate(['linear', 'quadratic', 'cubic', 'nearest']):
     plt.subplot(2, 2, i + 1)
     plt.plot(X_imputed[0], 'o--', color='C1', label='Imputed')
     plt.plot(X[0], 'o--', color='C0', label='Original')
-    plt.title("{0} Interpolation".format(strategy.capitalize()))
-    plt.legend(loc='best')
+    plt.title("{0} Interpolation".format(strategy.capitalize()), fontsize=16)
+    plt.legend(loc='best', fontsize=14)
 
+plt.suptitle('Interpolating missing values with different strategies',
+             fontsize=20)
+plt.tight_layout()
+plt.subplots_adjust(top=0.9)
 plt.show()

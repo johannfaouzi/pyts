@@ -3,4 +3,4 @@
 Dataset utilities
 -----------------
 
-Examples on how to make time series datasets.
+Examples on how to load and make time series datasets.

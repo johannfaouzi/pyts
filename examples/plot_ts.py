@@ -18,4 +18,5 @@ X = rng.randn(n_samples, n_timestamps)
 
 # Plot the first time series
 plt.plot(X[0], 'o-')
+plt.tight_layout()
 plt.show()

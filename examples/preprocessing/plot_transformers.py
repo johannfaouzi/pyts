@@ -7,33 +7,23 @@ This example shows the different transforming algorithms available in
 :mod:`pyts.preprocessing`.
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
+from pyts.datasets import load_gunpoint
 from pyts.preprocessing import PowerTransformer, QuantileTransformer
 
-# Parameters
-n_samples, n_timestamps = 100, 48
-
-# Toy dataset
-rng = np.random.RandomState(41)
-X = rng.randn(n_samples, n_timestamps)
+X, _, _, _ = load_gunpoint(return_X_y=True)
+n_timestamps = X.shape[1]
 
 # Scale the data with different scaling algorithms
 X_power = PowerTransformer().transform(X)
-X_quantile = QuantileTransformer().transform(X)
+X_quantile = QuantileTransformer(n_quantiles=n_timestamps).transform(X)
 
 # Show the results for the first time series
-plt.figure(figsize=(16, 6))
-
-ax1 = plt.subplot(121)
-ax1.plot(X[0], 'o-', label='Original')
-ax1.set_title('Original time series')
-ax1.legend(loc='best')
-
-ax2 = plt.subplot(122)
-ax2.plot(X_power[0], 'o--', color='C1', label='PowerTransformer')
-ax2.plot(X_quantile[0], 'o--', color='C2', label='QuantileTransformer')
-ax2.set_title('Transformed time series')
-ax2.legend(loc='best')
-
+plt.figure(figsize=(8, 6))
+plt.plot(X[0], '--', label='Original')
+plt.plot(X_power[0], '--', label='PowerTransformer')
+plt.plot(X_quantile[0], '--', label='QuantileTransformer')
+plt.legend(loc='best', fontsize=12)
+plt.title('Transforming time series', fontsize=16)
+plt.tight_layout()
 plt.show()

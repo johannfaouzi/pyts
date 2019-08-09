@@ -9,17 +9,13 @@ available: Gramian Angular Summation Field and Gramian Angular Difference
 Field.
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import ImageGrid
 from pyts.image import GramianAngularField
+from pyts.datasets import load_gunpoint
 
 # Parameters
-n_samples, n_timestamps = 100, 144
-
-# Toy dataset
-rng = np.random.RandomState(41)
-X = rng.randn(n_samples, n_timestamps)
+X, _, _, _ = load_gunpoint(return_X_y=True)
 
 # Transform the time series into Gramian Angular Fields
 gasf = GramianAngularField(image_size=24, method='summation')
@@ -43,7 +39,9 @@ titles = ['Gramian Angular Summation Field',
           'Gramian Angular Difference Field']
 for image, title, ax in zip(images, titles, grid):
     im = ax.imshow(image, cmap='rainbow', origin='lower')
-    ax.set_title(title)
+    ax.set_title(title, fontdict={'fontsize': 16})
 ax.cax.colorbar(im)
 ax.cax.toggle_label(True)
+
+plt.suptitle('Gramian Angular Fields', y=0.92, fontsize=20)
 plt.show()

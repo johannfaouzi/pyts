@@ -31,14 +31,18 @@ plt.figure(figsize=(16, 6))
 
 ax1 = plt.subplot(121)
 ax1.plot(X[0], 'o-', label='Original')
-ax1.legend(loc='best')
+ax1.legend(loc='best', fontsize=14)
 
 ax2 = plt.subplot(122)
 for i in range(len(groups)):
     ax2.plot(X_ssa[0, i], 'o--', label='SSA {0}'.format(i + 1))
-ax2.legend(loc='best')
+ax2.legend(loc='best', fontsize=14)
 
+plt.suptitle('Singular Spectrum Analysis', fontsize=20)
+
+plt.tight_layout()
+plt.subplots_adjust(top=0.88)
 plt.show()
 
 # The first subseries consists of the trend of the original time series.
-# The second and third subseries consist of the noise.
+# The second and third subseries consist of noise.

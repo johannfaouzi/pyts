@@ -23,4 +23,6 @@ for i, classe in enumerate(['cylinder', 'bell', 'funnel']):
         plt.plot(x, color='C0', linewidth=0.9)
     plt.title('Class: {}'.format(classe), fontsize=16)
 
+plt.tight_layout()
 plt.subplots_adjust(hspace=0.4)
+plt.show()

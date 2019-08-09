@@ -40,7 +40,7 @@ for x, y, s, bottom in zip(range(n_timestamps), X[0], X_sax[0], bottom_bool):
 plt.hlines(bins, 0, n_timestamps, color='g', linestyles='--', linewidth=0.5)
 sax_legend = mlines.Line2D([], [], color='#ff7f0e', marker='*',
                            label='SAX - {0} bins'.format(n_bins))
-first_legend = plt.legend(handles=[sax_legend], fontsize=14, loc=4)
+first_legend = plt.legend(handles=[sax_legend], fontsize=14, loc=(0.79, 0.87))
 ax = plt.gca().add_artist(first_legend)
-plt.legend(loc='best', fontsize=14)
+plt.legend(loc=(0.835, 0.93), fontsize=14)
 plt.show()
