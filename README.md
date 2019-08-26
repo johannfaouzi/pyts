@@ -99,9 +99,13 @@ can classify time series. Implemented algorithms are
 [SAXVSM](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.SAXVSM.html#) and
 [BOSSVS](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.BOSSVS.html#).
 
+- `datasets`: This module provides utilities to make or load toy datasets,
+as well as fetching datasets from the
+[UEA & UCR Time Series Classification Repository](http://www.timeseriesclassification.com).
+
 - `decomposition`: This module provides implementations of algorithms that
-decompose a time series into several time series. The only implemented algorithm
-is
+decompose a time series into several time series. The only implemented
+algorithm is
 [Singular Spectrum Analysis](https://pyts.readthedocs.io/en/latest/generated/pyts.decomposition.SingularSpectrumAnalysis.html#).
 
 - `image`: This module provides implementations of algorithms that transform
@@ -116,6 +120,15 @@ to time series. Implemented metrics are
 with several variants and the
 [BOSS](https://pyts.readthedocs.io/en/latest/generated/pyts.metrics.boss.html#)
 metric.
+
+- `multivariate`: This modules provides utilities to deal with multivariate
+time series. Available tools are
+[MultivariateTransformer](https://pyts.readthedocs.io/en/latest/generated/pyts.multivariate.transformation.MultivariateTransformer.html) and
+[MultivariateClassifier](https://pyts.readthedocs.io/en/latest/generated/pyts.multivariate.classification.MultivariateClassifier.html)
+to transform and classify multivariate time series using tools for univariate
+time series respectively, as well as
+[JointRecurrencePlot](https://pyts.readthedocs.io/en/latest/generated/pyts.multivariate.image.JointRecurrencePlot.html) and
+[WEASEL+MUSE](https://pyts.readthedocs.io/en/latest/generated/pyts.multivariate.transformation.WEASELMUSE.html).
 
 - `preprocessing`: This module provides most of the scikit-learn preprocessing
 tools but applied sample-wise (i.e. to each time series independently) instead
