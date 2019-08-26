@@ -1,5 +1,8 @@
 """Code for Symbolic Fourier Approximation."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
 from sklearn.utils.validation import check_is_fitted

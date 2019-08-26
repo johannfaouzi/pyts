@@ -3,6 +3,9 @@ Utility functions for the UEA multivariate time series classification
 archive.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import os
 import pickle

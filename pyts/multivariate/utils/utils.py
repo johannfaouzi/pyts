@@ -1,5 +1,8 @@
 """The :mod:`pyts.multivariate.utils` module includes utility tools."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 from sklearn.utils import check_array
 
 

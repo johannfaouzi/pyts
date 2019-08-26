@@ -1,5 +1,8 @@
 """Functions to load datasets."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import os
 from .uea import _load_uea_dataset
 from .ucr import _load_ucr_dataset

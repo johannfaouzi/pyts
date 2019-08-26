@@ -1,5 +1,8 @@
 """Code for Dynamic Time Warping and its variants."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from math import ceil, log2, sqrt
 from numba import njit, prange

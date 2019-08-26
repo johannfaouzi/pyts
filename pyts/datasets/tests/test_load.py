@@ -1,5 +1,8 @@
 """Testing for datatset loading."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import pytest
 from ..load import (load_basic_motions, load_coffee, load_gunpoint,

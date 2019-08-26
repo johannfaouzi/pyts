@@ -1,5 +1,8 @@
 """Code for Reccurence Plot."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from math import ceil
 from numpy.lib.stride_tricks import as_strided

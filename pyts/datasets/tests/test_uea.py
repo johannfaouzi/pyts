@@ -1,5 +1,8 @@
 """Testing for the UEA utility functions."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import pytest
 import re
 from pyts.datasets import uea_dataset_info, uea_dataset_list

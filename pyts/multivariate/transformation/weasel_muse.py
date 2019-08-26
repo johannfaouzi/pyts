@@ -1,5 +1,8 @@
 """WEASEL+MUSE algorithm."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 
 from scipy.sparse import csr_matrix, hstack

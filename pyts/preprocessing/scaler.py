@@ -1,5 +1,8 @@
 """Code for scalers."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import StandardScaler as SklearnStandardScaler
 from sklearn.preprocessing import MinMaxScaler as SklearnMinMaxScaler

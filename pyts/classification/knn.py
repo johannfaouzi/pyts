@@ -1,5 +1,8 @@
 """Code for k-nearest-neighbors."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.neighbors import KNeighborsClassifier as SklearnKNN
 from sklearn.preprocessing import LabelEncoder

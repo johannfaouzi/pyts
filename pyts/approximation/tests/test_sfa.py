@@ -1,5 +1,8 @@
 """Testing for Symbolic Fourier Approximation."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import pytest
 from sklearn.feature_selection import f_classif

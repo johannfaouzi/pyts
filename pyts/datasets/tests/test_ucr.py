@@ -1,5 +1,8 @@
 """Testing for the UCR utility functions."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import pytest
 import re
 from pyts.datasets import ucr_dataset_info, ucr_dataset_list

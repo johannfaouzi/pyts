@@ -1,5 +1,8 @@
 """Utility class for multivariate time series classification."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from numba import njit, prange
 from sklearn.base import BaseEstimator, ClassifierMixin, clone

@@ -1,5 +1,8 @@
 """Testing for Dynamic Time Warping and its variants."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import pytest
 import re

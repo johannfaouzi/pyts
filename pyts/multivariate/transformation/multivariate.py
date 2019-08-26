@@ -1,5 +1,8 @@
 """Utility class for multivariate time series transformation."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from scipy.sparse import csr_matrix, hstack
 from sklearn.base import BaseEstimator, TransformerMixin, clone

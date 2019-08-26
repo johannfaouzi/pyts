@@ -1,5 +1,8 @@
 """Functions to make datasets."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from sklearn.utils import check_array, check_random_state
 from sklearn.utils import shuffle as utils_shuffle

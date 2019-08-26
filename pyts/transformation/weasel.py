@@ -1,5 +1,8 @@
 """Code for Word ExtrAction for time SEries cLassification."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from scipy.sparse import coo_matrix, csr_matrix, hstack
 from sklearn.utils.validation import check_array, check_X_y, check_is_fitted

@@ -1,5 +1,8 @@
 """Code for Bag-of-Words."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from math import ceil
 from sklearn.base import BaseEstimator, TransformerMixin

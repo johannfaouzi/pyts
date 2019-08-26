@@ -1,5 +1,8 @@
 """Code for Markov Transition Field."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from math import ceil
 from numba import njit, prange

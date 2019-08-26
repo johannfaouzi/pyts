@@ -1,5 +1,8 @@
 """Code for SAX-VSM."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from sklearn.utils.validation import check_X_y, check_is_fitted
 from sklearn.utils.multiclass import check_classification_targets

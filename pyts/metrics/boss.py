@@ -1,5 +1,8 @@
 """Code for BOSS metric."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from math import sqrt
 from sklearn.utils import check_array

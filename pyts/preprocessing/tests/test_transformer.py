@@ -1,5 +1,8 @@
 """Testing for transformers."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from scipy.stats import boxcox, norm, yeojohnson
 from pyts.preprocessing import StandardScaler

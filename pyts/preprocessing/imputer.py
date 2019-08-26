@@ -1,5 +1,8 @@
 """Code for imputers."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from scipy.interpolate import interp1d
 from sklearn.base import BaseEstimator, TransformerMixin

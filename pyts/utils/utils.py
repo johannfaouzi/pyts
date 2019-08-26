@@ -1,5 +1,8 @@
 """Code for utility tools."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from numpy.lib.stride_tricks import as_strided
 from sklearn.utils import check_array

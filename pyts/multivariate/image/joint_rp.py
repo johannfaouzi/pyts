@@ -1,5 +1,8 @@
 """Joint Recurrence Plots."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from ...image import RecurrencePlot

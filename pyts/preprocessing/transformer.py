@@ -1,5 +1,8 @@
 """Code for transformers."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import PowerTransformer as SklearnPowerTransformer
 from sklearn.preprocessing import (QuantileTransformer as

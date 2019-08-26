@@ -1,5 +1,8 @@
 """Code for Bag-of-SFA Symbols."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from math import ceil
 from scipy.sparse import csr_matrix

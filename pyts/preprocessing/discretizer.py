@@ -1,5 +1,8 @@
 """Code for discretizers."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 from numba import njit, prange
 from scipy.stats import norm

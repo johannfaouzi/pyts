@@ -1,5 +1,8 @@
 """Testing for Word ExtrAction for time SEries cLassification."""
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import pytest
 import re
