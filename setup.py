@@ -1,12 +1,11 @@
-"""A python package for time series transformation and classification."""
+"""A python package for time series classification."""
 
 import pyts
 from setuptools import find_packages, setup
 
 
 DISTNAME = 'pyts'
-DESCRIPTION = ('A python package for time series transformation '
-               'and classification')
+DESCRIPTION = 'A python package for time series classification'
 with open('README.md') as f:
     LONG_DESCRIPTION = f.read()
 LONG_DESCRIPTION_CONTENT_TYPE = 'text/markdown'
