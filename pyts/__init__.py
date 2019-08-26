@@ -10,5 +10,5 @@ several tools to perform these transformations.
 __version__ = '0.9.0'
 
 __all__ = ['approximation', 'bag_of_words', 'classification', 'datasets',
-           'decomposition', 'image', 'metrics', 'preprocessing',
-           'transformation', 'utils']
+           'decomposition', 'image', 'metrics', 'multivariate',
+           'preprocessing', 'transformation', 'utils']
