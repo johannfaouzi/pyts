@@ -26,6 +26,10 @@ numba, you can easily install pyts using ``pip``::
 
     pip install pyts
 
+or ``conda`` via the ``conda-forge`` channel::
+
+    conda install -c conda-forge pyts
+
 You can also get the latest version of pyts by cloning the repository::
 
     git clone https://github.com/johannfaouzi/pyts.git

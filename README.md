@@ -8,7 +8,7 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/johannfaouzi/pyts.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/johannfaouzi/pyts/context:python)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1244152.svg)](https://doi.org/10.5281/zenodo.1244152)
 
-## pyts: a Python package for time series transformation and classification
+## pyts: a Python package for time series classification
 
 pyts is a Python package for time series transformation and classification. It
 aims to make time series classification easily accessible by providing
@@ -38,6 +38,10 @@ If you already have a working installation of numpy, scipy, scikit-learn and
 numba, you can easily install pyts using ``pip``
 
     pip install pyts
+
+or ``conda`` via the ``conda-forge`` channel
+
+  conda install -c conda-forge pyts
 
 You can also get the latest version of pyts by cloning the repository
 
