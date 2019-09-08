@@ -49,8 +49,8 @@ def _check_input_dtw(x, y):
 
 def _check_region(region, n_timestamps_1, n_timestamps_2):
     """Project region on the feasible set."""
-    region = np.array([reg[:n_timestamps_2] for reg in region])
-    region = np.clip(region, 0, n_timestamps_1)
+
+    region = np.clip(region[:, :n_timestamps_1], 0, n_timestamps_2)
 
     return region
 
@@ -440,8 +440,7 @@ def sakoe_chiba_band(n_timestamps_1, n_timestamps_2=None, window_size=0.1):
     region = np.array([slope * np.arange(n_timestamps_1) for _ in range(2)])
     region = np.ceil(region).astype(int)
     region += np.array([- window_size_, window_size_ + 1]).reshape(2, 1)
-    # region = _check_region(region, n_timestamps_1, n_timestamps_2)
-    region = np.clip(region, 0, n_timestamps_2)
+    region = _check_region(region, n_timestamps_1, n_timestamps_2)
     return region
 
 
@@ -567,25 +566,41 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     # rescale max_slop to the relative lengths slope
 
     min_slope = 1 / max_slope
-    scale = (n_timestamps_1 - 1) / (n_timestamps_2 - 1)
+    scale = (n_timestamps_2 - 1) / (n_timestamps_1 - 1)
     min_slope *= min(scale, 1 / scale)
     max_slope *= max(scale, 1 / scale)
+
+    # Now we create the piecewise linear functions defining the parallelogram
+
+    # lower_bound[0] = min_slope * x
+    # lower_bound[1] = max_slope * (x - n_timestamps_1) + n_timestamps_2
 
     centered_scale = np.arange(n_timestamps_1) - n_timestamps_1 + 1
     lower_bound = np.empty((2, n_timestamps_1))
     lower_bound[0] = min_slope * np.arange(n_timestamps_1)
     lower_bound[1] = max_slope * centered_scale + n_timestamps_2 - 1
-    lower_bound = np.round(lower_bound, 2)
-    lower_bound = np.floor(np.max(lower_bound, axis=0))
+
+    # take the max of the lower linear funcs
+    lower_bound = np.max(np.floor(lower_bound), axis=0)
+
+    # upper_bound[0] = max_slope * x
+    # upper_bound[1] = min_slope * (x - n_timestamps_1) + n_timestamps_2
 
     upper_bound = np.empty((2, n_timestamps_1))
     upper_bound[0] = max_slope * np.arange(n_timestamps_1) + 1
     upper_bound[1] = min_slope * centered_scale + n_timestamps_2
-    upper_bound = np.round(upper_bound, 2)
-    upper_bound = np.ceil(np.min(upper_bound, axis=0))
-    region = np.asarray([lower_bound, upper_bound]).astype('int64')
 
-    # region = _check_region(region, n_timestamps_1, n_timestamps_2)
+    # take the min of the upper linear funcs
+    upper_bound = np.ceil(np.min(upper_bound, axis=0))
+
+    # avoid broken paths by forcing end points
+    if upper_bound[0] < lower_bound[1]:
+        lower_bound[1] = upper_bound[0]
+    if upper_bound[-2] < lower_bound[-1]:
+        upper_bound[-2] = lower_bound[-1]
+
+    region = np.asarray([lower_bound, upper_bound]).astype('int64')
+    region = _check_region(region, n_timestamps_1, n_timestamps_2)
 
     return region
 
@@ -689,8 +704,7 @@ def _multiscale_region(n_timestamps_1, n_timestamps_2, resolution_level,
         region_reduced[1, i] = (max_ + 1) * resolution_level
 
     region = np.repeat(region_reduced, resolution_level, axis=1)
-    region = np.clip(region[:, :n_timestamps_1], 0, n_timestamps_2)
-    # region = _check_region(region, n_timestamps_1, n_timestamps_2)
+    region = _check_region(region, n_timestamps_1, n_timestamps_2)
 
     return region.astype('int64')
 
