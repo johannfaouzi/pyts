@@ -16,7 +16,6 @@ import sys
 import os
 
 import sphinx_gallery
-import sphinx_rtd_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -120,7 +119,7 @@ exclude_patterns = ['_build', '_templates']
 pygments_style = 'sphinx'
 
 # Custom style
-html_style = 'css/pyts.css'
+#html_style = 'css/pyts.css'
 
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
@@ -133,15 +132,36 @@ html_style = 'css/pyts.css'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = {
+    # Logo and description
+    'description': 'A Python Package for Time Series Classification',
+    'logo': 'img/logo.png',
+    'logo_name': 'false',
+    'logo_text_align': 'center',
+
+    # GitHub stuff
+    'github_banner': 'true',
+    'github_repo': 'pyts',
+    'github_type': 'star',
+    'github_user': 'johannfaouzi',
+
+    # Page and sidebar widths
+    'page_width': '1250px',
+    'sidebar_width': '250px',
+
+    # Font sizes
+    'font_size': '15px',
+    'code_font_size': '14px'
+
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+#html_theme_path = [alabaster.get_path()]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -152,7 +172,7 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#html_logo = None
+#html_logo = '_static/img/logo.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -178,7 +198,19 @@ html_static_path = ['_static']
 #html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = {}
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'relations.html',
+        'searchbox.html'
+    ]
+}
+
+# HTML context
+html_context = {
+    'css_files': ['_static/custom.css'],
+}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -314,5 +346,5 @@ sphinx_gallery_conf = {
 }
 
 def setup(app):
-    app.add_stylesheet('my_theme.css')
+    app.add_stylesheet('custom.css')
     app.add_javascript('js/copybutton.js')

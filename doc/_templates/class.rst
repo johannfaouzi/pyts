@@ -6,7 +6,6 @@
 .. autoclass:: {{ objname }}
 
    {% block methods %}
-   .. rubric:: Methods
    .. automethod:: __init__
    {% endblock %}
 
@@ -14,4 +13,4 @@
 
 .. raw:: html
 
-    <div style='clear:both'></div>
+    <div class="clearer"></div>

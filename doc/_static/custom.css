@@ -1,0 +1,92 @@
+/* Sidebar font properties */
+div.sphinxsidebar h3 { font-size: 22px; font-weight: 600; }
+div.sphinxsidebar p { font-size: 20px; font-weight: 600; }
+div.sphinxsidebar ul li.toctree-l1 > a { font-size: 16px; }
+div.sphinxsidebar ul li.toctree-l2 > a { font-size: 14px; }
+div.sphinxsidebar p span { font-size: 16px; font-weight: 600; }
+
+/* Description font properties */
+div.sphinxsidebar p.blurb { font-size: 17px; font-weight: 600; }
+
+/* Font properties for level-1 headers */
+
+div.body h1 {
+  text-align: center;
+  font-size: 30px;
+  border-radius: 0px 10px 0px 10px;
+  background-color: rgba(47, 79, 79, 0.3);
+}
+
+div.body h1 span {
+  font-size: 22px;
+  font-weight: 800;
+  background-color: none;
+}
+
+div.body h1 span {
+  font-size: 22px;
+  font-weight: 1000;
+  background-color: none;
+  color: rgba(47, 79, 79, 1);
+}
+
+div.reference.internal h1 span {
+  outline: none;
+  border-bottom: none;
+}
+
+/* Font properties for level-2 headers */
+
+div.body h2 {
+  font-size: 25px;
+  border-radius: 10px;
+  padding-left: 15px;
+  background-color: rgba(47, 79, 79, 0.2);
+}
+
+div.body h2 span {
+  font-size: 18px;
+  font-weight: 1000;
+  background-color: none;
+  color: rgba(47, 79, 79, 1);
+}
+
+a.reference {
+  outline: none;
+  border-style: none;
+}
+
+/* Font properties for level-3 headers */
+
+div.body h3 {
+  font-size: 20px;
+  border-radius: 10px;
+  padding-left: 15px;
+  background-color: none;
+}
+
+/* Properties for methods (description lists) */
+
+div.body dl.method dt {
+  border-radius: 10px;
+  padding: 5px;
+  background-color: rgba(47, 47, 47, 0.07);
+}
+
+div.body dl.method dd {
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+/* Exclude tables inside a method */
+
+div.body dl.method dt dd table dt {
+  border-radius: none;
+  padding: none;
+  background-color: none;
+}
+
+div.body dl.method dt dd table dd {
+  margin-top: none;
+  margin-bottom: none;
+}
