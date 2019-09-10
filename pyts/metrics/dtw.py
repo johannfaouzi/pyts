@@ -389,7 +389,7 @@ def sakoe_chiba_band(n_timestamps_1, n_timestamps_2=None, window_size=0.1):
         The size of the first time series.
 
     n_timestamps_2 : int (optional, default None)
-        The size of the second time series. if None, set to `n_timestamps_1`.
+        The size of the second time series. If None, set to `n_timestamps_1`.
 
     window_size : int or float (default = 0.1)
         The window above and below the diagonale. If float, it must be between
@@ -565,10 +565,11 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
 
     # rescale max_slop to the relative lengths slope
 
-    min_slope = 1 / max_slope
     scale = (n_timestamps_2 - 1) / (n_timestamps_1 - 1)
-    min_slope *= min(scale, 1 / scale)
-    max_slope *= max(scale, 1 / scale)
+    min_slope = 1 / max_slope
+
+    max_slope *= scale
+    min_slope *= scale
 
     # Now we create the piecewise linear functions defining the parallelogram
 
@@ -581,7 +582,7 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     lower_bound[1] = max_slope * centered_scale + n_timestamps_2 - 1
 
     # take the max of the lower linear funcs
-    lower_bound = np.max(np.floor(lower_bound), axis=0)
+    lower_bound = np.floor(np.max(lower_bound, axis=0))
 
     # upper_bound[0] = max_slope * x
     # upper_bound[1] = min_slope * (x - n_timestamps_1) + n_timestamps_2
@@ -589,7 +590,6 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     upper_bound = np.empty((2, n_timestamps_1))
     upper_bound[0] = max_slope * np.arange(n_timestamps_1) + 1
     upper_bound[1] = min_slope * centered_scale + n_timestamps_2
-
     # take the min of the upper linear funcs
     upper_bound = np.ceil(np.min(upper_bound, axis=0))
 
