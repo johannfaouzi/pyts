@@ -20,11 +20,13 @@ from pyts.metrics.dtw import (cost_matrix, accumulated_cost_matrix,
 X, _, _, _ = load_gunpoint(return_X_y=True)
 x, y = X[0], X[1]
 
-# To compare time series of different lengths, we keep only half of x
-x = x[::2]
+# To compare time series of different lengths, we remove some observations
+mask = np.ones(x.size)
+mask[::5] = 0
+x = x[mask.astype(bool)]
 n_timestamps_1, n_timestamps_2 = x.size, y.size
 
-plt.figure(figsize=(13, 14))
+plt.figure(figsize=(10, 15))
 timestamps_1 = np.arange(n_timestamps_1 + 1)
 timestamps_2 = np.arange(n_timestamps_2 + 1)
 
@@ -64,7 +66,7 @@ plt.title("{0}\nDTW(x, y) = {1:.2f}".format('sakoechiba', dtw_sakoechiba),
           fontsize=16)
 
 # Dynamic Time Warping: itakura
-slope = 1.5
+slope = 2
 dtw_itakura, path_itakura = dtw(
     x, y, dist='square', method='itakura',
     options={'max_slope': slope}, return_path=True
@@ -75,7 +77,6 @@ matrix_itakura = np.zeros((n_timestamps_1 + 1, n_timestamps_2 + 1))
 for i in range(n_timestamps_1):
     matrix_itakura[i, np.arange(*parallelogram[:, i])] = 0.5
 matrix_itakura[tuple(path_itakura)] = 1.
-
 plt.subplot(2, 2, 3)
 plt.pcolor(timestamps_1, timestamps_2, matrix_itakura.T,
            edgecolors='k', cmap='Greys')
