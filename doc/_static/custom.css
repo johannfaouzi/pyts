@@ -13,6 +13,7 @@ div.sphinxsidebar p.blurb { font-size: 17px; font-weight: 600; }
 div.body h1 {
   text-align: center;
   font-size: 30px;
+  line-height: 50px;
   border-radius: 0px 10px 0px 10px;
   background-color: rgba(47, 79, 79, 0.3);
 }
@@ -39,6 +40,7 @@ div.reference.internal h1 span {
 
 div.body h2 {
   font-size: 25px;
+  line-height: 42px;
   border-radius: 10px;
   padding-left: 15px;
   background-color: rgba(47, 79, 79, 0.2);
@@ -60,6 +62,7 @@ a.reference {
 
 div.body h3 {
   font-size: 20px;
+  line-height: 33px;
   border-radius: 10px;
   padding-left: 15px;
   background-color: none;
