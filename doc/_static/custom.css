@@ -1,12 +1,45 @@
+/* Custom CSS file */
+
+/* Properties for hyperlinks */
+
+a.reference {
+  outline: none;
+  border-bottom: none;
+}
+
+a.reference:hover {
+  border-bottom: 1px solid;
+  border-color: rgba(47, 79, 79, 0.8);
+}
+
+
 /* Sidebar font properties */
-div.sphinxsidebar h3 { font-size: 22px; font-weight: 600; }
-div.sphinxsidebar p { font-size: 20px; font-weight: 600; }
-div.sphinxsidebar ul li.toctree-l1 > a { font-size: 16px; }
-div.sphinxsidebar ul li.toctree-l2 > a { font-size: 14px; }
-div.sphinxsidebar p span { font-size: 16px; font-weight: 600; }
+
+div.sphinxsidebar h3 {
+  font-size: 22px; font-weight: 600;
+}
+
+div.sphinxsidebar p {
+  font-size: 20px; font-weight: 600;
+}
+
+div.sphinxsidebar ul li.toctree-l1 > a {
+  font-size: 16px;
+}
+
+div.sphinxsidebar ul li.toctree-l2 > a {
+  font-size: 14px;
+}
+
+div.sphinxsidebar p span {
+   font-size: 16px; font-weight: 600;
+}
+
 
 /* Description font properties */
+
 div.sphinxsidebar p.blurb { font-size: 17px; font-weight: 600; }
+
 
 /* Font properties for level-1 headers */
 
@@ -20,21 +53,21 @@ div.body h1 {
 
 div.body h1 span {
   font-size: 22px;
-  font-weight: 800;
-  background-color: none;
-}
-
-div.body h1 span {
-  font-size: 22px;
   font-weight: 1000;
   background-color: none;
   color: rgba(47, 79, 79, 1);
+}
+
+div.body h1 code {
+  background-color: transparent;
+  border-bottom: none;
 }
 
 div.reference.internal h1 span {
   outline: none;
   border-bottom: none;
 }
+
 
 /* Font properties for level-2 headers */
 
@@ -53,10 +86,18 @@ div.body h2 span {
   color: rgba(47, 79, 79, 1);
 }
 
-a.reference {
-  outline: none;
-  border-style: none;
+div.body h2 code {
+  background-color: transparent;
+  border-bottom: none;
 }
+
+div.section[id^="examples"] h2 span {
+  font-size: 18px;
+  font-weight: 900;
+  background-color: none;
+  color: rgba(47, 79, 79, 1);
+}
+
 
 /* Font properties for level-3 headers */
 
@@ -68,28 +109,69 @@ div.body h3 {
   background-color: none;
 }
 
-/* Properties for methods (description lists) */
 
-div.body dl.method dt {
-  border-radius: 10px;
-  padding: 5px;
-  background-color: rgba(47, 47, 47, 0.07);
+/* Properties for boxes around class and methods */
+
+div.body dl.class dt[id^="pyts"] {
+  border-radius: 5px;
+  padding: 10px;
+  background-color: rgba(47, 47, 47, 0.08);
+  margin-top: 5px;
+  margin-bottom: 15px;
 }
 
-div.body dl.method dd {
-  margin-top: 10px;
-  margin-bottom: 20px;
+
+/* Properties for code blocks in Examples section of an object */
+
+dl pre {
+    padding-left: 10px;
 }
 
-/* Exclude tables inside a method */
 
-div.body dl.method dt dd table dt {
-  border-radius: none;
-  padding: none;
+/* Properties for code blocks in body and auto-examples */
+
+div.highlight pre {
+  padding-left: 10px;
+}
+
+
+/* Properties for tables */
+
+table.docutils col.field-name {
+  background-color: rgba(47, 79, 79, 0.1);
+}
+
+table.docutils td, table.docutils th {
+  padding: 7px;
+}
+
+table.docutils {
+  border-top: 1px solid;
+  border-color: rgba(47, 47, 47, 0.2);
+}
+
+table.docutils.field-list tr {
+  border-bottom: 1px solid;
+  border-color: rgba(47, 47, 47, 0.2);
+}​
+
+
+/* Properties for code internal references */
+
+div.body span {
+  font-size: 14px;
+  font-weight: 1000;
   background-color: none;
+  color: rgba(47, 79, 79, 1);
 }
 
-div.body dl.method dt dd table dd {
-  margin-top: none;
-  margin-bottom: none;
+div.body code {
+  background-color: transparent;
+  border-bottom: none;
+}
+
+/* Headerlink properties */
+
+a.headerlink {
+  color: rgba(255, 110, 110, 1);
 }
