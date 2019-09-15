@@ -543,8 +543,8 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     --------
     >>> from pyts.metrics import itakura_parallelogram
     >>> print(itakura_parallelogram(5))
-    [[0 0 1 2 4]
-     [1 3 4 5 5]]
+    [[0 1 1 2 4]
+     [1 3 4 4 5]]
 
     """
     if not isinstance(n_timestamps_1, (int, np.integer)):
@@ -563,13 +563,15 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
             raise ValueError("'max_slope' must be a number greater "
                              "than or equal to 1.")
 
-    # rescale max_slop to the relative lengths slope
-
-    scale = (n_timestamps_2 - 1) / (n_timestamps_1 - 1)
     min_slope = 1 / max_slope
+    scale_max = (n_timestamps_2 - 1) / (n_timestamps_1 - 2)
+    max_slope *= scale_max
+    max_slope = max(1., max_slope)
 
-    max_slope *= scale
-    min_slope *= scale
+    scale_min = (n_timestamps_2 - 2) / (n_timestamps_1 - 1)
+
+    min_slope *= scale_min
+    min_slope = min(1., min_slope)
 
     # Now we create the piecewise linear functions defining the parallelogram
 
@@ -582,7 +584,7 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     lower_bound[1] = max_slope * centered_scale + n_timestamps_2 - 1
 
     # take the max of the lower linear funcs
-    lower_bound = np.floor(np.max(lower_bound, axis=0))
+    lower_bound = np.ceil(np.max(lower_bound, axis=0))
 
     # upper_bound[0] = max_slope * x
     # upper_bound[1] = min_slope * (x - n_timestamps_1) + n_timestamps_2
@@ -591,13 +593,7 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     upper_bound[0] = max_slope * np.arange(n_timestamps_1) + 1
     upper_bound[1] = min_slope * centered_scale + n_timestamps_2
     # take the min of the upper linear funcs
-    upper_bound = np.ceil(np.min(upper_bound, axis=0))
-
-    # avoid broken paths by forcing end points
-    if upper_bound[0] < lower_bound[1]:
-        lower_bound[1] = upper_bound[0]
-    if upper_bound[-2] < lower_bound[-1]:
-        upper_bound[-2] = lower_bound[-1]
+    upper_bound = np.floor(np.min(upper_bound, axis=0))
 
     region = np.asarray([lower_bound, upper_bound]).astype('int64')
     region = _check_region(region, n_timestamps_1, n_timestamps_2)
