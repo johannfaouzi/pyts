@@ -379,13 +379,13 @@ def test_parameter_check_itakura_parallelogram(params, error, err_msg):
 @pytest.mark.parametrize(
     'params, arr_desired',
     [({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'max_slope': 2},
-     [[0, 0, 1, 3], [1, 3, 4, 4]]),
+     [[0, 1, 1, 3], [1, 3, 3, 4]]),
      ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'max_slope': 8},
-     [[0, 0, 0, 3], [1, 4, 4, 4]]),
+     [[0, 1, 1, 3], [1, 3, 3, 4]]),
      ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'max_slope': 1},
      [[0, 1, 2, 3], [1, 2, 3, 4]]),
      ({'n_timestamps_1': 6, 'n_timestamps_2': 3, 'max_slope': 1},
-     [[0, 0, 0, 1, 1, 2], [1, 2, 2, 3, 3, 3]]),
+     [[0, 1, 1, 1, 1, 2], [1, 2, 2, 2, 2, 3]]),
      ({'n_timestamps_1': 4, 'n_timestamps_2': 6, 'max_slope': 1},
      [[0, 1, 3, 5], [1, 3, 5, 6]])]
 )
@@ -399,9 +399,9 @@ def test_actual_results_itakura_parallelogram(params, arr_desired):
     'params, res_desired',
     [({},
       {'cost_mat':
-          [[4, np.inf, np.inf], [1, 1, 0], [np.inf, np.inf, 1]],
+          [[4, np.inf, np.inf], [np.inf, 1, np.inf], [np.inf, np.inf, 1]],
        'acc_cost_mat':
-           [[4, np.inf, np.inf], [5, 5, 5], [np.inf, np.inf, 6]],
+           [[4, np.inf, np.inf], [np.inf, 5, np.inf], [np.inf, np.inf, 6]],
        'path': [[0, 1, 2], [0, 1, 2]],
        'dtw': sqrt(6)}),
 
@@ -415,17 +415,17 @@ def test_actual_results_itakura_parallelogram(params, arr_desired):
 
      ({'max_slope': 8},
       {'cost_mat':
-          [[4, np.inf, np.inf], [1, 1, 0], [np.inf, np.inf, 1]],
+          [[4, np.inf, np.inf], [np.inf, 1, np.inf], [np.inf, np.inf, 1]],
        'acc_cost_mat':
-          [[4, np.inf, np.inf], [5, 5, 5], [np.inf, np.inf, 6]],
+          [[4, np.inf, np.inf], [np.inf, 5, np.inf], [np.inf, np.inf, 6]],
        'path': [[0, 1, 2], [0, 1, 2]],
        'dtw': sqrt(6)}),
 
      ({'max_slope': 8, 'dist': 'absolute'},
       {'cost_mat':
-          [[2, np.inf, np.inf], [1, 1, 0], [np.inf, np.inf, 1]],
+          [[2, np.inf, np.inf], [np.inf, 1, np.inf], [np.inf, np.inf, 1]],
        'acc_cost_mat':
-          [[2, np.inf, np.inf], [3, 3, 3], [np.inf, np.inf, 4]],
+          [[2, np.inf, np.inf], [np.inf, 3, np.inf], [np.inf, np.inf, 4]],
        'path': [[0, 1, 2], [0, 1, 2]],
        'dtw': 4})]
 )
