@@ -66,7 +66,7 @@ plt.title("{0}\nDTW(x, y) = {1:.2f}".format('sakoechiba', dtw_sakoechiba),
           fontsize=16)
 
 # Dynamic Time Warping: itakura
-slope = 2
+slope = 1.2
 dtw_itakura, path_itakura = dtw(
     x, y, dist='square', method='itakura',
     options={'max_slope': slope}, return_path=True
