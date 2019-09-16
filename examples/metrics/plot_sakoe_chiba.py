@@ -9,11 +9,17 @@ It is implemented in :func:`pyts.metrics.dtw.sakoe_chiba_band`.
 """
 
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+#         Hicham Janati <hicham.janati@inria.fr>
+# License: BSD-3 Clause
+
 import numpy as np
 import matplotlib.pyplot as plt
 from pyts.metrics import sakoe_chiba_band
 from pyts.metrics.dtw import _check_sakoe_chiba_params
 
+
+######################################################################
 # We write a function to visualize the sakoe-chiba band for different
 # time series lengths.
 
@@ -60,10 +66,9 @@ def plot_sakoe_chiba(n_timestamps_1, n_timestamps_2, window_size=0.5,
     return ax
 
 ################################
-# relative window_size
 
 # When `relative_window_size == True`, the `window_size` arg should be a
-# fraction (0-1) of the time series lengths. `relative_window_size == False`
+# fraction (0-1) of the time series lengths. If `relative_window_size == False`
 # `window_size` is the max allowed temporal shift between the time series.
 
 
@@ -85,8 +90,8 @@ for ax, params_dict in zip(axes, params):
 plt.show()
 
 
-###########
-# We show the same plot with unbalanced proportions
+#######################################################
+# We show the same plot with n1 < n2
 
 n_timestamps_1 = 15
 n_timestamps_2 = 20
@@ -101,8 +106,8 @@ for ax, params_dict in zip(axes, params):
     ax.set_title(title)
 plt.show()
 
-###########
-# We show the same plot with reversed unbalanced proportions
+##################################################################
+# We show the same plot with n2 < n1
 
 n_timestamps_1 = 20
 n_timestamps_2 = 15

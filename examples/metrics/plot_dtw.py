@@ -9,6 +9,9 @@ compare the results with different variants of DTW. It is implemented
 as :func:`pyts.metrics.dtw`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3 Clause
+
 import numpy as np
 import matplotlib.pyplot as plt
 from pyts.datasets import load_gunpoint

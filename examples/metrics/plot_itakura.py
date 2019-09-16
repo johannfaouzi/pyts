@@ -8,6 +8,9 @@ computing the Dynamic Time Warping (DTW) between two time series.
 It is implemented in :func:`pyts.metrics.dtw.itakura_parallelogram`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+#         Hicham Janati <hicham.janati@inria.fr>
+# License: BSD-3 Clause
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -64,11 +67,9 @@ def plot_itakura(n_timestamps_1, n_timestamps_2, max_slope=1.,
 
     return ax
 
-################################
-# relative window_size
-
+###########################################################################
 # When `relative_window_size == True`, the `window_size` arg should be a
-# fraction (0-1) of the time series lengths. `relative_window_size == False`
+# fraction (0-1) of the time series lengths. If `relative_window_size == False`
 # `window_size` is the max allowed temporal shift between the time series.
 
 
@@ -86,8 +87,8 @@ for ax, slope in zip(axes, slopes):
 plt.show()
 
 
-###########
-# We show the same plot with unbalanced proportions
+####################################
+# We show the same plot with n1 < n2
 
 n_timestamps_1 = 15
 n_timestamps_2 = 20
@@ -99,8 +100,8 @@ for ax, slope in zip(axes, slopes):
     ax.set_title(title)
 plt.show()
 
-###########
-# We show the same plot with reversed unbalanced proportions
+####################################
+# We show the same plot with n2 < n1
 
 n_timestamps_1 = 20
 n_timestamps_2 = 15
