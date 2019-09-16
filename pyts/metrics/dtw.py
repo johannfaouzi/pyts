@@ -380,7 +380,50 @@ def dtw_region(x, y, dist='square', region=None, return_cost=False,
     return res
 
 
-def sakoe_chiba_band(n_timestamps_1, n_timestamps_2=None, window_size=0.1):
+def _check_sakoe_chiba_params(n_timestamps_1, n_timestamps_2, window_size,
+                              relative_window_size):
+    """Check and set some parameters of the sakoe-chiba band."""
+    if not isinstance(n_timestamps_1, (int, np.integer)):
+        raise TypeError("'n_timestamps_1' must be an integer.")
+    else:
+        if not n_timestamps_1 >= 2:
+            raise ValueError("'n_timestamps_1' must be an integer greater than"
+                             " or equal to 2.")
+    if not isinstance(window_size, (int, np.integer, float, np.floating)):
+        raise TypeError("'window_size' must be an integer or a float.")
+    n_timestamps = max(n_timestamps_1, n_timestamps_2)
+
+    if relative_window_size:
+        if not 0. <= window_size <= 1.:
+            raise ValueError("'relative_window_size' was set to True, "
+                             "`window_size` must be between "
+                             "0 and 1.")
+        window_size_ = ceil(window_size * (n_timestamps - 1))
+    else:
+        if not isinstance(window_size, (int, np.integer)):
+            raise ValueError(
+                "'relative_window_size' was set to False, `window_size` must "
+                "be an integer."
+            )
+        if not 0 <= window_size <= (n_timestamps - 1):
+            raise ValueError(
+                "'relative_window_size' was set to False, `window_size` must "
+                "be an integer greater "
+                "than or equal to 0 and lower than 'n_timestamps_1'."
+            )
+        window_size_ = int(window_size)
+
+    scale = (n_timestamps_2 - 1) / (n_timestamps_1 - 1)
+
+    if n_timestamps_2 > n_timestamps_1:
+        window_size_ = max(window_size_, scale / 2)
+    elif n_timestamps_2 < n_timestamps_1:
+        window_size_ = max(window_size_, 0.5)
+    return scale, window_size_
+
+
+def sakoe_chiba_band(n_timestamps_1, n_timestamps_2=None, window_size=0.1,
+                     relative_window_size=True):
     """Compute the Sakoe-Chiba band.
 
     Parameters
@@ -391,12 +434,18 @@ def sakoe_chiba_band(n_timestamps_1, n_timestamps_2=None, window_size=0.1):
     n_timestamps_2 : int (optional, default None)
         The size of the second time series. If None, set to `n_timestamps_1`.
 
-    window_size : int or float (default = 0.1)
-        The window above and below the diagonale. If float, it must be between
-        0 and 1, and the actual window size will be computed as
+    window_size : float (default = 0.1)
+        The window size above and below the diagonale.
+        If `relative_window_size == True`, `window_size must be between 0 and
+        1, and the actual window size will be computed as:
         ``ceil(window_size * max((n_timestamps_1, n_timestamps_2) - 1))``.
+        If not, `window_size` must be the largest temporal shift allowed.
         Each cell whose distance with the diagonale is lower than or equal to
         'window_size' becomes a valid cell for the path.
+
+    relative_window_size : bool (default True)
+        If True, the `window_size` is taken relatively to the time series
+        lengths.
 
     Returns
     -------
@@ -408,43 +457,28 @@ def sakoe_chiba_band(n_timestamps_1, n_timestamps_2=None, window_size=0.1):
     Examples
     --------
     >>> from pyts.metrics import sakoe_chiba_band
-    >>> print(sakoe_chiba_band(5, window_size=2))
+    >>> print(sakoe_chiba_band(5, window_size=0.5))
     [[0 0 0 1 2]
      [3 4 5 5 5]]
 
     """
-    if not isinstance(n_timestamps_1, (int, np.integer)):
-        raise TypeError("'n_timestamps_1' must be an integer.")
-    else:
-        if not n_timestamps_1 >= 2:
-            raise ValueError("'n_timestamps_1' must be an integer greater than"
-                             " or equal to 2.")
-    if not isinstance(window_size, (int, np.integer, float, np.floating)):
-        raise TypeError("'window_size' must be an integer or a float.")
     if n_timestamps_2 is None:
         n_timestamps_2 = n_timestamps_1
-    n_timestamps = max(n_timestamps_1, n_timestamps_2)
-    if isinstance(window_size, (int, np.integer)):
-        if not 0 <= window_size <= (n_timestamps - 1):
-            raise ValueError(
-                "If 'window_size' is an integer, it must be greater "
-                "than or equal to 0 and lower than 'n_timestamps_1'."
-            )
-        window_size_ = window_size
-    elif isinstance(window_size, (float, np.floating)):
-        if not 0. <= window_size <= 1.:
-            raise ValueError("If 'window_size' is a float, it must be between "
-                             "0 and 1.")
-        window_size_ = ceil(window_size * (n_timestamps - 1))
-    slope = (n_timestamps_2 - 1) / (n_timestamps_1 - 1)
-    region = np.array([slope * np.arange(n_timestamps_1) for _ in range(2)])
-    region = np.ceil(region).astype(int)
-    region += np.array([- window_size_, window_size_ + 1]).reshape(2, 1)
+    scale, window_size_ = \
+        _check_sakoe_chiba_params(n_timestamps_1, n_timestamps_2, window_size,
+                                  relative_window_size)
+
+    lower_bound = scale * np.arange(n_timestamps_1) - window_size_
+    lower_bound = np.ceil(lower_bound)
+    upper_bound = scale * np.arange(n_timestamps_1) + window_size_
+    upper_bound = np.floor(upper_bound) + 1
+    region = np.asarray([lower_bound, upper_bound]).astype('int64')
     region = _check_region(region, n_timestamps_1, n_timestamps_2)
     return region
 
 
-def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
+def dtw_sakoechiba(x, y, dist='square', window_size=0.1,
+                   relative_window_size=True, return_cost=False,
                    return_accumulated=False, return_path=False):
     """Dynamic Time Warping (DTW) distance with Sakoe-Chiba band constraint.
 
@@ -462,12 +496,18 @@ def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
 
-    window_size : int or float (default = 0.1)
-        The window above and below the diagonale. If float, it must be between
-        0 and 1, and the actual window size will be computed as
-        ``int(window_size * (max(n_timestamps_1, n_timestamps_2) - 1))``.
+    window_size : float (default = 0.1)
+        The window size above and below the diagonale.
+        If `relative_window_size == True`, `window_size must be between 0 and
+        1, and the actual window size will be computed as:
+        ``ceil(window_size * max((n_timestamps_1, n_timestamps_2) - 1))``.
+        If not, `window_size` must be the largest temporal shift allowed.
         Each cell whose distance with the diagonale is lower than or equal to
         'window_size' becomes a valid cell for the path.
+
+    relative_window_size : bool (default True)
+        If True, the `window_size` is taken relatively to the time series
+        lengths.
 
     return_cost : bool (default = False)
         If True, the cost matrix is returned.
@@ -506,7 +546,8 @@ def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
     """
     x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
 
-    region = sakoe_chiba_band(n_timestamps_1, n_timestamps_2, window_size)
+    region = sakoe_chiba_band(n_timestamps_1, n_timestamps_2, window_size,
+                              relative_window_size)
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
@@ -516,6 +557,35 @@ def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
     res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
                           return_cost, return_accumulated, return_path)
     return res
+
+
+def _get_itakura_slopes(n_timestamps_1, n_timestamps_2, max_slope):
+    """Compute the slopes of the parallelogram bounds."""
+
+    if not isinstance(n_timestamps_1, (int, np.integer)):
+        raise TypeError("'n_timestamps_1' must be an integer.")
+    else:
+        if not n_timestamps_1 >= 2:
+            raise ValueError("'n_timestamps_1' must be an integer greater than"
+                             " or equal to 2.")
+
+    if not isinstance(max_slope, (int, np.integer, float, np.floating)):
+        raise TypeError("'max_slope' must be an integer or a float.")
+    else:
+        if not max_slope >= 1:
+            raise ValueError("'max_slope' must be a number greater "
+                             "than or equal to 1.")
+
+    min_slope = 1 / max_slope
+    scale_max = (n_timestamps_2 - 1) / (n_timestamps_1 - 2)
+    max_slope *= scale_max
+    max_slope = max(1., max_slope)
+
+    scale_min = (n_timestamps_2 - 2) / (n_timestamps_1 - 1)
+
+    min_slope *= scale_min
+    min_slope = min(1., min_slope)
+    return min_slope, max_slope
 
 
 def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
@@ -547,34 +617,12 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
      [1 3 4 4 5]]
 
     """
-    if not isinstance(n_timestamps_1, (int, np.integer)):
-        raise TypeError("'n_timestamps_1' must be an integer.")
-    else:
-        if not n_timestamps_1 >= 2:
-            raise ValueError("'n_timestamps_1' must be an integer greater than"
-                             " or equal to 2.")
     if n_timestamps_2 is None:
         n_timestamps_2 = n_timestamps_1
 
-    if not isinstance(max_slope, (int, np.integer, float, np.floating)):
-        raise TypeError("'max_slope' must be an integer or a float.")
-    else:
-        if not max_slope >= 1:
-            raise ValueError("'max_slope' must be a number greater "
-                             "than or equal to 1.")
-
-    min_slope = 1 / max_slope
-    scale_max = (n_timestamps_2 - 1) / (n_timestamps_1 - 2)
-    max_slope *= scale_max
-    max_slope = max(1., max_slope)
-
-    scale_min = (n_timestamps_2 - 2) / (n_timestamps_1 - 1)
-
-    min_slope *= scale_min
-    min_slope = min(1., min_slope)
-
+    min_slope, max_slope = _get_itakura_slopes(n_timestamps_1, n_timestamps_2,
+                                               max_slope)
     # Now we create the piecewise linear functions defining the parallelogram
-
     # lower_bound[0] = min_slope * x
     # lower_bound[1] = max_slope * (x - n_timestamps_1) + n_timestamps_2
 
@@ -992,7 +1040,7 @@ def dtw(x, y, dist='square', method='classic', options=None, return_cost=False,
     >>> from pyts.metrics import dtw
     >>> x = [0, 1, 1]
     >>> y = [2, 0, 1]
-    >>> dtw(x, y, method='sakoechiba', options={'window_size': 2})
+    >>> dtw(x, y, method='sakoechiba', options={'window_size': 0.5})
     2.0
 
     """
