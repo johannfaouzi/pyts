@@ -271,12 +271,23 @@ def test_actual_results_dtw_region(params, res_desired):
      ({'n_timestamps_1': 1}, ValueError,
       "'n_timestamps_1' must be an integer greater than or equal to 2."),
 
-     ({'n_timestamps_1': 10, 'window_size': 20}, ValueError,
-      "If 'window_size' is an integer, it must be greater than or equal to 0 "
-      "and lower than 'n_timestamps_1'."),
+     ({'n_timestamps_1': 10, 'window_size': 3.,
+       'relative_window_size': False},
+      ValueError,
+        "'relative_window_size' was set to False, `window_size` must "
+        "be an integer."),
+
+     ({'n_timestamps_1': 10, 'window_size': 20,
+       'relative_window_size': False},
+      ValueError,
+        "'relative_window_size' was set to False, `window_size` must "
+        "be an integer greater "
+        "than or equal to 0 and lower than 'n_timestamps_1'."),
 
      ({'n_timestamps_1': 10, 'window_size': 2.}, ValueError,
-      "If 'window_size' is a float, it must be between 0 and 1.")]
+      "'relative_window_size' was set to True, "
+      "`window_size` must be between "
+      "0 and 1.")]
 )
 def test_parameter_check_sakoe_chiba_band(params, error, err_msg):
     """Test parameter validation."""
@@ -286,20 +297,26 @@ def test_parameter_check_sakoe_chiba_band(params, error, err_msg):
 
 @pytest.mark.parametrize(
     'params, arr_desired',
-    [({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 2},
+    [({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 2,
+       'relative_window_size': False},
      [[0, 0, 0, 1], [3, 4, 4, 4]]),
      ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 0.5},
      [[0, 0, 0, 1], [3, 4, 4, 4]]),
-     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 3},
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 3,
+       'relative_window_size': False},
      [[0, 0, 0, 0], [4, 4, 4, 4]]),
-     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 1},
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 1,
+       'relative_window_size': False},
      [[0, 0, 1, 2], [2, 3, 4, 4]]),
-     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 0},
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 0,
+       'relative_window_size': False},
      [[0, 1, 2, 3], [1, 2, 3, 4]]),
-     ({'n_timestamps_1': 4, 'n_timestamps_2': 5, 'window_size': 2},
-     [[0, 0, 1, 2], [3, 5, 5, 5]]),
-     ({'n_timestamps_1': 5, 'n_timestamps_2': 4, 'window_size': 2},
-     [[0, 0, 0, 1, 1], [3, 4, 4, 4, 4]]),
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 5, 'window_size': 2,
+       'relative_window_size': False},
+     [[0, 0, 1, 2], [3, 4, 5, 5]]),
+     ({'n_timestamps_1': 5, 'n_timestamps_2': 4, 'window_size': 2,
+       'relative_window_size': False},
+     [[0, 0, 0, 1, 1], [3, 3, 4, 4, 4]]),
      ]
 )
 def test_actual_results_sakoe_chiba_band(params, arr_desired):
@@ -310,31 +327,31 @@ def test_actual_results_sakoe_chiba_band(params, arr_desired):
 
 @pytest.mark.parametrize(
     'params, res_desired',
-    [({'window_size': 2},
+    [({'window_size': 2, 'relative_window_size': False},
       {'cost_mat': [[4, 0, 1], [1, 1, 0], [0, 4, 1]],
        'acc_cost_mat': [[4, 4, 5], [5, 5, 4], [5, 9, 5]],
        'path': [[0, 0, 1, 2], [0, 1, 2, 2]],
        'dtw': sqrt(5)}),
 
-     ({'window_size': 2, 'dist': 'absolute'},
+     ({'window_size': 2, 'dist': 'absolute', 'relative_window_size': False},
       {'cost_mat': [[2, 0, 1], [1, 1, 0], [0, 2, 1]],
        'acc_cost_mat': [[2, 2, 3], [3, 3, 2], [3, 5, 3]],
        'path': [[0, 0, 1, 2], [0, 1, 2, 2]],
        'dtw': 3}),
 
-     ({'window_size': 1},
+     ({'window_size': 1, 'relative_window_size': False},
       {'cost_mat': [[4, 0, np.inf], [1, 1, 0], [np.inf, 4, 1]],
        'acc_cost_mat': [[4, 4, np.inf], [5, 5, 4], [np.inf, 9, 5]],
        'path': [[0, 0, 1, 2], [0, 1, 2, 2]],
        'dtw': sqrt(5)}),
 
-     ({'window_size': 1, 'dist': 'absolute'},
+     ({'window_size': 1, 'dist': 'absolute', 'relative_window_size': False},
       {'cost_mat': [[2, 0, np.inf], [1, 1, 0], [np.inf, 2, 1]],
        'acc_cost_mat': [[2, 2, np.inf], [3, 3, 2], [np.inf, 5, 3]],
        'path': [[0, 0, 1, 2], [0, 1, 2, 2]],
        'dtw': 3}),
 
-     ({'window_size': 0},
+     ({'window_size': 0, 'relative_window_size': False},
       {'cost_mat':
           [[4, np.inf, np.inf], [np.inf, 1, np.inf], [np.inf, np.inf, 1]],
        'acc_cost_mat':
@@ -545,8 +562,9 @@ def test_parameter_check_dtw(params, err_msg):
 
      ({'method': 'sakoechiba'}, dtw_sakoechiba(x, y, **params_return)),
 
-     ({'method': 'sakoechiba', 'options': {'window_size': 2}},
-      dtw_sakoechiba(x, y, window_size=2, **params_return)),
+     ({'method': 'sakoechiba', 'options': {'window_size': 0.5,
+                                           'relative_window_size': True}},
+      dtw_sakoechiba(x, y, **params_return)),
 
      ({'method': 'itakura'}, dtw_itakura(x, y, **params_return)),
 
@@ -610,8 +628,8 @@ def test_actual_results_show_options(params, res_desired):
      ({}, dtw_classic(x_long, y, **params_return)),
      ({'method': 'sakoechiba'}, dtw_sakoechiba(x_long, y, **params_return)),
 
-     ({'method': 'sakoechiba', 'options': {'window_size': 2}},
-      dtw_sakoechiba(x_long, y, window_size=2, **params_return)),
+     ({'method': 'sakoechiba', 'options': {'window_size': 0.5}},
+      dtw_sakoechiba(x_long, y, window_size=0.5, **params_return)),
 
      ({'method': 'itakura'}, dtw_itakura(x_long, y, **params_return)),
 
