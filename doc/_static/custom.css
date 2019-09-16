@@ -72,7 +72,7 @@ div.reference.internal h1 span {
 /* Font properties for level-2 headers */
 
 div.body h2 {
-  font-size: 25px;
+  font-size: 22px;
   line-height: 42px;
   border-radius: 10px;
   padding-left: 15px;
@@ -102,11 +102,11 @@ div.section[id^="examples"] h2 span {
 /* Font properties for level-3 headers */
 
 div.body h3 {
-  font-size: 20px;
-  line-height: 33px;
-  border-radius: 10px;
-  padding-left: 15px;
-  background-color: none;
+  font-size: 19px;
+  line-height: 30px;
+  border-radius: 5px;
+  padding-left: 10px;
+  background-color: rgba(47, 79, 79, 0.1);
 }
 
 
@@ -158,20 +158,68 @@ table.docutils.field-list tr {
 
 /* Properties for code internal references */
 
-div.body span {
-  font-size: 14px;
-  font-weight: 1000;
-  background-color: none;
+pre, code.py {
   color: rgba(47, 79, 79, 1);
 }
 
-div.body code {
+pre:hover, code.py:hover {
+  border-bottom: 1px solid;
+  border-color: rgba(47, 79, 79, 0.2);
   background-color: transparent;
-  border-bottom: none;
 }
 
-/* Headerlink properties */
+
+/* Properties for headerlinks */
 
 a.headerlink {
   color: rgba(255, 110, 110, 1);
+}
+
+/* Properties for example images */
+
+div.section {
+  display: block;
+}
+
+div.sphx-glr-thumbcontainer {
+  display: inline-block;
+}
+
+div.sphx-glr-thumbcontainer img {
+  max-width: 200px;
+}
+
+div.sphx-glr-thumbcontainer:hover {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0px;
+  box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip .tooltiptext {
+  top: -5px;
+  left: 105%;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
