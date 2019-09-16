@@ -6,7 +6,7 @@ Change Log
 
 
 Version 0.10.0
--------------
+--------------
 
 - Adapt `pyts.metrics.dtw` to compare time series with different lengths (Hicham Janati)
 
