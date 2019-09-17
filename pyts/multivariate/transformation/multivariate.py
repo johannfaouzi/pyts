@@ -83,7 +83,7 @@ class MultivariateTransformer(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        X_new : array, shape = (n_samples,) or (n_samples, n_features,)
+        X_new : array, shape = (n_samples, *) or (n_samples, n_features, *)
             Transformed time series.
 
         """
