@@ -41,6 +41,13 @@ div.sphinxsidebar p span {
 div.sphinxsidebar p.blurb { font-size: 17px; font-weight: 600; }
 
 
+/* Properties for code hovering */
+
+div.body code:hover {
+  border-bottom: none;
+  background-color: transparent;
+}
+
 /* Font properties for level-1 headers */
 
 div.body h1 {
@@ -62,6 +69,12 @@ div.body h1 code {
   background-color: transparent;
   border-bottom: none;
 }
+
+/*
+div.body h1 code:hover {
+  border-bottom: none;
+}
+*/
 
 div.reference.internal h1 span {
   outline: none;
@@ -120,6 +133,16 @@ div.body dl.class dt[id^="pyts"] {
   margin-bottom: 15px;
 }
 
+/* Properties for boxes around functions */
+
+div.body dl.function dt[id^="pyts"] {
+  border-radius: 5px;
+  padding: 10px;
+  background-color: rgba(47, 47, 47, 0.08);
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
 
 /* Properties for code blocks in Examples section of an object */
 
@@ -162,10 +185,22 @@ pre, code.py {
   color: rgba(47, 79, 79, 1);
 }
 
-pre:hover, code.py:hover {
+code.py:hover {
   border-bottom: 1px solid;
   border-color: rgba(47, 79, 79, 0.2);
   background-color: transparent;
+}
+
+div.sphinxsidebar li code {
+    color: rgba(47, 79, 79, 1);
+    text-decoration: none;
+    border-bottom: none;
+}
+
+div.sphinxsidebar li code:hover {
+    border-bottom: 1px solid;
+    border-color: rgba(47, 79, 79, 1);
+    background-color: transparent;
 }
 
 
@@ -175,51 +210,95 @@ a.headerlink {
   color: rgba(255, 110, 110, 1);
 }
 
-/* Properties for example images */
+/* Properties for example page */
 
-div.section {
+div.section#introductory-examples,
+div.section#approximating-time-series,
+div.section#bag-of-words-transformation,
+div.section#classification-algorithms,
+div.section#dataset-utilities,
+div.section#decomposing-time-series,
+div.section#imaging-time-series,
+div.section#metrics,
+div.section#multivariate-time-series,
+div.section#preprocessing-tools,
+div.section#transformation-algorithms {
   display: block;
+  padding: 0px 0px 30px 0px;
 }
+
+
+/* Properties for example images */
 
 div.sphx-glr-thumbcontainer {
   display: inline-block;
+  padding: 0px;
+  width: 380px;
+  max-height: 300px;
+  border: 1px solid rgba(47, 79, 79, 0.4);
+  border-radius: 4px;
+}
+
+div.toctree-wrapper.compound {
+  display: inline-block;
+  padding: 0px;
 }
 
 div.sphx-glr-thumbcontainer img {
-  max-width: 200px;
-}
-
-div.sphx-glr-thumbcontainer:hover {
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  max-width: 330px;
+  max-height: 260px;
   padding: 0px;
-  box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
 }
 
-/* Tooltip container */
-.tooltip {
-  position: relative;
-  display: inline-block;
-}
-
-/* Tooltip text */
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
+div.sphx-glr-thumbcontainer p.caption {
+  font-size: 16px;
   text-align: center;
-  padding: 5px 0;
-  border-radius: 6px;
-  position: absolute;
-  z-index: 1;
+  white-space: normal;
+  padding: 0px;
 }
 
-.tooltip .tooltiptext {
-  top: -5px;
-  left: 105%;
+/* Properties for Sphinx download container */
+
+div.sphx-glr-download.docutils.container {
+  text-align: center;
+  margin: 30px 0px 30px 0px;
 }
 
-.tooltip:hover .tooltiptext {
-  visibility: visible;
+div.sphx-glr-download.docutils.container a {
+  background-color: rgba(245, 229, 27, 0.5);
+  border: 2px solid;
+  border-radius: 4px;
+  border-color: rgba(245, 229, 27, 0.9);
+  padding: 10px;
+}
+
+div.sphx-glr-download.docutils.container a code {
+  background-color: transparent;
+  border-bottom: none;
+}
+
+div.sphx-glr-download.docutils.container a:hover {
+  background-color: rgba(244, 208, 63, 0.7);
+  border: none;
+}
+
+.sphx-glr-signature {
+  text-align: right;
+}
+
+/* Note properties */
+
+div.sphx-glr-download-link-note.admonition.note {
+  background-color: rgba(129, 207, 224, 0.3);
+  border-radius: 3px;
+  padding: 5px;
+}
+
+div.sphx-glr-download-link-note.admonition.note p {
+  padding: -2px 0px 0px 0px;
+}
+
+div.sphx-glr-download-link-note.admonition.note p.first.admonition-title {
+  font-size: 20px;
+  color: rgba(1, 50, 67, 1);
 }
