@@ -7,7 +7,7 @@ from math import sqrt
 from numba import njit
 from pyts.metrics.dtw import (
     _square, _absolute, _check_input_dtw, _multiscale_region, _return_path,
-    _return_results, cost_matrix, accumulated_cost_matrix
+    _return_results, cost_matrix, accumulated_cost_matrix, _check_region
 )
 from pyts.metrics import (
     dtw_classic, dtw_region, sakoe_chiba_band, dtw_sakoechiba,
@@ -271,23 +271,20 @@ def test_actual_results_dtw_region(params, res_desired):
      ({'n_timestamps_1': 1}, ValueError,
       "'n_timestamps_1' must be an integer greater than or equal to 2."),
 
-     ({'n_timestamps_1': 10, 'window_size': 3.,
-       'relative_window_size': False},
-      ValueError,
-        "'relative_window_size' was set to False, `window_size` must "
-        "be an integer."),
+     ({'n_timestamps_1': 10, 'window_size': 3.},
+      ValueError, "The given 'window_size' is a float, "
+                  "it must be between "
+                  "0. and 1. To set the size of the sakoe-chiba "
+                  "manually, 'window_size' must be an integer."),
 
-     ({'n_timestamps_1': 10, 'window_size': 20,
-       'relative_window_size': False},
-      ValueError,
-        "'relative_window_size' was set to False, `window_size` must "
-        "be an integer greater "
-        "than or equal to 0 and lower than 'n_timestamps_1'."),
+     ({'n_timestamps_1': 10, 'window_size': 20},
+      ValueError, "The given 'window_size' is an integer, it must "
+                  "be greater "
+                  "than or equal to 0 and lower than max('n_timestamps_1', "
+                  "'n_timestamps_2')."),
 
-     ({'n_timestamps_1': 10, 'window_size': 2.}, ValueError,
-      "'relative_window_size' was set to True, "
-      "`window_size` must be between "
-      "0 and 1.")]
+     ({'n_timestamps_1': 10, 'window_size': "a"}, TypeError,
+        "'window_size' must be an integer or a float.")]
 )
 def test_parameter_check_sakoe_chiba_band(params, error, err_msg):
     """Test parameter validation."""
@@ -297,26 +294,20 @@ def test_parameter_check_sakoe_chiba_band(params, error, err_msg):
 
 @pytest.mark.parametrize(
     'params, arr_desired',
-    [({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 2,
-       'relative_window_size': False},
+    [({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 2},
      [[0, 0, 0, 1], [3, 4, 4, 4]]),
      ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 0.5},
      [[0, 0, 0, 1], [3, 4, 4, 4]]),
-     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 3,
-       'relative_window_size': False},
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 3},
      [[0, 0, 0, 0], [4, 4, 4, 4]]),
-     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 1,
-       'relative_window_size': False},
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 1},
      [[0, 0, 1, 2], [2, 3, 4, 4]]),
-     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 0,
-       'relative_window_size': False},
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 0},
      [[0, 1, 2, 3], [1, 2, 3, 4]]),
-     ({'n_timestamps_1': 4, 'n_timestamps_2': 5, 'window_size': 2,
-       'relative_window_size': False},
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 5, 'window_size': 2},
      [[0, 0, 1, 2], [3, 4, 5, 5]]),
-     ({'n_timestamps_1': 5, 'n_timestamps_2': 4, 'window_size': 2,
-       'relative_window_size': False},
-     [[0, 0, 0, 1, 1], [3, 3, 4, 4, 4]]),
+     ({'n_timestamps_1': 5, 'n_timestamps_2': 4, 'window_size': 2},
+     [[0, 0, 0, 1, 2], [2, 3, 4, 4, 4]]),
      ]
 )
 def test_actual_results_sakoe_chiba_band(params, arr_desired):
@@ -327,31 +318,31 @@ def test_actual_results_sakoe_chiba_band(params, arr_desired):
 
 @pytest.mark.parametrize(
     'params, res_desired',
-    [({'window_size': 2, 'relative_window_size': False},
+    [({'window_size': 2},
       {'cost_mat': [[4, 0, 1], [1, 1, 0], [0, 4, 1]],
        'acc_cost_mat': [[4, 4, 5], [5, 5, 4], [5, 9, 5]],
        'path': [[0, 0, 1, 2], [0, 1, 2, 2]],
        'dtw': sqrt(5)}),
 
-     ({'window_size': 2, 'dist': 'absolute', 'relative_window_size': False},
+     ({'window_size': 2, 'dist': 'absolute'},
       {'cost_mat': [[2, 0, 1], [1, 1, 0], [0, 2, 1]],
        'acc_cost_mat': [[2, 2, 3], [3, 3, 2], [3, 5, 3]],
        'path': [[0, 0, 1, 2], [0, 1, 2, 2]],
        'dtw': 3}),
 
-     ({'window_size': 1, 'relative_window_size': False},
+     ({'window_size': 1},
       {'cost_mat': [[4, 0, np.inf], [1, 1, 0], [np.inf, 4, 1]],
        'acc_cost_mat': [[4, 4, np.inf], [5, 5, 4], [np.inf, 9, 5]],
        'path': [[0, 0, 1, 2], [0, 1, 2, 2]],
        'dtw': sqrt(5)}),
 
-     ({'window_size': 1, 'dist': 'absolute', 'relative_window_size': False},
+     ({'window_size': 1, 'dist': 'absolute'},
       {'cost_mat': [[2, 0, np.inf], [1, 1, 0], [np.inf, 2, 1]],
        'acc_cost_mat': [[2, 2, np.inf], [3, 3, 2], [np.inf, 5, 3]],
        'path': [[0, 0, 1, 2], [0, 1, 2, 2]],
        'dtw': 3}),
 
-     ({'window_size': 0, 'relative_window_size': False},
+     ({'window_size': 0},
       {'cost_mat':
           [[4, np.inf, np.inf], [np.inf, 1, np.inf], [np.inf, np.inf, 1]],
        'acc_cost_mat':
@@ -562,8 +553,7 @@ def test_parameter_check_dtw(params, err_msg):
 
      ({'method': 'sakoechiba'}, dtw_sakoechiba(x, y, **params_return)),
 
-     ({'method': 'sakoechiba', 'options': {'window_size': 0.5,
-                                           'relative_window_size': True}},
+     ({'method': 'sakoechiba', 'options': {'window_size': 0.5}},
       dtw_sakoechiba(x, y, **params_return)),
 
      ({'method': 'itakura'}, dtw_itakura(x, y, **params_return)),
@@ -658,3 +648,14 @@ def test_actual_results_dtw_diff_lengths(params, res_desired):
     np.testing.assert_allclose(cost_mat_actual, res_desired[1])
     np.testing.assert_allclose(acc_cost_mat_actual, res_desired[2])
     np.testing.assert_allclose(path_actual, res_desired[3])
+
+
+@pytest.mark.parametrize(
+    "region, n_timestamps_1, n_timestamps_2",
+    [(np.array([[-3, 0, 1, 2, 10, 30], [0, 2, 4, 5, 10, 50]]), 4, 10),
+     (np.array([[-3, 0, 1, 2, 10, 30], [0, 2, 4, 5, 10, 50]]), 6, 3)])
+def test_check_region(region, n_timestamps_1, n_timestamps_2):
+    region = _check_region(region, n_timestamps_1, n_timestamps_2)
+    assert region.min() >= 0
+    assert region.max() <= n_timestamps_2
+    assert region.shape[1] == n_timestamps_1
