@@ -208,10 +208,13 @@ html_sidebars = {
     ]
 }
 
+# Custom CSS files
+html_css_files = [
+    'custom.css',
+]
+
 # HTML context
-html_context = {
-    'css_files': ['_static/custom.css'],
-}
+#html_context = {}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
