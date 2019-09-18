@@ -171,6 +171,7 @@ table.docutils td, table.docutils th {
 table.docutils {
   border-top: 1px solid;
   border-color: rgba(47, 47, 47, 0.2);
+  margin-bottom: 30px;
 }
 
 table.docutils.field-list tr {
@@ -224,81 +225,17 @@ div.section#multivariate-time-series,
 div.section#preprocessing-tools,
 div.section#transformation-algorithms {
   display: block;
-  padding: 0px 0px 30px 0px;
+  padding: 0px 0px 10px 0px;
 }
-
-
-/* Properties for example images */
 
 div.sphx-glr-thumbcontainer {
-  display: inline-block;
-  padding: 0px;
-  width: 380px;
-  max-height: 300px;
-  border: 1px solid rgba(47, 79, 79, 0.4);
-  border-radius: 4px;
+  max-width: 187px;
 }
 
-div.toctree-wrapper.compound {
-  display: inline-block;
-  padding: 0px;
-}
-
-div.sphx-glr-thumbcontainer img {
-  max-width: 330px;
-  max-height: 260px;
-  padding: 0px;
-}
 
 div.sphx-glr-thumbcontainer p.caption {
-  font-size: 16px;
+  font-size: 15px;
   text-align: center;
   white-space: normal;
   padding: 0px;
-}
-
-/* Properties for Sphinx download container */
-
-div.sphx-glr-download.docutils.container {
-  text-align: center;
-  margin: 30px 0px 30px 0px;
-}
-
-div.sphx-glr-download.docutils.container a {
-  background-color: rgba(245, 229, 27, 0.5);
-  border: 2px solid;
-  border-radius: 4px;
-  border-color: rgba(245, 229, 27, 0.9);
-  padding: 10px;
-}
-
-div.sphx-glr-download.docutils.container a code {
-  background-color: transparent;
-  border-bottom: none;
-}
-
-div.sphx-glr-download.docutils.container a:hover {
-  background-color: rgba(244, 208, 63, 0.7);
-  border: none;
-}
-
-.sphx-glr-signature {
-  text-align: right;
-}
-
-/* Note properties */
-
-div.sphx-glr-download-link-note.admonition.note {
-  background-color: rgba(129, 207, 224, 0.3);
-  border-radius: 3px;
-  padding: 5px;
-}
-
-div.sphx-glr-download-link-note.admonition.note p {
-  padding: -2px 0px 0px 0px;
-}
-
-div.sphx-glr-download-link-note.admonition.note p.first.admonition-title {
-  font-size: 20px;
-  color: rgba(1, 50, 67, 1);
 }
