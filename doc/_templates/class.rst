@@ -23,7 +23,7 @@
     .. autosummary::
     {% for item in methods %}
        ~{{ name }}.{{ item }}
-    {%- endfor %}
+    {%- endfor %} 
     .. automethod:: __init__
     {% endif %}
     {% endblock %}
