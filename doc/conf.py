@@ -157,7 +157,6 @@ html_theme_options = {
     # Font sizes
     'font_size': '15px',
     'code_font_size': '14px'
-
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
