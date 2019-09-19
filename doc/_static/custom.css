@@ -232,10 +232,26 @@ div.sphx-glr-thumbcontainer {
   max-width: 187px;
 }
 
-
 div.sphx-glr-thumbcontainer p.caption {
   font-size: 15px;
   text-align: center;
   white-space: normal;
   padding: 0px;
+}
+
+
+div.sphx-glr-download-link-note.admonition.note {
+  padding: 5px;
+  background-color: rgba(47, 79, 79, 0.1);
+  border-radius: 4px;
+}
+
+div.sphx-glr-download-link-note.admonition.note p {
+  display:inline;
+}
+
+div.sphx-glr-download-link-note.admonition.note p.admonition-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: rgba(47, 79, 79, 1);
 }
