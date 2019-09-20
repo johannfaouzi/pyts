@@ -466,9 +466,11 @@ def sakoe_chiba_band(n_timestamps_1, n_timestamps_2=None, window_size=0.1):
 
     lower_bound = scale * (np.arange(n_timestamps_1) - horizontal_shift) \
         - vertical_shift
+    lower_bound = np.round(lower_bound, 2)
     lower_bound = np.ceil(lower_bound)
     upper_bound = scale * (np.arange(n_timestamps_1) + horizontal_shift) \
         + vertical_shift
+    upper_bound = np.round(upper_bound, 2)
     upper_bound = np.floor(upper_bound) + 1
     region = np.asarray([lower_bound, upper_bound]).astype('int64')
     region = _check_region(region, n_timestamps_1, n_timestamps_2)
@@ -624,6 +626,7 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     lower_bound[1] = max_slope * centered_scale + n_timestamps_2 - 1
 
     # take the max of the lower linear funcs
+    lower_bound = np.round(lower_bound, 2)
     lower_bound = np.ceil(np.max(lower_bound, axis=0))
 
     # upper_bound[0] = max_slope * x
@@ -632,7 +635,9 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     upper_bound = np.empty((2, n_timestamps_1))
     upper_bound[0] = max_slope * np.arange(n_timestamps_1) + 1
     upper_bound[1] = min_slope * centered_scale + n_timestamps_2
+    upper_bound = np.round(upper_bound, 2)
     # take the min of the upper linear funcs
+
     upper_bound = np.floor(np.min(upper_bound, axis=0))
 
     region = np.asarray([lower_bound, upper_bound]).astype('int64')
