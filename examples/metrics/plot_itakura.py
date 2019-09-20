@@ -8,11 +8,9 @@ parallelogram when computing the Dynamic Time Warping (DTW) with
 `method` == "itakura". The Itakura parallelogram is defined through a
 `max_slope` parameter which determines the slope of the steeper side. It is
 implemented in :func:`pyts.metrics.dtw.itakura_parallelogram`. The slope of the
-other side is set to "1 / max_slope" and eventually rescaled by the relative
-`n_timestamps_2` / `n_timestamps_2` if the time series have different lengths.
-For a feasible region, `max_slope` must be larger than 1. This example
-visualizes the itakura parallelogram with different slopes and temporal
-dimensions.
+other side is set to "1 / max_slope". For a feasible region, `max_slope`
+must be larger than 1. This example visualizes the itakura parallelogram with
+different slopes and temporal dimensions.
 """
 
 # Author: Hicham Janati <hicham.janati@inria.fr>
@@ -25,7 +23,7 @@ import matplotlib.gridspec as gridspec
 from pyts.metrics import itakura_parallelogram
 from pyts.metrics.dtw import _get_itakura_slopes
 
-######################################################################
+# #####################################################################
 # We write a function to visualize the itakura parallelogram for different
 # time series lengths.
 

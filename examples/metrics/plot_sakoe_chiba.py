@@ -31,7 +31,7 @@ from pyts.metrics import sakoe_chiba_band
 from pyts.metrics.dtw import _check_sakoe_chiba_params
 
 
-######################################################################
+# #####################################################################
 # We write a function to visualize the sakoe-chiba band for different
 # time series lengths.
 
