@@ -21,20 +21,20 @@ def _absolute(x, y):
 
 @njit()
 def _cost_matrix_region(x, y, dist, region):
-    n_timestamps = x.size
-    cost_mat = np.full((n_timestamps, n_timestamps), np.inf)
-    for j in prange(n_timestamps):
-        for i in prange(region[0, j], region[1, j]):
+    n_timestamps_1, n_timestamps_2 = x.size, y.size
+    cost_mat = np.full((n_timestamps_1, n_timestamps_2), np.inf)
+    for i in prange(n_timestamps_1):
+        for j in prange(region[0, i], region[1, i]):
             cost_mat[i, j] = dist(x[i], y[j])
     return cost_mat
 
 
 @njit()
 def _cost_matrix_no_region(x, y, dist):
-    n_timestamps = x.size
-    cost_mat = np.empty((n_timestamps, n_timestamps))
-    for j in prange(n_timestamps):
-        for i in prange(n_timestamps):
+    n_timestamps_1, n_timestamps_2 = x.size, y.size
+    cost_mat = np.empty((n_timestamps_1, n_timestamps_2))
+    for j in prange(n_timestamps_2):
+        for i in prange(n_timestamps_1):
             cost_mat[i, j] = dist(x[i], y[j])
     return cost_mat
 
@@ -46,9 +46,16 @@ def _check_input_dtw(x, y):
         raise ValueError("'x' must be a one-dimensional array.")
     if y.ndim != 1:
         raise ValueError("'y' must be a one-dimensional array.")
-    if x.shape != y.shape:
-        raise ValueError("'x' and 'y' must have the same shape.")
-    return x, y, x.size
+
+    return x, y, x.size, y.size
+
+
+def _check_region(region, n_timestamps_1, n_timestamps_2):
+    """Project region on the feasible set."""
+
+    region = np.clip(region[:, :n_timestamps_1], 0, n_timestamps_2)
+
+    return region
 
 
 def cost_matrix(x, y, dist='square', region=None):
@@ -56,10 +63,10 @@ def cost_matrix(x, y, dist='square', region=None):
 
     Parameters
     ----------
-    x : array-like, shape = (n_timestamps,)
+    x : array-like, shape = (n_timestamps_1,)
         First sample.
 
-    y : array-like, shape = (n_timestamps,)
+    y : array-like, shape = (n_timestamps_2,)
         Second sample.
 
     dist : 'square', 'absolute' or callable (default = 'square')
@@ -68,7 +75,7 @@ def cost_matrix(x, y, dist='square', region=None):
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
 
-    region : None or array-like, shape = (2, n_timestamps) (default = None)
+    region : None or array-like, shape = (2, n_timestamps_1) (default = None)
         Constraint region. If None, there is no contraint region.
         If array-like, the first row indicates the starting indices (included)
         and the second row the ending indices (excluded) of the valid rows
@@ -76,11 +83,11 @@ def cost_matrix(x, y, dist='square', region=None):
 
     Returns
     -------
-    cost_matrix : array, shape = (n_timestamps, n_timestamps)
+    cost_matrix : array, shape = (n_timestamps_1, n_timestamps_2)
         Cost matrix.
 
     """
-    x, y, _ = _check_input_dtw(x, y)
+    x, y, _, _ = _check_input_dtw(x, y)
     if dist == 'square':
         dist_ = _square
     elif dist == 'absolute':
@@ -103,7 +110,7 @@ def cost_matrix(x, y, dist='square', region=None):
         region_shape = region.shape
         if region_shape != (2, x.size):
             raise ValueError(
-                "The shape of 'region' must be equal to (2, n_timestamps) "
+                "The shape of 'region' must be equal to (2, n_timestamps_1) "
                 "(got {0}).".format(region_shape)
             )
     if region is None:
@@ -115,16 +122,16 @@ def cost_matrix(x, y, dist='square', region=None):
 
 @njit()
 def _accumulated_cost_matrix_region(cost_matrix, region):
-    n_timestamps = cost_matrix.shape[0]
-    acc_cost_mat = np.ones((n_timestamps, n_timestamps)) * np.inf
+    n_timestamps_1, n_timestamps_2 = cost_matrix.shape
+    acc_cost_mat = np.ones((n_timestamps_1, n_timestamps_2)) * np.inf
     acc_cost_mat[0, 0: region[1, 0]] = np.cumsum(
         cost_matrix[0, 0: region[1, 0]]
     )
     acc_cost_mat[0: region[1, 0], 0] = np.cumsum(
         cost_matrix[0: region[1, 0], 0]
     )
-    for j in range(1, n_timestamps):
-        for i in range(region[0, j], region[1, j]):
+    for i in range(1, n_timestamps_1):
+        for j in range(region[0, i], region[1, i]):
             acc_cost_mat[i, j] = cost_matrix[i, j] + min(
                 acc_cost_mat[i - 1][j - 1],
                 acc_cost_mat[i - 1][j],
@@ -135,12 +142,12 @@ def _accumulated_cost_matrix_region(cost_matrix, region):
 
 @njit()
 def _accumulated_cost_matrix_no_region(cost_matrix):
-    n_timestamps = cost_matrix.shape[0]
-    acc_cost_mat = np.empty((n_timestamps, n_timestamps))
+    n_timestamps_1, n_timestamps_2 = cost_matrix.shape
+    acc_cost_mat = np.empty((n_timestamps_1, n_timestamps_2))
     acc_cost_mat[0] = np.cumsum(cost_matrix[0])
     acc_cost_mat[:, 0] = np.cumsum(cost_matrix[:, 0])
-    for j in range(1, n_timestamps):
-        for i in range(1, n_timestamps):
+    for j in range(1, n_timestamps_2):
+        for i in range(1, n_timestamps_1):
             acc_cost_mat[i, j] = cost_matrix[i, j] + min(
                 acc_cost_mat[i - 1][j - 1],
                 acc_cost_mat[i - 1][j],
@@ -154,10 +161,10 @@ def accumulated_cost_matrix(cost_mat, region=None):
 
     Parameters
     ----------
-    cost_mat : array-like, shape = (n_timestamps, n_timestamps)
+    cost_mat : array-like, shape = (n_timestamps_1, n_timestamps_2)
         Cost matrix.
 
-    region : None or array-like, shape = (2, n_timestamps) (default = None)
+    region : None or tuple, shape = (2, n_timestamps_1) (default = None)
         Constraint region. If None, there is no contraint region.
         If array-like, the first row indicates the starting indices (included)
         and the second row the ending indices (excluded) of the valid rows
@@ -165,7 +172,7 @@ def accumulated_cost_matrix(cost_mat, region=None):
 
     Returns
     -------
-    acc_cost_mat : array, shape = (n_timestamps, n_timestamps)
+    acc_cost_mat : array, shape = (n_timestamps_1, n_timestamps_2)
         Accumulated cost matrix.
 
     """
@@ -174,8 +181,7 @@ def accumulated_cost_matrix(cost_mat, region=None):
         force_all_finite=False, dtype='float64'
     )
     cost_mat_shape = cost_mat.shape
-    if cost_mat_shape[0] != cost_mat_shape[1]:
-        raise ValueError("'cost_mat' must be a square matrix.")
+
     if region is None:
         acc_cost_mat = _accumulated_cost_matrix_no_region(cost_mat)
     else:
@@ -183,7 +189,8 @@ def accumulated_cost_matrix(cost_mat, region=None):
         region_shape = region.shape
         if region_shape != (2, cost_mat_shape[0]):
             raise ValueError("The shape of 'region' must be equal to "
-                             "(2, n_timestamps) (got {0})".format(region_shape)
+                             "(2, n_timestamps_1) "
+                             "(got {0})".format(region_shape)
                              )
         acc_cost_mat = _accumulated_cost_matrix_region(cost_mat, region)
     return acc_cost_mat
@@ -191,8 +198,8 @@ def accumulated_cost_matrix(cost_mat, region=None):
 
 @njit()
 def _return_path(acc_cost_mat):
-    n_timestamps = acc_cost_mat.shape[0]
-    path = [(n_timestamps - 1, n_timestamps - 1)]
+    n_timestamps_1, n_timestamps_2 = acc_cost_mat.shape
+    path = [(n_timestamps_1 - 1, n_timestamps_2 - 1)]
     while path[-1] != (0, 0):
         i, j = path[-1]
         if i == 0:
@@ -233,14 +240,14 @@ def _return_results(dtw_dist, cost_mat, acc_cost_mat,
 
 def dtw_classic(x, y, dist='square', return_cost=False,
                 return_accumulated=False, return_path=False):
-    """Classic Dynamic Time Warping (DTW) distance between two samples.
+    """Classic Dynamic Time Warping (DTW) distance between two time series.
 
     Parameters
     ----------
-    x : array-like, shape = (n_timestamps,)
+    x : array-like, shape = (n_timestamps_1,)
         First array.
 
-    y : array-like, shape = (n_timestamps,)
+    y : array-like, shape = (n_timestamps_2,)
         Second array
 
     dist : 'square', 'absolute' or callable (default = 'square')
@@ -263,10 +270,10 @@ def dtw_classic(x, y, dist='square', return_cost=False,
     dtw_dist : float
         The DTW distance between the two arrays.
 
-    cost_mat : array, shape = (n_timestamps, n_timestamps)
+    cost_mat : array, shape = (n_timestamps_1, n_timestamps_2)
         Cost matrix. Only returned if ``return_cost=True``.
 
-    acc_cost_mat : array, shape = (n_timestamps, n_timestamps)
+    acc_cost_mat : array, shape = (n_timestamps_1, n_timestamps_2)
         Accumulated cost matrix. Only returned if ``return_accumulated=True``.
 
     path : array, shape = (2, path_length)
@@ -284,7 +291,7 @@ def dtw_classic(x, y, dist='square', return_cost=False,
     2.0
 
     """
-    x, y, n_timestamps = _check_input_dtw(x, y)
+    x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
 
     cost_mat = cost_matrix(x, y, dist=dist, region=None)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
@@ -303,10 +310,10 @@ def dtw_region(x, y, dist='square', region=None, return_cost=False,
 
     Parameters
     ----------
-    x : array-like, shape = (n_timestamps,)
+    x : array-like, shape = (n_timestamps_1,)
         First array.
 
-    y : array-like, shape = (n_timestamps,)
+    y : array-like, shape = (n_timestamps_2,)
         Second array
 
     dist : 'square', 'absolute' or callable (default = 'square')
@@ -315,7 +322,7 @@ def dtw_region(x, y, dist='square', region=None, return_cost=False,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
 
-     region : None or array-like, shape = (2, n_timestamps)
+     region : None or array-like, shape = (2, n_timestamps_1)
          Constraint region. If None, no constraint region is used. Otherwise,
          the first row consists of the starting indices (included) and the
          second row consists of the ending indices (excluded) of the valid rows
@@ -335,10 +342,10 @@ def dtw_region(x, y, dist='square', region=None, return_cost=False,
     dtw_dist : float
         The DTW distance between the two arrays.
 
-    cost_mat : array, shape = (n_timestamps, n_timestamps)
+    cost_mat : array, shape = (n_timestamps_1, n_timestamps_2)
         Cost matrix. Only returned if ``return_cost=True``.
 
-    acc_cost_mat : array, shape = (n_timestamps, n_timestamps)
+    acc_cost_mat : array, shape = (n_timestamps_1 n_timestamps_2)
         Accumulated cost matrix. Only returned if ``return_accumulated=True``.
 
     path : array, shape = (2, path_length)
@@ -357,13 +364,13 @@ def dtw_region(x, y, dist='square', region=None, return_cost=False,
     2.23...
 
     """
-    x, y, n_timestamps = _check_input_dtw(x, y)
+    x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
 
     if region is not None:
         region = check_array(region, dtype='int64')
-        if region.shape != (2, n_timestamps):
+        if region.shape != (2, n_timestamps_1):
             raise ValueError("If 'region' is not None, it must be array-like "
-                             "with shape (2, n_timestamps).")
+                             "with shape (2, n_timestamps_1).")
 
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
@@ -376,24 +383,73 @@ def dtw_region(x, y, dist='square', region=None, return_cost=False,
     return res
 
 
-def sakoe_chiba_band(n_timestamps, window_size=0.1):
+def _check_sakoe_chiba_params(n_timestamps_1, n_timestamps_2, window_size):
+    """Check and set some parameters of the sakoe-chiba band."""
+    if not isinstance(n_timestamps_1, (int, np.integer)):
+        raise TypeError("'n_timestamps_1' must be an integer.")
+    else:
+        if not n_timestamps_1 >= 2:
+            raise ValueError("'n_timestamps_1' must be an integer greater than"
+                             " or equal to 2.")
+    if not isinstance(window_size, (int, np.integer, float, np.floating)):
+        raise TypeError("'window_size' must be an integer or a float.")
+    n_timestamps = max(n_timestamps_1, n_timestamps_2)
+
+    if isinstance(window_size, (float, np.floating)):
+        if not 0. <= window_size <= 1.:
+            raise ValueError("The given 'window_size' is a float, "
+                             "it must be between "
+                             "0. and 1. To set the size of the sakoe-chiba "
+                             "manually, 'window_size' must be an integer.")
+        window_size = ceil(window_size * (n_timestamps - 1))
+    else:
+        if not 0 <= window_size <= (n_timestamps - 1):
+            raise ValueError(
+                "The given 'window_size' is an integer, it must "
+                "be greater "
+                "than or equal to 0 and lower than max('n_timestamps_1', "
+                "'n_timestamps_2')."
+            )
+
+    scale = (n_timestamps_2 - 1) / (n_timestamps_1 - 1)
+
+    if n_timestamps_2 > n_timestamps_1:
+        window_size = max(window_size, scale / 2)
+        horizontal_shift = 0
+        vertical_shift = window_size
+    elif n_timestamps_1 > n_timestamps_2:
+        window_size = max(window_size, 0.5 / scale)
+        horizontal_shift = window_size
+        vertical_shift = 0
+    else:
+        horizontal_shift = 0
+        vertical_shift = window_size
+    return scale, horizontal_shift, vertical_shift
+
+
+def sakoe_chiba_band(n_timestamps_1, n_timestamps_2=None, window_size=0.1):
     """Compute the Sakoe-Chiba band.
 
     Parameters
     ----------
-    n_timestamps : int
-        The size of both time series.
+    n_timestamps_1 : int
+        The size of the first time series.
 
-    window_size : int or float (default = 0.1)
-        The window above and below the diagonale. If float, it must be between
-        0 and 1, and the actual window size will be computed as
-        ``ceil(window_size * (n_timestamps - 1))``. Each cell whose distance
-        with the diagonale is lower than or equal to 'window_size' becomes a
-        valid cell for the path.
+    n_timestamps_2 : int (optional, default None)
+        The size of the second time series. If None, set to `n_timestamps_1`.
+
+    window_size : float or int (default = 0.1)
+        The window size above and below the diagonale.
+        If float, `window_size must be between 0 and
+        1, and the actual window size will be computed as:
+        ``ceil(window_size * max((n_timestamps_1, n_timestamps_2) - 1))``.
+        If int, `window_size` must be the largest temporal shift allowed.
+        Each cell whose distance with the diagonale is lower than or equal to
+        'window_size' becomes a valid cell for the path.
 
     Returns
     -------
-    region : array, shape = (2, n_timestamps)
+    region : array, shape = (2, n_timestamps_1)
         Constraint region. The first row consists of the starting indices
         (included) and the second row consists of the ending indices (excluded)
         of the valid rows for each column.
@@ -401,35 +457,26 @@ def sakoe_chiba_band(n_timestamps, window_size=0.1):
     Examples
     --------
     >>> from pyts.metrics import sakoe_chiba_band
-    >>> print(sakoe_chiba_band(5, window_size=2))
+    >>> print(sakoe_chiba_band(5, window_size=0.5))
     [[0 0 0 1 2]
      [3 4 5 5 5]]
 
     """
-    if not isinstance(n_timestamps, (int, np.integer)):
-        raise TypeError("'n_timestamps' must be an intger.")
-    else:
-        if not n_timestamps >= 2:
-            raise ValueError("'n_timestamps' must be an integer greater than "
-                             "or equal to 2.")
-    if not isinstance(window_size, (int, np.integer, float, np.floating)):
-        raise TypeError("'window_size' must be an integer or a float.")
-    if isinstance(window_size, (int, np.integer)):
-        if not 0 <= window_size <= (n_timestamps - 1):
-            raise ValueError(
-                "If 'window_size' is an integer, it must be greater "
-                "than or equal to 0 and lower than 'n_timestamps'."
-            )
-        window_size_ = window_size
-    elif isinstance(window_size, (float, np.floating)):
-        if not 0. <= window_size <= 1.:
-            raise ValueError("If 'window_size' is a float, it must be between "
-                             "0 and 1.")
-        window_size_ = ceil(window_size * (n_timestamps - 1))
+    if n_timestamps_2 is None:
+        n_timestamps_2 = n_timestamps_1
+    scale, horizontal_shift, vertical_shift = \
+        _check_sakoe_chiba_params(n_timestamps_1, n_timestamps_2, window_size)
 
-    region = np.array([np.arange(n_timestamps) for _ in range(2)])
-    region += np.array([- window_size_, window_size_ + 1]).reshape(2, 1)
-    region = np.clip(region, 0, n_timestamps)
+    lower_bound = scale * (np.arange(n_timestamps_1) - horizontal_shift) \
+        - vertical_shift
+    lower_bound = np.round(lower_bound, 2)
+    lower_bound = np.ceil(lower_bound)
+    upper_bound = scale * (np.arange(n_timestamps_1) + horizontal_shift) \
+        + vertical_shift
+    upper_bound = np.round(upper_bound, 2)
+    upper_bound = np.floor(upper_bound) + 1
+    region = np.asarray([lower_bound, upper_bound]).astype('int64')
+    region = _check_region(region, n_timestamps_1, n_timestamps_2)
     return region
 
 
@@ -439,10 +486,10 @@ def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
 
     Parameters
     ----------
-    x : array-like, shape = (n_timestamps,)
+    x : array-like, shape = (n_timestamps_1,)
         First array.
 
-    y : array-like, shape = (n_timestamps,)
+    y : array-like, shape = (n_timestamps_2,)
         Second array
 
     dist : 'square', 'absolute' or callable (default = 'square')
@@ -451,12 +498,14 @@ def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
 
-    window_size : int or float (default = 0.1)
-        The window above and below the diagonale. If float, it must be between
-        0 and 1, and the actual window size will be computed as
-        ``int(window_size * (n_timestamps - 1))``. Each cell whose distance
-        with the diagonale is lower than or equal to 'window_size' becomes a
-        valid cell for the path.
+    window_size : float or int (default = 0.1)
+        The window size above and below the diagonale.
+        If float, `window_size must be between 0 and
+        1, and the actual window size will be computed as:
+        ``ceil(window_size * max((n_timestamps_1, n_timestamps_2) - 1))``.
+        If int, `window_size` must be the largest temporal shift allowed.
+        Each cell whose distance with the diagonale is lower than or equal to
+        'window_size' becomes a valid cell for the path.
 
     return_cost : bool (default = False)
         If True, the cost matrix is returned.
@@ -472,10 +521,10 @@ def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
     dtw_dist : float
         The DTW distance between the two arrays.
 
-    cost_mat : array, shape = (n_timestamps, n_timestamps)
+    cost_mat : array, shape = (n_timestamps_1, n_timestamps_2)
         Cost matrix. Only returned if ``return_cost=True``.
 
-    acc_cost_mat : array, shape = (n_timestamps, n_timestamps)
+    acc_cost_mat : array, shape = (n_timestamps_1, n_timestamps_2)
         Accumulated cost matrix. Only returned if ``return_accumulated=True``.
 
     path : array, shape = (2, path_length)
@@ -493,9 +542,9 @@ def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
     2.0
 
     """
-    x, y, n_timestamps = _check_input_dtw(x, y)
+    x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
 
-    region = sakoe_chiba_band(n_timestamps, window_size)
+    region = sakoe_chiba_band(n_timestamps_1, n_timestamps_2, window_size)
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
@@ -507,20 +556,52 @@ def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
     return res
 
 
-def itakura_parallelogram(n_timestamps, max_slope=2.):
+def _get_itakura_slopes(n_timestamps_1, n_timestamps_2, max_slope):
+    """Compute the slopes of the parallelogram bounds."""
+
+    if not isinstance(n_timestamps_1, (int, np.integer)):
+        raise TypeError("'n_timestamps_1' must be an integer.")
+    else:
+        if not n_timestamps_1 >= 2:
+            raise ValueError("'n_timestamps_1' must be an integer greater than"
+                             " or equal to 2.")
+
+    if not isinstance(max_slope, (int, np.integer, float, np.floating)):
+        raise TypeError("'max_slope' must be an integer or a float.")
+    else:
+        if not max_slope >= 1:
+            raise ValueError("'max_slope' must be a number greater "
+                             "than or equal to 1.")
+
+    min_slope = 1 / max_slope
+    scale_max = (n_timestamps_2 - 1) / (n_timestamps_1 - 2)
+    max_slope *= scale_max
+    max_slope = max(1., max_slope)
+
+    scale_min = (n_timestamps_2 - 2) / (n_timestamps_1 - 1)
+
+    min_slope *= scale_min
+    min_slope = min(1., min_slope)
+    return min_slope, max_slope
+
+
+def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     """Compute the Itakura parallelogram.
 
     Parameters
     ----------
-    n_timestamps : int
-        The size of both time series.
+    n_timestamps_1 : int
+        The size of the first time series.
+
+    n_timestamps_2 : int (optional, default None)
+        The size of the second time series. If None, set to `n_timestamps_1`.
 
     max_slope : float (default = 2.)
-        Maximum slope for the parallelogram.
+        Maximum slope for the parallelogram. Must be >= 1.
 
     Returns
     -------
-    region : array, shape = (2, n_timestamps)
+    region : array, shape = (2, n_timestamps_1)
         Constraint region. The first row consists of the starting indices
         (included) and the second row consists of the ending indices (excluded)
         of the valid rows for each column.
@@ -533,36 +614,38 @@ def itakura_parallelogram(n_timestamps, max_slope=2.):
      [1 3 4 4 5]]
 
     """
-    if not isinstance(n_timestamps, (int, np.integer)):
-        raise TypeError("'n_timestamps' must be an intger.")
-    else:
-        if not n_timestamps >= 2:
-            raise ValueError("'n_timestamps' must be an integer greater than "
-                             "or equal to 2.")
-    if not isinstance(max_slope, (int, np.integer, float, np.floating)):
-        raise TypeError("'max_slope' must be an integer or a float.")
-    else:
-        if not max_slope >= 1:
-            raise ValueError("'max_slope' must be a number greater "
-                             "than or equal to 1.")
+    if n_timestamps_2 is None:
+        n_timestamps_2 = n_timestamps_1
 
-    min_slope = 1 / max_slope
+    min_slope, max_slope = _get_itakura_slopes(n_timestamps_1, n_timestamps_2,
+                                               max_slope)
+    # Now we create the piecewise linear functions defining the parallelogram
+    # lower_bound[0] = min_slope * x
+    # lower_bound[1] = max_slope * (x - n_timestamps_1) + n_timestamps_2
 
-    lower_bound = np.empty((2, n_timestamps))
-    lower_bound[0] = min_slope * np.arange(n_timestamps)
-    lower_bound[1] = ((1 - max_slope) * (n_timestamps - 1)
-                      + max_slope * np.arange(n_timestamps))
+    centered_scale = np.arange(n_timestamps_1) - n_timestamps_1 + 1
+    lower_bound = np.empty((2, n_timestamps_1))
+    lower_bound[0] = min_slope * np.arange(n_timestamps_1)
+    lower_bound[1] = max_slope * centered_scale + n_timestamps_2 - 1
+
+    # take the max of the lower linear funcs
     lower_bound = np.round(lower_bound, 2)
     lower_bound = np.ceil(np.max(lower_bound, axis=0))
 
-    upper_bound = np.empty((2, n_timestamps))
-    upper_bound[0] = max_slope * np.arange(n_timestamps)
-    upper_bound[1] = ((1 - min_slope) * (n_timestamps - 1)
-                      + min_slope * np.arange(n_timestamps))
+    # upper_bound[0] = max_slope * x
+    # upper_bound[1] = min_slope * (x - n_timestamps_1) + n_timestamps_2
+
+    upper_bound = np.empty((2, n_timestamps_1))
+    upper_bound[0] = max_slope * np.arange(n_timestamps_1) + 1
+    upper_bound[1] = min_slope * centered_scale + n_timestamps_2
     upper_bound = np.round(upper_bound, 2)
-    upper_bound = np.floor(np.min(upper_bound, axis=0) + 1)
+    # take the min of the upper linear funcs
+
+    upper_bound = np.floor(np.min(upper_bound, axis=0))
 
     region = np.asarray([lower_bound, upper_bound]).astype('int64')
+    region = _check_region(region, n_timestamps_1, n_timestamps_2)
+
     return region
 
 
@@ -572,10 +655,10 @@ def dtw_itakura(x, y, dist='square', max_slope=2., return_cost=False,
 
     Parameters
     ----------
-    x : array-like, shape (n_timestamps,)
+    x : array-like, shape (n_timestamps_1,)
         First array.
 
-    y : array-like, shape (n_timestamps,)
+    y : array-like, shape (n_timestamps_2,)
         Second array
 
     dist : 'square', 'absolute' or callable (default = 'square')
@@ -601,10 +684,10 @@ def dtw_itakura(x, y, dist='square', max_slope=2., return_cost=False,
     dtw_dist : float
         The DTW distance between the two arrays.
 
-    cost_mat : ndarray, shape = (n_timestamps, n_timestamps)
+    cost_mat : ndarray, shape = (n_timestamps_1, n_timestamps_2)
         Cost matrix. Only returned if ``return_cost=True``.
 
-    acc_cost_mat : ndarray, shape = (n_timestamps, n_timestamps)
+    acc_cost_mat : ndarray, shape = (n_timestamps_1, n_timestamps_2)
         Accumulated cost matrix. Only returned if ``return_accumulated=True``.
 
     path : array, shape = (2, path_length)
@@ -622,9 +705,9 @@ def dtw_itakura(x, y, dist='square', max_slope=2., return_cost=False,
     2.23...
 
     """
-    x, y, n_timestamps = _check_input_dtw(x, y)
+    x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
 
-    region = itakura_parallelogram(n_timestamps, max_slope)
+    region = itakura_parallelogram(n_timestamps_1, n_timestamps_2, max_slope)
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
@@ -636,7 +719,8 @@ def dtw_itakura(x, y, dist='square', max_slope=2., return_cost=False,
     return res
 
 
-def _multiscale_region(n_timestamps, resolution_level, n_timestamps_reduced,
+def _multiscale_region(n_timestamps_1, n_timestamps_2, resolution_level,
+                       n_timestamps_reduced_1, n_timestamps_reduced_2,
                        path, radius):
     path_length = path.shape[1]
     path_up = np.repeat(path, radius, axis=1)
@@ -652,20 +736,19 @@ def _multiscale_region(n_timestamps, resolution_level, n_timestamps_reduced,
         path_left[1, start: end] -= i
         path_right[1, start: end] += i
 
-    path_radius = np.clip(
-        np.c_[path, path_up, path_down, path_left, path_right],
-        0, n_timestamps_reduced - 1
-    )
+    path_radius = np.c_[path, path_up, path_down, path_left, path_right]
+    path_radius[0] = np.clip(path_radius[0], 0, n_timestamps_reduced_1 - 1)
+    path_radius[1] = np.clip(path_radius[1], 0, n_timestamps_reduced_2 - 1)
 
-    region_reduced = np.empty((2, n_timestamps_reduced))
-    for i in range(n_timestamps_reduced):
+    region_reduced = np.empty((2, n_timestamps_reduced_1))
+    for i in range(n_timestamps_reduced_1):
         arr = path_radius[1, path_radius[0] == i]
         min_, max_ = np.min(arr), np.max(arr)
         region_reduced[0, i] = min_ * resolution_level
         region_reduced[1, i] = (max_ + 1) * resolution_level
 
     region = np.repeat(region_reduced, resolution_level, axis=1)
-    region = np.clip(region[:, :n_timestamps], 0, n_timestamps)
+    region = _check_region(region, n_timestamps_1, n_timestamps_2)
 
     return region.astype('int64')
 
@@ -677,10 +760,10 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
 
     Parameters
     ----------
-    x : array-like, shape = (n_timestamps,)
+    x : array-like, shape = (n_timestamps_1,)
         First array.
 
-    y : array-like, shape = (n_timestamps,)
+    y : array-like, shape = (n_timestamps_2,)
         Second array
 
     dist : 'square', 'absolute' or callable (default = 'square')
@@ -712,10 +795,10 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
     dtw_dist : float
         The DTW distance between the two arrays.
 
-    cost_mat : ndarray, shape = (n_timestamps, n_timestamps)
+    cost_mat : ndarray, shape = (n_timestamps_1, n_timestamps_2)
         Cost matrix. Only returned if ``return_cost=True``.
 
-    acc_cost_mat : ndarray, shape = (n_timestamps, n_timestamps)
+    acc_cost_mat : ndarray, shape = (n_timestamps_1, n_timestamps_2)
         Accumulated cost matrix. Only returned if ``return_accumulated=True``.
 
     path : array, shape = (2, path_length)
@@ -733,7 +816,7 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
     2.23...
 
     """
-    x, y, n_timestamps = _check_input_dtw(x, y)
+    x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
     if not isinstance(resolution, (int, np.integer)):
         raise TypeError("'resolution' must be an integer.")
     if resolution < 1:
@@ -746,21 +829,25 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
     if resolution == 1:
         region = None
     else:
-        remainder = n_timestamps % resolution
-        if remainder != 0:
-            x_padded = np.append(x, np.repeat(x[-1], resolution - remainder))
-            y_padded = np.append(y, np.repeat(y[-1], resolution - remainder))
+        remainder_1 = n_timestamps_1 % resolution
+        remainder_2 = n_timestamps_2 % resolution
+
+        if remainder_1 != 0:
+            x_padded = np.append(x, np.repeat(x[-1], resolution - remainder_1))
             x_padded = x_padded.reshape(-1, resolution).mean(axis=1)
-            y_padded = y_padded.reshape(-1, resolution).mean(axis=1)
         else:
             x_padded = x.reshape(-1, resolution).mean(axis=1)
+        if remainder_2 != 0:
+            y_padded = np.append(y, np.repeat(y[-1], resolution - remainder_2))
+            y_padded = y_padded.reshape(-1, resolution).mean(axis=1)
+        else:
             y_padded = y.reshape(-1, resolution).mean(axis=1)
-
         cost_mat_res = cost_matrix(x_padded, y_padded, dist=dist, region=None)
         acc_cost_mat_res = accumulated_cost_matrix(cost_mat_res)
         path_res = _return_path(acc_cost_mat_res)
-        region = _multiscale_region(n_timestamps, resolution,
-                                    x_padded.size, path_res, radius)
+        region = _multiscale_region(n_timestamps_1, n_timestamps_2, resolution,
+                                    x_padded.size, y_padded.size, path_res,
+                                    radius)
 
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
@@ -779,10 +866,10 @@ def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
 
     Parameters
     ----------
-    x : array-like, shape = (n_timestamps,)
+    x : array-like, shape = (n_timestamps_1,)
         First array.
 
-    y : array-like, shape = (n_timestamps,)
+    y : array-like, shape = (n_timestamps_2,)
         Second array
 
     dist : 'square', 'absolute' or callable (default = 'square')
@@ -811,10 +898,10 @@ def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
     dtw_dist : float
         The DTW distance between the two arrays.
 
-    cost_mat : ndarray, shape = (n_timestamps, n_timestamps)
+    cost_mat : ndarray, shape = (n_timestamps_1, n_timestamps_2)
         Cost matrix. Only returned if ``return_cost=True``.
 
-    acc_cost_mat : ndarray, shape = (n_timestamps, n_timestamps)
+    acc_cost_mat : ndarray, shape = (n_timestamps_1, n_timestamps_2)
         Accumulated cost matrix. Only returned if ``return_accumulated=True``.
 
     path : ndarray, shape = (2, path_length)
@@ -832,7 +919,7 @@ def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
     2.0
 
     """
-    x, y, n_timestamps = _check_input_dtw(x, y)
+    x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
     if not isinstance(radius, (int, np.integer)):
         raise TypeError("'radius' must be an integer.")
     if radius < 0:
@@ -840,30 +927,39 @@ def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
 
     min_size = radius + 2
     region = None
+    n_timestamps = min(n_timestamps_1, n_timestamps_2)
     if n_timestamps > min_size:
         n_recursions = ceil(log2(n_timestamps / min_size))
         for i in range(n_recursions):
             resolution = 2 ** (n_recursions - i)
-            remainder = n_timestamps % resolution
-            if remainder != 0:
+            remainder_1 = n_timestamps_1 % resolution
+            remainder_2 = n_timestamps_2 % resolution
+
+            if remainder_1 != 0:
                 x_padded = np.append(
-                    x, np.repeat(x[-1], resolution - remainder)
-                )
-                y_padded = np.append(
-                    y, np.repeat(y[-1], resolution - remainder)
+                    x, np.repeat(x[-1], resolution - remainder_1)
                 )
                 x_padded = x_padded.reshape(-1, resolution).mean(axis=1)
-                y_padded = y_padded.reshape(-1, resolution).mean(axis=1)
             else:
                 x_padded = x.reshape(-1, resolution).mean(axis=1)
+            if remainder_2 != 0:
+                y_padded = np.append(
+                    y, np.repeat(y[-1], resolution - remainder_2)
+                )
+                y_padded = y_padded.reshape(-1, resolution).mean(axis=1)
+            else:
                 y_padded = y.reshape(-1, resolution).mean(axis=1)
 
             cost_mat_res = cost_matrix(x_padded, y_padded,
                                        dist=dist, region=region)
             acc_cost_mat_res = accumulated_cost_matrix(cost_mat_res)
             path_res = _return_path(acc_cost_mat_res)
-            n_timestamps_next = ceil((2 * n_timestamps) / resolution)
-            region = _multiscale_region(n_timestamps_next, 2, x_padded.size,
+            n_timestamps_next_1 = ceil((2 * n_timestamps_1) / resolution)
+            n_timestamps_next_2 = ceil((2 * n_timestamps_2) / resolution)
+
+            region = _multiscale_region(n_timestamps_next_1,
+                                        n_timestamps_next_2,
+                                        2, x_padded.size, y_padded.size,
                                         path_res, radius)
 
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
@@ -883,10 +979,10 @@ def dtw(x, y, dist='square', method='classic', options=None, return_cost=False,
 
     Parameters
     ----------
-    x : array-like, shape = (n_timestamps,)
+    x : array-like, shape = (n_timestamps_1,)
         First array.
 
-    y : array-like, shape = (n_timestamps,)
+    y : array-like, shape = (n_timestamps_2,)
         Second array
 
     dist : 'square', 'absolute' or callable (default = 'square')
@@ -927,10 +1023,10 @@ def dtw(x, y, dist='square', method='classic', options=None, return_cost=False,
     dist : float
         The DTW distance between the two arrays.
 
-    cost_mat : ndarray, shape = (n_timestamps, n_timestamps)
+    cost_mat : ndarray, shape = (n_timestamps_1, n_timestamps_2)
         Cost matrix. Only returned if ``return_cost=True``.
 
-    acc_cost_mat : ndarray, shape = (n_timestamps, n_timestamps)
+    acc_cost_mat : ndarray, shape = (n_timestamps_1, n_timestamps_2)
         Accumulated cost matrix. Only returned if ``return_accumulated=True``.
 
     path : ndarray, shape = (2, path_length)
@@ -944,7 +1040,7 @@ def dtw(x, y, dist='square', method='classic', options=None, return_cost=False,
     >>> from pyts.metrics import dtw
     >>> x = [0, 1, 1]
     >>> y = [2, 0, 1]
-    >>> dtw(x, y, method='sakoechiba', options={'window_size': 2})
+    >>> dtw(x, y, method='sakoechiba', options={'window_size': 0.5})
     2.0
 
     """
