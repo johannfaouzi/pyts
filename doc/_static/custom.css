@@ -1,0 +1,257 @@
+/* Custom CSS file */
+
+/* Properties for hyperlinks */
+
+a.reference {
+  outline: none;
+  border-bottom: none;
+}
+
+a.reference:hover {
+  border-bottom: 1px solid;
+  border-color: rgba(47, 79, 79, 0.8);
+}
+
+
+/* Sidebar font properties */
+
+div.sphinxsidebar h3 {
+  font-size: 22px; font-weight: 600;
+}
+
+div.sphinxsidebar p {
+  font-size: 20px; font-weight: 600;
+}
+
+div.sphinxsidebar ul li.toctree-l1 > a {
+  font-size: 16px;
+}
+
+div.sphinxsidebar ul li.toctree-l2 > a {
+  font-size: 14px;
+}
+
+div.sphinxsidebar p span {
+   font-size: 16px; font-weight: 600;
+}
+
+
+/* Description font properties */
+
+div.sphinxsidebar p.blurb { font-size: 17px; font-weight: 600; }
+
+
+/* Properties for code hovering */
+
+div.body code:hover {
+  border-bottom: none;
+  background-color: transparent;
+}
+
+/* Font properties for level-1 headers */
+
+div.body h1 {
+  text-align: center;
+  font-size: 30px;
+  line-height: 50px;
+  border-radius: 0px 10px 0px 10px;
+  background-color: rgba(47, 79, 79, 0.3);
+}
+
+div.body h1 span {
+  font-size: 22px;
+  font-weight: 1000;
+  background-color: none;
+  color: rgba(47, 79, 79, 1);
+}
+
+div.body h1 code {
+  background-color: transparent;
+  border-bottom: none;
+}
+
+/*
+div.body h1 code:hover {
+  border-bottom: none;
+}
+*/
+
+div.reference.internal h1 span {
+  outline: none;
+  border-bottom: none;
+}
+
+
+/* Font properties for level-2 headers */
+
+div.body h2 {
+  font-size: 22px;
+  line-height: 42px;
+  border-radius: 10px;
+  padding-left: 15px;
+  background-color: rgba(47, 79, 79, 0.2);
+}
+
+div.body h2 span {
+  font-size: 18px;
+  font-weight: 1000;
+  background-color: none;
+  color: rgba(47, 79, 79, 1);
+}
+
+div.body h2 code {
+  background-color: transparent;
+  border-bottom: none;
+}
+
+div.section[id^="examples"] h2 span {
+  font-size: 18px;
+  font-weight: 900;
+  background-color: none;
+  color: rgba(47, 79, 79, 1);
+}
+
+
+/* Font properties for level-3 headers */
+
+div.body h3 {
+  font-size: 19px;
+  line-height: 30px;
+  border-radius: 5px;
+  padding-left: 10px;
+  background-color: rgba(47, 79, 79, 0.1);
+}
+
+
+/* Properties for boxes around class and methods */
+
+div.body dl.class dt[id^="pyts"] {
+  border-radius: 5px;
+  padding: 10px;
+  background-color: rgba(47, 47, 47, 0.08);
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+/* Properties for boxes around functions */
+
+div.body dl.function dt[id^="pyts"] {
+  border-radius: 5px;
+  padding: 10px;
+  background-color: rgba(47, 47, 47, 0.08);
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+
+/* Properties for code blocks in Examples section of an object */
+
+dl pre {
+    padding-left: 10px;
+}
+
+
+/* Properties for code blocks in body and auto-examples */
+
+div.highlight pre {
+  padding-left: 10px;
+}
+
+
+/* Properties for tables */
+
+table.docutils col.field-name {
+  background-color: rgba(47, 79, 79, 0.1);
+}
+
+table.docutils td, table.docutils th {
+  padding: 7px;
+}
+
+table.docutils {
+  border-top: 1px solid;
+  border-color: rgba(47, 47, 47, 0.2);
+  margin-bottom: 30px;
+}
+
+table.docutils.field-list tr {
+  border-bottom: 1px solid;
+  border-color: rgba(47, 47, 47, 0.2);
+}​
+
+
+/* Properties for code internal references */
+
+pre, code.py {
+  color: rgba(47, 79, 79, 1);
+}
+
+code.py:hover {
+  border-bottom: 1px solid;
+  border-color: rgba(47, 79, 79, 0.2);
+  background-color: transparent;
+}
+
+div.sphinxsidebar li code {
+    color: rgba(47, 79, 79, 1);
+    text-decoration: none;
+    border-bottom: none;
+}
+
+div.sphinxsidebar li code:hover {
+    border-bottom: 1px solid;
+    border-color: rgba(47, 79, 79, 1);
+    background-color: transparent;
+}
+
+
+/* Properties for headerlinks */
+
+a.headerlink {
+  color: rgba(255, 110, 110, 1);
+}
+
+/* Properties for example page */
+
+div.section#introductory-examples,
+div.section#approximating-time-series,
+div.section#bag-of-words-transformation,
+div.section#classification-algorithms,
+div.section#dataset-utilities,
+div.section#decomposing-time-series,
+div.section#imaging-time-series,
+div.section#metrics,
+div.section#multivariate-time-series,
+div.section#preprocessing-tools,
+div.section#transformation-algorithms {
+  display: block;
+  padding: 0px 0px 10px 0px;
+}
+
+div.sphx-glr-thumbcontainer {
+  max-width: 187px;
+}
+
+div.sphx-glr-thumbcontainer p.caption {
+  font-size: 15px;
+  text-align: center;
+  white-space: normal;
+  padding: 0px;
+}
+
+
+div.sphx-glr-download-link-note.admonition.note {
+  padding: 5px;
+  background-color: rgba(47, 79, 79, 0.1);
+  border-radius: 4px;
+}
+
+div.sphx-glr-download-link-note.admonition.note p {
+  display:inline;
+}
+
+div.sphx-glr-download-link-note.admonition.note p.admonition-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: rgba(47, 79, 79, 1);
+}
