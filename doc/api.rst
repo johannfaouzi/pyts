@@ -4,7 +4,7 @@
 API Documentation
 =================
 
-Full API documentation of the `pyts` Python package.
+Full API documentation of the :code:`pyts` Python package.
 
 :mod:`pyts.approximation`: Approximation algorithms
 ===================================================
@@ -123,27 +123,27 @@ Full API documentation of the `pyts` Python package.
 :mod:`pyts.metrics`: Metrics
 ============================
 
-  .. automodule:: pyts.metrics
-     :no-members:
-     :no-inherited-members:
+.. automodule:: pyts.metrics
+   :no-members:
+   :no-inherited-members:
 
-  .. currentmodule:: pyts
+.. currentmodule:: pyts
 
-  .. autosummary::
-    :toctree: generated/
-    :template: function.rst
+.. autosummary::
+  :toctree: generated/
+  :template: function.rst
 
-    metrics.boss
-    metrics.dtw
-    metrics.dtw_classic
-    metrics.dtw_region
-    metrics.dtw_sakoechiba
-    metrics.dtw_itakura
-    metrics.dtw_multiscale
-    metrics.dtw_fast
-    metrics.itakura_parallelogram
-    metrics.sakoe_chiba_band
-    metrics.show_options
+  metrics.boss
+  metrics.dtw
+  metrics.dtw_classic
+  metrics.dtw_region
+  metrics.dtw_sakoechiba
+  metrics.dtw_itakura
+  metrics.dtw_multiscale
+  metrics.dtw_fast
+  metrics.itakura_parallelogram
+  metrics.sakoe_chiba_band
+  metrics.show_options
 
 
 :mod:`pyts.multivariate`: Multivariate time series tools

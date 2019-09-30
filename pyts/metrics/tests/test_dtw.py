@@ -10,7 +10,7 @@ from math import sqrt
 from numba import njit
 from pyts.metrics.dtw import (
     _square, _absolute, _check_input_dtw, _multiscale_region, _return_path,
-    _return_results, cost_matrix, accumulated_cost_matrix
+    _return_results, cost_matrix, accumulated_cost_matrix, _check_region
 )
 from pyts.metrics import (
     dtw_classic, dtw_region, sakoe_chiba_band, dtw_sakoechiba,
@@ -21,6 +21,9 @@ from pyts.metrics import (
 
 x = np.array([0, 1, 2])
 y = np.array([2, 0, 1])
+
+x_long = np.array([0, 1, 2, 4, 2, 0])
+y_long = np.array([2, 0, 1, 3, 0, 1])
 
 params_return = {'return_cost': True,
                  'return_accumulated': True,
@@ -61,7 +64,7 @@ def test_absolute(x, y, scalar_desired):
     'params, err_msg',
     [({'x': x[:, None], 'y': y}, "'x' must be a one-dimensional array."),
      ({'x': x, 'y': y[:, None]}, "'y' must be a one-dimensional array."),
-     ({'x': x, 'y': y[:2]}, "'x' and 'y' must have the same shape.")]
+     ]
 )
 def test_check_input_dtw(params, err_msg):
     """Test parameter validation."""
@@ -80,7 +83,7 @@ def test_check_input_dtw(params, err_msg):
       "Calling dist(1, 1) did not return a float or an integer."),
 
      ({'region': [[1, 1]]},
-      "The shape of 'region' must be equal to (2, n_timestamps) "
+      "The shape of 'region' must be equal to (2, n_timestamps_1) "
       "(got (1, 2)).")]
 )
 def test_parameter_check_cost_matrix(params, err_msg):
@@ -108,10 +111,9 @@ def test_actual_results_cost_matrix(params, arr_desired):
 
 @pytest.mark.parametrize(
     'params, err_msg',
-    [({'cost_mat': np.ones((4, 3))}, "'cost_mat' must be a square matrix."),
-
+    [
      ({'cost_mat': np.ones((4, 4)), 'region': [[1, 1]]},
-      "The shape of 'region' must be equal to (2, n_timestamps) "
+      "The shape of 'region' must be equal to (2, n_timestamps_1) "
       "(got {0})".format((1, 2)))]
 )
 def test_parameter_check_accumulated_cost_matrix(params, err_msg):
@@ -214,7 +216,7 @@ def test_actual_results_dtw_classic(params, res_desired):
     'params, err_msg',
     [({'region': [[1, 1]]},
       "If 'region' is not None, it must be array-like with shape "
-      "(2, n_timestamps).")]
+      "(2, n_timestamps_1).")]
 )
 def test_parameter_check_dtw_region(params, err_msg):
     """Test parameter validation."""
@@ -263,21 +265,29 @@ def test_actual_results_dtw_region(params, res_desired):
 
 @pytest.mark.parametrize(
     'params, error, err_msg',
-    [({'n_timestamps': '3'}, TypeError,
-      "'n_timestamps' must be an intger."),
+    [({'n_timestamps_1': '3.'}, TypeError,
+      "'n_timestamps_1' must be an integer."),
 
-     ({'n_timestamps': 3, 'window_size': '0.5'}, TypeError,
+     ({'n_timestamps_1': 3, 'window_size': '0.5'}, TypeError,
       "'window_size' must be an integer or a float."),
 
-     ({'n_timestamps': 1}, ValueError,
-      "'n_timestamps' must be an integer greater than or equal to 2."),
+     ({'n_timestamps_1': 1}, ValueError,
+      "'n_timestamps_1' must be an integer greater than or equal to 2."),
 
-     ({'n_timestamps': 10, 'window_size': 20}, ValueError,
-      "If 'window_size' is an integer, it must be greater than or equal to 0 "
-      "and lower than 'n_timestamps'."),
+     ({'n_timestamps_1': 10, 'window_size': 3.},
+      ValueError, "The given 'window_size' is a float, "
+                  "it must be between "
+                  "0. and 1. To set the size of the sakoe-chiba "
+                  "manually, 'window_size' must be an integer."),
 
-     ({'n_timestamps': 10, 'window_size': 2.}, ValueError,
-      "If 'window_size' is a float, it must be between 0 and 1.")]
+     ({'n_timestamps_1': 10, 'window_size': 20},
+      ValueError, "The given 'window_size' is an integer, it must "
+                  "be greater "
+                  "than or equal to 0 and lower than max('n_timestamps_1', "
+                  "'n_timestamps_2')."),
+
+     ({'n_timestamps_1': 10, 'window_size': "a"}, TypeError,
+        "'window_size' must be an integer or a float.")]
 )
 def test_parameter_check_sakoe_chiba_band(params, error, err_msg):
     """Test parameter validation."""
@@ -287,11 +297,21 @@ def test_parameter_check_sakoe_chiba_band(params, error, err_msg):
 
 @pytest.mark.parametrize(
     'params, arr_desired',
-    [({'n_timestamps': 4, 'window_size': 2}, [[0, 0, 0, 1], [3, 4, 4, 4]]),
-     ({'n_timestamps': 4, 'window_size': 0.5}, [[0, 0, 0, 1], [3, 4, 4, 4]]),
-     ({'n_timestamps': 4, 'window_size': 3}, [[0, 0, 0, 0], [4, 4, 4, 4]]),
-     ({'n_timestamps': 4, 'window_size': 1}, [[0, 0, 1, 2], [2, 3, 4, 4]]),
-     ({'n_timestamps': 4, 'window_size': 0}, [[0, 1, 2, 3], [1, 2, 3, 4]])]
+    [({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 2},
+     [[0, 0, 0, 1], [3, 4, 4, 4]]),
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 0.5},
+     [[0, 0, 0, 1], [3, 4, 4, 4]]),
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 3},
+     [[0, 0, 0, 0], [4, 4, 4, 4]]),
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 1},
+     [[0, 0, 1, 2], [2, 3, 4, 4]]),
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'window_size': 0},
+     [[0, 1, 2, 3], [1, 2, 3, 4]]),
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 5, 'window_size': 2},
+     [[0, 0, 1, 2], [3, 4, 5, 5]]),
+     ({'n_timestamps_1': 5, 'n_timestamps_2': 4, 'window_size': 2},
+     [[0, 0, 0, 1, 2], [2, 3, 4, 4, 4]]),
+     ]
 )
 def test_actual_results_sakoe_chiba_band(params, arr_desired):
     """Test that the actual results are the expected ones."""
@@ -348,16 +368,17 @@ def test_actual_results_dtw_sakoechiba(params, res_desired):
 
 @pytest.mark.parametrize(
     'params, error, err_msg',
-    [({'n_timestamps': '3'}, TypeError,
-      "'n_timestamps' must be an intger."),
+    [({'n_timestamps_1': '3'}, TypeError,
+      "'n_timestamps_1' must be an integer."),
 
-     ({'n_timestamps': 10, 'max_slope': '3'}, TypeError,
+     ({'n_timestamps_1': 10, 'n_timestamps_2': 10, 'max_slope': '3'},
+     TypeError,
       "'max_slope' must be an integer or a float."),
 
-     ({'n_timestamps': 1}, ValueError,
-      "'n_timestamps' must be an integer greater than or equal to 2."),
+     ({'n_timestamps_1': 1}, ValueError,
+      "'n_timestamps_1' must be an integer greater than or equal to 2."),
 
-     ({'n_timestamps': 10, 'max_slope': 0.5}, ValueError,
+     ({'n_timestamps_1': 10, 'max_slope': 0.5}, ValueError,
       "'max_slope' must be a number greater than or equal to 1.")]
 )
 def test_parameter_check_itakura_parallelogram(params, error, err_msg):
@@ -368,9 +389,16 @@ def test_parameter_check_itakura_parallelogram(params, error, err_msg):
 
 @pytest.mark.parametrize(
     'params, arr_desired',
-    [({'n_timestamps': 4, 'max_slope': 2}, [[0, 1, 1, 3], [1, 3, 3, 4]]),
-     ({'n_timestamps': 4, 'max_slope': 8}, [[0, 1, 1, 3], [1, 3, 3, 4]]),
-     ({'n_timestamps': 4, 'max_slope': 1}, [[0, 1, 2, 3], [1, 2, 3, 4]])]
+    [({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'max_slope': 2},
+     [[0, 1, 1, 3], [1, 3, 3, 4]]),
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'max_slope': 8},
+     [[0, 1, 1, 3], [1, 3, 3, 4]]),
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 4, 'max_slope': 1},
+     [[0, 1, 2, 3], [1, 2, 3, 4]]),
+     ({'n_timestamps_1': 6, 'n_timestamps_2': 3, 'max_slope': 1},
+     [[0, 1, 1, 1, 1, 2], [1, 2, 2, 2, 2, 3]]),
+     ({'n_timestamps_1': 4, 'n_timestamps_2': 6, 'max_slope': 1},
+     [[0, 1, 3, 5], [1, 3, 5, 6]])]
 )
 def test_actual_results_itakura_parallelogram(params, arr_desired):
     """Test that the actual results are the expected ones."""
@@ -388,7 +416,7 @@ def test_actual_results_itakura_parallelogram(params, arr_desired):
        'path': [[0, 1, 2], [0, 1, 2]],
        'dtw': sqrt(6)}),
 
-     ({'dist': 'absolute'},
+     ({'max_slope': 1, 'dist': 'absolute'},
       {'cost_mat':
           [[2, np.inf, np.inf], [np.inf, 1, np.inf], [np.inf, np.inf, 1]],
        'acc_cost_mat':
@@ -427,13 +455,20 @@ def test_actual_results_dtw_itakura(params, res_desired):
 
 @pytest.mark.parametrize(
     'params, arr_desired',
-    [({'n_timestamps': 6, 'resolution_level': 2, 'n_timestamps_reduced': 3,
+    [({'n_timestamps_1': 6, 'n_timestamps_2': 6, 'resolution_level': 2,
+     'n_timestamps_reduced_1': 3, 'n_timestamps_reduced_2': 3,
        'path': np.asarray([[0, 0, 1, 2], [0, 1, 2, 2]]), 'radius': 0},
       [[0, 0, 4, 4, 4, 4], [4, 4, 6, 6, 6, 6]]),
 
-     ({'n_timestamps': 6, 'resolution_level': 2, 'n_timestamps_reduced': 3,
+     ({'n_timestamps_1': 6, 'n_timestamps_2': 6, 'resolution_level': 2,
+      'n_timestamps_reduced_1': 3, 'n_timestamps_reduced_2': 3,
        'path': np.asarray([[0, 0, 1, 2], [0, 1, 2, 2]]), 'radius': 1},
-      [[0, 0, 0, 0, 2, 2], [6, 6, 6, 6, 6, 6]])]
+      [[0, 0, 0, 0, 2, 2], [6, 6, 6, 6, 6, 6]]),
+     ({'n_timestamps_1': 6, 'n_timestamps_2': 4, 'resolution_level': 2,
+      'n_timestamps_reduced_1': 2, 'n_timestamps_reduced_2': 2,
+       'path': np.asarray([[0, 0, 1, 2], [0, 1, 2, 2]]), 'radius': 1},
+      [[0, 0, 0, 0], [4, 4, 4, 4]])
+     ]
 )
 def test_actual_results_multiscale_region(params, arr_desired):
     """Test that the actual results are the expected ones."""
@@ -521,8 +556,8 @@ def test_parameter_check_dtw(params, err_msg):
 
      ({'method': 'sakoechiba'}, dtw_sakoechiba(x, y, **params_return)),
 
-     ({'method': 'sakoechiba', 'options': {'window_size': 2}},
-      dtw_sakoechiba(x, y, window_size=2, **params_return)),
+     ({'method': 'sakoechiba', 'options': {'window_size': 0.5}},
+      dtw_sakoechiba(x, y, **params_return)),
 
      ({'method': 'itakura'}, dtw_itakura(x, y, **params_return)),
 
@@ -578,3 +613,52 @@ def test_actual_results_show_options(params, res_desired):
     """Test that the actual results are the expected ones."""
     res_actual = show_options(disp=True, **params)
     np.testing.assert_equal(res_actual, res_desired)
+
+
+@pytest.mark.parametrize(
+    'params, res_desired',
+    [({}, dtw_classic(x_long, y, **params_return)),
+     ({}, dtw_classic(x_long, y, **params_return)),
+     ({'method': 'sakoechiba'}, dtw_sakoechiba(x_long, y, **params_return)),
+
+     ({'method': 'sakoechiba', 'options': {'window_size': 0.5}},
+      dtw_sakoechiba(x_long, y, window_size=0.5, **params_return)),
+
+     ({'method': 'itakura'}, dtw_itakura(x_long, y, **params_return)),
+
+     ({'method': 'itakura', 'options': {'max_slope': 8}},
+      dtw_itakura(x_long, y, max_slope=8, **params_return)),
+
+     ({'method': 'multiscale'}, dtw_multiscale(x_long, y, **params_return)),
+
+     ({'method': 'multiscale', 'options': {'resolution': 1}},
+      dtw_multiscale(x_long, y, resolution=1, **params_return)),
+
+     ({'method': 'multiscale', 'options': {'radius': 2}},
+      dtw_multiscale(x_long, y, radius=2, **params_return)),
+
+     ({'method': 'fast'}, dtw_fast(x_long, y, **params_return)),
+
+     ({'method': 'fast', 'options': {'radius': 1}},
+      dtw_fast(x_long, y, radius=1, **params_return))]
+)
+def test_actual_results_dtw_diff_lengths(params, res_desired):
+    """Test that the actual results are the expected ones."""
+    (dtw_actual, cost_mat_actual, acc_cost_mat_actual, path_actual) = dtw(
+        x_long, y, **params_return, **params
+    )
+    np.testing.assert_allclose(dtw_actual, res_desired[0])
+    np.testing.assert_allclose(cost_mat_actual, res_desired[1])
+    np.testing.assert_allclose(acc_cost_mat_actual, res_desired[2])
+    np.testing.assert_allclose(path_actual, res_desired[3])
+
+
+@pytest.mark.parametrize(
+    "region, n_timestamps_1, n_timestamps_2",
+    [(np.array([[-3, 0, 1, 2, 10, 30], [0, 2, 4, 5, 10, 50]]), 4, 10),
+     (np.array([[-3, 0, 1, 2, 10, 30], [0, 2, 4, 5, 10, 50]]), 6, 3)])
+def test_check_region(region, n_timestamps_1, n_timestamps_2):
+    region = _check_region(region, n_timestamps_1, n_timestamps_2)
+    assert region.min() >= 0
+    assert region.max() <= n_timestamps_2
+    assert region.shape[1] == n_timestamps_1
