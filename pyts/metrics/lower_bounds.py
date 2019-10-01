@@ -77,9 +77,9 @@ def lower_bound_yi(X_train, X_test):
 
     References
     ----------
-    .. [1] B. K. Yi et al, "Efficient Retrieval of Similar Time
-           Sequences Under Time Warping". International Conference on
-           Data Engineering, 201-208 (1998).
+    .. [1] B. K. Yi et al, "Efficient Retrieval of Similar Time Sequences
+           Under Time Warping". International Conference on Data Engineering,
+           201-208 (1998).
 
     Examples
     --------
@@ -119,10 +119,9 @@ def lower_bound_kim(X_train, X_test):
 
     References
     ----------
-    .. [1] S. W. Kim et al, "An Index-Based Approach
-           for Similarity Search Supporting Time Warping in Large
-           Sequence Databases". International Conference on Data
-           Engineering, 607-614 (2001).
+    .. [1] S. W. Kim et al, "An Index-Based Approach for Similarity Search
+           Supporting Time Warping in Large Sequence Databases". International
+           Conference on Data Engineering, 607-614 (2001).
 
     Examples
     --------
