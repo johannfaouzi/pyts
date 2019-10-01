@@ -45,7 +45,7 @@ div.sphinxsidebar p.blurb { font-size: 17px; font-weight: 600; }
 
 div.body code:hover {
   border-bottom: none;
-  background-color: transparent;
+  background-color: none;
 }
 
 /* Font properties for level-1 headers */
@@ -69,12 +69,6 @@ div.body h1 code {
   background-color: transparent;
   border-bottom: none;
 }
-
-/*
-div.body h1 code:hover {
-  border-bottom: none;
-}
-*/
 
 div.reference.internal h1 span {
   outline: none;
