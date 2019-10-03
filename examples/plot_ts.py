@@ -3,7 +3,8 @@
 Plotting a time series
 ======================
 
-This example shows how you can plot a single time series.
+Visualizing data is important and should usually be the first step in any
+analysis. This example shows how you can plot a single time series.
 """
 
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
