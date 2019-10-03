@@ -3,9 +3,11 @@
 Bag of Words
 ============
 
-This example shows how you can transform a discretized time series
-(i.e. a time series represented as a sequence of letters) into a bag
-of words using :class:`pyts.bag_of_words.BagOfWords`.
+Time series are often transformed into sequences of symbols. Bag-of-words
+approaches are then used to extract features from these sequences.
+This example shows how one can transform a dataset of sequences of symbols
+into words and illustrates the created words. It is implemented as
+:class:`pyts.bag_of_words.BagOfWords`.
 """
 
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
