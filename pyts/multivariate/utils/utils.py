@@ -12,7 +12,12 @@ def check_3d_array(X):
     Parameters
     ----------
     X : array-like
-        Input data
+        Input data.
+
+    Returns
+    -------
+    X_new : array
+        Input data as an array.
 
     """
     X = check_array(X, ensure_2d=False, allow_nd=True)
