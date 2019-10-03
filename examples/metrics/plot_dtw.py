@@ -26,10 +26,10 @@ x, y = X[0], X[1]
 # To compare time series of different lengths, we remove some observations
 mask = np.ones(x.size)
 mask[::5] = 0
-x = x[mask.astype(bool)]
+y = y[mask.astype(bool)]
 n_timestamps_1, n_timestamps_2 = x.size, y.size
 
-plt.figure(figsize=(10, 15))
+plt.figure(figsize=(10, 8))
 timestamps_1 = np.arange(n_timestamps_1 + 1)
 timestamps_2 = np.arange(n_timestamps_2 + 1)
 
@@ -42,10 +42,10 @@ matrix_classic[tuple(path_classic)[::-1]] = 1.
 plt.subplot(2, 2, 1)
 plt.pcolor(timestamps_1, timestamps_2, matrix_classic,
            edgecolors='k', cmap='Greys')
-plt.xlabel('x', fontsize=16)
-plt.ylabel('y', fontsize=16)
+plt.xlabel('x', fontsize=12)
+plt.ylabel('y', fontsize=12)
 plt.title("{0}\nDTW(x, y) = {1:.2f}".format('classic', dtw_classic),
-          fontsize=16)
+          fontsize=14)
 
 # Dynamic Time Warping: sakoechiba
 window_size = 0.1
@@ -63,10 +63,10 @@ matrix_sakoechiba[tuple(path_sakoechiba)] = 1.
 plt.subplot(2, 2, 2)
 plt.pcolor(timestamps_1, timestamps_2, matrix_sakoechiba.T,
            edgecolors='k', cmap='Greys')
-plt.xlabel('x', fontsize=16)
-plt.ylabel('y', fontsize=16)
+plt.xlabel('x', fontsize=12)
+plt.ylabel('y', fontsize=12)
 plt.title("{0}\nDTW(x, y) = {1:.2f}".format('sakoechiba', dtw_sakoechiba),
-          fontsize=16)
+          fontsize=14)
 
 # Dynamic Time Warping: itakura
 slope = 1.2
@@ -83,10 +83,10 @@ matrix_itakura[tuple(path_itakura)] = 1.
 plt.subplot(2, 2, 3)
 plt.pcolor(timestamps_1, timestamps_2, matrix_itakura.T,
            edgecolors='k', cmap='Greys')
-plt.xlabel('x', fontsize=16)
-plt.ylabel('y', fontsize=16)
+plt.xlabel('x', fontsize=12)
+plt.ylabel('y', fontsize=12)
 plt.title("{0}\nDTW(x, y) = {1:.2f}".format('itakura', dtw_itakura),
-          fontsize=16)
+          fontsize=14)
 
 # Dynamic Time Warping: multiscale
 resolution, radius = 5, 2
@@ -115,12 +115,11 @@ matrix_multiscale[tuple(path_multiscale)] = 1.
 plt.subplot(2, 2, 4)
 plt.pcolor(timestamps_1, timestamps_2, matrix_multiscale.T,
            edgecolors='k', cmap='Greys')
-plt.xlabel('x', fontsize=16)
-plt.ylabel('y', fontsize=16)
+plt.xlabel('x', fontsize=12)
+plt.ylabel('y', fontsize=12)
 plt.title("{0}\nDTW(x, y) = {1:.2f}".format('multiscale', dtw_multiscale),
-          fontsize=16)
+          fontsize=14)
 
-plt.suptitle("Dynamic Time Warping", fontsize=22)
-plt.tight_layout()
-plt.subplots_adjust(top=0.91)
+plt.suptitle("Dynamic Time Warping", y=0.995, fontsize=17)
+plt.subplots_adjust(top=0.91, hspace=0.4)
 plt.show()
