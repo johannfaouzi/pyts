@@ -9,6 +9,9 @@ available: Gramian Angular Summation Field and Gramian Angular Difference
 Field.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import ImageGrid
 from pyts.image import GramianAngularField

@@ -7,6 +7,9 @@ This example shows the different scaling algorithms available in
 :mod:`pyts.preprocessing`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import matplotlib.pyplot as plt
 from pyts.preprocessing import (StandardScaler, MinMaxScaler,

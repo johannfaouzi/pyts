@@ -3,9 +3,17 @@
 Piecewise Aggregate Approximation
 =================================
 
-This example shows how you can approximate a time series using
-:class:`pyts.approximation.PiecewiseAggregateApproximation`.
+Time series with a high sampling rate can be very noisy. In order to reduce
+noise, a technique called *Piecewise Aggregate Approximation* was invented,
+consisting in taking the mean over back-to-back points. This decreases the
+number of points and reduces noise while preserving the trend of the time
+series. This example shows how you can approximate a time series using
+:class:`pyts.approximation.PiecewiseAggregateApproximation` and illustrates
+the transformation.
 """
+
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -32,4 +40,5 @@ plt.plot(np.arange(window_size // 2,
 plt.vlines(np.arange(0, n_timestamps, window_size) - 0.5,
            X[0].min(), X[0].max(), color='g', linestyles='--', linewidth=0.5)
 plt.legend(loc='best', fontsize=14)
+plt.title('Piecewise Aggregate Approximation', fontsize=16)
 plt.show()

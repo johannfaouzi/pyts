@@ -2,9 +2,13 @@
 =====================
 Joint Recurrence Plot
 =====================
+
 This example shows how to transform a multivariate time series into a joint
 recurrence plot using :class:`pyts.multivariate.image.JointRecurrencePlot`.
 """
+
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
 
 import matplotlib.pyplot as plt
 from pyts.multivariate.image import JointRecurrencePlot

@@ -7,6 +7,9 @@ This example shows the different transforming algorithms available in
 :mod:`pyts.preprocessing`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import matplotlib.pyplot as plt
 from pyts.datasets import load_gunpoint
 from pyts.preprocessing import PowerTransformer, QuantileTransformer

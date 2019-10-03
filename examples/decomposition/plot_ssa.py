@@ -7,6 +7,9 @@ This example shows how you can decompose a time series into several time series
 using :class:`pyts.decomposition.SingularSpectrumAnalysis`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import matplotlib.pyplot as plt
 from pyts.decomposition import SingularSpectrumAnalysis

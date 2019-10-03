@@ -8,6 +8,9 @@ some of its Fourier coefficients using
 :class:`pyts.approximation.DiscreteFourierTransform`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import matplotlib.pyplot as plt
 from pyts.approximation import DiscreteFourierTransform

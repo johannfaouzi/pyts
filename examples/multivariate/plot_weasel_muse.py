@@ -2,12 +2,16 @@
 ===========
 WEASEL+MUSE
 ===========
-WEASEL+MUSE stand for Word ExtrAction for time SEries cLassification plus
+
+WEASELMUSE stand for Word ExtrAction for time SEries cLassification plus
 Multivariate Unsupervised Symbols and dErivatives.
-This example shows how the WEASEL+MUSE algorithm transforms multivariate time
+This example shows how the WEASELMUSE algorithm transforms multivariate time
 series of real numbers into a sequence of frequencies of words.
 It is implemented as :class:`pyts.multivariate.transformation.WEASELMUSE`.
 """
+
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
 
 import numpy as np
 import matplotlib.pyplot as plt

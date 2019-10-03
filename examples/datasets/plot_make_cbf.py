@@ -10,6 +10,9 @@ well-known datasets in time series classification. It is implemented as
 :func:`pyts.datasets.make_cylinder_bell_funnel`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import matplotlib.pyplot as plt
 from pyts.datasets import make_cylinder_bell_funnel
 

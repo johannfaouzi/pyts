@@ -8,6 +8,9 @@ This example shows how you can transform a discretized time series
 of words using :class:`pyts.bag_of_words.BagOfWords`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import matplotlib.pyplot as plt
 from pyts.bag_of_words import BagOfWords

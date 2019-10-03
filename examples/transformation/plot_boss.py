@@ -8,6 +8,9 @@ numbers into a sequence of frequencies of words. It is implemented as
 :class:`pyts.transformation.BOSS`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import matplotlib.pyplot as plt
 from pyts.datasets import load_gunpoint

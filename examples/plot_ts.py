@@ -6,6 +6,9 @@ Plotting a time series
 This example shows how you can plot a single time series.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import matplotlib.pyplot as plt
 

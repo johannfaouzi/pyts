@@ -18,6 +18,9 @@ data in the archive is just the X-axis.
 It is implemented as :func:`pyts.datasets.load_gunpoint`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import matplotlib.pyplot as plt
 from pyts.datasets import load_gunpoint
 

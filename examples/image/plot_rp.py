@@ -7,6 +7,9 @@ This example shows how to transform a time series into a Recurrence Plot
 using :class:`pyts.image.RecurrencePlot`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import matplotlib.pyplot as plt
 from pyts.image import RecurrencePlot
 from pyts.datasets import load_gunpoint

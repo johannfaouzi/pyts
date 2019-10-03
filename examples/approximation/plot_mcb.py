@@ -9,6 +9,9 @@ sequences of symbols. It is implemented as
 :class:`pyts.approximation.MultipleCoefficientBinning`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import matplotlib.pyplot as plt
 from pyts.approximation import MultipleCoefficientBinning

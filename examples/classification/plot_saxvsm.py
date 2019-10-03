@@ -12,6 +12,9 @@ the tf vector of the unlabeled time series. SAX-VSM algorithm is
 implemented as :class:`pyts.classification.SAXVSM`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import matplotlib.pyplot as plt
 from pyts.classification import SAXVSM

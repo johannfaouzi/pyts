@@ -7,6 +7,9 @@ This example shows how to transform a time series into a Markov
 Transition Field using :class:`pyts.image.MarkovTransitionField`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import matplotlib.pyplot as plt
 from pyts.image import MarkovTransitionField
 from pyts.datasets import load_gunpoint

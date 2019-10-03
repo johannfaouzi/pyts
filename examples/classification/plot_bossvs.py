@@ -12,6 +12,9 @@ the tf vector of the unlabeled time series. BOSSVS algorithm is
 implemented as :class:`pyts.classification.BOSSVS`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import matplotlib.pyplot as plt
 from pyts.classification import BOSSVS

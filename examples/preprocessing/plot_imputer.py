@@ -7,6 +7,9 @@ This example shows how one can impute missing values using
 :class:`pyts.preprocessing.InterpolationImputer`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import matplotlib.pyplot as plt
 from pyts.preprocessing import InterpolationImputer

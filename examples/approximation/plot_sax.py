@@ -8,6 +8,9 @@ sequence of real numbers into a sequence of symbols) using
 :class:`pyts.approximation.SymbolicAggregateApproximation`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import numpy as np
 import matplotlib.lines as mlines
 import matplotlib.pyplot as plt
