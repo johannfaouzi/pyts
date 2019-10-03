@@ -7,7 +7,7 @@ from sklearn.utils import check_array
 
 
 def check_3d_array(X):
-    """Check that the input is a three-dimensional arrayself.
+    """Check that the input is a three-dimensional array.
 
     Parameters
     ----------
