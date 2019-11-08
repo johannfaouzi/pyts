@@ -979,6 +979,7 @@ def dtw_fast(x, y, dist='square', radius=0, precomputed_cost=None,
 
     """
     n_timestamps_1, n_timestamps_2 = _get_dimensions(x, y, dist,
+                                                     precomputed_cost)
     if not isinstance(radius, (int, np.integer)):
         raise TypeError("'radius' must be an integer.")
     if radius < 0:

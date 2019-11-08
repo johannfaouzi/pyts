@@ -215,8 +215,7 @@ def test_actual_results_dtw_classic(params, res_desired):
 @pytest.mark.parametrize(
     'params, err_msg',
     [({'region': [[1, 1]]},
-      "If 'region' is not None, it must be array-like with shape "
-      "(2, n_timestamps_1).")]
+      "The shape of 'region' must be equal to (2, n_timestamps_1)")]
 )
 def test_parameter_check_dtw_region(params, err_msg):
     """Test parameter validation."""
