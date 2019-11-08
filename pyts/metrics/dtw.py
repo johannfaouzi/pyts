@@ -61,7 +61,11 @@ def _check_input_dtw(x, y):
 
 
 def _get_dimensions(x, y, dist, precomputed_cost):
+    x = check_array(x, ensure_2d=False, dtype='float64')
+    y = check_array(y, ensure_2d=False, dtype='float64')
     if dist == "precomputed":
+        precomputed_cost = check_array(precomputed_cost, ensure_2d=True,
+                                       dtype='float64')
         shape = precomputed_cost.shape
     else:
         shape = x.size, y.size
