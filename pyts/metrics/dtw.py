@@ -343,17 +343,18 @@ def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
     return res
 
 
-def dtw_region(x, y, dist='square', region=None, precomputed_cost=None,
-               return_cost=False, return_accumulated=False, return_path=False):
+def dtw_region(x=None, y=None, dist='square', region=None,
+               precomputed_cost=None, return_cost=False,
+               return_accumulated=False, return_path=False):
     """Dynamic Time Warping (DTW) distance with a constraint region.
 
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array.
+        First array. Ignored if `dist` == "precomputed".
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array
+        Second array.  Ignored if `dist` == "precomputed".
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
@@ -515,18 +516,18 @@ def sakoe_chiba_band(n_timestamps_1, n_timestamps_2=None, window_size=0.1):
     return region
 
 
-def dtw_sakoechiba(x, y, dist='square', window_size=0.1, precomputed_cost=None,
-                   return_cost=False, return_accumulated=False,
-                   return_path=False):
+def dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
+                   precomputed_cost=None, return_cost=False,
+                   return_accumulated=False, return_path=False):
     """Dynamic Time Warping (DTW) distance with Sakoe-Chiba band constraint.
 
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array.
+        First array. Ignored if `dist` == "precomputed".
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array
+        Second array. Ignored if `dist` == "precomputed".
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
@@ -691,18 +692,18 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     return region
 
 
-def dtw_itakura(x, y, dist='square', max_slope=2., precomputed_cost=None,
-                return_cost=False, return_accumulated=False,
-                return_path=False):
+def dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
+                precomputed_cost=None, return_cost=False,
+                return_accumulated=False, return_path=False):
     """Dynamic Time Warping distance with Itakura parallelogram constraint.
 
     Parameters
     ----------
     x : array-like, shape (n_timestamps_1,)
-        First array.
+        First array. Ignored if `dist` == "precomputed".
 
     y : array-like, shape (n_timestamps_2,)
-        Second array
+        Second array. Ignored if `dist` == "precomputed".
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
@@ -801,7 +802,7 @@ def _multiscale_region(n_timestamps_1, n_timestamps_2, resolution_level,
     return region.astype('int64')
 
 
-def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
+def dtw_multiscale(x=None, y=None, dist='square', resolution=2, radius=0,
                    precomputed_cost=None, return_cost=False,
                    return_accumulated=False, return_path=False):
     """Multiscale Dynamic Time Warping distance.
@@ -809,10 +810,10 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array.
+        First array. Ignored if `dist` == "precomputed".
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array
+        Second array. Ignored if `dist` == "precomputed".
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
