@@ -81,11 +81,10 @@ def _input_to_cost(x, y, dist, precomputed_cost, region):
     """Computes cost matrix from dtw input."""
     if dist == "precomputed":
         cost_mat = _check_input_cost(precomputed_cost)
-        n_timestamps_1, n_timestamps_2 = cost_mat.shape
         if region is not None:
             cost_mat = _project_cost_matrix_region(cost_mat, region)
     else:
-        x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
+        x, y, _, _ = _check_input_dtw(x, y)
         cost_mat = cost_matrix(x, y, dist=dist, region=region)
     return cost_mat
 
