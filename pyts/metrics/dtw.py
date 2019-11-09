@@ -61,13 +61,13 @@ def _check_input_dtw(x, y):
 
 
 def _get_dimensions(x, y, dist, precomputed_cost):
-    x = check_array(x, ensure_2d=False, dtype='float64')
-    y = check_array(y, ensure_2d=False, dtype='float64')
     if dist == "precomputed":
         precomputed_cost = check_array(precomputed_cost, ensure_2d=True,
                                        dtype='float64')
         shape = precomputed_cost.shape
     else:
+        x = check_array(x, ensure_2d=False, dtype='float64')
+        y = check_array(y, ensure_2d=False, dtype='float64')
         shape = x.size, y.size
     return shape
 
@@ -289,7 +289,7 @@ def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
         First array. Ignored if `dist` == "precomputed".
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array. Ignored if dist == "precomputed".
+        Second array. Ignored if `dist` == "precomputed".
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
@@ -358,7 +358,7 @@ def dtw_region(x=None, y=None, dist='square', region=None,
         First array. Ignored if `dist` == "precomputed".
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array.  Ignored if `dist` == "precomputed".
+        Second array. Ignored if `dist` == "precomputed".
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
@@ -592,7 +592,6 @@ def dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
     region = sakoe_chiba_band(n_timestamps_1, n_timestamps_2, window_size)
     cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
 
-    cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
     if dist == 'square':
@@ -703,10 +702,10 @@ def dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
 
     Parameters
     ----------
-    x : array-like, shape (n_timestamps_1,)
+    x : array-like, shape = (n_timestamps_1,)
         First array. Ignored if `dist` == "precomputed".
 
-    y : array-like, shape (n_timestamps_2,)
+    y : array-like, shape = (n_timestamps_2,)
         Second array. Ignored if `dist` == "precomputed".
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
@@ -761,7 +760,6 @@ def dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
                                                      precomputed_cost)
     region = itakura_parallelogram(n_timestamps_1, n_timestamps_2, max_slope)
     cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
-    cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
     if dist == 'square':
@@ -806,7 +804,7 @@ def _multiscale_region(n_timestamps_1, n_timestamps_2, resolution_level,
     return region.astype('int64')
 
 
-def dtw_multiscale(x=None, y=None, dist='square', resolution=2, radius=0,
+def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
                    precomputed_cost=None, return_cost=False,
                    return_accumulated=False, return_path=False):
     """Multiscale Dynamic Time Warping distance.
@@ -814,15 +812,14 @@ def dtw_multiscale(x=None, y=None, dist='square', resolution=2, radius=0,
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array. Ignored if `dist` == "precomputed".
+        First array.
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array. Ignored if `dist` == "precomputed".
+        Second array.
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
-        If 'absolute', the absolute difference is used. If 'precomputed',
-        `precomputed_cost` must be the cost matrix. If callable,
+        If 'absolute', the absolute difference is used. If callable,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
 
@@ -873,8 +870,7 @@ def dtw_multiscale(x=None, y=None, dist='square', resolution=2, radius=0,
     2.23...
 
     """
-    n_timestamps_1, n_timestamps_2 = _get_dimensions(x, y, dist,
-                                                     precomputed_cost)
+    x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
     if not isinstance(resolution, (int, np.integer)):
         raise TypeError("'resolution' must be an integer.")
     if resolution < 1:
@@ -907,7 +903,6 @@ def dtw_multiscale(x=None, y=None, dist='square', resolution=2, radius=0,
                                     x_padded.size, y_padded.size, path_res,
                                     radius)
 
-    cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
@@ -919,17 +914,17 @@ def dtw_multiscale(x=None, y=None, dist='square', resolution=2, radius=0,
     return res
 
 
-def dtw_fast(x, y, dist='square', radius=0, precomputed_cost=None,
+def dtw_fast(x=None, y=None, dist='square', radius=0, precomputed_cost=None,
              return_cost=False, return_accumulated=False, return_path=False):
     """Fast Dynamic Time Warping distance.
 
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array.
+        First array. Ignored if `dist` == "precomputed".
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array
+        Second array. Ignored if `dist` == "precomputed".
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
@@ -982,8 +977,8 @@ def dtw_fast(x, y, dist='square', radius=0, precomputed_cost=None,
     2.0
 
     """
-    n_timestamps_1, n_timestamps_2 = _get_dimensions(x, y, dist,
-                                                     precomputed_cost)
+    x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
+
     if not isinstance(radius, (int, np.integer)):
         raise TypeError("'radius' must be an integer.")
     if radius < 0:
@@ -1026,7 +1021,6 @@ def dtw_fast(x, y, dist='square', radius=0, precomputed_cost=None,
                                         2, x_padded.size, y_padded.size,
                                         path_res, radius)
 
-    cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat)
     dtw_dist = acc_cost_mat[-1, -1]
@@ -1038,7 +1032,7 @@ def dtw_fast(x, y, dist='square', radius=0, precomputed_cost=None,
     return res
 
 
-def dtw(x, y, dist='square', method='classic', options=None,
+def dtw(x=None, y=None, dist='square', method='classic', options=None,
         precomputed_cost=None, return_cost=False,
         return_accumulated=False, return_path=False):
     """Dynamic Time Warping (DTW) distance between two samples.
@@ -1046,10 +1040,10 @@ def dtw(x, y, dist='square', method='classic', options=None,
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array.
+        First array. Ignored if `dist` == "precomputed".
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array
+        Second array. Ignored if `dist` == "precomputed".
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
@@ -1114,6 +1108,11 @@ def dtw(x, y, dist='square', method='classic', options=None,
     2.0
 
     """
+    if dist == "precomputed" and method in ["multiscale", "fast"]:
+        raise ValueError("The method '{0}' cannot be used with "
+                         "a precomputed cost. Provide the raw time series or"
+                         "use one of the methods: 'classic', 'sakoechiba', "
+                         "'itakura'".format(method))
     if options is None:
         options = dict()
 
