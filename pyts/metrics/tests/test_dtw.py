@@ -18,6 +18,8 @@ from pyts.metrics import (
     show_options
 )
 
+from itertools import product
+
 
 x = np.array([0, 1, 2])
 y = np.array([2, 0, 1])
@@ -661,3 +663,26 @@ def test_check_region(region, n_timestamps_1, n_timestamps_2):
     assert region.min() >= 0
     assert region.max() <= n_timestamps_2
     assert region.shape[1] == n_timestamps_1
+
+
+@pytest.mark.parametrize(
+    "method, n_timestamps_1, n_timestamps_2",
+    product(["classic", "sakoechiba", "itakura"],
+            [4, 10], [4, 10]))
+def test_precomputed_cost(method, n_timestamps_1, n_timestamps_2):
+    rng = np.random.RandomState(42)
+    x = rng.randn(n_timestamps_1)
+    y = rng.randn(n_timestamps_2)
+    squared_cost = (x[:, None] - y[None, :]) ** 2
+    dtw_desired = dtw(x, y, method=method, dist="square")
+    dtw_desired **= 2
+    dtw_precomputed = dtw(method=method, dist="precomputed",
+                          precomputed_cost=squared_cost)
+    np.testing.assert_allclose(dtw_desired, dtw_precomputed)
+
+
+@pytest.mark.parametrize("method", ["fast", "multiscale"])
+def test_precomputed_cost_error(method):
+    error_match = "cannot be used with a precomputed cost"
+    with pytest.raises(ValueError, match=error_match):
+        dtw(method=method, dist="precomputed")
