@@ -7,7 +7,7 @@ Time series with a high sampling rate can be very noisy. In order to reduce
 noise, a technique called *Piecewise Aggregate Approximation* was invented,
 consisting in taking the mean over back-to-back points. This decreases the
 number of points and reduces noise while preserving the trend of the time
-series. This example shows how you can approximate a time series using
+series. This example shows how to approximate a time series using
 :class:`pyts.approximation.PiecewiseAggregateApproximation` and illustrates
 the transformation.
 """

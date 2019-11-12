@@ -3,9 +3,14 @@
 Symbolic Aggregate approXimation
 ================================
 
-This example shows how you can discretize a time series (i.e. transform a
-sequence of real numbers into a sequence of symbols) using
+Binning continuous data into intervals can be seen as an approximation that
+reduces noise and captures the trend of a time series. The Symbolic Aggregate
+approXimation (SAX) algorithm bins continuous time series into intervals,
+transforming independently each time series (a sequence of floats) into a
+sequence of symbols, usually letters. It is implemented as
 :class:`pyts.approximation.SymbolicAggregateApproximation`.
+This example shows how to use this algorithm and illustrates the
+transformation.
 """
 
 # Author: Johann Faouzi <johann.faouzi@gmail.com>

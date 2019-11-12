@@ -3,9 +3,17 @@
 Discrete Fourier Transform
 ==========================
 
-This example shows how to approximate a time series using only
-some of its Fourier coefficients using
-:class:`pyts.approximation.DiscreteFourierTransform`.
+Discrete Fourier Transform is a signal processing technique that transforms
+a signal of size `n` into a vector of complex Fourier coefficients of size`n`.
+When the signal consists of floats, the transformation can be made bijective
+and consists of a vector of floats of size `n`. The first Fourier coefficients
+are the coefficients from the lowest frequencies and represent the trend,
+while the last Fourier coefficients are for the highest frequencies and
+usually represent noise. A time series can thus be approximated using some
+of the first Fourier coefficients. Discrete Fourier Transform is implemented
+as :class:`pyts.approximation.DiscreteFourierTransform` and this example
+illustrates the difference between the original time series and the time
+series approximated with the first Fourier coefficients.
 """
 
 # Author: Johann Faouzi <johann.faouzi@gmail.com>

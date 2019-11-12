@@ -3,10 +3,15 @@
 Multiple Coefficient Binning
 ============================
 
-This example shows how the Multiple Coefficient Binning algorithm
-transforms a dataset of time series of real numbers into a list of
-sequences of symbols. It is implemented as
-:class:`pyts.approximation.MultipleCoefficientBinning`.
+Binning continuous data into intervals can be seen as an approximation that
+reduces noise and captures the trend of a time series. The Multiple Coefficient
+Binning (MCB) algorithm bins continuous time series into intervals,
+transforming each time point of all the time series (a sequence of floats) into
+a sequence of symbols, usually letters. Contrary to SAX which bins each time
+series independently, MCB bins each time point independently. It is
+implemented as :class:`pyts.approximation.MultipleCoefficientBinning`.
+This example shows how to use this algorithm and illustrates the
+transformation.
 """
 
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
