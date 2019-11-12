@@ -46,7 +46,7 @@ def uea_dataset_list():
     module_path = os.path.dirname(__file__)
     finfo = os.path.join(module_path, 'info', 'uea.pickle')
     dictionary = pickle.load(open(finfo, 'rb'))
-    datasets = list(dictionary.keys())
+    datasets = sorted(dictionary.keys())
     return datasets
 
 
