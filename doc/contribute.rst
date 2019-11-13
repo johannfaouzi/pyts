@@ -58,6 +58,9 @@ This makes reviewing the relevance of the requested feature easier.
 Contributing code
 -----------------
 
+In order to contribute code, you need to create a pull request on
+GitHub: https://github.com/johannfaouzi/pyts/pulls
+
 How to contribute
 ^^^^^^^^^^^^^^^^^
 
@@ -180,4 +183,5 @@ click on ``index.html`` to open the index page, which will look like
 the first page that you see on the online documentation. Then you can move to
 the pages that you modified and have a look at your changes.
 
-Finally, repeat this process until you are satisfied with your changes.
+Finally, repeat this process until you are satisfied with your changes and
+open a pull request describing the changes you made.
