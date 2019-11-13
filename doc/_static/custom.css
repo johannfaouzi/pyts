@@ -48,6 +48,12 @@ div.body code:hover {
   background-color: none;
 }
 
+/* Properties for inline code */
+
+div.body code {
+  padding: 1px 3px 1px 3px;
+}
+
 /* Font properties for level-1 headers */
 
 div.body h1 {

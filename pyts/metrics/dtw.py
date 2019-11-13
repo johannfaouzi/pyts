@@ -130,8 +130,10 @@ def _accumulated_cost_matrix_region(cost_matrix, region):
     acc_cost_mat[0: region[1, 0], 0] = np.cumsum(
         cost_matrix[0: region[1, 0], 0]
     )
+    region_ = np.copy(region)
+    region_[0] = np.maximum(region_[0], 1)
     for i in range(1, n_timestamps_1):
-        for j in range(region[0, i], region[1, i]):
+        for j in range(region_[0, i], region_[1, i]):
             acc_cost_mat[i, j] = cost_matrix[i, j] + min(
                 acc_cost_mat[i - 1][j - 1],
                 acc_cost_mat[i - 1][j],
@@ -373,7 +375,7 @@ def dtw_region(x, y, dist='square', region=None, return_cost=False,
                              "with shape (2, n_timestamps_1).")
 
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
-    acc_cost_mat = accumulated_cost_matrix(cost_mat)
+    acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
     dtw_dist = acc_cost_mat[-1, -1]
     if dist == 'square':
         dtw_dist = sqrt(dtw_dist)
@@ -546,7 +548,7 @@ def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
 
     region = sakoe_chiba_band(n_timestamps_1, n_timestamps_2, window_size)
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
-    acc_cost_mat = accumulated_cost_matrix(cost_mat)
+    acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
     dtw_dist = acc_cost_mat[-1, -1]
     if dist == 'square':
         dtw_dist = sqrt(dtw_dist)
@@ -709,7 +711,7 @@ def dtw_itakura(x, y, dist='square', max_slope=2., return_cost=False,
 
     region = itakura_parallelogram(n_timestamps_1, n_timestamps_2, max_slope)
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
-    acc_cost_mat = accumulated_cost_matrix(cost_mat)
+    acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
     dtw_dist = acc_cost_mat[-1, -1]
     if dist == 'square':
         dtw_dist = sqrt(dtw_dist)
@@ -843,14 +845,14 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
         else:
             y_padded = y.reshape(-1, resolution).mean(axis=1)
         cost_mat_res = cost_matrix(x_padded, y_padded, dist=dist, region=None)
-        acc_cost_mat_res = accumulated_cost_matrix(cost_mat_res)
+        acc_cost_mat_res = accumulated_cost_matrix(cost_mat_res, region=None)
         path_res = _return_path(acc_cost_mat_res)
         region = _multiscale_region(n_timestamps_1, n_timestamps_2, resolution,
                                     x_padded.size, y_padded.size, path_res,
                                     radius)
 
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
-    acc_cost_mat = accumulated_cost_matrix(cost_mat)
+    acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
     dtw_dist = acc_cost_mat[-1, -1]
     if dist == 'square':
         dtw_dist = sqrt(dtw_dist)
@@ -952,7 +954,8 @@ def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
 
             cost_mat_res = cost_matrix(x_padded, y_padded,
                                        dist=dist, region=region)
-            acc_cost_mat_res = accumulated_cost_matrix(cost_mat_res)
+            acc_cost_mat_res = accumulated_cost_matrix(cost_mat_res,
+                                                       region=region)
             path_res = _return_path(acc_cost_mat_res)
             n_timestamps_next_1 = ceil((2 * n_timestamps_1) / resolution)
             n_timestamps_next_2 = ceil((2 * n_timestamps_2) / resolution)
@@ -963,7 +966,7 @@ def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
                                         path_res, radius)
 
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
-    acc_cost_mat = accumulated_cost_matrix(cost_mat)
+    acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
     dtw_dist = acc_cost_mat[-1, -1]
     if dist == 'square':
         dtw_dist = sqrt(dtw_dist)
