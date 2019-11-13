@@ -5,7 +5,7 @@
 
 import pytest
 import re
-from pyts.datasets import uea_dataset_info, uea_dataset_list
+from pyts.datasets import fetch_uea_dataset, uea_dataset_info, uea_dataset_list
 from pyts.datasets.uea import _correct_uea_name_download
 
 
@@ -76,3 +76,12 @@ def test_length_uea_dataset_list():
 def test_correct_uea_name_download(dataset, output):
     """Test that the results are the expected ones."""
     assert _correct_uea_name_download(dataset) == output
+
+
+def test_fetch_cached_uea_dataset():
+    """Test that a cached dataset can be loaded using 'fetch_uea_dataset'."""
+    res = fetch_uea_dataset('BasicMotions', use_cache=True)
+    assert res.data_train.shape == (40, 6, 100)
+    assert res.data_test.shape == (40, 6, 100)
+    assert res.target_train.shape == (40,)
+    assert res.target_test.shape == (40,)
