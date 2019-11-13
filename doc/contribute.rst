@@ -4,7 +4,7 @@
 Contributing guide
 ==================
 
-Thank you for considering contributing to **pyts**. Contributions from anyone
+Thank you for considering contributing to pyts. Contributions from anyone
 are welcomed. There are many ways to contribute to the package, such as
 reporting bugs, adding new features and improving the documentation. The
 following sections give more details on how to contribute.
@@ -18,7 +18,7 @@ following sections give more details on how to contribute.
 Submitting a bug report or a feature request
 --------------------------------------------
 
-If you experience a bug using **pyts** or if you would like to see a new
+If you experience a bug using pyts or if you would like to see a new
 feature being added to the package, feel free to open an issue on GitHub:
 https://github.com/johannfaouzi/pyts/issues
 
@@ -30,7 +30,7 @@ A good bug report usually contains:
 - a description of the bug,
 - a self-contained example to reproduce the bug if applicable,
 - a description of the difference between the actual and expected results,
-- the versions of the dependencies of **pyts**.
+- the versions of the dependencies of pyts.
 
 The last point can easily be done with the following commands::
 
@@ -61,12 +61,12 @@ Contributing code
 How to contribute
 ^^^^^^^^^^^^^^^^^
 
-To contribute to **pyts**, you need to fork the repository then submit a
+To contribute to pyts, you need to fork the repository then submit a
 pull request:
 
 1. Fork the repository.
 
-2. Clone your fork of the **pyts** repository from your GitHub account to your
+2. Clone your fork of the pyts repository from your GitHub account to your
    local disk::
 
      git clone https://github.com/yourusername/pyts.git
@@ -78,7 +78,7 @@ pull request:
 
       pip install pytest flake8
 
-4. Install **pyts** in editable mode::
+4. Install pyts in editable mode::
 
       pip install -e .
 
@@ -156,7 +156,7 @@ Contributing to the documentation
 
 Documentation is as important as code. If you see typos, find docstrings
 unclear or want to add examples illustrating functionalities provided in
-**pyts**, feel free to open an issue to report it or a pull request if you
+pyts, feel free to open an issue to report it or a pull request if you
 want to fix it.
 
 
