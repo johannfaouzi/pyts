@@ -19,7 +19,7 @@ pyts provides two types of estimators:
 
 These estimators have the same basic methods as the ones from scikit-learn:
 
-- Transformers
+- Transformers:
 
   + ``fit``: fit the transformer,
   + ``transform``: transform the input data.
