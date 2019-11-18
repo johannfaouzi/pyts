@@ -16,6 +16,7 @@ Welcome to pyts documentation!
 
    user_guide
    api
+   scikit_learn_compatibility
 
 .. toctree::
    :maxdepth: 2
@@ -69,7 +70,9 @@ The following code snippet illustrates the basic usage of pyts:
 
 People familiar with scikit-learn API should feel comfortable with pyts as
 its API is heavily inspired from it, and pyts estimators are compatible
-with scikit-learn tools like model selection and pipelines.
+with scikit-learn tools like model selection and pipelines. For more
+information, please refer to the
+`Scikit-learn compatibility <scikit_learn_compatibility.html>`_ page.
 
 
 `Getting started <install.html>`_
