@@ -9,6 +9,9 @@ from sklearn.utils.validation import check_is_fitted
 from .dft import DiscreteFourierTransform
 from .mcb import MultipleCoefficientBinning
 
+import sklearn
+SKLEARN_VERSION = sklearn.__version__
+
 
 class SymbolicFourierApproximation(BaseEstimator, TransformerMixin):
     """Symbolic Fourier Approximation.
@@ -140,7 +143,10 @@ class SymbolicFourierApproximation(BaseEstimator, TransformerMixin):
             Transformed data.
 
         """
-        check_is_fitted(self, ['support_', 'bin_edges_'])
+        if SKLEARN_VERSION >= '0.22':
+            check_is_fitted(self)
+        else:
+            check_is_fitted(self, ['support_', 'bin_edges_'])
         return self._pipeline.transform(X)
 
     def fit_transform(self, X, y=None):

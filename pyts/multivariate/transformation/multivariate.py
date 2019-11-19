@@ -9,6 +9,9 @@ from sklearn.base import BaseEstimator, TransformerMixin, clone
 from sklearn.utils.validation import check_is_fitted
 from ..utils import check_3d_array
 
+import sklearn
+SKLEARN_VERSION = sklearn.__version__
+
 
 class MultivariateTransformer(BaseEstimator, TransformerMixin):
     r"""Transformer for multivariate time series.
@@ -92,7 +95,10 @@ class MultivariateTransformer(BaseEstimator, TransformerMixin):
         """
         X = check_3d_array(X)
         n_samples, _, _ = X.shape
-        check_is_fitted(self, 'estimators_')
+        if SKLEARN_VERSION >= '0.22':
+            check_is_fitted(self)
+        else:
+            check_is_fitted(self, 'estimators_')
 
         X_transformed = [transformer.transform(X[:, i, :])
                          for i, transformer in enumerate(self.estimators_)]

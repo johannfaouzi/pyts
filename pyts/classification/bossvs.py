@@ -14,6 +14,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from ..approximation import SymbolicFourierApproximation
 from ..utils import windowed_view
 
+import sklearn
+SKLEARN_VERSION = sklearn.__version__
+
 
 class BOSSVS(BaseEstimator, ClassifierMixin):
     """Bag-of-SFA Symbols in Vector Space.
@@ -223,7 +226,10 @@ class BOSSVS(BaseEstimator, ClassifierMixin):
             Cosine similarity between the document-term matrix and X.
 
         """
-        check_is_fitted(self, ['vocabulary_', 'tfidf_', 'idf_', '_tfidf'])
+        if SKLEARN_VERSION >= '0.22':
+            check_is_fitted(self)
+        else:
+            check_is_fitted(self, ['vocabulary_', 'tfidf_', 'idf_', '_tfidf'])
         X = check_array(X, dtype='float64')
         n_samples, n_timestamps = X.shape
 
