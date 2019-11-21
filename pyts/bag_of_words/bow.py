@@ -7,7 +7,7 @@ import numpy as np
 from math import ceil
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_array
-from ..utils import windowed_view
+from ..utils.utils import _windowed_view
 
 
 class BagOfWords(BaseEstimator, TransformerMixin):
@@ -87,7 +87,8 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         window_size, window_step = self._check_params(n_timestamps)
         n_windows = (n_timestamps - window_size + window_step) // window_step
 
-        X_window = windowed_view(X, window_size, window_step)
+        X_window = _windowed_view(X, n_samples, n_timestamps,
+                                  window_size, window_step)
         X_word = np.asarray([[''.join(X_window[i, j])
                               for j in range(n_windows)]
                              for i in range(n_samples)])

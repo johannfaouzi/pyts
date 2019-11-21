@@ -5,6 +5,7 @@
 
 import numpy as np
 from numpy.lib.stride_tricks import as_strided
+from numba import njit
 from sklearn.utils import check_array
 
 
@@ -99,6 +100,17 @@ def segmentation(ts_size, window_size, overlapping=False, n_segments=None):
         return start, end, size
 
 
+@njit()
+def _windowed_view(X, n_samples, n_timestamps, window_size, window_step):
+    overlap = window_size - window_step
+    shape_new = (n_samples,
+                 (n_timestamps - overlap) // window_step,
+                 window_size)
+    s0, s1 = X.strides
+    strides_new = (s0, window_step * s1, s1)
+    return as_strided(X, shape=shape_new, strides=strides_new)
+
+
 def windowed_view(X, window_size, window_step=1):
     """Return a windowed view of a 2D array.
 
@@ -145,10 +157,4 @@ def windowed_view(X, window_size, window_step=1):
         raise ValueError("'window_step' must be an integer between 1 and "
                          "n_timestamps.")
 
-    overlap = window_size - window_step
-    shape_new = (n_samples,
-                 (n_timestamps - overlap) // window_step,
-                 window_size)
-    s0, s1 = X.strides
-    strides_new = (s0, window_step * s1, s1)
-    return as_strided(X, shape=shape_new, strides=strides_new)
+    return _windowed_view(X, n_samples, n_timestamps, window_size, window_step)

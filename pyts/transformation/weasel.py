@@ -11,7 +11,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_selection import chi2
 from ..approximation import SymbolicFourierApproximation
-from ..utils import windowed_view
+from ..utils.utils import _windowed_view
 
 import sklearn
 SKLEARN_VERSION = sklearn.__version__
@@ -149,8 +149,8 @@ class WEASEL(BaseEstimator, TransformerMixin):
         for (window_size, window_step) in zip(window_sizes, window_steps):
             n_windows = ((n_timestamps - window_size + window_step)
                          // window_step)
-            X_windowed = windowed_view(
-                X, window_size=window_size, window_step=window_step
+            X_windowed = _windowed_view(
+                X, n_samples, n_timestamps, window_size, window_step
             )
             X_windowed = X_windowed.reshape(n_samples * n_windows, window_size)
 
@@ -219,8 +219,8 @@ class WEASEL(BaseEstimator, TransformerMixin):
 
             n_windows = ((n_timestamps - window_size + window_step)
                          // window_step)
-            X_windowed = windowed_view(
-                X, window_size=window_size, window_step=window_step
+            X_windowed = _windowed_view(
+                X, n_samples, n_timestamps, window_size, window_step
             )
             X_windowed = X_windowed.reshape(n_samples * n_windows, window_size)
             X_sfa = sfa.transform(X_windowed)
@@ -270,8 +270,8 @@ class WEASEL(BaseEstimator, TransformerMixin):
         for (window_size, window_step) in zip(window_sizes, window_steps):
             n_windows = ((n_timestamps - window_size + window_step)
                          // window_step)
-            X_windowed = windowed_view(
-                X, window_size=window_size, window_step=window_step
+            X_windowed = _windowed_view(
+                X, n_samples, n_timestamps, window_size, window_step
             )
             X_windowed = X_windowed.reshape(n_samples * n_windows, window_size)
 
