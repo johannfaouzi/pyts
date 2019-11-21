@@ -8,7 +8,7 @@ from math import ceil
 from numba import njit, prange
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_array
-from ..utils import windowed_view
+from ..utils.utils import _windowed_view
 
 
 @njit
@@ -118,7 +118,8 @@ class SingularSpectrumAnalysis(BaseEstimator, TransformerMixin):
         n_windows = n_timestamps - window_size + 1
 
         X_window = np.transpose(
-            windowed_view(X, window_size, window_step=1), axes=(0, 2, 1)
+            _windowed_view(X, n_samples, n_timestamps,
+                           window_size, window_step=1), axes=(0, 2, 1)
         ).copy()
         X_tranpose = np.matmul(X_window,
                                np.transpose(X_window, axes=(0, 2, 1)))
