@@ -9,7 +9,7 @@ import re
 from math import sqrt
 from numba import njit
 from pyts.metrics.dtw import (
-    _square, _absolute, _check_input_dtw, _multiscale_region, _return_path,
+    _square, _absolute, _check_input_dtw, _blurred_path_region, _return_path,
     _return_results, cost_matrix, accumulated_cost_matrix, _check_region
 )
 from pyts.metrics import (
@@ -64,9 +64,12 @@ def test_absolute(x, y, scalar_desired):
 
 @pytest.mark.parametrize(
     'params, err_msg',
-    [({'x': x[:, None], 'y': y}, "'x' must be a one-dimensional array."),
-     ({'x': x, 'y': y[:, None]}, "'y' must be a one-dimensional array."),
-     ]
+    [({'x': x[:, None], 'y': y, 'precomputed_cost': None, 'dist': 'squared',
+       'method': 'classic'}, "'x' must be a one-dimensional array."),
+     ({'x': x, 'y': y[:, None], 'precomputed_cost': None, 'dist': 'squared',
+       'method': 'classic'}, "'y' must be a one-dimensional array."),
+     ({'x': x, 'y': y, 'precomputed_cost': None, 'dist': 'precomputed',
+       'method': 'fast'}, "cannot be used with a precomputed cost")]
 )
 def test_check_input_dtw(params, err_msg):
     """Test parameter validation."""
@@ -471,9 +474,9 @@ def test_actual_results_dtw_itakura(params, res_desired):
       [[0, 0, 0, 0], [4, 4, 4, 4]])
      ]
 )
-def test_actual_results_multiscale_region(params, arr_desired):
+def test_actual_results_blurred_path_region(params, arr_desired):
     """Test that the actual results are the expected ones."""
-    arr_actual = _multiscale_region(**params)
+    arr_actual = _blurred_path_region(**params)
     np.testing.assert_array_equal(arr_actual, arr_desired)
 
 

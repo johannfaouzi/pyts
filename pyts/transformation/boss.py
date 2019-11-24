@@ -11,7 +11,10 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.utils.validation import check_array, check_is_fitted
 from sklearn.utils.multiclass import check_classification_targets
 from ..approximation import SymbolicFourierApproximation
-from ..utils import windowed_view
+from ..utils.utils import _windowed_view
+
+import sklearn
+SKLEARN_VERSION = sklearn.__version__
 
 
 class BOSS(BaseEstimator, TransformerMixin):
@@ -141,8 +144,8 @@ class BOSS(BaseEstimator, TransformerMixin):
         window_size, window_step = self._check_params(n_timestamps)
         n_windows = (n_timestamps - window_size + window_step) // window_step
 
-        X_windowed = windowed_view(
-            X, window_size=window_size, window_step=window_step
+        X_windowed = _windowed_view(
+            X, n_samples, n_timestamps, window_size, window_step
         )
         X_windowed = X_windowed.reshape(n_samples * n_windows, window_size)
 
@@ -194,12 +197,15 @@ class BOSS(BaseEstimator, TransformerMixin):
             Document-term matrix.
 
         """
-        check_is_fitted(self, ['_sfa', '_vectorizer', 'vocabulary_'])
+        if SKLEARN_VERSION >= '0.22':
+            check_is_fitted(self)
+        else:
+            check_is_fitted(self, ['_sfa', '_vectorizer', 'vocabulary_'])
         X = check_array(X)
         n_samples, n_timestamps = X.shape
 
-        X_windowed = windowed_view(
-            X, window_size=self._window_size, window_step=self._window_step
+        X_windowed = _windowed_view(
+            X, n_samples, n_timestamps, self._window_size, self._window_step
         )
         X_windowed = X_windowed.reshape(-1, self._window_size)
 
@@ -245,8 +251,8 @@ class BOSS(BaseEstimator, TransformerMixin):
         window_size, window_step = self._check_params(n_timestamps)
         n_windows = (n_timestamps - window_size + window_step) // window_step
 
-        X_windowed = windowed_view(
-            X, window_size=window_size, window_step=window_step
+        X_windowed = _windowed_view(
+            X, n_samples, n_timestamps, window_size, window_step
         )
         X_windowed = X_windowed.reshape(n_samples * n_windows, window_size)
 

@@ -8,8 +8,10 @@ from numba import njit, prange
 from sklearn.base import BaseEstimator, ClassifierMixin, clone
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils.validation import check_is_fitted
-
 from ..utils import check_3d_array
+
+import sklearn
+SKLEARN_VERSION = sklearn.__version__
 
 
 @njit()
@@ -112,7 +114,10 @@ class MultivariateClassifier(BaseEstimator, ClassifierMixin):
 
         """
         X = check_3d_array(X)
-        check_is_fitted(self, 'estimators_')
+        if SKLEARN_VERSION >= '0.22':
+            check_is_fitted(self)
+        else:
+            check_is_fitted(self, 'estimators_')
         n_samples, n_features, _ = X.shape
 
         y_pred = np.empty((n_samples, n_features))

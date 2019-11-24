@@ -11,6 +11,9 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.utils.validation import check_array, check_is_fitted, check_X_y
 from sklearn.utils.multiclass import check_classification_targets
 
+import sklearn
+SKLEARN_VERSION = sklearn.__version__
+
 
 @njit()
 def _uniform_bins(timestamp_min, timestamp_max, n_timestamps, n_bins):
@@ -145,7 +148,10 @@ class MultipleCoefficientBinning(BaseEstimator, TransformerMixin):
             Binned data.
 
         """
-        check_is_fitted(self, 'bin_edges_')
+        if SKLEARN_VERSION >= '0.22':
+            check_is_fitted(self)
+        else:
+            check_is_fitted(self, 'bin_edges_')
         X = check_array(X, dtype='float64')
         self._check_consistent_lengths(X)
         indices = _digitize(X, self.bin_edges_)

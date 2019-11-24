@@ -5,7 +5,7 @@
 
 import pytest
 import re
-from pyts.datasets import ucr_dataset_info, ucr_dataset_list
+from pyts.datasets import fetch_ucr_dataset, ucr_dataset_info, ucr_dataset_list
 from pyts.datasets.ucr import (_correct_ucr_name_description,
                                _correct_ucr_name_download)
 
@@ -96,3 +96,12 @@ def test_correct_ucr_name_download(dataset, output):
 def test_correct_ucr_name_description(dataset, output):
     """Test that the results are the expected ones."""
     assert _correct_ucr_name_description(dataset) == output
+
+
+def test_fetch_cached_ucr_dataset():
+    """Test that a cached dataset can be loaded using 'fetch_ucr_dataset'."""
+    res = fetch_ucr_dataset('GunPoint', use_cache=True)
+    assert res.data_train.shape == (50, 150)
+    assert res.data_test.shape == (150, 150)
+    assert res.target_train.shape == (50,)
+    assert res.target_test.shape == (150,)

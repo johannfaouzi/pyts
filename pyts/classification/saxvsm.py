@@ -13,6 +13,9 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from ..bag_of_words import BagOfWords
 from ..approximation import SymbolicAggregateApproximation
 
+import sklearn
+SKLEARN_VERSION = sklearn.__version__
+
 
 class SAXVSM(BaseEstimator, ClassifierMixin):
     """Classifier based on SAX-VSM representation and tf-idf statistics.
@@ -177,8 +180,11 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
             osine similarity between the document-term matrix and X.
 
         """
-        check_is_fitted(self, ['vocabulary_', 'tfidf_', 'idf_',
-                               '_tfidf', 'classes_'])
+        if SKLEARN_VERSION >= '0.22':
+            check_is_fitted(self)
+        else:
+            check_is_fitted(self, ['vocabulary_', 'tfidf_', 'idf_',
+                                   '_tfidf', 'classes_'])
         X_sax = self._sax.transform(X)
         X_bow = self._bow.transform(X_sax)
         vectorizer = CountVectorizer(vocabulary=self._tfidf.vocabulary_)

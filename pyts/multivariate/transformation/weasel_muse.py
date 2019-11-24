@@ -9,9 +9,11 @@ from scipy.sparse import csr_matrix, hstack
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.base import clone
 from sklearn.utils.validation import check_is_fitted
-
 from ...transformation import WEASEL
 from ..utils import check_3d_array
+
+import sklearn
+SKLEARN_VERSION = sklearn.__version__
 
 
 class WEASELMUSE(BaseEstimator, TransformerMixin):
@@ -177,7 +179,10 @@ class WEASELMUSE(BaseEstimator, TransformerMixin):
             Document-term matrix with relevant learned features only.
 
         """
-        check_is_fitted(self, 'vocabulary_')
+        if SKLEARN_VERSION >= '0.22':
+            check_is_fitted(self)
+        else:
+            check_is_fitted(self, 'vocabulary_')
         X = check_3d_array(X)
         n_samples, _, _ = X.shape
         X_diff = np.abs(np.diff(X))
