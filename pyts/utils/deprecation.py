@@ -1,6 +1,11 @@
 import warnings
 import functools
 
+
+# Author: <hicham.janati@inria.fr>
+# Adapted from sklearn.utils.deprecation
+
+
 __all__ = ["deprecated"]
 
 
@@ -24,8 +29,6 @@ class deprecated:
     extra : string
           to be added to the deprecation messages
     """
-
-    # Adapted from sklearn.utils.deprecation
 
     def __init__(self, extra=''):
         self.extra = extra
