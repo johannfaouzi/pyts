@@ -81,7 +81,8 @@ def _input_to_cost(x, y, dist, precomputed_cost, region):
     if dist == "precomputed":
         if region is not None:
             cost_mat = _project_cost_matrix_region(precomputed_cost, region)
-        cost_mat = precomputed_cost
+        else:
+            cost_mat = precomputed_cost.copy()
     else:
         cost_mat = cost_matrix(x, y, dist=dist, region=region)
     cost_mat = check_array(cost_mat, ensure_min_samples=2,
@@ -277,8 +278,8 @@ def _return_results(dtw_dist, cost_mat, acc_cost_mat,
     else:
         return res
 
-@deprecated("``dtw_classic`` is deprecated in v0.9.0 and will be removed in "
-            "v0.11.0. Use ``dtw`` instead.")
+@deprecated("``dtw_classic`` is deprecated in v0.10 and will be removed in "
+            "v0.11. Use ``dtw`` instead.")
 def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
                 return_cost=False, return_accumulated=False,
                 return_path=False):
@@ -287,10 +288,10 @@ def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array. ``dist == 'precomputed'``.
+        First array. Ignored if ``dist == 'precomputed'``.
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array. ``dist == 'precomputed'``.
+        Second array. Ignored if ``dist == 'precomputed'``.
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
@@ -300,7 +301,7 @@ def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
         as input two numbers (two arguments) and returns a number.
 
     precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
-        (default = None). Ignored unless ``dist == 'precomputed'``.
+        (default = None). Ignored if ``dist != 'precomputed'``.
         Precomputed cost matrix between the time series.
 
     return_cost : bool (default = False)
@@ -351,8 +352,8 @@ def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
     return res
 
 
-@deprecated("``dtw_region`` is deprecated in v0.9.0 and will be removed in "
-            "v0.11.0. Use ``dtw`` instead.")
+@deprecated("``dtw_region`` is deprecated in v0.10 and will be removed in "
+            "v0.11. Use ``dtw`` instead.")
 def dtw_region(x=None, y=None, dist='square', region=None,
                precomputed_cost=None, return_cost=False,
                return_accumulated=False, return_path=False):
@@ -361,10 +362,10 @@ def dtw_region(x=None, y=None, dist='square', region=None,
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array. ``dist == 'precomputed'``.
+        First array. Ignored if ``dist == 'precomputed'``.
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array. ``dist == 'precomputed'``.
+        Second array. Ignored if ``dist == 'precomputed'``.
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
@@ -380,7 +381,7 @@ def dtw_region(x=None, y=None, dist='square', region=None,
          for each column.
 
     precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
-        (default = None). Ignored unless ``dist == 'precomputed'``.
+        (default = None). Ignored if ``dist != 'precomputed'``.
         Precomputed cost matrix between the time series.
 
     return_cost : bool (default = False)
@@ -422,8 +423,6 @@ def dtw_region(x=None, y=None, dist='square', region=None,
     x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
         _check_input_dtw(x, y, precomputed_cost, dist, method="region")
     cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
-
-    cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat, region)
     dtw_dist = acc_cost_mat[-1, -1]
     if dist == 'square':
@@ -531,8 +530,8 @@ def sakoe_chiba_band(n_timestamps_1, n_timestamps_2=None, window_size=0.1):
     return region
 
 
-@deprecated("``dtw_region`` is deprecated in v0.9.0 and will be removed in "
-            "v0.11.0. Use ``dtw`` with ``method == 'sakoechiba'`` instead.")
+@deprecated("``dtw_region`` is deprecated in v0.10 and will be removed in "
+            "v0.11. Use ``dtw`` with ``method == 'sakoechiba'`` instead.")
 def dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
                    precomputed_cost=None, return_cost=False,
                    return_accumulated=False, return_path=False):
@@ -541,10 +540,10 @@ def dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array. ``dist == 'precomputed'``.
+        First array. Ignored if ``dist == 'precomputed'``.
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array. ``dist == 'precomputed'``.
+        Second array. Ignored if ``dist == 'precomputed'``.
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
@@ -563,7 +562,7 @@ def dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
         'window_size' becomes a valid cell for the path.
 
     precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
-        (default = None). Ignored unless ``dist == 'precomputed'``.
+        (default = None). Ignored if ``dist != 'precomputed'``.
         Precomputed cost matrix between the time series.
 
     return_cost : bool (default = False)
@@ -709,8 +708,8 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     return region
 
 
-@deprecated("``dtw_region`` is deprecated in v0.9.0 and will be removed in "
-            "v0.11.0. Use ``dtw`` with ``method == 'itakura'`` instead.")
+@deprecated("``dtw_region`` is deprecated in v0.10 and will be removed in "
+            "v0.11. Use ``dtw`` with ``method == 'itakura'`` instead.")
 def dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
                 precomputed_cost=None, return_cost=False,
                 return_accumulated=False, return_path=False):
@@ -719,10 +718,10 @@ def dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array. ``dist == 'precomputed'``.
+        First array. Ignored if ``dist == 'precomputed'``.
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array. ``dist == 'precomputed'``.
+        Second array. Ignored if ``dist == 'precomputed'``.
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
@@ -735,7 +734,7 @@ def dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
         Maximum slope for the parallelogram.
 
     precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
-        (default = None). Ignored unless ``dist == 'precomputed'``.
+        (default = None). Ignored if ``dist != 'precomputed'``.
         Precomputed cost matrix between the time series.
 
     return_cost : bool (default = False)
@@ -931,8 +930,8 @@ def _compute_region(n_timestamps_1, n_timestamps_2, method, dist,
     return region
 
 
-@deprecated("``dtw_multiscale`` is deprecated in v0.9.0 and will be removed "
-            "in v0.11.0. Use ``dtw`` with ``method == 'multiscale'`` instead.")
+@deprecated("``dtw_multiscale`` is deprecated in v0.10 and will be removed "
+            "in v0.11. Use ``dtw`` with ``method == 'multiscale'`` instead.")
 def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
                    precomputed_cost=None, return_cost=False,
                    return_accumulated=False, return_path=False):
@@ -962,7 +961,7 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
         path. It is computed at the resolution level.
 
     precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
-        (default = None). Ignored unless ``dist == 'precomputed'``.
+        (default = None). Ignored if ``dist != 'precomputed'``.
         Precomputed cost matrix between the time series.
 
     return_cost : bool (default = False)
@@ -1016,8 +1015,8 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
     return res
 
 
-@deprecated("``dtw_fast`` is deprecated in v0.9.0 and will be removed in "
-            "v0.11.0. Use ``dtw`` with ``method == 'fast'`` instead.")
+@deprecated("``dtw_fast`` is deprecated in v0.10 and will be removed in "
+            "v0.11. Use ``dtw`` with ``method == 'fast'`` instead.")
 def dtw_fast(x=None, y=None, dist='square', radius=0, precomputed_cost=None,
              return_cost=False, return_accumulated=False, return_path=False):
     """Fast Dynamic Time Warping distance.
@@ -1025,10 +1024,10 @@ def dtw_fast(x=None, y=None, dist='square', radius=0, precomputed_cost=None,
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array. ``dist == 'precomputed'``.
+        First array. Ignored if ``dist == 'precomputed'``.
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array. ``dist == 'precomputed'``.
+        Second array. Ignored if ``dist == 'precomputed'``.
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
@@ -1044,7 +1043,7 @@ def dtw_fast(x=None, y=None, dist='square', radius=0, precomputed_cost=None,
         path. It is computed at the resolution level.
 
     precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
-        (default = None). Ignored unless ``dist == 'precomputed'``.
+        (default = None). Ignored if ``dist != 'precomputed'``.
         Precomputed cost matrix between the time series.
 
     return_cost : bool (default = False)
@@ -1104,17 +1103,18 @@ def dtw(x=None, y=None, dist='square', method='classic', options=None,
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array. ``dist == 'precomputed'``.
+        First array. Ignored if ``dist == 'precomputed'``.
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array. ``dist == 'precomputed'``.
+        Second array. Ignored if ``dist == 'precomputed'``.
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
-        If 'absolute', the absolute difference is used. If 'precomputed',
-        `precomputed_cost` must be the cost matrix. If callable,
+        If 'absolute', the absolute difference is used. If callable,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
+        If 'precomputed', `precomputed_cost` must be the cost matrix and
+        `method` must be 'classic', 'sakoechiba' or 'itakura'.
 
     method : str (default = 'classic')
         Method used.  Should be one of
@@ -1135,7 +1135,7 @@ def dtw(x=None, y=None, dist='square', method='classic', options=None,
             - 'fast': radius (int)
 
     precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
-        (default = None). Ignored unless ``dist == 'precomputed'``.
+        (default = None). Ignored if ``dist != 'precomputed'``.
         Precomputed cost matrix between the time series.
 
     return_cost : bool (default = False)
