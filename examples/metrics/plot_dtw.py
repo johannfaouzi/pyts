@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 from pyts.datasets import load_gunpoint
 from pyts.metrics import dtw, itakura_parallelogram, sakoe_chiba_band
 from pyts.metrics.dtw import (cost_matrix, accumulated_cost_matrix,
-                              _return_path, _multiscale_region)
+                              _return_path, _blurred_path_region)
 
 # Parameters
 X, _, _, _ = load_gunpoint(return_X_y=True)
@@ -102,7 +102,7 @@ cost_mat_res = cost_matrix(x_padded, y_padded, dist='square', region=None)
 acc_cost_mat_res = accumulated_cost_matrix(cost_mat_res)
 path_res = _return_path(acc_cost_mat_res)
 
-multiscale_region = _multiscale_region(
+multiscale_region = _blurred_path_region(
     n_timestamps_1, n_timestamps_2, resolution, x_padded.size, y_padded.size,
     path_res,
     radius=radius
