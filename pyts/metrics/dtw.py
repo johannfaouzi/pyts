@@ -933,8 +933,8 @@ def _compute_region(n_timestamps_1, n_timestamps_2, method, dist,
 @deprecated("``dtw_multiscale`` is deprecated in v0.10 and will be removed "
             "in v0.11. Use ``dtw`` with ``method == 'multiscale'`` instead.")
 def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
-                   precomputed_cost=None, return_cost=False,
-                   return_accumulated=False, return_path=False):
+                   return_cost=False, return_accumulated=False,
+                   return_path=False):
     """Multiscale Dynamic Time Warping distance.
 
     Parameters
@@ -959,10 +959,6 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
         computed at the resolution level is expanded with `radius` cells to the
         top, bottom, left and right of every cell belonging to the optimal
         path. It is computed at the resolution level.
-
-    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
-        (default = None). Ignored if ``dist != 'precomputed'``.
-        Precomputed cost matrix between the time series.
 
     return_cost : bool (default = False)
         If True, the cost matrix is returned.
@@ -1000,7 +996,8 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
 
     """
     x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
-        _check_input_dtw(x, y, precomputed_cost, dist, method="multiscale")
+        _check_input_dtw(x, y, precomputed_cost=None, dist=dist,
+                         method="multiscale")
 
     region = _multiscale_region(x, y, dist, resolution=resolution,
                                 radius=radius)
@@ -1017,8 +1014,8 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
 
 @deprecated("``dtw_fast`` is deprecated in v0.10 and will be removed in "
             "v0.11. Use ``dtw`` with ``method == 'fast'`` instead.")
-def dtw_fast(x=None, y=None, dist='square', radius=0, precomputed_cost=None,
-             return_cost=False, return_accumulated=False, return_path=False):
+def dtw_fast(x=None, y=None, dist='square', radius=0, return_cost=False,
+             return_accumulated=False, return_path=False):
     """Fast Dynamic Time Warping distance.
 
     Parameters
@@ -1041,10 +1038,6 @@ def dtw_fast(x=None, y=None, dist='square', radius=0, precomputed_cost=None,
         computed at the resolution level is expanded with `radius` cells to the
         top, bottom, left and right of every cell belonging to the optimal
         path. It is computed at the resolution level.
-
-    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
-        (default = None). Ignored if ``dist != 'precomputed'``.
-        Precomputed cost matrix between the time series.
 
     return_cost : bool (default = False)
         If True, the cost matrix is returned.
@@ -1082,7 +1075,7 @@ def dtw_fast(x=None, y=None, dist='square', radius=0, precomputed_cost=None,
 
     """
     x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
-        _check_input_dtw(x, y, precomputed_cost, dist, method="fast")
+        _check_input_dtw(x, y, precomputed_cost=None, dist=dist, method="fast")
     region = _fast_region(x, y, dist, radius=radius)
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
