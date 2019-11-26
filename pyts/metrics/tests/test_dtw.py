@@ -18,8 +18,6 @@ from pyts.metrics import (
     show_options
 )
 
-from itertools import product
-
 
 x = np.array([0, 1, 2])
 y = np.array([2, 0, 1])
@@ -668,10 +666,8 @@ def test_check_region(region, n_timestamps_1, n_timestamps_2):
     assert region.shape[1] == n_timestamps_1
 
 
-@pytest.mark.parametrize(
-    "method, n_timestamps_1, n_timestamps_2",
-    product(["classic", "sakoechiba", "itakura"],
-            [4, 10], [4, 10]))
+@pytest.mark.parametrize('method', ['classic', 'sakoechiba', 'itakura'])
+@pytest.mark.parametrize('n_timestamps_1, n_timestamps_2', [[4, 10], [4, 10]])
 def test_precomputed_cost(method, n_timestamps_1, n_timestamps_2):
     rng = np.random.RandomState(42)
     x = rng.randn(n_timestamps_1)
@@ -689,3 +685,16 @@ def test_precomputed_cost_error(method):
     error_match = "cannot be used with a precomputed cost"
     with pytest.raises(ValueError, match=error_match):
         dtw(method=method, dist="precomputed")
+
+
+@pytest.mark.parametrize(
+    "method, dtw_func",
+    [("classic", dtw_classic),
+     ("multiscale", dtw_multiscale),
+     ("itakura", dtw_itakura),
+     ("sakoechiba", dtw_sakoechiba),
+     ("fast", dtw_fast)])
+def test_dtw_methods(method, dtw_func):
+    value_specific = dtw_func(x, y)
+    value_generic = dtw(x, y, method=method)
+    assert value_specific == value_generic
