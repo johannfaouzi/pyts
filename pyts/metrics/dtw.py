@@ -8,6 +8,8 @@ from math import ceil, log2, sqrt
 from numba import njit, prange
 from sklearn.utils import check_array
 
+from ..utils import deprecated
+
 
 @njit()
 def _square(x, y):
@@ -30,6 +32,16 @@ def _cost_matrix_region(x, y, dist, region):
 
 
 @njit()
+def _project_cost_matrix_region(cost_mat, region):
+    n_timestamps_1, n_timestamps_2 = cost_mat.shape
+    cost_mat_projected = np.full((n_timestamps_1, n_timestamps_2), np.inf)
+    for i in prange(n_timestamps_1):
+        for j in prange(region[0, i], region[1, i]):
+            cost_mat_projected[i, j] = cost_mat[i, j]
+    return cost_mat_projected
+
+
+@njit()
 def _cost_matrix_no_region(x, y, dist):
     n_timestamps_1, n_timestamps_2 = x.size, y.size
     cost_mat = np.empty((n_timestamps_1, n_timestamps_2))
@@ -39,15 +51,44 @@ def _cost_matrix_no_region(x, y, dist):
     return cost_mat
 
 
-def _check_input_dtw(x, y):
-    x = check_array(x, ensure_2d=False, dtype='float64')
-    y = check_array(y, ensure_2d=False, dtype='float64')
-    if x.ndim != 1:
-        raise ValueError("'x' must be a one-dimensional array.")
-    if y.ndim != 1:
-        raise ValueError("'y' must be a one-dimensional array.")
+def _check_input_dtw(x, y, precomputed_cost, dist, method):
+    if dist == "precomputed" and method in ["multiscale", "fast"]:
+        raise ValueError("The method '{0}' cannot be used with "
+                         "a precomputed cost. Provide the raw time series or"
+                         "use one of the methods: 'classic', 'sakoechiba', "
+                         "'itakura'".format(method))
+    if dist == "precomputed":
+        cost = check_array(precomputed_cost, ensure_min_samples=2,
+                           ensure_min_features=2, ensure_2d=True,
+                           force_all_finite=False, dtype='float64')
+        n_timestamps_1, n_timestamps_2 = precomputed_cost.shape
+    else:
+        cost = None
+        x = check_array(x, ensure_2d=False, dtype='float64')
+        y = check_array(y, ensure_2d=False, dtype='float64')
+        if x.ndim != 1:
+            raise ValueError("'x' must be a one-dimensional array.")
+        if y.ndim != 1:
+            raise ValueError("'y' must be a one-dimensional array.")
+        n_timestamps_1 = x.size
+        n_timestamps_2 = y.size
 
-    return x, y, x.size, y.size
+    return x, y, cost, n_timestamps_1, n_timestamps_2
+
+
+def _input_to_cost(x, y, dist, precomputed_cost, region):
+    """Computes cost matrix from dtw input."""
+    if dist == "precomputed":
+        if region is not None:
+            cost_mat = _project_cost_matrix_region(precomputed_cost, region)
+        else:
+            cost_mat = precomputed_cost.copy()
+    else:
+        cost_mat = cost_matrix(x, y, dist=dist, region=region)
+    cost_mat = check_array(cost_mat, ensure_min_samples=2,
+                           ensure_min_features=2, ensure_2d=True,
+                           force_all_finite=False, dtype='float64')
+    return cost_mat
 
 
 def _check_region(region, n_timestamps_1, n_timestamps_2):
@@ -87,7 +128,6 @@ def cost_matrix(x, y, dist='square', region=None):
         Cost matrix.
 
     """
-    x, y, _, _ = _check_input_dtw(x, y)
     if dist == 'square':
         dist_ = _square
     elif dist == 'absolute':
@@ -178,10 +218,9 @@ def accumulated_cost_matrix(cost_mat, region=None):
         Accumulated cost matrix.
 
     """
-    cost_mat = check_array(
-        cost_mat, ensure_min_samples=2, ensure_min_features=2,
-        force_all_finite=False, dtype='float64'
-    )
+    cost_mat = check_array(cost_mat, ensure_min_samples=2,
+                           ensure_min_features=2, ensure_2d=True,
+                           force_all_finite=False, dtype='float64')
     cost_mat_shape = cost_mat.shape
 
     if region is None:
@@ -239,24 +278,31 @@ def _return_results(dtw_dist, cost_mat, acc_cost_mat,
     else:
         return res
 
-
-def dtw_classic(x, y, dist='square', return_cost=False,
-                return_accumulated=False, return_path=False):
+@deprecated("``dtw_classic`` is deprecated in v0.10 and will be removed in "
+            "v0.11. Use ``dtw`` instead.")
+def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
+                return_cost=False, return_accumulated=False,
+                return_path=False):
     """Classic Dynamic Time Warping (DTW) distance between two time series.
 
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array.
+        First array. Ignored if ``dist == 'precomputed'``.
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array
+        Second array. Ignored if ``dist == 'precomputed'``.
 
-    dist : 'square', 'absolute' or callable (default = 'square')
+    dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
-        If 'absolute', the absolute difference is used. If callable,
+        If 'absolute', the absolute difference is used. If 'precomputed',
+        `precomputed_cost` must be the cost matrix. If callable,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
+
+    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
+        (default = None). Ignored if ``dist != 'precomputed'``.
+        Precomputed cost matrix between the time series.
 
     return_cost : bool (default = False)
         If True, the cost matrix is returned.
@@ -293,10 +339,10 @@ def dtw_classic(x, y, dist='square', return_cost=False,
     2.0
 
     """
-    x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
-
-    cost_mat = cost_matrix(x, y, dist=dist, region=None)
-    acc_cost_mat = accumulated_cost_matrix(cost_mat)
+    x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
+        _check_input_dtw(x, y, precomputed_cost, dist, method="classic")
+    cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=None)
+    acc_cost_mat = accumulated_cost_matrix(cost_mat, region=None)
     dtw_dist = acc_cost_mat[-1, -1]
     if dist == 'square':
         dtw_dist = sqrt(dtw_dist)
@@ -306,21 +352,25 @@ def dtw_classic(x, y, dist='square', return_cost=False,
     return res
 
 
-def dtw_region(x, y, dist='square', region=None, return_cost=False,
+@deprecated("``dtw_region`` is deprecated in v0.10 and will be removed in "
+            "v0.11. Use ``dtw`` instead.")
+def dtw_region(x=None, y=None, dist='square', region=None,
+               precomputed_cost=None, return_cost=False,
                return_accumulated=False, return_path=False):
     """Dynamic Time Warping (DTW) distance with a constraint region.
 
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array.
+        First array. Ignored if ``dist == 'precomputed'``.
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array
+        Second array. Ignored if ``dist == 'precomputed'``.
 
-    dist : 'square', 'absolute' or callable (default = 'square')
+    dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
-        If 'absolute', the absolute difference is used. If callable,
+        If 'absolute', the absolute difference is used. If 'precomputed',
+        `precomputed_cost` must be the cost matrix. If callable,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
 
@@ -329,6 +379,10 @@ def dtw_region(x, y, dist='square', region=None, return_cost=False,
          the first row consists of the starting indices (included) and the
          second row consists of the ending indices (excluded) of the valid rows
          for each column.
+
+    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
+        (default = None). Ignored if ``dist != 'precomputed'``.
+        Precomputed cost matrix between the time series.
 
     return_cost : bool (default = False)
         If True, the cost matrix is returned.
@@ -366,16 +420,10 @@ def dtw_region(x, y, dist='square', region=None, return_cost=False,
     2.23...
 
     """
-    x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
-
-    if region is not None:
-        region = check_array(region, dtype='int64')
-        if region.shape != (2, n_timestamps_1):
-            raise ValueError("If 'region' is not None, it must be array-like "
-                             "with shape (2, n_timestamps_1).")
-
-    cost_mat = cost_matrix(x, y, dist=dist, region=region)
-    acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
+    x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
+        _check_input_dtw(x, y, precomputed_cost, dist, method="region")
+    cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
+    acc_cost_mat = accumulated_cost_matrix(cost_mat, region)
     dtw_dist = acc_cost_mat[-1, -1]
     if dist == 'square':
         dtw_dist = sqrt(dtw_dist)
@@ -482,21 +530,25 @@ def sakoe_chiba_band(n_timestamps_1, n_timestamps_2=None, window_size=0.1):
     return region
 
 
-def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
+@deprecated("``dtw_region`` is deprecated in v0.10 and will be removed in "
+            "v0.11. Use ``dtw`` with ``method == 'sakoechiba'`` instead.")
+def dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
+                   precomputed_cost=None, return_cost=False,
                    return_accumulated=False, return_path=False):
     """Dynamic Time Warping (DTW) distance with Sakoe-Chiba band constraint.
 
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array.
+        First array. Ignored if ``dist == 'precomputed'``.
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array
+        Second array. Ignored if ``dist == 'precomputed'``.
 
-    dist : 'square', 'absolute' or callable (default = 'square')
+    dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
-        If 'absolute', the absolute difference is used. If callable,
+        If 'absolute', the absolute difference is used. If 'precomputed',
+        `precomputed_cost` must be the cost matrix. If callable,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
 
@@ -508,6 +560,10 @@ def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
         If int, `window_size` must be the largest temporal shift allowed.
         Each cell whose distance with the diagonale is lower than or equal to
         'window_size' becomes a valid cell for the path.
+
+    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
+        (default = None). Ignored if ``dist != 'precomputed'``.
+        Precomputed cost matrix between the time series.
 
     return_cost : bool (default = False)
         If True, the cost matrix is returned.
@@ -544,11 +600,12 @@ def dtw_sakoechiba(x, y, dist='square', window_size=0.1, return_cost=False,
     2.0
 
     """
-    x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
-
+    x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
+        _check_input_dtw(x, y, precomputed_cost, dist, method="sakoechiba")
     region = sakoe_chiba_band(n_timestamps_1, n_timestamps_2, window_size)
-    cost_mat = cost_matrix(x, y, dist=dist, region=region)
-    acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
+    cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
+
+    acc_cost_mat = accumulated_cost_matrix(cost_mat, region)
     dtw_dist = acc_cost_mat[-1, -1]
     if dist == 'square':
         dtw_dist = sqrt(dtw_dist)
@@ -651,26 +708,34 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     return region
 
 
-def dtw_itakura(x, y, dist='square', max_slope=2., return_cost=False,
+@deprecated("``dtw_region`` is deprecated in v0.10 and will be removed in "
+            "v0.11. Use ``dtw`` with ``method == 'itakura'`` instead.")
+def dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
+                precomputed_cost=None, return_cost=False,
                 return_accumulated=False, return_path=False):
     """Dynamic Time Warping distance with Itakura parallelogram constraint.
 
     Parameters
     ----------
-    x : array-like, shape (n_timestamps_1,)
-        First array.
+    x : array-like, shape = (n_timestamps_1,)
+        First array. Ignored if ``dist == 'precomputed'``.
 
-    y : array-like, shape (n_timestamps_2,)
-        Second array
+    y : array-like, shape = (n_timestamps_2,)
+        Second array. Ignored if ``dist == 'precomputed'``.
 
-    dist : 'square', 'absolute' or callable (default = 'square')
+    dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
-        If 'absolute', the absolute difference is used. If callable,
+        If 'absolute', the absolute difference is used. If 'precomputed',
+        `precomputed_cost` must be the cost matrix. If callable,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
 
     max_slope : float (default = 2.)
         Maximum slope for the parallelogram.
+
+    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
+        (default = None). Ignored if ``dist != 'precomputed'``.
+        Precomputed cost matrix between the time series.
 
     return_cost : bool (default = False)
         If True, the cost matrix is returned.
@@ -707,11 +772,11 @@ def dtw_itakura(x, y, dist='square', max_slope=2., return_cost=False,
     2.23...
 
     """
-    x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
-
+    x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
+        _check_input_dtw(x, y, precomputed_cost, dist, method="itakura")
     region = itakura_parallelogram(n_timestamps_1, n_timestamps_2, max_slope)
-    cost_mat = cost_matrix(x, y, dist=dist, region=region)
-    acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
+    cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
+    acc_cost_mat = accumulated_cost_matrix(cost_mat, region)
     dtw_dist = acc_cost_mat[-1, -1]
     if dist == 'square':
         dtw_dist = sqrt(dtw_dist)
@@ -721,9 +786,9 @@ def dtw_itakura(x, y, dist='square', max_slope=2., return_cost=False,
     return res
 
 
-def _multiscale_region(n_timestamps_1, n_timestamps_2, resolution_level,
-                       n_timestamps_reduced_1, n_timestamps_reduced_2,
-                       path, radius):
+def _blurred_path_region(n_timestamps_1, n_timestamps_2, resolution_level,
+                         n_timestamps_reduced_1, n_timestamps_reduced_2,
+                         path, radius):
     path_length = path.shape[1]
     path_up = np.repeat(path, radius, axis=1)
     path_down = path_up.copy()
@@ -755,6 +820,118 @@ def _multiscale_region(n_timestamps_1, n_timestamps_2, resolution_level,
     return region.astype('int64')
 
 
+def _multiscale_region(x, y, dist, resolution=2, radius=0):
+    n_timestamps_1 = len(x)
+    n_timestamps_2 = len(y)
+    if not isinstance(resolution, (int, np.integer)):
+        raise TypeError("'resolution' must be an integer.")
+    if resolution < 1:
+        raise ValueError("'resolution' must be a positive integer.")
+    if not isinstance(radius, (int, np.integer)):
+        raise TypeError("'radius' must be an integer.")
+    if radius < 0:
+        raise ValueError("'radius' must be a non-negative integer.")
+
+    if resolution == 1:
+        region = None
+    else:
+        remainder_1 = n_timestamps_1 % resolution
+        remainder_2 = n_timestamps_2 % resolution
+
+        if remainder_1 != 0:
+            x_padded = np.append(x, np.repeat(x[-1], resolution - remainder_1))
+            x_padded = x_padded.reshape(-1, resolution).mean(axis=1)
+        else:
+            x_padded = x.reshape(-1, resolution).mean(axis=1)
+        if remainder_2 != 0:
+            y_padded = np.append(y, np.repeat(y[-1], resolution - remainder_2))
+            y_padded = y_padded.reshape(-1, resolution).mean(axis=1)
+        else:
+            y_padded = y.reshape(-1, resolution).mean(axis=1)
+        cost_mat_res = cost_matrix(x_padded, y_padded, dist=dist, region=None)
+        acc_cost_mat_res = accumulated_cost_matrix(cost_mat_res, region=None)
+        path_res = _return_path(acc_cost_mat_res)
+        region = _blurred_path_region(n_timestamps_1, n_timestamps_2,
+                                      resolution, x_padded.size,
+                                      y_padded.size, path_res,
+                                      radius)
+    return region
+
+
+def _fast_region(x, y, dist, radius=0):
+    if not isinstance(radius, (int, np.integer)):
+        raise TypeError("'radius' must be an integer.")
+    if radius < 0:
+        raise ValueError("'radius' must be a non-negative integer.")
+    n_timestamps_1, n_timestamps_2 = len(x), len(y)
+    min_size = radius + 2
+    region = None
+    n_timestamps = min(n_timestamps_1, n_timestamps_2)
+    if n_timestamps > min_size:
+        n_recursions = ceil(log2(n_timestamps / min_size))
+        for i in range(n_recursions):
+            resolution = 2 ** (n_recursions - i)
+            remainder_1 = n_timestamps_1 % resolution
+            remainder_2 = n_timestamps_2 % resolution
+
+            if remainder_1 != 0:
+                x_padded = np.append(
+                    x, np.repeat(x[-1], resolution - remainder_1)
+                )
+                x_padded = x_padded.reshape(-1, resolution).mean(axis=1)
+            else:
+                x_padded = x.reshape(-1, resolution).mean(axis=1)
+            if remainder_2 != 0:
+                y_padded = np.append(
+                    y, np.repeat(y[-1], resolution - remainder_2)
+                )
+                y_padded = y_padded.reshape(-1, resolution).mean(axis=1)
+            else:
+                y_padded = y.reshape(-1, resolution).mean(axis=1)
+
+            cost_mat_res = cost_matrix(x_padded, y_padded,
+                                       dist=dist, region=region)
+            acc_cost_mat_res = accumulated_cost_matrix(cost_mat_res,
+                                                       region=region)
+            path_res = _return_path(acc_cost_mat_res)
+            n_timestamps_next_1 = ceil((2 * n_timestamps_1) / resolution)
+            n_timestamps_next_2 = ceil((2 * n_timestamps_2) / resolution)
+
+            region = _blurred_path_region(n_timestamps_next_1,
+                                          n_timestamps_next_2,
+                                          2, x_padded.size, y_padded.size,
+                                          path_res, radius)
+
+    return region
+
+
+def _compute_region(n_timestamps_1, n_timestamps_2, method, dist,
+                    x=None, y=None, **options):
+    """Compute the region of feasible alignment paths."""
+
+    if options is None:
+        options = dict()
+
+    if method == 'classic':
+        region = None
+    elif method == 'sakoechiba':
+        region = sakoe_chiba_band(n_timestamps_1, n_timestamps_2, **options)
+    elif method == 'itakura':
+        region = itakura_parallelogram(n_timestamps_1, n_timestamps_2,
+                                       **options)
+    elif method == 'multiscale':
+        region = _multiscale_region(x, y, dist, **options)
+    elif method == 'fast':
+        region = _fast_region(x, y, dist, **options)
+    else:
+        raise ValueError("'method' must be either 'classic', 'sakoechiba', "
+                         "'itakura', 'multiscale' or 'fast'.")
+
+    return region
+
+
+@deprecated("``dtw_multiscale`` is deprecated in v0.10 and will be removed "
+            "in v0.11. Use ``dtw`` with ``method == 'multiscale'`` instead.")
 def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
                    return_cost=False, return_accumulated=False,
                    return_path=False):
@@ -766,9 +943,9 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
         First array.
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array
+        Second array.
 
-    dist : 'square', 'absolute' or callable (default = 'square')
+    dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
         If 'absolute', the absolute difference is used. If callable,
         it must be a function with a numba.njit() decorator that takes
@@ -818,39 +995,12 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
     2.23...
 
     """
-    x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
-    if not isinstance(resolution, (int, np.integer)):
-        raise TypeError("'resolution' must be an integer.")
-    if resolution < 1:
-        raise ValueError("'resolution' must be a positive integer.")
-    if not isinstance(radius, (int, np.integer)):
-        raise TypeError("'radius' must be an integer.")
-    if radius < 0:
-        raise ValueError("'radius' must be a non-negative integer.")
+    x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
+        _check_input_dtw(x, y, precomputed_cost=None, dist=dist,
+                         method="multiscale")
 
-    if resolution == 1:
-        region = None
-    else:
-        remainder_1 = n_timestamps_1 % resolution
-        remainder_2 = n_timestamps_2 % resolution
-
-        if remainder_1 != 0:
-            x_padded = np.append(x, np.repeat(x[-1], resolution - remainder_1))
-            x_padded = x_padded.reshape(-1, resolution).mean(axis=1)
-        else:
-            x_padded = x.reshape(-1, resolution).mean(axis=1)
-        if remainder_2 != 0:
-            y_padded = np.append(y, np.repeat(y[-1], resolution - remainder_2))
-            y_padded = y_padded.reshape(-1, resolution).mean(axis=1)
-        else:
-            y_padded = y.reshape(-1, resolution).mean(axis=1)
-        cost_mat_res = cost_matrix(x_padded, y_padded, dist=dist, region=None)
-        acc_cost_mat_res = accumulated_cost_matrix(cost_mat_res, region=None)
-        path_res = _return_path(acc_cost_mat_res)
-        region = _multiscale_region(n_timestamps_1, n_timestamps_2, resolution,
-                                    x_padded.size, y_padded.size, path_res,
-                                    radius)
-
+    region = _multiscale_region(x, y, dist, resolution=resolution,
+                                radius=radius)
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
     dtw_dist = acc_cost_mat[-1, -1]
@@ -862,21 +1012,24 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
     return res
 
 
-def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
+@deprecated("``dtw_fast`` is deprecated in v0.10 and will be removed in "
+            "v0.11. Use ``dtw`` with ``method == 'fast'`` instead.")
+def dtw_fast(x=None, y=None, dist='square', radius=0, return_cost=False,
              return_accumulated=False, return_path=False):
     """Fast Dynamic Time Warping distance.
 
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array.
+        First array. Ignored if ``dist == 'precomputed'``.
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array
+        Second array. Ignored if ``dist == 'precomputed'``.
 
-    dist : 'square', 'absolute' or callable (default = 'square')
+    dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
-        If 'absolute', the absolute difference is used. If callable,
+        If 'absolute', the absolute difference is used. If 'precomputed',
+        `precomputed_cost` must be the cost matrix. If callable,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
 
@@ -921,50 +1074,9 @@ def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
     2.0
 
     """
-    x, y, n_timestamps_1, n_timestamps_2 = _check_input_dtw(x, y)
-    if not isinstance(radius, (int, np.integer)):
-        raise TypeError("'radius' must be an integer.")
-    if radius < 0:
-        raise ValueError("'radius' must be a non-negative integer.")
-
-    min_size = radius + 2
-    region = None
-    n_timestamps = min(n_timestamps_1, n_timestamps_2)
-    if n_timestamps > min_size:
-        n_recursions = ceil(log2(n_timestamps / min_size))
-        for i in range(n_recursions):
-            resolution = 2 ** (n_recursions - i)
-            remainder_1 = n_timestamps_1 % resolution
-            remainder_2 = n_timestamps_2 % resolution
-
-            if remainder_1 != 0:
-                x_padded = np.append(
-                    x, np.repeat(x[-1], resolution - remainder_1)
-                )
-                x_padded = x_padded.reshape(-1, resolution).mean(axis=1)
-            else:
-                x_padded = x.reshape(-1, resolution).mean(axis=1)
-            if remainder_2 != 0:
-                y_padded = np.append(
-                    y, np.repeat(y[-1], resolution - remainder_2)
-                )
-                y_padded = y_padded.reshape(-1, resolution).mean(axis=1)
-            else:
-                y_padded = y.reshape(-1, resolution).mean(axis=1)
-
-            cost_mat_res = cost_matrix(x_padded, y_padded,
-                                       dist=dist, region=region)
-            acc_cost_mat_res = accumulated_cost_matrix(cost_mat_res,
-                                                       region=region)
-            path_res = _return_path(acc_cost_mat_res)
-            n_timestamps_next_1 = ceil((2 * n_timestamps_1) / resolution)
-            n_timestamps_next_2 = ceil((2 * n_timestamps_2) / resolution)
-
-            region = _multiscale_region(n_timestamps_next_1,
-                                        n_timestamps_next_2,
-                                        2, x_padded.size, y_padded.size,
-                                        path_res, radius)
-
+    x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
+        _check_input_dtw(x, y, precomputed_cost=None, dist=dist, method="fast")
+    region = _fast_region(x, y, dist, radius=radius)
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
     dtw_dist = acc_cost_mat[-1, -1]
@@ -976,23 +1088,26 @@ def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
     return res
 
 
-def dtw(x, y, dist='square', method='classic', options=None, return_cost=False,
+def dtw(x=None, y=None, dist='square', method='classic', options=None,
+        precomputed_cost=None, return_cost=False,
         return_accumulated=False, return_path=False):
     """Dynamic Time Warping (DTW) distance between two samples.
 
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array.
+        First array. Ignored if ``dist == 'precomputed'``.
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array
+        Second array. Ignored if ``dist == 'precomputed'``.
 
-    dist : 'square', 'absolute' or callable (default = 'square')
+    dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
         If 'absolute', the absolute difference is used. If callable,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
+        If 'precomputed', `precomputed_cost` must be the cost matrix and
+        `method` must be 'classic', 'sakoechiba' or 'itakura'.
 
     method : str (default = 'classic')
         Method used.  Should be one of
@@ -1011,6 +1126,10 @@ def dtw(x, y, dist='square', method='classic', options=None, return_cost=False,
             - 'itakura': max_slope (float)
             - 'multiscale': resolution (int) and radius (int)
             - 'fast': radius (int)
+
+    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
+        (default = None). Ignored if ``dist != 'precomputed'``.
+        Precomputed cost matrix between the time series.
 
     return_cost : bool (default = False)
         If True, the cost matrix is returned.
@@ -1049,30 +1168,19 @@ def dtw(x, y, dist='square', method='classic', options=None, return_cost=False,
     """
     if options is None:
         options = dict()
+    x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
+        _check_input_dtw(x, y, precomputed_cost, dist, method)
+    region = _compute_region(n_timestamps_1, n_timestamps_2, method, dist, x=x,
+                             y=y, **options)
+    cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region)
+    acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
+    dtw_dist = acc_cost_mat[-1, -1]
+    if dist == 'square':
+        dtw_dist = sqrt(dtw_dist)
 
-    if method == 'classic':
-        return dtw_classic(x, y, dist=dist, return_cost=return_cost,
-                           return_accumulated=return_accumulated,
-                           return_path=return_path)
-    elif method == 'sakoechiba':
-        return dtw_sakoechiba(x, y, dist=dist, return_cost=return_cost,
-                              return_accumulated=return_accumulated,
-                              return_path=return_path, **options)
-    elif method == 'itakura':
-        return dtw_itakura(x, y, dist=dist, return_cost=return_cost,
-                           return_accumulated=return_accumulated,
-                           return_path=return_path, **options)
-    elif method == 'multiscale':
-        return dtw_multiscale(x, y, dist=dist, return_cost=return_cost,
-                              return_accumulated=return_accumulated,
-                              return_path=return_path, **options)
-    elif method == 'fast':
-        return dtw_fast(x, y, dist=dist, return_cost=return_cost,
-                        return_accumulated=return_accumulated,
-                        return_path=return_path, **options)
-    else:
-        raise ValueError("'method' must be either 'classic', 'sakoechiba', "
-                         "'itakura', 'multiscale' or 'fast'.")
+    res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
+                          return_cost, return_accumulated, return_path)
+    return res
 
 
 def show_options(method=None, disp=True):
