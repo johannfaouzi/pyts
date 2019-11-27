@@ -1,5 +1,32 @@
 /* Custom CSS file */
 
+/* Properties for API changes */
+
+.deprecated {
+  color: rgba(190, 0, 0, 1);
+  background-color: rgba(255, 0, 0, 0.2);
+  border: 1px solid;
+  border-color: rgba(255, 0, 0, 1);
+  padding: 8px 8px 0px 8px;
+  border-radius: 5px;
+  margin-bottom: 8px;
+}
+
+.deprecated p span.versionmodified {
+    font-weight: bold;
+}
+
+.deprecated p a code {
+  background-color: transparent;
+  border-bottom: none;
+}
+
+.deprecated span.pre {
+  background-color: transparent;
+  border-bottom: none;
+}
+
+
 /* Properties for hyperlinks */
 
 a.reference {
@@ -159,6 +186,10 @@ div.highlight pre {
 
 
 /* Properties for tables */
+
+table.docutils.citation {
+  padding: 0px;
+}
 
 table.docutils col.field-name {
   background-color: rgba(47, 79, 79, 0.1);
