@@ -18,6 +18,7 @@ VERSION = pyts.__version__
 INSTALL_REQUIRES = ['numpy>=1.15.4'
                     'scipy>=1.3.0'
                     'scikit-learn>=0.20.1'
+                    'joblib>=0.11.0'
                     'numba>=0.41.0']
 CLASSIFIERS = ['Development Status :: 3 - Alpha',
                'Intended Audience :: Science/Research',
