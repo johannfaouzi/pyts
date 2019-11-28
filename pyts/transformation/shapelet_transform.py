@@ -477,6 +477,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
         if isinstance(self.window_sizes, str):
             if self.window_sizes == 'auto':
                 window_sizes = self._auto_length_computation(X, y, rng, n_jobs)
+                print(window_sizes)
                 self.window_range_ = (window_sizes[0], window_sizes[-1])
         else:
             window_sizes = np.asarray(self.window_sizes)
@@ -610,7 +611,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
             window_range = np.percentile(
                 shapelet_lengths, [25, 75], interpolation='lower'
             ).astype('int64')
-            window_sizes = np.arange(*window_range)
+            window_sizes = np.arange(window_range[0], window_range[1] + 1)
 
         else:
             _, _, shapelets, _ = self._fit(
@@ -618,9 +619,10 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
                 self.remove_similar, n_jobs, rng
             )
             shapelet_lengths = [len(shapelet) for shapelet in shapelets]
+            print(shapelet_lengths)
             window_range = np.percentile(
                 shapelet_lengths, [25, 75], interpolation='lower'
             ).astype('int64')
-            window_sizes = np.arange(*window_range)
+            window_sizes = np.arange(window_range[0], window_range[1] + 1)
 
         return window_sizes
