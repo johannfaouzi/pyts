@@ -160,13 +160,18 @@ def _remove_similar_shapelets(scores, start_idx, end_idx):
 class ShapeletTransform(BaseEstimator, TransformerMixin):
     """Shapelet Transform Algorithm.
 
+    The Shapelet Transform algorithm extracts the most discriminative
+    shapelets from a data set of time series. A shapelet is defined as
+    a subset of consecutive points from a time series. Two criteria are
+    made available: mutual information and F-scores.
+
     Parameters
     ----------
     n_shapelets : int or 'auto' (default = 'auto')
         The number of shapelets to keep. If 'auto', `n_timestamps // 2`
         shapelets are considered, where `n_timestamps` is the number of
         time points in the dataset. Note that there might be a smaller
-        number of shapelets if less than ``n_shapelets`` have been
+        number of shapelets if fewer than ``n_shapelets`` shapelets have been
         extracted during the search.
 
     criterion : 'mutual_info' or 'anova' (default = 'mutual_info')
@@ -245,7 +250,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
     ----------
     .. [1] J. Lines, L. M. Davis, J. Hills and A. Bagnall, "A Shapelet
            Transform for Time Series Classification". Data Mining and Knowledge
-           Discovery, 29(6), 289-297 (2012).
+           Discovery, 289-297 (2012).
 
     Examples
     --------
