@@ -22,21 +22,20 @@ class JointRecurrencePlot(BaseEstimator, TransformerMixin):
     Parameters
     ----------
     dimension : int or float (default = 1)
-        Dimension of the trajectory. If float, If float, it represents
-        a percentage of the size of each time series and must be between
-        0 and 1.
+        Dimension of the trajectory. If float, it represents a percentage of
+        the size of each time series and must be between 0 and 1.
 
     time_delay : int or float (default = 1)
         Time gap between two back-to-back points of the trajectory. If
-        float, If float, it represents a percentage of the size of each
-        time series and must be between 0 and 1.
+        float, it represents a percentage of the size of each time series and
+        must be between 0 and 1.
 
     threshold : float, 'point', 'distance' or None or list thereof (default = None)
         Threshold for the minimum distance. If None, the recurrence plots
-        are not binarized. If 'point', the threshold is computed such as
-        `percentage` percents of the points are smaller than the threshold.
-        If 'distance', the threshold is computed as the `percentage` of the
-        maximum distance.
+        are not binarized. If ``threshold='point'``, the threshold is computed
+        such as ``percentage`` percents of the points are smaller than the
+        threshold. If ``threshold='distance'``, the threshold is computed as
+        the ``percentage`` of the maximum distance.
 
     percentage : int, float or list thereof (default = 10)
         Percentage of black points if ``threshold='point'`` or percentage of

@@ -154,9 +154,12 @@ html_theme_options = {
     'page_width': '1250px',
     'sidebar_width': '250px',
 
+    # Related links
+    'show_related': 'true',
+
     # Font sizes
     'font_size': '15px',
-    'code_font_size': '14px'
+    'code_font_size': '13px'
 }
 
 # Add any paths that contain custom themes here, relative to this directory.

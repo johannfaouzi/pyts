@@ -41,7 +41,7 @@ Testing
 -------
 
 After installation, you can launch the test suite from outside the source
-directory using pytest::
+directory using ``pytest``::
 
     pytest pyts
 
@@ -50,6 +50,5 @@ Development
 -----------
 
 The development of this package is in line with the one of the scikit-learn
-community. Therefore, you can refer to their
-`Development Guide <https://scikit-learn.org/stable/developers/>`_.
-A slight difference is the use of Numba instead of Cython for optimization.
+community. Fore more information about our contributing guidelines, please
+refer to the :ref:`contribute`.

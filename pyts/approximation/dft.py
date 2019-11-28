@@ -11,6 +11,9 @@ from math import ceil
 from warnings import warn
 from ..preprocessing import StandardScaler
 
+import sklearn
+SKLEARN_VERSION = sklearn.__version__
+
 
 class DiscreteFourierTransform(BaseEstimator, TransformerMixin):
     """Discrete Fourier Transform.
@@ -128,7 +131,10 @@ class DiscreteFourierTransform(BaseEstimator, TransformerMixin):
             The selected Fourier coefficients for each sample.
 
         """
-        check_is_fitted(self, 'support_')
+        if SKLEARN_VERSION >= '0.22':
+            check_is_fitted(self)
+        else:
+            check_is_fitted(self, 'support_')
         X = check_array(X, dtype='float64')
         n_samples, n_timestamps = X.shape
 

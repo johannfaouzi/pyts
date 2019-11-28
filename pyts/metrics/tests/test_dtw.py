@@ -9,7 +9,7 @@ import re
 from math import sqrt
 from numba import njit
 from pyts.metrics.dtw import (
-    _square, _absolute, _check_input_dtw, _multiscale_region, _return_path,
+    _square, _absolute, _check_input_dtw, _blurred_path_region, _return_path,
     _return_results, cost_matrix, accumulated_cost_matrix, _check_region
 )
 from pyts.metrics import (
@@ -62,9 +62,12 @@ def test_absolute(x, y, scalar_desired):
 
 @pytest.mark.parametrize(
     'params, err_msg',
-    [({'x': x[:, None], 'y': y}, "'x' must be a one-dimensional array."),
-     ({'x': x, 'y': y[:, None]}, "'y' must be a one-dimensional array."),
-     ]
+    [({'x': x[:, None], 'y': y, 'precomputed_cost': None, 'dist': 'squared',
+       'method': 'classic'}, "'x' must be a one-dimensional array."),
+     ({'x': x, 'y': y[:, None], 'precomputed_cost': None, 'dist': 'squared',
+       'method': 'classic'}, "'y' must be a one-dimensional array."),
+     ({'x': x, 'y': y, 'precomputed_cost': None, 'dist': 'precomputed',
+       'method': 'fast'}, "cannot be used with a precomputed cost")]
 )
 def test_check_input_dtw(params, err_msg):
     """Test parameter validation."""
@@ -215,8 +218,7 @@ def test_actual_results_dtw_classic(params, res_desired):
 @pytest.mark.parametrize(
     'params, err_msg',
     [({'region': [[1, 1]]},
-      "If 'region' is not None, it must be array-like with shape "
-      "(2, n_timestamps_1).")]
+      "The shape of 'region' must be equal to (2, n_timestamps_1)")]
 )
 def test_parameter_check_dtw_region(params, err_msg):
     """Test parameter validation."""
@@ -470,9 +472,9 @@ def test_actual_results_dtw_itakura(params, res_desired):
       [[0, 0, 0, 0], [4, 4, 4, 4]])
      ]
 )
-def test_actual_results_multiscale_region(params, arr_desired):
+def test_actual_results_blurred_path_region(params, arr_desired):
     """Test that the actual results are the expected ones."""
-    arr_actual = _multiscale_region(**params)
+    arr_actual = _blurred_path_region(**params)
     np.testing.assert_array_equal(arr_actual, arr_desired)
 
 
@@ -662,3 +664,37 @@ def test_check_region(region, n_timestamps_1, n_timestamps_2):
     assert region.min() >= 0
     assert region.max() <= n_timestamps_2
     assert region.shape[1] == n_timestamps_1
+
+
+@pytest.mark.parametrize('method', ['classic', 'sakoechiba', 'itakura'])
+@pytest.mark.parametrize('n_timestamps_1, n_timestamps_2', [[4, 10], [4, 10]])
+def test_precomputed_cost(method, n_timestamps_1, n_timestamps_2):
+    rng = np.random.RandomState(42)
+    x = rng.randn(n_timestamps_1)
+    y = rng.randn(n_timestamps_2)
+    squared_cost = (x[:, None] - y[None, :]) ** 2
+    dtw_desired = dtw(x, y, method=method, dist="square")
+    dtw_desired **= 2
+    dtw_precomputed = dtw(method=method, dist="precomputed",
+                          precomputed_cost=squared_cost)
+    np.testing.assert_allclose(dtw_desired, dtw_precomputed)
+
+
+@pytest.mark.parametrize("method", ["fast", "multiscale"])
+def test_precomputed_cost_error(method):
+    error_match = "cannot be used with a precomputed cost"
+    with pytest.raises(ValueError, match=error_match):
+        dtw(method=method, dist="precomputed")
+
+
+@pytest.mark.parametrize(
+    "method, dtw_func",
+    [("classic", dtw_classic),
+     ("multiscale", dtw_multiscale),
+     ("itakura", dtw_itakura),
+     ("sakoechiba", dtw_sakoechiba),
+     ("fast", dtw_fast)])
+def test_dtw_methods(method, dtw_func):
+    value_specific = dtw_func(x, y)
+    value_generic = dtw(x, y, method=method)
+    assert value_specific == value_generic

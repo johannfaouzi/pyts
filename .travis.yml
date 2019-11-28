@@ -10,9 +10,9 @@ cache:
 matrix:
   include:
     - env: PYTHON_VERSION="3.6" NUMPY_VERSION="1.15.4" SCIPY_VERSION="1.3.0"
-           SKLEARN_VERSION="0.20.1" NUMBA_VERSION="0.41.0"
+           SKLEARN_VERSION="0.20.1" JOBLIB_VERSION="0.12" NUMBA_VERSION="0.41.0"
     - env: PYTHON_VERSION="3.7" NUMPY_VERSION="1.15.4" SCIPY_VERSION="1.3.0"
-           SKLEARN_VERSION="0.20.1" NUMBA_VERSION="0.41.0"
+           SKLEARN_VERSION="0.20.1" JOBLIB_VERSION="0.12" NUMBA_VERSION="0.41.0"
 
 install:
   # install miniconda
@@ -25,7 +25,7 @@ install:
   # create the testing environment
   - conda create -n testenv --yes python=$PYTHON_VERSION pip
   - source activate testenv
-  - conda install --yes numpy==$NUMPY_VERSION scipy==$SCIPY_VERSION scikit-learn==$SKLEARN_VERSION numba==$NUMBA_VERSION nose pytest pytest-cov
+  - conda install --yes numpy==$NUMPY_VERSION scipy==$SCIPY_VERSION scikit-learn==$SKLEARN_VERSION joblib==$JOBLIB_VERSION numba==$NUMBA_VERSION pytest pytest-cov
   - pip install codecov
   - pip install .
 

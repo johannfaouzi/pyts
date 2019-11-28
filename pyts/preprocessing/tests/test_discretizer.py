@@ -39,7 +39,8 @@ def test_uniform_bins(sample_min, sample_max, n_bins, arr_desired):
 )
 def test_digitize(X, bins, arr_desired):
     """Test '_digitize' function."""
-    arr_actual = _digitize(X, bins)
+    X_float = np.asarray(X, dtype='float64')
+    arr_actual = _digitize(X_float, bins)
     np.testing.assert_array_equal(arr_actual, arr_desired)
 
 

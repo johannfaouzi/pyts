@@ -12,7 +12,10 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
 from ..approximation import SymbolicFourierApproximation
-from ..utils import windowed_view
+from ..utils.utils import _windowed_view
+
+import sklearn
+SKLEARN_VERSION = sklearn.__version__
 
 
 class BOSSVS(BaseEstimator, ClassifierMixin):
@@ -162,8 +165,8 @@ class BOSSVS(BaseEstimator, ClassifierMixin):
         window_size, window_step = self._check_params(n_timestamps)
         n_windows = (n_timestamps - window_size + window_step) // window_step
 
-        X_windowed = windowed_view(
-            X, window_size=window_size, window_step=window_step
+        X_windowed = _windowed_view(
+            X, n_samples, n_timestamps, window_size, window_step
         )
         X_windowed = X_windowed.reshape(n_samples * n_windows, window_size)
 
@@ -223,12 +226,15 @@ class BOSSVS(BaseEstimator, ClassifierMixin):
             Cosine similarity between the document-term matrix and X.
 
         """
-        check_is_fitted(self, ['vocabulary_', 'tfidf_', 'idf_', '_tfidf'])
+        if SKLEARN_VERSION >= '0.22':
+            check_is_fitted(self)
+        else:
+            check_is_fitted(self, ['vocabulary_', 'tfidf_', 'idf_', '_tfidf'])
         X = check_array(X, dtype='float64')
         n_samples, n_timestamps = X.shape
 
-        X_windowed = windowed_view(
-            X, window_size=self._window_size, window_step=self._window_step
+        X_windowed = _windowed_view(
+            X, n_samples, n_timestamps, self._window_size, self._window_step
         )
         X_windowed = X_windowed.reshape(-1, self._window_size)
 
