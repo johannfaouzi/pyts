@@ -193,7 +193,10 @@ def test_parameter_check(params, error, err_msg):
 
 
 @pytest.mark.parametrize(
-    'params', [{'window_sizes': [3, 5], 'sort': True}, {'window_sizes': [4]}]
+    'params',
+    [{'window_sizes': [3, 5], 'sort': True},
+     {'window_sizes': [0.5], 'window_step': [0.1], 'criterion': 'anova'},
+     {}]
 )
 def test_fit_transform(params):
     """Test that 'fit_transform' and 'fit' then 'transform' yield same res."""
