@@ -93,9 +93,7 @@ def _input_to_cost(x, y, dist, precomputed_cost, region):
 
 def _check_region(region, n_timestamps_1, n_timestamps_2):
     """Project region on the feasible set."""
-
     region = np.clip(region[:, :n_timestamps_1], 0, n_timestamps_2)
-
     return region
 
 
@@ -617,7 +615,6 @@ def dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
 
 def _get_itakura_slopes(n_timestamps_1, n_timestamps_2, max_slope):
     """Compute the slopes of the parallelogram bounds."""
-
     if not isinstance(n_timestamps_1, (int, np.integer)):
         raise TypeError("'n_timestamps_1' must be an integer.")
     else:
@@ -675,17 +672,17 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     """
     if n_timestamps_2 is None:
         n_timestamps_2 = n_timestamps_1
+    min_slope_, max_slope_ = _get_itakura_slopes(
+        n_timestamps_1, n_timestamps_2, max_slope)
 
-    min_slope, max_slope = _get_itakura_slopes(n_timestamps_1, n_timestamps_2,
-                                               max_slope)
     # Now we create the piecewise linear functions defining the parallelogram
     # lower_bound[0] = min_slope * x
     # lower_bound[1] = max_slope * (x - n_timestamps_1) + n_timestamps_2
 
     centered_scale = np.arange(n_timestamps_1) - n_timestamps_1 + 1
     lower_bound = np.empty((2, n_timestamps_1))
-    lower_bound[0] = min_slope * np.arange(n_timestamps_1)
-    lower_bound[1] = max_slope * centered_scale + n_timestamps_2 - 1
+    lower_bound[0] = min_slope_ * np.arange(n_timestamps_1)
+    lower_bound[1] = max_slope_ * centered_scale + n_timestamps_2 - 1
 
     # take the max of the lower linear funcs
     lower_bound = np.round(lower_bound, 2)
@@ -695,16 +692,22 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     # upper_bound[1] = min_slope * (x - n_timestamps_1) + n_timestamps_2
 
     upper_bound = np.empty((2, n_timestamps_1))
-    upper_bound[0] = max_slope * np.arange(n_timestamps_1) + 1
-    upper_bound[1] = min_slope * centered_scale + n_timestamps_2
-    upper_bound = np.round(upper_bound, 2)
-    # take the min of the upper linear funcs
+    upper_bound[0] = max_slope_ * np.arange(n_timestamps_1) + 1
+    upper_bound[1] = min_slope_ * centered_scale + n_timestamps_2
 
+    # take the min of the upper linear funcs
+    upper_bound = np.round(upper_bound, 2)
     upper_bound = np.floor(np.min(upper_bound, axis=0))
+
+    # Little fix for max_slope = 1
+    if max_slope == 1:
+        if n_timestamps_2 > n_timestamps_1:
+            upper_bound[:-1] = lower_bound[1:]
+        else:
+            upper_bound = lower_bound + 1
 
     region = np.asarray([lower_bound, upper_bound]).astype('int64')
     region = _check_region(region, n_timestamps_1, n_timestamps_2)
-
     return region
 
 

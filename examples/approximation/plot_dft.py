@@ -3,10 +3,21 @@
 Discrete Fourier Transform
 ==========================
 
-This example shows how to approximate a time series using only
-some of its Fourier coefficients using
-:class:`pyts.approximation.DiscreteFourierTransform`.
+Discrete Fourier Transform is a signal processing technique that transforms
+a signal of size `n` into a vector of complex Fourier coefficients of size `n`.
+When the signal consists of floats, the transformation can be made bijective
+and consists of a vector of floats of size `n`. The first Fourier coefficients
+are the coefficients from the lowest frequencies and represent the trend,
+while the last Fourier coefficients are for the highest frequencies and
+usually represent noise. A time series can thus be approximated using some
+of the first Fourier coefficients. This example illustrates the difference
+between the original time series and the time series approximated with the
+first Fourier coefficients.
+It is implemented as :class:`pyts.approximation.DiscreteFourierTransform`.
 """
+
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -44,8 +55,10 @@ else:
 X_irfft = np.fft.irfft(X_dft_new, n_timestamps)
 
 # Show the results for the first time series
-plt.figure(figsize=(12, 8))
-plt.plot(X[0], 'o--', label='Original')
-plt.plot(X_irfft[0], 'o--', label='DFT - {0} coefs'.format(n_coefs))
-plt.legend(loc='best', fontsize=14)
+plt.figure(figsize=(6, 4))
+plt.plot(X[0], 'o--', ms=4, label='Original')
+plt.plot(X_irfft[0], 'o--', ms=4, label='DFT - {0} coefs'.format(n_coefs))
+plt.legend(loc='best', fontsize=10)
+plt.xlabel('Time', fontsize=14)
+plt.title('Discrete Fourier Transform', fontsize=16)
 plt.show()
