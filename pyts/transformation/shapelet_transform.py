@@ -214,7 +214,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
         If None, the random number generator is the RandomState instance used
         by ``np.random``. Only used if ``window_sizes='auto'`` in order to
         subsample the dataset to find the best range or if
-        ``criterion=='mutual_info' to add small noise to the data.
+        ``criterion=='mutual_info'`` to add small noise to the data.
 
     n_jobs : None or int (default = None)
         The number of jobs to run in parallel for ``fit``.
@@ -249,16 +249,19 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
 
     Examples
     --------
-    >>> from pyts.datasets import load_gunpoint
     >>> from pyts.transformation import ShapeletTransform
-    >>> X_train, _, y_train, _ = load_gunpoint(return_X_y=True)
-    >>> st = ShapeletTransform(n_shapelets=50, window_sizes=[20])
-    >>> st.fit(X_train, y_train) # doctest: +ELLIPSIS
+    >>> X = [[0, 2, 3, 4, 3, 2, 1],
+    ...      [0, 1, 3, 4, 3, 4, 5],
+    ...      [2, 1, 0, 2, 1, 5, 4],
+    ...      [1, 2, 2, 1, 0, 3, 5]]
+    >>> y = [0, 0, 1, 1]
+    >>> st = ShapeletTransform(n_shapelets=2, window_sizes=[3])
+    >>> st.fit(X, y) # doctest: +ELLIPSIS
     ShapeletTransform(...)
     >>> len(st.shapelets_)
-    50
+    2
     >>> st.indices_.shape
-    (50, 3)
+    (2, 3)
 
     """
 
