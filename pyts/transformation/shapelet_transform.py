@@ -241,6 +241,25 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
     window_range_ : None or tuple
         Range of the window sizes if ``window_sizes='auto'``. None otherwise.
 
+    References
+    ----------
+    .. [1] J. Lines, L. M. Davis, J. Hills and A. Bagnall, "A Shapelet
+           Transform for Time Series Classification". Data Mining and Knowledge
+           Discovery, 29(6), 289-297 (2012).
+
+    Examples
+    --------
+    >>> from pyts.datasets import load_gunpoint
+    >>> from pyts.transformation import ShapeletTransform
+    >>> X_train, _, y_train, _ = load_gunpoint(return_X_y=True)
+    >>> st = ShapeletTransform(n_shapelets=50, window_sizes=[20])
+    >>> st.fit(X_train, y_train) # doctest: +ELLIPSIS
+    ShapeletTransform(...)
+    >>> len(st.shapelets_)
+    50
+    >>> st.indices_.shape
+    (50, 3)
+
     """
 
     def __init__(self, n_shapelets='auto', criterion='mutual_info',
@@ -477,10 +496,8 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
         if isinstance(self.window_sizes, str):
             if self.window_sizes == 'auto':
                 window_sizes = self._auto_length_computation(X, y, rng, n_jobs)
-                print(window_sizes)
                 self.window_range_ = (window_sizes[0], window_sizes[-1])
         else:
-            window_sizes = np.asarray(self.window_sizes)
             self.window_range_ = None
 
         if self.window_steps is None:
@@ -507,14 +524,13 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
             scores = mutual_info_classif(X_dist, y, discrete_features=False,
                                          random_state=rng)
         else:
-            scores = f_classif(X_dist, y)
+            scores, _ = f_classif(X_dist, y)
 
         # Flatten the list of 2D arrays into an array of 1D arrays
         shapelets = [list(shapelet) for shapelet in shapelets]
         shapelets = np.asarray(list(chain.from_iterable(shapelets)))
 
         # Concatenate the list/tuple of 1D arrays into one 1D array
-        lengths = np.concatenate(lengths)
         start_idx = np.concatenate(start_idx)
         end_idx = np.concatenate(end_idx)
 
@@ -619,7 +635,6 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
                 self.remove_similar, n_jobs, rng
             )
             shapelet_lengths = [len(shapelet) for shapelet in shapelets]
-            print(shapelet_lengths)
             window_range = np.percentile(
                 shapelet_lengths, [25, 75], interpolation='lower'
             ).astype('int64')
