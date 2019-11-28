@@ -8,6 +8,7 @@ environment:
       NUMPY_VERSION: "1.15.4"
       SCIPY_VERSION: "1.3.0"
       SKLEARN_VERSION: "0.20.1"
+      JOBLIB_VERSION: "0.11.0"
       NUMBA_VERSION: "0.41.0"
 
     - PYTHON: "C:\\Miniconda3-x64"
@@ -16,6 +17,7 @@ environment:
       NUMPY_VERSION: "1.15.4"
       SCIPY_VERSION: "1.3.0"
       SKLEARN_VERSION: "0.20.1"
+      JOBLIB_VERSION: "0.11.0"
       NUMBA_VERSION: "0.41.0"
 
     - PYTHON: "C:\\Miniconda3-x64"
@@ -24,6 +26,7 @@ environment:
       NUMPY_VERSION: "1.15.4"
       SCIPY_VERSION: "1.3.0"
       SKLEARN_VERSION: "0.20.1"
+      JOBLIB_VERSION: "0.11.0"
       NUMBA_VERSION: "0.41.0"
 
 install:
@@ -32,7 +35,7 @@ install:
   # https://github.com/conda/conda/issues/1753
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PYTHON%\\Library\\bin;%PATH%"
   # install the dependencies
-  - "conda install --yes pip numpy==%NUMPY_VERSION% scipy==%SCIPY_VERSION% scikit-learn==%SKLEARN_VERSION% numba==%NUMBA_VERSION% nose pytest pytest-cov"
+  - "conda install --yes pip numpy==%NUMPY_VERSION% scipy==%SCIPY_VERSION% scikit-learn==%SKLEARN_VERSION% joblib==%JOBLIB_VERSION% numba==%NUMBA_VERSION% pytest pytest-cov"
   - pip install codecov
   - pip install .
 
