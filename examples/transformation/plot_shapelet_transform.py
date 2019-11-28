@@ -29,7 +29,7 @@ st = ShapeletTransform(window_sizes=[12, 24, 36, 48],
 X_new = st.fit_transform(X_train, y_train)
 
 # Visualize the four most discriminative shapelets
-plt.figure(figsize=(8, 5))
+plt.figure(figsize=(6, 4))
 for i, index in enumerate(st.indices_[:4]):
     idx, start, end = index
     plt.plot(X_train[idx], color='C{}'.format(i),
@@ -37,7 +37,7 @@ for i, index in enumerate(st.indices_[:4]):
     plt.plot(np.arange(start, end), X_train[idx, start:end],
              lw=5, color='C{}'.format(i))
 
-plt.xlabel('Time', fontsize=14)
-plt.title('The four more discriminative shapelets', fontsize=18)
-plt.legend(loc='best', fontsize=12)
+plt.xlabel('Time', fontsize=12)
+plt.title('The four more discriminative shapelets', fontsize=14)
+plt.legend(loc='best', fontsize=8)
 plt.show()

@@ -3,8 +3,13 @@
 Imputer
 =======
 
-This example shows how one can impute missing values using
-:class:`pyts.preprocessing.InterpolationImputer`.
+Missing values are common in real-word datasets and most algorithms cannot
+deal with them. Thus it is standard to impute them. For time series, the
+imputation is based on interpolation from other time points in order to
+preserve temporal correlation between consecutive time points. Different
+strategies for interpolation are made available. This example illustrates
+these different strategies.
+It is implemented as :class:`pyts.preprocessing.InterpolationImputer`.
 """
 
 # Author: Johann Faouzi <johann.faouzi@gmail.com>

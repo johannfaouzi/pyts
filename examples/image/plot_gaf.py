@@ -3,10 +3,13 @@
 Gramian Angular Field
 =====================
 
-This example shows how you can transform a time series into a Gramian Angular
-Field using :class:`pyts.image.GramianAngularField`. Two methods are
+A Gramian Angular Field is an image obtained from a time series, representing
+some temporal correlation between each time point. Two methods are
 available: Gramian Angular Summation Field and Gramian Angular Difference
-Field.
+Field. This example illustrates the transformation on the first sample of
+the *GunPoint* dataset. Both images are plotted side by side to illustrate
+the differences.
+It is implemented as :class:`pyts.image.GramianAngularField`.
 """
 
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
@@ -27,7 +30,7 @@ gadf = GramianAngularField(image_size=24, method='difference')
 X_gadf = gadf.fit_transform(X)
 
 # Show the images for the first time series
-fig = plt.figure(figsize=(12, 7))
+fig = plt.figure(figsize=(8, 4))
 grid = ImageGrid(fig, 111,
                  nrows_ncols=(1, 2),
                  axes_pad=0.15,
@@ -38,13 +41,11 @@ grid = ImageGrid(fig, 111,
                  cbar_pad=0.3,
                  )
 images = [X_gasf[0], X_gadf[0]]
-titles = ['Gramian Angular Summation Field',
-          'Gramian Angular Difference Field']
+titles = ['Summation', 'Difference']
 for image, title, ax in zip(images, titles, grid):
     im = ax.imshow(image, cmap='rainbow', origin='lower')
-    ax.set_title(title, fontdict={'fontsize': 16})
+    ax.set_title(title, fontdict={'fontsize': 12})
 ax.cax.colorbar(im)
 ax.cax.toggle_label(True)
-
-plt.suptitle('Gramian Angular Fields', y=0.92, fontsize=20)
+plt.suptitle('Gramian Angular Fields', y=0.98, fontsize=16)
 plt.show()

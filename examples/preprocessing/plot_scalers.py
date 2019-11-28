@@ -3,7 +3,10 @@
 Scalers
 =======
 
-This example shows the different scaling algorithms available in
+Scaling data is a usual requirement for many algorithms and allows to have
+identical scales for time series with originally different scales.
+For time series, scaling is performed sample-wise instead of feature-wise.
+This example illustrates several scaling algorithms made available in
 :mod:`pyts.preprocessing`.
 """
 

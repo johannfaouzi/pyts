@@ -6,8 +6,8 @@ Making a Cylinder-Bell-Funnel dataset
 This example shows how to generate a Cylinder-Bell-Funnel dataset. This
 simulated dataset was introduced by N. Saito in his Ph.D. thesis entitled
 "Local feature extraction and its application". It is one of the most
-well-known datasets in time series classification. It is implemented as
-:func:`pyts.datasets.make_cylinder_bell_funnel`.
+well-known datasets in time series classification.
+It is implemented as :func:`pyts.datasets.make_cylinder_bell_funnel`.
 """
 
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
