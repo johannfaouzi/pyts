@@ -42,7 +42,10 @@ The datasets used are taken from this repository.
 On this website, you can download the datasets (a password is required to
 unzip the file, you can find it by reading the PDF or the PowerPoint).
 Convenience functions are also provided in pyts to download a dataset from this
-repository (:func:pyts.datasets.fetch_ucr_dataset and :func:pyts.datasets.fetch_uea_dataset).
+repository:
+
+* Univariate time series dataset: :func:`pyts.datasets.fetch_ucr_dataset`,
+* Multivariate time series dataset: :func:`pyts.datasets.fetch_uea_dataset`.
 
 For computational reasons, the algorithms are only tested on the smallest
 datasets. This way, anyone can run the scripts by themselves on a single
