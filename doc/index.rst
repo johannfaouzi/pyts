@@ -30,6 +30,7 @@ Welcome to pyts documentation!
    :hidden:
    :caption: Additional Information
 
+   reproducibility
    changelog
 
 
