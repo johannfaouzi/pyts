@@ -81,7 +81,7 @@ The metrics used are:
 * Dynamic Time Warping (DTW), and
 * Dynamic Time Warping with a learned warping window (DTW(w)).
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.9.0/1NN%20-%20ED%2C%20DTW%20and%20DTW(w).ipynb>`_
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.9.0/1NN%20-%20ED%2C%20DTW%20and%20DTW(w).ipynb>`__
 
 +------------------+---------------+-----------+----------------+------------+-------------------+----------------+
 | Name             | ED (reported) | ED (pyts) | DTW (reported) | DTW (pyts) | DTW(w) (reported) | DTW(w) (pyts)  |
@@ -103,7 +103,7 @@ The metrics used are:
 BOSS transformer followed by a 1NN classifier using the BOSS metric
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.9.0/BOSS.ipynb>`_
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.9.0/BOSS.ipynb>`__
 
 +------------------+-----------------+-------------+
 | Name             | BOSS (reported) | BOSS (pyts) |
@@ -125,7 +125,7 @@ BOSS transformer followed by a 1NN classifier using the BOSS metric
 BOSSVS classifier
 ^^^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.9.0/BOSSVS.ipynb>`_
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.9.0/BOSSVS.ipynb>`__
 
 +------------------+-------------------+---------------+
 | Name             | BOSSVS (reported) | BOSSVS (pyts) |
@@ -147,7 +147,7 @@ BOSSVS classifier
 WEASEL transformer followed by a logistic regression
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.9.0/WEASEL.ipynb>`_
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.9.0/WEASEL.ipynb>`__
 
 +------------------+-------------------+---------------+
 | Name             | WEASEL (reported) | WEASEL (pyts) |

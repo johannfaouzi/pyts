@@ -1,5 +1,15 @@
 /* Custom CSS file */
 
+/* Properties for references */
+
+div.topic {
+  border-radius: 5px;
+}
+
+div.topic ul{
+  margin-top: -10px;
+}
+
 /* Properties for hyperlinks */
 
 a.reference {

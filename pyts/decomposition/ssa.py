@@ -45,7 +45,7 @@ class SingularSpectrumAnalysis(BaseEstimator, TransformerMixin):
         Size of the sliding window (i.e. the size of each word). If float, it
         represents the percentage of the size of each time series and must be
         between 0 and 1. The window size will be computed as
-        ``max(2, ceil(self.window_size * n_timestamps))``.
+        ``max(2, ceil(window_size * n_timestamps))``.
 
     groups : None, int or array-like (default = None)
         The way the elementary matrices are grouped. If None, no grouping is

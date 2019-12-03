@@ -60,7 +60,7 @@ plt.ylim((0, 1.2))
 plt.xlabel("True label", fontsize=14)
 plt.ylabel("Cosine similarity", fontsize=14)
 plt.title(("Cosine similarity between tf-idf vectors for each class\n"
-           "and tf vectors for each sample (tets set)"), fontsize=15)
+           "and tf vectors for each sample (test set)"), fontsize=15)
 plt.legend(loc='best')
 
 plt.suptitle("SAX-VSM", y=0.95, fontsize=22)
