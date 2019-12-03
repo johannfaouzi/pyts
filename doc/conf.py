@@ -268,8 +268,6 @@ latex_elements = {
 #'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
-'preamble': "\pdfimageresolution=300",
-'pxunit': '0.001in'
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
