@@ -40,6 +40,10 @@ extensions = [
     'sphinx_gallery.gen_gallery',
 ]
 
+# Use svg images for math stuff
+extensions.append('sphinx.ext.imgmath')
+imgmath_image_format = 'svg'
+
 # this is needed for some reason...
 # see https://github.com/numpy/numpydoc/issues/69
 numpydoc_show_class_members = False
@@ -156,6 +160,7 @@ html_theme_options = {
 
     # Related links
     'show_related': 'true',
+    'show_relbar_bottom': 'true',
 
     # Font sizes
     'font_size': '15px',
@@ -253,6 +258,7 @@ htmlhelp_basename = 'pytsdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
+latex_engine = 'pdflatex'
 
 latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
@@ -262,7 +268,8 @@ latex_elements = {
 #'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
-#'preamble': '',
+'preamble': "\pdfimageresolution=300",
+'pxunit': '0.001in'
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
