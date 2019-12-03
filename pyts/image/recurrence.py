@@ -60,8 +60,8 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
         \vec{x}_i = (x_i, x_{i + \tau}, \ldots, x_{i + (m - 1)\tau}), \quad
         \forall i \in \{1, \ldots, n - (m - 1)\tau \}
 
-    where `m` is the `dimension` of the trajectories and :math:`\tau` is the
-    `time_delay`. The recurrence plot, denoted :math:`R`, is the
+    where :math:`m` is the ``dimension`` of the trajectories and :math:`\tau`
+    is the ``time_delay``. The recurrence plot, denoted :math:`R`, is the
     pairwise distance between the trajectories
 
     .. math::
@@ -70,11 +70,11 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
         \forall i,j \in \{1, \ldots, n - (m - 1)\tau \}
 
     where :math:`\Theta` is the Heaviside function and :math:`\varepsilon`
-    is the `threshold`.
+    is the ``threshold``.
 
     References
     ----------
-    .. [1] J.-P Eckmann and S. Oliffson Kamphorst and D Ruelle, "Recurrence
+    .. [1] J.-P Eckmann, S. Oliffson Kamphorst and D Ruelle, "Recurrence
            Plots of Dynamical Systems". Europhysics Letters (1987).
 
     Examples
