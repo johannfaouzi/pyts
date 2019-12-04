@@ -9,12 +9,12 @@ Version 0.10.0
 --------------
 
 - Adapt DTW functions to compare time series with different lengths
-  (by :user:`Hicham Janati <hichamjanati>`)
+  (by Hicham Janati)
 
 - Add a ``precomputed_cost`` parameter in DTW variants that are compatible
   with a precomputed cost matrix, that is classical DTW and DTW with global
   constraint regions like Sakoe-Chiba band and Itakura parallelogram
-  (by :user:`Hicham Janati <hichamjanati>`)
+  (by Hicham Janati)
 
 - Add a new algorithm called *ShapeletTransform* in the :mod:`pyts.transformation`
   module.
