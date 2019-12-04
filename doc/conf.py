@@ -151,7 +151,8 @@ html_theme_options = {
     'github_user': 'johannfaouzi',
 
     # Page and sidebar widths
-    'page_width': '1250px',
+    'page_width': '1300px',
+    'body_max_width': '850px',
     'sidebar_width': '250px',
 
     # Related links
