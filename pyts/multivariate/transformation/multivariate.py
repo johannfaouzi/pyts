@@ -116,7 +116,7 @@ class MultivariateTransformer(BaseEstimator, TransformerMixin):
                 one_shape = np.unique(shapes, axis=0).shape[0] == 1
             else:
                 one_shape = False
-            if (not one_dim) or (not one_shape) or self.flatten:
+            if (not one_shape) or self.flatten:
                 X_new = [X_new_i.reshape(n_samples, -1) for X_new_i in X_new]
                 X_new = np.concatenate(X_new, axis=1)
             else:
