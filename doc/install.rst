@@ -22,8 +22,8 @@ To run the examples Matplotlib (>=2.0.0) is required.
 User installation
 -----------------
 
-If you already have a working installation of numpy, scipy, scikit-learn and
-numba, you can easily install pyts using ``pip``::
+If you already have a working installation of numpy, scipy, scikit-learn,
+joblib and numba, you can easily install pyts using ``pip``::
 
     pip install pyts
 

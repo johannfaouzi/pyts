@@ -8,8 +8,29 @@ Change Log
 Version 0.10.0
 --------------
 
-- Adapt `pyts.metrics.dtw` to compare time series with different lengths (Hicham Janati)
+- Adapt DTW functions to compare time series with different lengths
+  (by Hicham Janati)
 
+- Add a ``precomputed_cost`` parameter in DTW variants that are compatible
+  with a precomputed cost matrix, that is classical DTW and DTW with global
+  constraint regions like Sakoe-Chiba band and Itakura parallelogram
+  (by Hicham Janati)
+
+- Add a new algorithm called *ShapeletTransform* in the :mod:`pyts.transformation`
+  module.
+
+- Add a new dependency, the *joblib* Python package, since it has been vendored
+  from scikit-learn and it is used in ShapeletTransform.
+
+- [DOC] Revamp documentation in most sections:
+
+  * User guide is much more detailed
+  * A *Scikit-learn compatibility* page has been added to highlight the compatibility
+    of pyts estimators with scikit-learn tools like model selection and pipelines.
+  * A *Reproducibility* page has been added to highlight the work done in the
+    `pyts-repro <https://github.com/johannfaouzi/pyts-repro>`_ repository,
+    where we compare the performance of our implementations to the literature.
+  * A *Contributing guide* has been added.
 
 
 Version 0.9.0

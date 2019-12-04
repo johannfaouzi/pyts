@@ -34,8 +34,8 @@ To run the examples Matplotlib (>=2.0.0) is required.
 
 #### User installation
 
-If you already have a working installation of numpy, scipy, scikit-learn and
-numba, you can easily install pyts using ``pip``
+If you already have a working installation of numpy, scipy, scikit-learn,
+joblib and numba, you can easily install pyts using ``pip``
 
     pip install pyts
 
@@ -140,7 +140,8 @@ of missing values using interpolation. More information is available at the
 - `transformation`: This module provides implementations of algorithms that
 transform a data set of time series with shape `(n_samples, n_timestamps)` into
 a data set with shape `(n_samples, n_features)`. Implemented algorithms are
-[BOSS](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.BOSS.html#) and
+[BOSS](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.BOSS.html#),
+[ShapeletTransform](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.ShapeletTransform.html) and
 [WEASEL](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.WEASEL.html#).
 
 - `utils`: a simple module with

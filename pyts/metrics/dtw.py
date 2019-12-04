@@ -8,8 +8,6 @@ from math import ceil, log2, sqrt
 from numba import njit, prange
 from sklearn.utils import check_array
 
-from ..utils import deprecated
-
 
 @njit()
 def _square(x, y):
@@ -276,8 +274,7 @@ def _return_results(dtw_dist, cost_mat, acc_cost_mat,
     else:
         return res
 
-@deprecated("``dtw_classic`` is deprecated in v0.10 and will be removed in "
-            "v0.11. Use ``dtw`` instead.")
+
 def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
                 return_cost=False, return_accumulated=False,
                 return_path=False):
@@ -298,9 +295,10 @@ def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
 
-    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
-        (default = None). Ignored if ``dist != 'precomputed'``.
+    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2) \
+            (default = None).
         Precomputed cost matrix between the time series.
+        Ignored if ``dist != 'precomputed'``.
 
     return_cost : bool (default = False)
         If True, the cost matrix is returned.
@@ -328,6 +326,12 @@ def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
 
+    References
+    ----------
+    .. [1] H. Sakoe and S. Chiba, “Dynamic programming algorithm optimization
+           for spoken word recognition”. IEEE Transactions on Acoustics,
+           Speech, and Signal Processing, 26(1), 43-49 (1978).
+
     Examples
     --------
     >>> from pyts.metrics import dtw_classic
@@ -350,8 +354,6 @@ def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
     return res
 
 
-@deprecated("``dtw_region`` is deprecated in v0.10 and will be removed in "
-            "v0.11. Use ``dtw`` instead.")
 def dtw_region(x=None, y=None, dist='square', region=None,
                precomputed_cost=None, return_cost=False,
                return_accumulated=False, return_path=False):
@@ -378,9 +380,10 @@ def dtw_region(x=None, y=None, dist='square', region=None,
          second row consists of the ending indices (excluded) of the valid rows
          for each column.
 
-    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
-        (default = None). Ignored if ``dist != 'precomputed'``.
+    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2) \
+            (default = None).
         Precomputed cost matrix between the time series.
+        Ignored if ``dist != 'precomputed'``.
 
     return_cost : bool (default = False)
         If True, the cost matrix is returned.
@@ -502,6 +505,12 @@ def sakoe_chiba_band(n_timestamps_1, n_timestamps_2=None, window_size=0.1):
         (included) and the second row consists of the ending indices (excluded)
         of the valid rows for each column.
 
+    References
+    ----------
+    .. [1] H. Sakoe and S. Chiba, “Dynamic programming algorithm optimization
+           for spoken word recognition”. IEEE Transactions on Acoustics,
+           Speech, and Signal Processing, 26(1), 43-49 (1978).
+
     Examples
     --------
     >>> from pyts.metrics import sakoe_chiba_band
@@ -528,8 +537,6 @@ def sakoe_chiba_band(n_timestamps_1, n_timestamps_2=None, window_size=0.1):
     return region
 
 
-@deprecated("``dtw_region`` is deprecated in v0.10 and will be removed in "
-            "v0.11. Use ``dtw`` with ``method == 'sakoechiba'`` instead.")
 def dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
                    precomputed_cost=None, return_cost=False,
                    return_accumulated=False, return_path=False):
@@ -559,9 +566,10 @@ def dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
         Each cell whose distance with the diagonale is lower than or equal to
         'window_size' becomes a valid cell for the path.
 
-    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
-        (default = None). Ignored if ``dist != 'precomputed'``.
+    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2) \
+            (default = None).
         Precomputed cost matrix between the time series.
+        Ignored if ``dist != 'precomputed'``.
 
     return_cost : bool (default = False)
         If True, the cost matrix is returned.
@@ -588,6 +596,12 @@ def dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
         of the indices of the optimal path for x while the second row
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
+
+    References
+    ----------
+    .. [1] H. Sakoe and S. Chiba, “Dynamic programming algorithm optimization
+           for spoken word recognition”. IEEE Transactions on Acoustics,
+           Speech, and Signal Processing, 26(1), 43-49 (1978).
 
     Examples
     --------
@@ -662,6 +676,12 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
         (included) and the second row consists of the ending indices (excluded)
         of the valid rows for each column.
 
+    References
+    ----------
+    .. [1] F. Itakura, “Minimum prediction residual principle applied to speech
+           recognition”. IEEE Transactions on Acoustics, Speech, and Signal
+           Processing, 23(1), 67–72 (1975).
+
     Examples
     --------
     >>> from pyts.metrics import itakura_parallelogram
@@ -711,8 +731,6 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     return region
 
 
-@deprecated("``dtw_region`` is deprecated in v0.10 and will be removed in "
-            "v0.11. Use ``dtw`` with ``method == 'itakura'`` instead.")
 def dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
                 precomputed_cost=None, return_cost=False,
                 return_accumulated=False, return_path=False):
@@ -736,9 +754,10 @@ def dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
     max_slope : float (default = 2.)
         Maximum slope for the parallelogram.
 
-    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
-        (default = None). Ignored if ``dist != 'precomputed'``.
+    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2) \
+            (default = None).
         Precomputed cost matrix between the time series.
+        Ignored if ``dist != 'precomputed'``.
 
     return_cost : bool (default = False)
         If True, the cost matrix is returned.
@@ -765,6 +784,12 @@ def dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
         of the indices of the optimal path for x while the second row
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
+
+    References
+    ----------
+    .. [1] F. Itakura, “Minimum prediction residual principle applied to speech
+           recognition”. IEEE Transactions on Acoustics, Speech, and Signal
+           Processing, 23(1), 67–72 (1975).
 
     Examples
     --------
@@ -933,8 +958,6 @@ def _compute_region(n_timestamps_1, n_timestamps_2, method, dist,
     return region
 
 
-@deprecated("``dtw_multiscale`` is deprecated in v0.10 and will be removed "
-            "in v0.11. Use ``dtw`` with ``method == 'multiscale'`` instead.")
 def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
                    return_cost=False, return_accumulated=False,
                    return_path=False):
@@ -989,6 +1012,12 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
 
+    References
+    ----------
+    .. [1] M. Müller, H. Mattes and F. Kurth, “An efficient multiscale approach
+           to audio synchronization”. International Conference on Music
+           Information Retrieval, 6(1), 192-197 (2006).
+
     Examples
     --------
     >>> from pyts.metrics import dtw_multiscale
@@ -1015,19 +1044,17 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
     return res
 
 
-@deprecated("``dtw_fast`` is deprecated in v0.10 and will be removed in "
-            "v0.11. Use ``dtw`` with ``method == 'fast'`` instead.")
-def dtw_fast(x=None, y=None, dist='square', radius=0, return_cost=False,
+def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
              return_accumulated=False, return_path=False):
     """Fast Dynamic Time Warping distance.
 
     Parameters
     ----------
     x : array-like, shape = (n_timestamps_1,)
-        First array. Ignored if ``dist == 'precomputed'``.
+        First array.
 
     y : array-like, shape = (n_timestamps_2,)
-        Second array. Ignored if ``dist == 'precomputed'``.
+        Second array.
 
     dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
         Distance used. If 'square', the squared difference is used.
@@ -1067,6 +1094,12 @@ def dtw_fast(x=None, y=None, dist='square', radius=0, return_cost=False,
         of the indices of the optimal path for x while the second row
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
+
+    References
+    ----------
+    .. [1] S. Salvador ans P. Chan, “FastDTW: Toward Accurate Dynamic Time
+           Warping in Linear Time and Space”. KDD Workshop on Mining Temporal
+           and Sequential Data, 70–80 (2004).
 
     Examples
     --------
@@ -1109,8 +1142,8 @@ def dtw(x=None, y=None, dist='square', method='classic', options=None,
         If 'absolute', the absolute difference is used. If callable,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
-        If 'precomputed', `precomputed_cost` must be the cost matrix and
-        `method` must be 'classic', 'sakoechiba' or 'itakura'.
+        If 'precomputed', ``precomputed_cost`` must be the cost matrix and
+        ``method`` must be 'classic', 'sakoechiba' or 'itakura'.
 
     method : str (default = 'classic')
         Method used.  Should be one of
@@ -1130,9 +1163,13 @@ def dtw(x=None, y=None, dist='square', method='classic', options=None,
             - 'multiscale': resolution (int) and radius (int)
             - 'fast': radius (int)
 
-    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2)
-        (default = None). Ignored if ``dist != 'precomputed'``.
+        For more information on these parameters, see the `Other Parameters`
+        section.
+
+    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2) \
+            (default = None).
         Precomputed cost matrix between the time series.
+        Ignored if ``dist != 'precomputed'``.
 
     return_cost : bool (default = False)
         If True, the cost matrix is returned.
@@ -1159,6 +1196,47 @@ def dtw(x=None, y=None, dist='square', method='classic', options=None,
         of the indices of the optimal path for x while the second row
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
+
+    Other Parameters
+    ----------------
+    window_size : float or int (default = 0.1)
+        The window size above and below the diagonale.
+        If float, `window_size must be between 0 and
+        1, and the actual window size will be computed as
+        ``ceil(window_size * max((n_timestamps_1, n_timestamps_2) - 1))``.
+        If int, `window_size` must be the largest temporal shift allowed.
+        Each cell whose distance with the diagonale is lower than or equal to
+        'window_size' becomes a valid cell for the path.
+
+    max_slope : float (default = 2.)
+        Maximum slope for the parallelogram.
+
+    resolution : int (default = 2)
+        The resolution level.
+
+    radius : int (default = 0)
+        The radius used to expand the constraint region. The optimal path
+        computed at the resolution level is expanded with `radius` cells to the
+        top, bottom, left and right of every cell belonging to the optimal
+        path. It is computed at the resolution level.
+
+    References
+    ----------
+    .. [1] H. Sakoe and S. Chiba, "Dynamic programming algorithm optimization
+           for spoken word recognition". IEEE Transactions on Acoustics,
+           Speech, and Signal Processing, 26(1), 43-49 (1978).
+
+    .. [2] F. Itakura, "Minimum prediction residual principle applied to
+           speech recognition". IEEE Transactions on Acoustics,
+           Speech, and Signal Processing, 23(1), 67–72 (1975).
+
+    .. [3] M. Müller, H. Mattes and F. Kurth, "An efficient multiscale approach
+           to audio synchronization". International Conference on Music
+           Information Retrieval, 6(1), 192-197 (2006).
+
+    .. [4] S. Salvador ans P. Chan, "FastDTW: Toward Accurate Dynamic Time
+           Warping in Linear Time and Space". KDD Workshop on Mining Temporal
+           and Sequential Data, 70–80 (2004).
 
     Examples
     --------
