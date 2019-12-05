@@ -50,5 +50,6 @@ steps:
     pytest -v --cov=pyts --pyargs pyts
   displayName: 'Run tests suite'
 
-- after_success:
-  - codecov
+- script: |
+    codecov
+  displayName: 'Publish code coverage results'
