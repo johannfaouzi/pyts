@@ -22,8 +22,8 @@ jobs:
         numba.version: '0.45.1'
       Python37:
         python.version: '3.7'
-        numpy.version: '1.*'
-        scipy.version: '1.*'
+        numpy.version: "*"
+        scipy.version: "*"
         scikit-learn.version: '0.*'
         joblib.version: '0.*'
         numba.version: '0.*'
