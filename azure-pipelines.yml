@@ -53,3 +53,50 @@ steps:
 - script: |
     codecov
   displayName: 'Publish code coverage results'
+
+pool:
+  vmImage: 'macOS-latest'
+strategy:
+  matrix:
+    Python35:
+      python.version: '3.5'
+      numpy.version: '1.15'
+      scipy.version: '1.3'
+      scikit-learn.version: '0.20'
+      joblib.version: '0.12'
+      numba.version: '0.41'
+    Python36:
+      python.version: '3.6'
+      numpy.version: '1.15'
+      scipy.version: '1.3'
+      scikit-learn.version: '0.20'
+      joblib.version: '0.12'
+      numba.version: '0.41'
+    Python37:
+      python.version: '3.7'
+      numpy.version: '1.15'
+      scipy.version: '1.3'
+      scikit-learn.version: '0.20'
+      joblib.version: '0.12'
+      numba.version: '0.41'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '$(python.version)'
+  displayName: 'Use Python $(python.version)'
+
+- script: |
+    python -m pip install --upgrade pip
+    pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+    pip install .
+  displayName: 'Install dependencies and package'
+
+- script: |
+    pip install pytest pytest-cov codecov
+    pytest -v --cov=pyts --pyargs pyts
+  displayName: 'Run tests suite'
+
+- script: |
+    codecov
+  displayName: 'Publish code coverage results'
