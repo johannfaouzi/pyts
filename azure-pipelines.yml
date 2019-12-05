@@ -8,7 +8,7 @@ trigger:
 - master
 
 jobs:
-- job: Linux JIT
+- job: Linux_JIT
   pool:
     vmImage: 'ubuntu-latest'
   strategy:
@@ -45,7 +45,7 @@ jobs:
       pytest -v --pyargs pyts
     displayName: 'Run tests suite'
 
-- job: Linux NOJIT
+- job: Linux_NOJIT
   pool:
     vmImage: 'ubuntu-latest'
   strategy:
