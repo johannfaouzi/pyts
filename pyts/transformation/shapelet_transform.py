@@ -26,7 +26,7 @@ def _extract_all_shapelets_raw(x, window_sizes, window_steps, n_timestamps):
     for window_size, window_step in zip(window_sizes, window_steps):
         # Derive the new shape and strides
         overlap = window_size - window_step
-        shape_new = ((n_timestamps - overlap) // window_step, window_size)
+        shape_new = ((n_timestamps - overlap) // window_step, window_size // 1)
         strides = x.strides[0]
         strides_new = (window_step * strides, strides)
 
@@ -302,7 +302,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
         self : object
 
         """
-        X, y = check_X_y(X, y)
+        X, y = check_X_y(X, y, dtype='float64')
         (n_shapelets, window_sizes,
          window_steps, n_jobs, rng) = self._check_params(X, y)
 
@@ -344,7 +344,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
             check_is_fitted(self)
         else:
             check_is_fitted(self, ['shapelets_', 'indices_', 'scores_'])
-        X = check_array(X)
+        X = check_array(X, dtype='float64')
         return self._transform(X)
 
     def fit_transform(self, X, y):
@@ -367,7 +367,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
             Distances between the selected shapelets and the samples.
 
         """
-        X, y = check_X_y(X, y)
+        X, y = check_X_y(X, y, dtype='float64')
         (n_shapelets, window_sizes, window_steps,
          n_jobs, rng) = self._check_params(X, y)
 

@@ -1,0 +1,244 @@
+# Python package
+# Create and test a Python package on multiple Python versions.
+# Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+# Adapted from: https://github.com/scikit-learn/scikit-learn/blob/master/azure-pipelines.yml
+
+trigger:
+- master
+
+jobs:
+- job: Linting
+  pool:
+    vmImage: 'ubuntu-latest'
+  strategy:
+    matrix:
+      Python37:
+        python.version: '3.7'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install flake8
+    displayName: 'Install flake8'
+
+  - script: |
+      flake8 pyts
+    displayName: 'Run flake8'
+
+- job: Linux_JIT
+  pool:
+    vmImage: 'ubuntu-latest'
+  strategy:
+    matrix:
+      Python35:
+        python.version: '3.5'
+        numpy.version: '1.15.4'
+        scipy.version: '1.3.0'
+        scikit-learn.version: '0.20.4'
+        joblib.version: '0.12'
+        numba.version: '0.45.1'
+      Python37:
+        python.version: '3.7'
+        numpy.version: '1.*'
+        scipy.version: '1.*'
+        scikit-learn.version: '0.*'
+        joblib.version: '0.*'
+        numba.version: '0.*'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+      pip install .
+    displayName: 'Install dependencies and package'
+
+  - script: |
+      pip install pytest
+      pytest -v --pyargs pyts
+    displayName: 'Run test suite'
+
+- job: Linux_NOJIT
+  pool:
+    vmImage: 'ubuntu-latest'
+  strategy:
+    matrix:
+      Python36:
+        python.version: '3.6'
+        numpy.version: '1.*'
+        scipy.version: '1.*'
+        scikit-learn.version: '0.*'
+        joblib.version: '0.*'
+        numba.version: '0.*'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+      pip install .
+    displayName: 'Install dependencies and package'
+
+  - script: |
+      pip install pytest pytest-cov
+      export NUMBA_DISABLE_JIT=1
+      pytest -v --cov=pyts --pyargs pyts
+    displayName: 'Run test suite'
+
+  - script: |
+      bash <(curl -s https://codecov.io/bash)
+    displayName: 'Publish code coverage results'
+
+- job: MacOS_JIT
+  pool:
+    vmImage: 'macOS-latest'
+  strategy:
+    matrix:
+      Python35:
+        python.version: '3.5'
+        numpy.version: '1.15.4'
+        scipy.version: '1.3.0'
+        scikit-learn.version: '0.20.4'
+        joblib.version: '0.12'
+        numba.version: '0.45.1'
+      Python37:
+        python.version: '3.7'
+        numpy.version: '1.*'
+        scipy.version: '1.*'
+        scikit-learn.version: '0.*'
+        joblib.version: '0.*'
+        numba.version: '0.*'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+      pip install .
+    displayName: 'Install dependencies and package'
+
+  - script: |
+      pip install pytest
+      pytest -v --pyargs pyts
+    displayName: 'Run test suite'
+
+- job: MacOS_NOJIT
+  pool:
+    vmImage: 'macOS-latest'
+  strategy:
+    matrix:
+      Python36:
+        python.version: '3.6'
+        numpy.version: '1.*'
+        scipy.version: '1.*'
+        scikit-learn.version: '0.*'
+        joblib.version: '0.*'
+        numba.version: '0.*'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+      pip install .
+    displayName: 'Install dependencies and package'
+
+  - script: |
+      pip install pytest pytest-cov
+      export NUMBA_DISABLE_JIT=1
+      pytest -v --cov=pyts --pyargs pyts
+    displayName: 'Run test suite'
+
+  - script: |
+      bash <(curl -s https://codecov.io/bash)
+    displayName: 'Publish code coverage results'
+
+- job: Windows_JIT
+  pool:
+    vmImage: 'windows-latest'
+  strategy:
+    matrix:
+      Python35:
+        python.version: '3.5'
+        numpy.version: '1.15.4'
+        scipy.version: '1.3.0'
+        scikit-learn.version: '0.20.4'
+        joblib.version: '0.12'
+        numba.version: '0.45.1'
+      Python37:
+        python.version: '3.7'
+        numpy.version: '1.*'
+        scipy.version: '1.*'
+        scikit-learn.version: '0.*'
+        joblib.version: '0.*'
+        numba.version: '0.*'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+      pip install .
+    displayName: 'Install dependencies and package'
+
+  - script: |
+      pip install pytest
+      pytest -v --pyargs pyts
+    displayName: 'Run test suite'
+
+- job: Windows_NOJIT
+  pool:
+    vmImage: 'windows-latest'
+  strategy:
+    matrix:
+      Python36:
+        python.version: '3.6'
+        numpy.version: '1.*'
+        scipy.version: '1.*'
+        scikit-learn.version: '0.*'
+        joblib.version: '0.*'
+        numba.version: '0.*'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+      pip install .
+    displayName: 'Install dependencies and package'
+
+  - script: |
+      pip install pytest
+      set NUMBA_DISABLE_JIT=1
+      pytest -v --pyargs pyts
+    displayName: 'Run test suite'
