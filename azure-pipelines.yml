@@ -43,8 +43,8 @@ jobs:
         scikit-learn.version: '0.20.4'
         joblib.version: '0.12'
         numba.version: '0.45.1'
-      Python37:
-        python.version: '3.7'
+      Python38:
+        python.version: '3.8'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '0.*'
@@ -115,8 +115,8 @@ jobs:
         scikit-learn.version: '0.20.4'
         joblib.version: '0.12'
         numba.version: '0.45.1'
-      Python37:
-        python.version: '3.7'
+      Python38:
+        python.version: '3.8'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '0.*'
@@ -145,8 +145,8 @@ jobs:
     vmImage: 'macOS-latest'
   strategy:
     matrix:
-      Python36:
-        python.version: '3.6'
+      Python37:
+        python.version: '3.7'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '0.*'
@@ -187,8 +187,8 @@ jobs:
         scikit-learn.version: '0.20.4'
         joblib.version: '0.12'
         numba.version: '0.45.1'
-      Python37:
-        python.version: '3.7'
+      Python38:
+        python.version: '3.8'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '0.*'
@@ -217,8 +217,8 @@ jobs:
     vmImage: 'windows-latest'
   strategy:
     matrix:
-      Python36:
-        python.version: '3.6'
+      Python37:
+        python.version: '3.7'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '0.*'
