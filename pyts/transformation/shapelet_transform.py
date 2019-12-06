@@ -302,7 +302,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
         self : object
 
         """
-        X, y = check_X_y(X, y)
+        X, y = check_X_y(X, y, dtype='float64')
         (n_shapelets, window_sizes,
          window_steps, n_jobs, rng) = self._check_params(X, y)
 
@@ -344,7 +344,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
             check_is_fitted(self)
         else:
             check_is_fitted(self, ['shapelets_', 'indices_', 'scores_'])
-        X = check_array(X)
+        X = check_array(X, dtype='float64')
         return self._transform(X)
 
     def fit_transform(self, X, y):
@@ -367,7 +367,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
             Distances between the selected shapelets and the samples.
 
         """
-        X, y = check_X_y(X, y)
+        X, y = check_X_y(X, y, dtype='float64')
         (n_shapelets, window_sizes, window_steps,
          n_jobs, rng) = self._check_params(X, y)
 
