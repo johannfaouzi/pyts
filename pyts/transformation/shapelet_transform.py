@@ -26,7 +26,7 @@ def _extract_all_shapelets_raw(x, window_sizes, window_steps, n_timestamps):
     for window_size, window_step in zip(window_sizes, window_steps):
         # Derive the new shape and strides
         overlap = window_size - window_step
-        shape_new = ((n_timestamps - overlap) // window_step, window_size)
+        shape_new = ((n_timestamps - overlap) // window_step, window_size // 1)
         strides = x.strides[0]
         strides_new = (window_step * strides, strides)
 
