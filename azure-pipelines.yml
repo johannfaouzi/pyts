@@ -11,20 +11,14 @@ jobs:
 - job: Linting
   pool:
     vmImage: 'ubuntu-latest'
-  strategy:
-    matrix:
-      Python35:
-        python.version: '3.5'
 
   steps:
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: '$(python.version)'
-    displayName: 'Use Python $(python.version)'
-
   - script: |
       python -m pip install --upgrade pip
       pip install flake8
+    displayName: 'Install flake8'
+
+  - script: |
       flake8 pyts
     displayName: 'Run flake8'
 
