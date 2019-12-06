@@ -16,19 +16,19 @@ y_large = rng.randint(2, size=11)
 
 @pytest.mark.parametrize(
     'params, res_desired',
-    [({'x': np.arange(5), 'window_sizes': (2,),
+    [({'x': np.arange(5, dtype='float64'), 'window_sizes': (2,),
        'window_steps': (1,), 'n_timestamps': 5},
       {'shapelets': ([[0, 1], [1, 2], [2, 3], [3, 4]],),
        'lengths': (np.full(4, 2),), 'start_idx': [np.arange(4)],
        'end_idx': [np.arange(2, 6)]}),
 
-     ({'x': np.arange(5), 'window_sizes': (2, 3),
+     ({'x': np.arange(5, dtype='float64'), 'window_sizes': (2, 3),
        'window_steps': (1, 2), 'n_timestamps': 5},
       {'shapelets': ([[0, 1], [1, 2], [2, 3], [3, 4]], [[0, 1, 2], [2, 3, 4]]),
        'lengths': ([2, 2, 2, 2], [3, 3]), 'start_idx': [(0, 1, 2, 3), (0, 2)],
        'end_idx': [(2, 3, 4, 5), (3, 5)]}),
 
-     ({'x': np.arange(4)[::-1], 'window_sizes': (1, 3),
+     ({'x': np.arange(4, dtype='float64')[::-1], 'window_sizes': (1, 3),
        'window_steps': (2, 1), 'n_timestamps': 4},
       {'shapelets': ([[3], [1]], [[3, 2, 1], [2, 1, 0]]),
        'lengths': ([1, 1], [3, 3]), 'start_idx': [(0, 2), (0, 1)],
