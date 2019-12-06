@@ -17,9 +17,9 @@ DOWNLOAD_URL = 'https://github.com/johannfaouzi/pyts'
 VERSION = pyts.__version__
 INSTALL_REQUIRES = ['numpy>=1.15.4'
                     'scipy>=1.3.0'
-                    'scikit-learn>=0.20.1'
+                    'scikit-learn>=0.20.4'
                     'joblib>=0.12'
-                    'numba>=0.41.0']
+                    'numba>=0.45.1']
 CLASSIFIERS = ['Development Status :: 3 - Alpha',
                'Intended Audience :: Science/Research',
                'Intended Audience :: Developers',

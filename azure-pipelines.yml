@@ -39,7 +39,7 @@ jobs:
       Python35:
         python.version: '3.5'
         numpy.version: '1.15.4'
-        scipy.version: '1.3.3'
+        scipy.version: '1.3.0'
         scikit-learn.version: '0.20.4'
         joblib.version: '0.12'
         numba.version: '0.45.1'
@@ -111,7 +111,7 @@ jobs:
       Python35:
         python.version: '3.5'
         numpy.version: '1.15.4'
-        scipy.version: '1.3.3'
+        scipy.version: '1.3.0'
         scikit-learn.version: '0.20.4'
         joblib.version: '0.12'
         numba.version: '0.45.1'
@@ -183,7 +183,7 @@ jobs:
       Python35:
         python.version: '3.5'
         numpy.version: '1.15.4'
-        scipy.version: '1.3.3'
+        scipy.version: '1.3.0'
         scikit-learn.version: '0.20.4'
         joblib.version: '0.12'
         numba.version: '0.45.1'
