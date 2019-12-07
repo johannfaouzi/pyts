@@ -4,7 +4,7 @@
 API Documentation
 =================
 
-Full API documentation of the :code:`pyts` Python package.
+Full API documentation of the *pyts* Python package.
 
 :mod:`pyts.approximation`: Approximation algorithms
 ===================================================
