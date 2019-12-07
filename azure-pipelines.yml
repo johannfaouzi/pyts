@@ -98,7 +98,7 @@ jobs:
       export NUMBA_DISABLE_JIT=1
       mkdir for_test
       cd for_test
-      pytest -v --cov=pyts --pyars pyts
+      pytest -v --cov=pyts --pyargs pyts
     displayName: 'Run test suite'
 
   - script: |
@@ -172,7 +172,7 @@ jobs:
       export NUMBA_DISABLE_JIT=1
       mkdir for_test
       cd for_test
-      pytest -v --cov=pyts --pyars pyts
+      pytest -v --cov=pyts --pyargs pyts
     displayName: 'Run test suite'
 
   - script: |
