@@ -15,7 +15,7 @@ SKLEARN_VERSION = sklearn.__version__
 
 
 class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
-    """k nearest neighbors classifier.
+    """k-nearest neighbors classifier.
 
     Parameters
     ----------

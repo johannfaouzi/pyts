@@ -57,6 +57,22 @@ such as a given float or a quantile of the distances.
      >>> X_new.shape
      (50, 150, 150)
 
+Images can be flattened by setting the ``flatten`` parameter to True,
+so that classification can be directly performed::
+
+    >>> from pyts.image import RecurrencePlot
+    >>> from pyts.datasets import load_gunpoint
+    >>> from sklearn.pipeline import make_pipeline
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
+    >>> recurrence = RecurrencePlot(dimension=15, time_delay=3, flatten=True)
+    >>> logistic = LogisticRegression(solver='liblinear')
+    >>> clf = make_pipeline(recurrence, logistic)
+    >>> clf.fit(X_train, y_train)
+    Pipeline(...)
+    >>> clf.score(X_test, y_test)
+    0.933...
+
 .. topic:: References
 
     * J.-P Eckmann, S. Oliffson Kamphorst and D Ruelle, "Recurrence
@@ -106,6 +122,22 @@ computed.
     >>> X_new.shape
     (50, 150, 150)
 
+Images can be flattened by setting the ``flatten`` parameter to True,
+so that classification can be directly performed::
+
+    >>> from pyts.image import GramianAngularField
+    >>> from pyts.datasets import load_gunpoint
+    >>> from sklearn.pipeline import make_pipeline
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
+    >>> gaf = GramianAngularField(flatten=True)
+    >>> logistic = LogisticRegression(solver='liblinear')
+    >>> clf = make_pipeline(gaf, logistic)
+    >>> clf.fit(X_train, y_train)
+    Pipeline(...)
+    >>> clf.score(X_test, y_test)
+    0.973...
+
 .. topic:: References
 
     * Z. Wang and T. Oates, "Encoding Time Series as Images for Visual
@@ -135,6 +167,22 @@ the loss of temporal information.
     >>> X_new = transformer.transform(X)
     >>> X_new.shape
     (50, 150, 150)
+
+Images can be flattened by setting the ``flatten`` parameter to True,
+so that classification can be directly performed::
+
+    >>> from pyts.image import MarkovTransitionField
+    >>> from pyts.datasets import load_gunpoint
+    >>> from sklearn.pipeline import make_pipeline
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
+    >>> mtf = MarkovTransitionField(image_size=0.1, n_bins=3, flatten=True)
+    >>> logistic = LogisticRegression(solver='liblinear')
+    >>> clf = make_pipeline(mtf, logistic)
+    >>> clf.fit(X_train, y_train)
+    Pipeline(...)
+    >>> clf.score(X_test, y_test)
+    0.92
 
 .. topic:: References
 

@@ -164,3 +164,10 @@ def test_actual_results(params, X, arr_desired):
     """Test that the actual results are the expected ones."""
     arr_actual = MarkovTransitionField(**params).fit_transform(X)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+
+def test_flatten():
+    """Test the 'flatten' parameter."""
+    arr_false = MarkovTransitionField(n_bins=2).transform(X).reshape(2, -1)
+    arr_true = MarkovTransitionField(n_bins=2, flatten=True).transform(X)
+    np.testing.assert_allclose(arr_false, arr_true, atol=1e-5, rtol=0.)

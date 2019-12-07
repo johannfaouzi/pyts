@@ -50,6 +50,9 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
         maximum distance for threshold if ``threshold='distance'``.
         Ignored if ``threshold`` is a float or None.
 
+    flatten : bool (default = False)
+        If True, images are flattened to be one-dimensional.
+
     Notes
     -----
     Given a time series :math:`(x_1, \ldots, x_n)`, the extracted
@@ -90,11 +93,12 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
     """
 
     def __init__(self, dimension=1, time_delay=1,
-                 threshold=None, percentage=10):
+                 threshold=None, percentage=10, flatten=False):
         self.dimension = dimension
         self.time_delay = time_delay
         self.threshold = threshold
         self.percentage = percentage
+        self.flatten = flatten
 
     def fit(self, X=None, y=None):
         """Pass.
@@ -126,6 +130,8 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
             Recurrence plots. ``image_size`` is the number of
             trajectories and is equal to
             ``n_timestamps - (dimension - 1) * time_delay``.
+            If ``flatten=True``, the shape is
+            `(n_samples, image_size * image_size)`.
 
         """
         X = check_array(X)
@@ -154,6 +160,9 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
             X_rp = X_dist < percents[:, None, None]
         else:
             X_rp = X_dist < self.threshold
+
+        if self.flatten:
+            return X_rp.reshape(n_samples, -1).astype('float64')
         return X_rp.astype('float64')
 
     def _check_params(self, n_timestamps):

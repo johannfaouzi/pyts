@@ -9,7 +9,10 @@ from sklearn.utils import check_array
 
 
 def boss(x, y):
-    """Return the BOSS distance between two arrays.
+    r"""Return the BOSS distance between two arrays.
+
+    Parameters
+    ----------
 
     x : array-like, shape = (n_timestamps,)
         First array.
@@ -21,6 +24,18 @@ def boss(x, y):
     -------
     dist : float
         The BOSS distance between both arrays.
+
+    Notes
+    -----
+    The BOSS metric is defined as
+
+    .. math::
+
+        BOSS(x, y) = \sum_{\substack{i=1\\ x_i > 0}}^n (x_i - y_i)^2
+
+    where :math:`x` and :math:`y` are vectors of non-negative integers.
+    The BOSS distance is not a distance metric as it neither satisfies the
+    symmetry condition nor the triangle inequality.
 
     References
     ----------

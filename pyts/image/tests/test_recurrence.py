@@ -131,3 +131,10 @@ def test_actual_results_recurrence_plot(params, arr_desired):
     recurrence = RecurrencePlot(**params)
     arr_actual = recurrence.fit_transform(X) ** 2
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+
+def test_flatten():
+    """Test the 'flatten' parameter."""
+    arr_false = RecurrencePlot().transform(X).reshape(2, -1)
+    arr_true = RecurrencePlot(flatten=True).transform(X)
+    np.testing.assert_allclose(arr_false, arr_true, atol=1e-5, rtol=0.)
