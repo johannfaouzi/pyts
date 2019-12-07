@@ -96,7 +96,7 @@ jobs:
   - script: |
       pip install pytest pytest-cov
       export NUMBA_DISABLE_JIT=1
-      pytest -v --cov=pyts --pyargs pyts
+      pytest -v --cov=pyts pyts
     displayName: 'Run test suite'
 
   - script: |
