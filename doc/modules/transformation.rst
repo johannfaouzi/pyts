@@ -52,6 +52,23 @@ called::
     >>> X_new.shape()
     (4, 2)
 
+Classification can be performed with any standard classifier. In the example
+below, we use a Support Vector Machine with a linear kernel::
+
+    >>> import numpy as np
+    >>> from pyts.transformation import ShapeletTransform
+    >>> from pyts.datasets import load_gunpoint
+    >>> from sklearn.pipeline import make_pipeline
+    >>> from sklearn.svm import LinearSVC
+    >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
+    >>> shapelet = ShapeletTransform(window_sizes=np.arange(10, 130, 3), random_state=42)
+    >>> svc = LinearSVC()
+    >>> clf = make_pipeline(shapelet, svc)
+    >>> clf.fit(X_train, y_train)
+    Pipeline(...)
+    >>> clf.score(X_test, y_test)
+    0.966...
+
 .. topic:: References
 
     * J. Lines, L. M. Davis, J. Hills and A. Bagnall, "A Shapelet Transform for
@@ -85,6 +102,23 @@ corresponding words::
     ['aa', 'ab', 'ba', 'bb']
     >>> boss.transform(X_test) # doctest: +ELLIPSIS
     array(...)
+
+Classification can be performed with any standard classifier. In the example
+below, we use a k-nearest neighbors classifier with the
+:func:`pyts.metrics.boss` metric::
+
+    >>> from pyts.datasets import load_gunpoint
+    >>> from pyts.transformation import BOSS
+    >>> from pyts.classification import KNeighborsClassifier
+    >>> from sklearn.pipeline import make_pipeline
+    >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
+    >>> boss = BOSS(word_size=8, window_size=40, norm_mean=True, drop_sum=True, sparse=False)
+    >>> knn = KNeighborsClassifier(metric='boss')
+    >>> clf = make_pipeline(boss, knn)
+    >>> clf.fit(X_train, y_train) # doctest: +ELLIPSIS
+    Pipeline(...)
+    >>> clf.score(X_test, y_test)
+    1.0
 
 .. topic:: References
 
@@ -121,6 +155,23 @@ For new input data, the frequencies of each selected word are derived::
     73
     >>> weasel.transform(X_test).shape
     (150, 73)
+
+Classification can be performed with any standard classifier. In the example
+below, we use a logistic regression::
+
+    >>> import numpy as np
+    >>> from pyts.transformation import WEASEL
+    >>> from pyts.datasets import load_gunpoint
+    >>> from sklearn.pipeline import make_pipeline
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
+    >>> weasel = WEASEL(word_size=4, window_sizes=np.arange(5, 149))
+    >>> logistic = LogisticRegression(solver='liblinear')
+    >>> clf = make_pipeline(weasel, logistic)
+    >>> clf.fit(X_train, y_train)
+    Pipeline(...)
+    >>> clf.score(X_test, y_test)
+    0.96
 
 .. topic:: References
 

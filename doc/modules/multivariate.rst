@@ -83,6 +83,21 @@ series and their derivatives and derives their frequencies.
     >>> X_new.shape
     (40, 9086)
 
+Classification can be performed with any standard classifier. In the example
+below, we use a logistic regression::
+
+    >>> from pyts.datasets import load_basic_motions
+    >>> from pyts.multivariate.transformation import WEASELMUSE
+    >>> from sklearn.pipeline import make_pipeline
+    >>> from sklearn.linear_model import LogisticRegression
+    >>> X_train, X_test, y_train, y_test = load_basic_motions(return_X_y=True)
+    >>> transformer = WEASELMUSE()
+    >>> logistic = LogisticRegression(solver='liblinear', multi_class='ovr')
+    >>> clf = make_pipeline(transformer, logistic)
+    >>> clf.fit(X_train, y_train)
+    Pipeline(...)
+    >>> clf.score(X_test, y_test)
+    0.975
 
 .. topic:: References
 
