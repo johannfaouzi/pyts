@@ -72,6 +72,9 @@ class MarkovTransitionField(BaseEstimator, TransformerMixin):
         will be applied on non-overlapping rectangles. If True,
         it will be applied on possibly overlapping squares.
 
+    flatten : bool (default = False)
+        If True, images are flattened to be one-dimensional.
+
     References
     ----------
     .. [1] Z. Wang and T. Oates, "Encoding Time Series as Images for Visual
@@ -91,11 +94,12 @@ class MarkovTransitionField(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, image_size=1., n_bins=8,
-                 strategy='quantile', overlapping=False):
+                 strategy='quantile', overlapping=False, flatten=False):
         self.image_size = image_size
         self.n_bins = n_bins
         self.strategy = strategy
         self.overlapping = overlapping
+        self.flatten = flatten
 
     def fit(self, X=None, y=None):
         """Pass.
@@ -125,7 +129,8 @@ class MarkovTransitionField(BaseEstimator, TransformerMixin):
         Returns
         -------
         X_new : array-like, shape = (n_samples, image_size, image_size)
-            Transformed data.
+            Transformed data. If ``flatten=True``, the shape is
+            `(n_samples, image_size * image_size)`.
 
         """
         X = check_array(X)
@@ -160,6 +165,8 @@ class MarkovTransitionField(BaseEstimator, TransformerMixin):
             X_amtf = _aggregated_markov_transition_field(
                 X_mtf, n_samples, image_size, start, end
             )
+        if self.flatten:
+            return X_amtf.reshape(n_samples, -1)
         return X_amtf
 
     def _check_params(self, n_timestamps):

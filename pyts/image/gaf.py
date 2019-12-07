@@ -52,6 +52,9 @@ class GramianAngularField(BaseEstimator, TransformerMixin):
         If True, reduce the size of each time series using PAA with possible
         overlapping windows.
 
+    flatten : bool (default = False)
+        If True, images are flattened to be one-dimensional.
+
     References
     ----------
     .. [1] Z. Wang and T. Oates, "Encoding Time Series as Images for Visual
@@ -71,11 +74,12 @@ class GramianAngularField(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, image_size=1., sample_range=(-1, 1),
-                 method='summation', overlapping=False):
+                 method='summation', overlapping=False, flatten=False):
         self.image_size = image_size
         self.sample_range = sample_range
         self.method = method
         self.overlapping = overlapping
+        self.flatten = flatten
 
     def fit(self, X=None, y=None):
         """Pass.
@@ -103,8 +107,9 @@ class GramianAngularField(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        X_new : array, shape = (n_samples, image_size, image_size)
-            Transformed data.
+        X_new : array-like, shape = (n_samples, image_size, image_size)
+            Transformed data. If ``flatten=True``, the shape is
+            `(n_samples, image_size * image_size)`.
 
         """
         X = check_array(X)
@@ -127,9 +132,13 @@ class GramianAngularField(BaseEstimator, TransformerMixin):
             X_cos = scaler.fit_transform(X_paa)
         X_sin = np.sqrt(np.clip(1 - X_cos ** 2, 0, 1))
         if self.method in ['s', 'summation']:
-            return _gasf(X_cos, X_sin, n_samples, image_size)
+            X_new = _gasf(X_cos, X_sin, n_samples, image_size)
         else:
-            return _gadf(X_cos, X_sin, n_samples, image_size)
+            X_new = _gadf(X_cos, X_sin, n_samples, image_size)
+
+        if self.flatten:
+            return X_new.reshape(n_samples, -1)
+        return X_new
 
     def _check_params(self, n_timestamps):
         if not isinstance(self.image_size,
