@@ -1,0 +1,14 @@
+codecov:
+  require_ci_to_pass: yes
+  ci:
+    - "azure-pipelines"
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+
+  status:
+    project: yes
+    patch: yes
+    changes: no
