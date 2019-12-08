@@ -164,7 +164,7 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
-      pip install .
+      pip install -e .
     displayName: 'Install dependencies and package'
 
   - script: |
