@@ -70,6 +70,10 @@ community. Therefore, you can refer to their
 [Development Guide](https://scikit-learn.org/stable/developers/). A slight
 difference is the use of Numba instead of Cython for optimization.
 
+The development of this package is in line with the one of the scikit-learn
+community. Fore more information about our contributing guidelines, please
+refer to the [documentation](https://pyts.readthedocs.io/en/latest/contribute.html).
+
 ### Documentation
 
 The section below gives some information about the implemented algorithms in pyts.
