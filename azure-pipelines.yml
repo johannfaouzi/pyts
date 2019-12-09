@@ -90,7 +90,7 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
-      pip install .
+      pip install -e .
     displayName: 'Install dependencies and package'
 
   - script: |
@@ -99,11 +99,8 @@ jobs:
       mkdir for_test
       cd for_test
       pytest -v --cov=pyts --pyargs pyts
-    displayName: 'Run test suite'
-
-  - script: |
       bash <(curl -s https://codecov.io/bash)
-    displayName: 'Publish code coverage results'
+    displayName: 'Run test suite and publish results'
 
 - job: MacOS_JIT
   pool:
@@ -164,7 +161,7 @@ jobs:
   - script: |
       python -m pip install --upgrade pip
       pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
-      pip install .
+      pip install -e .
     displayName: 'Install dependencies and package'
 
   - script: |
@@ -173,11 +170,8 @@ jobs:
       mkdir for_test
       cd for_test
       pytest -v --cov=pyts --pyargs pyts
-    displayName: 'Run test suite'
-
-  - script: |
       bash <(curl -s https://codecov.io/bash)
-    displayName: 'Publish code coverage results'
+    displayName: 'Run test suite and publish results'
 
 - job: Windows_JIT
   pool:
