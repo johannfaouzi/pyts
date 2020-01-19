@@ -61,7 +61,7 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite=$(llvmlite.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
       pip install .
     displayName: 'Install dependencies and package'
 
@@ -92,7 +92,7 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite=$(llvmlite.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
       pip install -e .
     displayName: 'Install dependencies and package'
 
@@ -135,7 +135,7 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite=$(llvmlite.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
       pip install .
     displayName: 'Install dependencies and package'
 
@@ -166,7 +166,7 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite=$(llvmlite.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
       pip install -e .
     displayName: 'Install dependencies and package'
 
@@ -209,7 +209,7 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite=$(llvmlite.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
       pip install .
     displayName: 'Install dependencies and package'
 
@@ -240,7 +240,7 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite=$(llvmlite.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
       pip install .
     displayName: 'Install dependencies and package'
 
