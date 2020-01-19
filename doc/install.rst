@@ -14,7 +14,7 @@ pyts requires:
 - SciPy (>= 1.3.0)
 - Scikit-Learn (>=0.20.4)
 - Joblib (>=0.12)
-- Numba (>0.45.1)
+- Numba (==0.46.0)
 
 To run the examples Matplotlib (>=2.0.0) is required.
 

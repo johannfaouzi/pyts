@@ -19,7 +19,7 @@ INSTALL_REQUIRES = ['numpy>=1.15.4'
                     'scipy>=1.3.0'
                     'scikit-learn>=0.20.4'
                     'joblib>=0.12'
-                    'numba>=0.45.1']
+                    'numba==0.46.0']
 CLASSIFIERS = ['Development Status :: 3 - Alpha',
                'Intended Audience :: Science/Research',
                'Intended Audience :: Developers',
