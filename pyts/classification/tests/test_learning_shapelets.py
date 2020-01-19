@@ -408,16 +408,18 @@ def test_convergence_warning(X, y, max_iter):
 @pytest.mark.parametrize('X, y', [(X_bin, y_bin), (X_multi, y_multi)])
 @pytest.mark.parametrize(
     'params, n_shapelets_desired',
-    [({'verbose': 1, 'learning_rate': 100}, 3),  # for code coverage
+    [({'verbose': 1, 'learning_rate': 100, 'max_iter': 1}, 3),
      ({'min_shapelet_length': 1, 'fit_intercept': False}, 3),
      ({'n_shapelets_per_size': 3}, 9),
-     ({'shapelet_scale': 5, 'tol': 10}, 5),
+     ({'shapelet_scale': 5, 'tol': 10, 'max_iter': 2}, 5),
      ({'n_shapelets_per_size': 2, 'shapelet_scale': 3}, 6)]
 )
 def test_shapes_cross_entropy(X, y, params, n_shapelets_desired):
     """Test that the attributes and returned arrays have the expected shapes"""
     n_samples = X.shape[0]
-    clf = CrossEntropyLearningShapelets(max_iter=0, **params)
+    if 'max_iter' not in params.keys():
+        params['max_iter'] = 0
+    clf = CrossEntropyLearningShapelets(**params)
 
     # Training phase
     clf.fit(X, y)
@@ -472,7 +474,7 @@ def test_parameter_check(params, error, err_msg):
 @pytest.mark.parametrize('X, y', [(X_bin, y_bin), (X_multi, y_multi)])
 @pytest.mark.parametrize(
     'params, n_shapelets_desired, n_tasks',
-    [({'verbose': 1, 'learning_rate': 100}, 3, 4),  # for code coverage
+    [({'verbose': 1, 'learning_rate': 100, 'max_iter': 1}, 3, 4),
      ({'multi_class': 'ovr'}, 3, 4),
      ({'multi_class': 'ovo'}, 3, 6),
      ({'fit_intercept': False}, 3, 4),
@@ -483,7 +485,9 @@ def test_parameter_check(params, error, err_msg):
 def test_shapes(X, y, params, n_shapelets_desired, n_tasks):
     """Test that the attributes and returned arrays have the expected shapes"""
     n_samples = X.shape[0]
-    clf = LearningShapelets(max_iter=0, **params)
+    if 'max_iter' not in params.keys():
+        params['max_iter'] = 0
+    clf = LearningShapelets(**params)
 
     # Training phase
     clf.fit(X, y)
