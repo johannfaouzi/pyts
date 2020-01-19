@@ -379,7 +379,11 @@ def test_grad_shapelets(params, arr_desired):
       "'verbose' must be a non-negative integer (got 200)."),
 
      ({'verbose': -1}, ValueError,
-      "'verbose' must be a non-negative integer (got -1).")]
+      "'verbose' must be a non-negative integer (got -1)."),
+
+     ({'n_shapelets_per_size': 5}, ValueError,
+      "'n_shapelets_per_size' is too high given "
+      "'min_shapelet_length' and 'shapelet_scale'.")]
 )
 def test_parameter_check_cross_entropy(params, error, err_msg):
     """Test parameter validation."""
@@ -393,7 +397,7 @@ def test_parameter_check_cross_entropy(params, error, err_msg):
 def test_convergence_warning(X, y, max_iter):
     """Test that the ConvergenceWarning is raised."""
     clf = CrossEntropyLearningShapelets(learning_rate=1e-3, tol=1e-9,
-                                        max_iter=max_iter)
+                                        random_state=42, max_iter=max_iter)
     msg = ('Maximum number of iterations reached without converging. Increase '
            'the maximum number of iterations.')
     with pytest.warns(ConvergenceWarning, match=msg):
@@ -404,10 +408,10 @@ def test_convergence_warning(X, y, max_iter):
 @pytest.mark.parametrize('X, y', [(X_bin, y_bin), (X_multi, y_multi)])
 @pytest.mark.parametrize(
     'params, n_shapelets_desired',
-    [({}, 3),
-     ({'fit_intercept': False}, 3),
+    [({'verbose': 1, 'learning_rate': 100}, 3),  # for code coverage
+     ({'min_shapelet_length': 1, 'fit_intercept': False}, 3),
      ({'n_shapelets_per_size': 3}, 9),
-     ({'shapelet_scale': 5}, 5),
+     ({'shapelet_scale': 5, 'tol': 10}, 5),
      ({'n_shapelets_per_size': 2, 'shapelet_scale': 3}, 6)]
 )
 def test_shapes_cross_entropy(X, y, params, n_shapelets_desired):
@@ -468,7 +472,7 @@ def test_parameter_check(params, error, err_msg):
 @pytest.mark.parametrize('X, y', [(X_bin, y_bin), (X_multi, y_multi)])
 @pytest.mark.parametrize(
     'params, n_shapelets_desired, n_tasks',
-    [({}, 3, 4),
+    [({'verbose': 1, 'learning_rate': 100}, 3, 4),  # for code coverage
      ({'multi_class': 'ovr'}, 3, 4),
      ({'multi_class': 'ovo'}, 3, 6),
      ({'fit_intercept': False}, 3, 4),
