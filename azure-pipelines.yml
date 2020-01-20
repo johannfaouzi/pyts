@@ -40,16 +40,18 @@ jobs:
         python.version: '3.5'
         numpy.version: '1.15.4'
         scipy.version: '1.3.0'
-        scikit-learn.version: '0.20.4'
+        scikit-learn.version: '0.22.1'
         joblib.version: '0.12'
-        numba.version: '0.45.1'
+        numba.version: '0.46.0'
+        llvmlite.version: '0.30.0'
       Python37:
         python.version: '3.7'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '0.*'
         joblib.version: '0.*'
-        numba.version: '0.*'
+        numba.version: '0.46.0'
+        llvmlite.version: '0.30.0'
 
   steps:
   - task: UsePythonVersion@0
@@ -59,7 +61,7 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
       pip install .
     displayName: 'Install dependencies and package'
 
@@ -79,7 +81,8 @@ jobs:
         scipy.version: '1.*'
         scikit-learn.version: '0.*'
         joblib.version: '0.*'
-        numba.version: '0.*'
+        numba.version: '0.46.0'
+        llvmlite.version: '0.30.0'
 
   steps:
   - task: UsePythonVersion@0
@@ -89,7 +92,7 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
       pip install -e .
     displayName: 'Install dependencies and package'
 
@@ -111,16 +114,18 @@ jobs:
         python.version: '3.5'
         numpy.version: '1.15.4'
         scipy.version: '1.3.0'
-        scikit-learn.version: '0.20.4'
+        scikit-learn.version: '0.22.1'
         joblib.version: '0.12'
-        numba.version: '0.45.1'
+        numba.version: '0.46.0'
+        llvmlite.version: '0.30.0'
       Python37:
         python.version: '3.7'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '0.*'
         joblib.version: '0.*'
-        numba.version: '0.*'
+        numba.version: '0.46.0'
+        llvmlite.version: '0.30.0'
 
   steps:
   - task: UsePythonVersion@0
@@ -130,7 +135,7 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
       pip install .
     displayName: 'Install dependencies and package'
 
@@ -150,7 +155,8 @@ jobs:
         scipy.version: '1.*'
         scikit-learn.version: '0.*'
         joblib.version: '0.*'
-        numba.version: '0.*'
+        numba.version: '0.46.0'
+        llvmlite.version: '0.30.0'
 
   steps:
   - task: UsePythonVersion@0
@@ -160,7 +166,7 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
       pip install -e .
     displayName: 'Install dependencies and package'
 
@@ -182,16 +188,18 @@ jobs:
         python.version: '3.5'
         numpy.version: '1.15.4'
         scipy.version: '1.3.0'
-        scikit-learn.version: '0.20.4'
+        scikit-learn.version: '0.22.1'
         joblib.version: '0.12'
-        numba.version: '0.45.1'
+        numba.version: '0.46.0'
+        llvmlite.version: '0.30.0'
       Python37:
         python.version: '3.7'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '0.*'
         joblib.version: '0.*'
-        numba.version: '0.*'
+        numba.version: '0.46.0'
+        llvmlite.version: '0.30.0'
 
   steps:
   - task: UsePythonVersion@0
@@ -201,7 +209,7 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
       pip install .
     displayName: 'Install dependencies and package'
 
@@ -221,7 +229,8 @@ jobs:
         scipy.version: '1.*'
         scikit-learn.version: '0.*'
         joblib.version: '0.*'
-        numba.version: '0.*'
+        numba.version: '0.46.0'
+        llvmlite.version: '0.30.0'
 
   steps:
   - task: UsePythonVersion@0
@@ -231,7 +240,7 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
       pip install .
     displayName: 'Install dependencies and package'
 
