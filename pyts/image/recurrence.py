@@ -217,8 +217,9 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
                                (int, np.integer, float, np.floating))):
             raise TypeError("'threshold' must be either None, 'point', "
                             "'distance', a float or an integer.")
-        if ((isinstance(self.threshold, (int, np.integer, float, np.floating)))
-            and (self.threshold <= 0)):
+        threshold_number = isinstance(self.threshold,
+                                      (int, np.integer, float, np.floating))
+        if threshold_number and (self.threshold <= 0):
             raise ValueError("If 'threshold' is a float or an integer, "
                              "it must be greater than or equal to 0.")
 

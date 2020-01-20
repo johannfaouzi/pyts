@@ -218,8 +218,9 @@ def test_fit_transform(params):
     np.testing.assert_allclose(shapelet_1.scores_, shapelet_2.scores_,
                                atol=1e-5, rtol=0.)
     np.testing.assert_array_equal(shapelet_1.indices_, shapelet_2.indices_)
-    if ((shapelet_1.window_range_ is not None) and
-        (shapelet_2.window_range_ is not None)):
+    shapelets_not_none = ((shapelet_1.window_range_ is not None) and
+                          (shapelet_2.window_range_ is not None))
+    if shapelets_not_none:
         np.testing.assert_array_equal(shapelet_1.window_range_,
                                       shapelet_2.window_range_)
 

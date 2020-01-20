@@ -134,7 +134,7 @@ def cost_matrix(x, y, dist='square', region=None):
     else:
         try:
             temp = dist(1, 1)
-        except:
+        except:  # noqa: E722
             raise ValueError("Calling dist(1, 1) did not work.")
         else:
             if not isinstance(temp, (int, float)):

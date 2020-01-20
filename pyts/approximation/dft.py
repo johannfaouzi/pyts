@@ -222,8 +222,7 @@ class DiscreteFourierTransform(BaseEstimator, TransformerMixin):
                 or (self.n_coefs is None)):
             raise TypeError("'n_coefs' must be None, an integer or a float.")
         if isinstance(self.n_coefs, (int, np.integer)):
-            if ((self.drop_sum)
-                and (not (1 <= self.n_coefs <= (n_timestamps - 1)))):
+            if self.drop_sum and not (1 <= self.n_coefs <= n_timestamps - 1):
                 raise ValueError(
                     "If 'n_coefs' is an integer, it must be greater than or "
                     "equal to 1 and lower than or equal to (n_timestamps - 1) "
