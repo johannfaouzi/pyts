@@ -127,8 +127,9 @@ class MultivariateTransformer(BaseEstimator, TransformerMixin):
 
     def _check_params(self, n_features):
         """Check parameters."""
-        if (isinstance(self.estimator, BaseEstimator)
-            and hasattr(self.estimator, 'transform')):
+        transformer = (isinstance(self.estimator, BaseEstimator)
+                       and hasattr(self.estimator, 'transform'))
+        if transformer:
             self.estimators_ = [clone(self.estimator)
                                 for _ in range(n_features)]
 

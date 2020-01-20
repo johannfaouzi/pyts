@@ -129,8 +129,9 @@ class MultivariateClassifier(BaseEstimator, ClassifierMixin):
 
     def _check_params(self, n_features):
         """Check parameters."""
-        if (isinstance(self.estimator, BaseEstimator)
-            and hasattr(self.estimator, 'predict')):
+        classifier = (isinstance(self.estimator, BaseEstimator)
+                      and hasattr(self.estimator, 'predict'))
+        if classifier:
             self.estimators_ = [clone(self.estimator)
                                 for _ in range(n_features)]
 

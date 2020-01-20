@@ -392,11 +392,10 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
         n_timestamps = X.shape[1]
 
         # Checking for 'n_shapelets'
-        if not (self.n_shapelets == 'auto' or
-                isinstance(self.n_shapelets, (int, np.integer))):
+        n_shapelets_int = isinstance(self.n_shapelets, (int, np.integer))
+        if not (self.n_shapelets == 'auto' or n_shapelets_int):
             raise TypeError("'n_shapelets' must be 'auto' or an integer.")
-        if (isinstance(self.n_shapelets, (int, np.integer))
-            and not self.n_shapelets > 0):
+        if (n_shapelets_int and not self.n_shapelets > 0):
             raise ValueError("If 'n_shapelets' is an integer, it must be a "
                              "positive integer (got {})."
                              .format(self.n_shapelets))
