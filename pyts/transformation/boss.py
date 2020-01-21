@@ -13,9 +13,6 @@ from sklearn.utils.multiclass import check_classification_targets
 from ..approximation import SymbolicFourierApproximation
 from ..utils.utils import _windowed_view
 
-import sklearn
-SKLEARN_VERSION = sklearn.__version__
-
 
 class BOSS(BaseEstimator, TransformerMixin):
     """Bag of Symbolic Fourier Approximation Symbols.
@@ -197,10 +194,7 @@ class BOSS(BaseEstimator, TransformerMixin):
             Document-term matrix.
 
         """
-        if SKLEARN_VERSION >= '0.22':
-            check_is_fitted(self)
-        else:
-            check_is_fitted(self, ['_sfa', '_vectorizer', 'vocabulary_'])
+        check_is_fitted(self, ['_sfa', '_vectorizer', 'vocabulary_'])
         X = check_array(X)
         n_samples, n_timestamps = X.shape
 
