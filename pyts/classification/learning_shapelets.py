@@ -401,9 +401,6 @@ class CrossEntropyLearningShapelets(BaseEstimator, ClassifierMixin):
            "Learning Time-Series Shapelets". International Conference on Data
            Mining, 14, 392-401 (2014).
 
-    Examples
-    --------
-
     """
 
     def __init__(self, n_shapelets_per_size=0.2, min_shapelet_length=0.1,
@@ -940,13 +937,15 @@ class LearningShapelets(BaseEstimator, ClassifierMixin):
     Examples
     --------
     >>> from pyts.classification import LearningShapelets
-    >>> from pyts.datasets import load_gunpoint
-    >>> X, _, y, _ = load_gunpoint(return_X_y=True)
+    >>> X = [[1, 2, 2, 1, 2, 3, 2],
+    ...      [0, 2, 0, 2, 0, 2, 3],
+    ...      [0, 1, 2, 2, 1, 2, 2]]
+    >>> y = [0, 1, 0]
     >>> clf = LearningShapelets(random_state=42, tol=0.01)
     >>> clf.fit(X, y)
     LearningShapelets(...)
     >>> clf.coef_.shape
-    (1, 90)
+    (1, 6)
 
     """
 
