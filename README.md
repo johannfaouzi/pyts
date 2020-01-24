@@ -95,6 +95,7 @@ in time series classification.
 - `classification`: This module provides implementations of algorithms that
 can classify time series. Implemented algorithms are
 [KNeighborsClassifier](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.KNeighborsClassifier.html#),
+[LearningShapelets](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.LearningShapelets.html#),
 [SAXVSM](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.SAXVSM.html#) and
 [BOSSVS](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.BOSSVS.html#).
 
