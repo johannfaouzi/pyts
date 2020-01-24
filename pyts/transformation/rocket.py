@@ -51,7 +51,7 @@ def generate_kernels(n_kernels, n_timestamps, kernel_sizes, seed):
     # Weights of the kernels
     cumsum_lengths = np.concatenate((np.array([0]), np.cumsum(lengths)))
     weights_all = np.random.randn(cumsum_lengths[-1])
-    weights = np.zeros((n_kernels, np.max(kernel_sizes)))
+    weights = np.zeros((n_kernels, np.max(kernel_sizes).item()))
     for i in prange(n_kernels):
         weights[i, :lengths[i]] = (
             weights_all[cumsum_lengths[i]: cumsum_lengths[i+1]] -
@@ -298,7 +298,7 @@ class ROCKET(BaseEstimator, TransformerMixin):
             raise TypeError("'kernel_sizes' must be a list, a tuple or "
                             "an array (got {}).".format(self.kernel_sizes))
         kernel_sizes = check_array(self.kernel_sizes, ensure_2d=False,
-                                   dtype='int32', accept_large_sparse=False)
+                                   dtype='int64', accept_large_sparse=False)
         if not np.all(1 <= kernel_sizes):
             raise ValueError("All the values in 'kernel_sizes' must be "
                              "greater than or equal to 1 ({} < 1)."
