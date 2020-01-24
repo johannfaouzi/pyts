@@ -51,7 +51,7 @@ def generate_kernels(n_kernels, n_timestamps, kernel_sizes, seed):
     # Weights of the kernels
     cumsum_lengths = np.concatenate((np.array([0]), np.cumsum(lengths)))
     weights_all = np.random.randn(cumsum_lengths[-1])
-    weights = np.zeros((n_kernels, np.max(kernel_sizes)))
+    weights = np.zeros((n_kernels, int(np.max(kernel_sizes))))
     for i in prange(n_kernels):
         weights[i, :lengths[i]] = (
             weights_all[cumsum_lengths[i]: cumsum_lengths[i+1]] -
