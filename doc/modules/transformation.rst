@@ -184,11 +184,18 @@ ROCKET
 ------
 
 ROCKET stands for **R**\ and\ **O**\ m **C**\ onvolutional **KE**\ rnel
-**T**\ ransform. This algorithm generates a great variety of random
+**T**\ ransform. :class:`ROCKET` generates a great variety of random
 convolutional kernels and extracts two features from the convolutions:
 the maximum and the proportion of positive values. The kernels are generated
 randomly and are not learned, which greatly speeds up the computation of this
-transformation::
+transformation.
+
+.. figure:: ../auto_examples/transformation/images/sphx_glr_plot_rocket_001.png
+   :target: ../auto_examples/transformation/plot_rocket.html
+   :align: center
+   :scale: 80%
+
+.. code-block:: python
 
     >>> from pyts.datasets import load_gunpoint
     >>> from pyts.transformation import ROCKET
