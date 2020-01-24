@@ -314,13 +314,13 @@ class CrossEntropyLearningShapelets(BaseEstimator, ClassifierMixin):
         Number of shapelets per size. If float, it represents
         a fraction of the number of timestamps and the number
         of shapelets per size is equal to
-        ``ceil(n_shapelets_per_size * n_timestamps).``
+        ``ceil(n_shapelets_per_size * n_timestamps)``.
 
     min_shapelet_length : int or float (default = 0.1)
         Minimum length of the shapelets. If float, it represents
         a fraction of the number of timestamps and the minimum
         length of the shapelets per size is equal to
-        ``ceil(min_shapelet_length * n_timestamps).``
+        ``ceil(min_shapelet_length * n_timestamps)``.
 
     shapelet_scale : int (default = 3)
         The different scales for the lengths of the shapelets.
@@ -814,7 +814,12 @@ class CrossEntropyLearningShapelets(BaseEstimator, ClassifierMixin):
 
 
 class LearningShapelets(BaseEstimator, ClassifierMixin):
-    """Learning Shapelets algorithm for binary classification.
+    """Learning Shapelets algorithm.
+
+    This estimator consists of two steps: computing the distances between the
+    shapelets and the time series, then computing a logistic regression using
+    these distances as features. This algorithm learns the shapelets as well as
+    the coefficients of the logistic regression.
 
     Parameters
     ----------
@@ -822,13 +827,13 @@ class LearningShapelets(BaseEstimator, ClassifierMixin):
         Number of shapelets per size. If float, it represents
         a fraction of the number of timestamps and the number
         of shapelets per size is equal to
-        ``ceil(n_shapelets_per_size * n_timestamps).``
+        ``ceil(n_shapelets_per_size * n_timestamps)``.
 
     min_shapelet_length : int or float (default = 0.1)
         Minimum length of the shapelets. If float, it represents
         a fraction of the number of timestamps and the minimum
         length of the shapelets per size is equal to
-        ``ceil(min_shapelet_length * n_timestamps).``
+        ``ceil(min_shapelet_length * n_timestamps)``.
 
     shapelet_scale : int (default = 3)
         The different scales for the lengths of the shapelets.
@@ -934,6 +939,14 @@ class LearningShapelets(BaseEstimator, ClassifierMixin):
 
     Examples
     --------
+    >>> from pyts.classification import LearningShapelets
+    >>> from pyts.datasets import load_gunpoint
+    >>> X, _, y, _ = load_gunpoint(return_X_y=True)
+    >>> clf = LearningShapelets(random_state=42, tol=0.01)
+    >>> clf.fit(X, y)
+    LearningShapelets(...)
+    >>> clf.coef_.shape
+    (1, 90)
 
     """
 
