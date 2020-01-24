@@ -273,6 +273,7 @@ Imputation
   :template: class.rst
 
   transformation.BOSS
+  transformation.ROCKET
   transformation.ShapeletTransform
   transformation.WEASEL
 
