@@ -201,7 +201,7 @@ transformation.
     >>> from pyts.transformation import ROCKET
     >>> X_train, X_test, _, _ = load_gunpoint(return_X_y=True)
     >>> rocket = ROCKET()
-    >>> rocket.fit(X_train)
+    >>> rocket.fit(X_train) 
     ROCKET(...)
     >>> rocket.transform(X_train).shape
     (50, 20000)
