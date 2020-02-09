@@ -10,9 +10,6 @@ from sklearn.utils.validation import check_X_y, check_is_fitted
 from ..metrics import (boss, dtw, dtw_classic, dtw_region, dtw_fast,
                        dtw_multiscale, sakoe_chiba_band, itakura_parallelogram)
 
-import sklearn
-SKLEARN_VERSION = sklearn.__version__
-
 
 class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
     """k-nearest neighbors classifier.
@@ -221,10 +218,7 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
             Probability estimates.
 
         """
-        if SKLEARN_VERSION >= '0.22':
-            check_is_fitted(self)
-        else:
-            check_is_fitted(self, '_clf')
+        check_is_fitted(self, '_clf')
         return self._clf.predict_proba(X)
 
     def predict(self, X):
@@ -241,8 +235,5 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
             Class labels for each data sample.
 
         """
-        if SKLEARN_VERSION >= '0.22':
-            check_is_fitted(self)
-        else:
-            check_is_fitted(self, '_clf')
+        check_is_fitted(self, '_clf')
         return self._clf.predict(X)

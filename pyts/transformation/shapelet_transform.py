@@ -11,9 +11,6 @@ from sklearn.utils.validation import (check_array, check_is_fitted,
                                       check_random_state, check_X_y)
 from ..utils.utils import _windowed_view
 
-import sklearn
-SKLEARN_VERSION = sklearn.__version__
-
 
 @njit()
 def _extract_all_shapelets_raw(x, window_sizes, window_steps, n_timestamps):
@@ -340,10 +337,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
             Distances between the selected shapelets and the samples.
 
         """
-        if SKLEARN_VERSION >= '0.22':
-            check_is_fitted(self)
-        else:
-            check_is_fitted(self, ['shapelets_', 'indices_', 'scores_'])
+        check_is_fitted(self, ['shapelets_', 'indices_', 'scores_'])
         X = check_array(X, dtype='float64')
         return self._transform(X)
 
