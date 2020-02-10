@@ -3,15 +3,13 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-import numpy as np
-from sklearn.utils.validation import check_X_y, check_is_fitted
+from sklearn.utils.validation import check_X_y, check_array, check_is_fitted
 from sklearn.utils.multiclass import check_classification_targets
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from ..bag_of_words import BagOfWords
-from ..approximation import SymbolicAggregateApproximation
 
 
 class SAXVSM(BaseEstimator, ClassifierMixin):
@@ -25,31 +23,42 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
 
     Parameters
     ----------
+    window_size : int or float (default = 0.5)
+        Length of the sliding window. If float, it represents
+        a percentage of the size of each time series and must be
+        between 0 and 1.
+
+    word_size : int or float (default = 0.5)
+        Length of the words. If float, it represents
+        a percentage of the length of the sliding window and must be
+        between 0. and 1.
+
     n_bins : int (default = 4)
         The number of bins to produce. It must be between 2 and
-        ``min(n_timestamps, 26)``.
+        ``min(window_size, 26)``.
 
-    strategy : 'uniform', 'quantile' or 'normal' (default = 'quantile')
+    strategy : 'uniform', 'quantile' or 'normal' (default = 'normal')
         Strategy used to define the widths of the bins:
 
         - 'uniform': All bins in each sample have identical widths
         - 'quantile': All bins in each sample have the same number of points
         - 'normal': Bin edges are quantiles from a standard normal distribution
 
-    window_size : int or float (default = 4)
-        Size of the sliding window (i.e. the size of each word). If float, it
-        represents the percentage of the size of each time series and must be
-        between 0 and 1. The window size will be computed as
-        ``ceil(window_size * n_timestamps)``.
-
-    window_step : int or float (default = 1)
-        Step of the sliding window. If float, it represents the percentage of
-        the size of each time series and must be between 0 and 1. The window
-        step will be computed as ``ceil(window_step * n_timestamps)``.
-
     numerosity_reduction : bool (default = True)
         If True, delete sample-wise all but one occurence of back to back
         identical occurences of the same words.
+
+    window_step : int or float (default = 1)
+        Step of the sliding window. If float, it represents the percentage of
+        the size of each time series and must be between 0 and 1. The step of
+        sliding window will be computed as
+        ``ceil(window_step * n_timestamps)``.
+
+    norm_mean : bool (default = True)
+        If True, center each subseries before scaling.
+
+    norm_std : bool (default = True)
+        If True, scale each subseries to unit variance.
 
     use_idf : bool (default = True)
         Enable inverse-document-frequency reweighting.
@@ -61,6 +70,12 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
 
     sublinear_tf : bool (default = True)
         Apply sublinear tf scaling, i.e. replace tf with 1 + log(tf).
+
+    overlapping : bool (default = True)
+        If True, time points may belong to two bins when decreasing the size
+        of the subsequence with the Piecewise Aggregate Approximation
+        algorithm. If False, each time point belong to one single bin, but
+        the size of the bins may vary.
 
     alphabet : None or array-like, shape = (n_bins,)
         Alphabet to use. If None, the first `n_bins` letters of the Latin
@@ -92,25 +107,30 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
     >>> from pyts.classification import SAXVSM
     >>> from pyts.datasets import load_gunpoint
     >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
-    >>> clf = SAXVSM(window_size=34, sublinear_tf=False, use_idf=False)
+    >>> clf = SAXVSM(window_size=64, word_size=12, n_bins=5, strategy='normal')
     >>> clf.fit(X_train, y_train) # doctest: +ELLIPSIS
     SAXVSM(...)
     >>> clf.score(X_test, y_test)
-    0.76
+    0.9933...
 
     """
 
-    def __init__(self, n_bins=4, strategy='quantile', window_size=4,
-                 window_step=1, numerosity_reduction=True, use_idf=True,
-                 smooth_idf=False, sublinear_tf=True, alphabet=None):
+    def __init__(self, window_size=0.5, word_size=0.5, n_bins=4,
+                 strategy='normal', numerosity_reduction=True, window_step=1,
+                 norm_mean=True, norm_std=True, use_idf=True, smooth_idf=False,
+                 sublinear_tf=True, overlapping=True, alphabet=None):
+        self.window_size = window_size
+        self.word_size = word_size
         self.n_bins = n_bins
         self.strategy = strategy
-        self.window_size = window_size
-        self.window_step = window_step
         self.numerosity_reduction = numerosity_reduction
+        self.window_step = window_step
+        self.norm_mean = norm_mean
+        self.norm_std = norm_std
         self.use_idf = use_idf
         self.smooth_idf = smooth_idf
         self.sublinear_tf = sublinear_tf
+        self.overlapping = overlapping
         self.alphabet = alphabet
 
     def fit(self, X, y):
@@ -130,19 +150,22 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
 
         """
         X, y = check_X_y(X, y)
-        self._check_params()
         check_classification_targets(y)
         le = LabelEncoder()
         y_ind = le.fit_transform(y)
         self.classes_ = le.classes_
         n_classes = self.classes_.size
 
-        sax = SymbolicAggregateApproximation(
-            self.n_bins, self.strategy, self.alphabet)
-        X_sax = sax.fit_transform(X)
-        bow = BagOfWords(self.window_size, self.window_step,
-                         self.numerosity_reduction)
-        X_bow = bow.fit_transform(X_sax)
+        # Transform each time series into a bag of words
+        bow = BagOfWords(
+            window_size=self.window_size, word_size=self.word_size,
+            n_bins=self.n_bins, strategy=self.strategy,
+            numerosity_reduction=self.numerosity_reduction,
+            window_step=self.window_step, norm_mean=self.norm_mean,
+            norm_std=self.norm_std, overlapping=self.overlapping,
+            alphabet=self.alphabet
+        )
+        X_bow = bow.fit_transform(X)
 
         X_class = [' '.join(X_bow[y_ind == classe])
                    for classe in range(n_classes)]
@@ -151,7 +174,7 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
             norm=None, use_idf=self.use_idf, smooth_idf=self.smooth_idf,
             sublinear_tf=self.sublinear_tf
         )
-        self.tfidf_ = tfidf.fit_transform(X_class).toarray()
+        self.tfidf_ = tfidf.fit_transform(X_class).A
         self.vocabulary_ = {value: key for key, value in
                             tfidf.vocabulary_.items()}
         if self.use_idf:
@@ -159,7 +182,6 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
         else:
             self.idf_ = None
         self._tfidf = tfidf
-        self._sax = sax
         self._bow = bow
         return self
 
@@ -179,8 +201,8 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
         """
         check_is_fitted(self, ['vocabulary_', 'tfidf_', 'idf_',
                                '_tfidf', 'classes_'])
-        X_sax = self._sax.transform(X)
-        X_bow = self._bow.transform(X_sax)
+        X = check_array(X)
+        X_bow = self._bow.transform(X)
         vectorizer = CountVectorizer(vocabulary=self._tfidf.vocabulary_)
         X_transformed = vectorizer.transform(X_bow).toarray()
         return cosine_similarity(X_transformed, self.tfidf_)
@@ -200,9 +222,3 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
 
         """
         return self.classes_[self.decision_function(X).argmax(axis=1)]
-
-    def _check_params(self):
-        if not isinstance(self.n_bins, (int, np.integer)):
-            raise TypeError("'n_bins' must be an integer.")
-        if not 2 <= self.n_bins <= 26:
-            raise ValueError("'n_bins' must be between 2 and 26.")

@@ -24,8 +24,8 @@ from pyts.datasets import load_gunpoint
 X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
 
 # SAXVSM transformation
-saxvsm = SAXVSM(n_bins=4, strategy='uniform', window_size=2,
-                sublinear_tf=True)
+saxvsm = SAXVSM(window_size=15, word_size=3, n_bins=2,
+                strategy='uniform')
 saxvsm.fit(X_train, y_train)
 tfidf = saxvsm.tfidf_
 vocabulary_length = len(saxvsm.vocabulary_)
@@ -43,7 +43,7 @@ plt.bar(np.arange(vocabulary_length) + width / 2, tfidf[1],
 plt.xticks(np.arange(vocabulary_length),
            np.vectorize(saxvsm.vocabulary_.get)(np.arange(vocabulary_length)),
            fontsize=14)
-plt.ylim((0, 5.5))
+plt.ylim((0, 7))
 plt.xlabel("Words", fontsize=14)
 plt.ylabel("tf-idf", fontsize=14)
 plt.title("tf-idf vector for each class (training set)", fontsize=15)

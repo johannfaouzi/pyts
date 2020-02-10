@@ -273,6 +273,7 @@ Imputation
   :toctree: generated/
   :template: class.rst
 
+  transformation.BagOfPatterns
   transformation.BOSS
   transformation.ROCKET
   transformation.ShapeletTransform

@@ -73,9 +73,6 @@ class SymbolicAggregateApproximation(BaseEstimator, TransformerMixin):
         X : array-like, shape = (n_samples, n_timestamps)
             Data to transform.
 
-        y
-            Ignored
-
         Returns
         -------
         X_new : array, shape = (n_samples, n_timestamps)
