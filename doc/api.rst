@@ -275,6 +275,7 @@ Imputation
 
   transformation.BagOfPatterns
   transformation.BOSS
+  transformation.ROCKET
   transformation.ShapeletTransform
   transformation.WEASEL
 

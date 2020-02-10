@@ -216,3 +216,38 @@ below, we use a logistic regression::
     * P. Schäfer, and U. Leser, "Fast and Accurate Time Series Classification
       with WEASEL". Conference on Information and Knowledge Management,
       637-646 (2017).
+
+
+ROCKET
+------
+
+ROCKET stands for **R**\ and\ **O**\ m **C**\ onvolutional **KE**\ rnel
+**T**\ ransform. :class:`ROCKET` generates a great variety of random
+convolutional kernels and extracts two features from the convolutions:
+the maximum and the proportion of positive values. The kernels are generated
+randomly and are not learned, which greatly speeds up the computation of this
+transformation.
+
+.. figure:: ../auto_examples/transformation/images/sphx_glr_plot_rocket_001.png
+   :target: ../auto_examples/transformation/plot_rocket.html
+   :align: center
+   :scale: 80%
+
+.. code-block:: python
+
+    >>> from pyts.datasets import load_gunpoint
+    >>> from pyts.transformation import ROCKET
+    >>> X_train, X_test, _, _ = load_gunpoint(return_X_y=True)
+    >>> rocket = ROCKET()
+    >>> rocket.fit(X_train)
+    ROCKET(...)
+    >>> rocket.transform(X_train).shape
+    (50, 20000)
+    >>> rocket.transform(X_test).shape
+    (150, 20000)
+
+.. topic:: References
+
+    * A. Dempster, F. Petitjean and G. I. Webb, "ROCKET: Exceptionally
+      fast and accurate time series classification using random convolutional
+      kernels". https://arxiv.org/abs/1910.13051.
