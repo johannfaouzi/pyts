@@ -4,6 +4,21 @@
 Change Log
 ==========
 
+Version 0.11.0
+--------------
+
+- Rework the *BagOfWords* algorithm to match the description of the algorithm
+  in the original paper.
+
+- Update the *SAXVSM* classifier with the new version of *BagOfWords*.
+
+- Add the *BagOfPatterns* algorithm in the :mod:`pyts.transformation` module.
+
+- Add the *ROCKET* algorithm in the :mod:`pyts.transformation` module.
+
+- Add the *LearningShapelets* algorithm in the :mod:`pyts.classification`
+  module.
+
 
 Version 0.10.0
 --------------
