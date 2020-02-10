@@ -142,6 +142,7 @@ transform a data set of time series with shape `(n_samples, n_timestamps)` into
 a data set with shape `(n_samples, n_features)`. Implemented algorithms are
 [BOSS](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.BOSS.html#),
 [BagOfPatterns](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.BagOfPatterns.html#),
+[ROCKET](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.ROCKET.html#),
 [ShapeletTransform](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.ShapeletTransform.html) and
 [WEASEL](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.WEASEL.html#).
 
