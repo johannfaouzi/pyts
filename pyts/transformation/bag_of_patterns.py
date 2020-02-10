@@ -89,13 +89,11 @@ class BagOfPatterns(BaseEstimator, TransformerMixin):
     >>> X = np.arange(12).reshape(2, 6)
     >>> bop = BagOfPatterns(window_size=4, word_size=4, sparse=False)
     >>> bop.fit_transform(X)
-    array([[1],
-           [1]])
+    array(...)
     >>> bop.set_params(numerosity_reduction=False)
     BagOfPatterns(...)
     >>> bop.fit_transform(X)
-    array([[3],
-           [3]])
+    array(...)
 
     """
 
