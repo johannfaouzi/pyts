@@ -24,12 +24,12 @@ class BagOfWords(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    window_size : int, float or None (default = 0.2)
+    window_size : int, float or None (default = 0.5)
         Length of the sliding window. If float, it represents
         a percentage of the size of each time series and must be
         between 0 and 1.
 
-    word_size : int, float or None (default = 0.2)
+    word_size : int, float or None (default = 0.5)
         Length of the words. If float, it represents
         a percentage of the length of the sliding window and must be
         between 0. and 1.
@@ -38,7 +38,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         The number of bins to produce. It must be between 2 and
         ``min(n_timestamps, 26)``.
 
-    strategy : 'uniform', 'quantile' or 'normal' (default = 'quantile')
+    strategy : 'uniform', 'quantile' or 'normal' (default = 'normal')
         Strategy used to define the widths of the bins:
 
         - 'uniform': All bins in each sample have identical widths
@@ -59,9 +59,6 @@ class BagOfWords(BaseEstimator, TransformerMixin):
 
     norm_std : bool (default = True)
         If True, scale each subseries to unit variance.
-
-    sparse : bool (default = True)
-        Return a sparse matrix if True, else return an array.
 
     overlapping : bool (default = True)
         If True, time points may belong to two bins when decreasing the size
@@ -94,9 +91,9 @@ class BagOfWords(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, window_size=0.2, word_size=0.2, n_bins=4,
-                 strategy='quantile', numerosity_reduction=True, window_step=1,
-                 norm_mean=True, norm_std=True, sparse=True, overlapping=True,
+    def __init__(self, window_size=0.5, word_size=0.5, n_bins=4,
+                 strategy='normal', numerosity_reduction=True, window_step=1,
+                 norm_mean=True, norm_std=True, overlapping=True,
                  alphabet=None):
         self.window_size = window_size
         self.word_size = word_size
@@ -106,7 +103,6 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         self.window_step = window_step
         self.norm_mean = norm_mean
         self.norm_std = norm_std
-        self.sparse = sparse
         self.overlapping = overlapping
         self.alphabet = alphabet
 
