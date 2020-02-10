@@ -32,7 +32,7 @@ X_bow = bow.transform(X)
 
 # Plot the considered subseries
 plt.figure(figsize=(10, 4))
-splits_series = np.linspace(0, X.shape[1], 1 + X.shape[1] / window_size,
+splits_series = np.linspace(0, X.shape[1], 1 + X.shape[1] // window_size,
                             dtype='int64')
 for start, end in zip(splits_series[:-1],
                       np.clip(splits_series[1:] + 1, 0, X.shape[1])):
@@ -40,7 +40,7 @@ for start, end in zip(splits_series[:-1],
 
 # Plot the corresponding letters
 splits_letters = np.linspace(0, X.shape[1],
-                             1 + word_size * X.shape[1] / window_size)
+                             1 + word_size * X.shape[1] // window_size)
 splits_letters = (
     (splits_letters[:-1] + splits_letters[1:]) / 2).astype('int64')
 for i, (x, text) in enumerate(zip(splits_letters, X_bow[0].replace(' ', ''))):
