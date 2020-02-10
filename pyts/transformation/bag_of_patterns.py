@@ -21,21 +21,21 @@ class BagOfPatterns(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    window_size : int, float or None (default = 0.2)
+    window_size : int or float (default = 0.5)
         Length of the sliding window. If float, it represents
         a percentage of the size of each time series and must be
         between 0 and 1.
 
-    word_size : int, float or None (default = 0.2)
+    word_size : int or float (default = 0.5)
         Length of the words. If float, it represents
         a percentage of the length of the sliding window and must be
         between 0. and 1.
 
     n_bins : int (default = 4)
         The number of bins to produce. It must be between 2 and
-        ``min(n_timestamps, 26)``.
+        ``min(window_size, 26)``.
 
-    strategy : 'uniform', 'quantile' or 'normal' (default = 'quantile')
+    strategy : 'uniform', 'quantile' or 'normal' (default = 'normal')
         Strategy used to define the widths of the bins:
 
         - 'uniform': All bins in each sample have identical widths
@@ -48,8 +48,9 @@ class BagOfPatterns(BaseEstimator, TransformerMixin):
 
     window_step : int or float (default = 1)
         Step of the sliding window. If float, it represents the percentage of
-        the size of each time series and must be between 0 and 1. The window
-        size will be computed as ``ceil(window_step * n_timestamps)``.
+        the size of each time series and must be between 0 and 1. The step of
+        sliding window will be computed as
+        ``ceil(window_step * n_timestamps)``.
 
     norm_mean : bool (default = True)
         If True, center each subseries before scaling.
@@ -98,8 +99,8 @@ class BagOfPatterns(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, window_size=0.2, word_size=0.2, n_bins=4,
-                 strategy='quantile', numerosity_reduction=True, window_step=1,
+    def __init__(self, window_size=0.5, word_size=0.5, n_bins=4,
+                 strategy='normal', numerosity_reduction=True, window_step=1,
                  norm_mean=True, norm_std=True, sparse=True, overlapping=True,
                  alphabet=None):
         self.window_size = window_size
@@ -136,8 +137,8 @@ class BagOfPatterns(BaseEstimator, TransformerMixin):
             n_bins=self.n_bins, strategy=self.strategy,
             numerosity_reduction=self.numerosity_reduction,
             window_step=self.window_step, norm_mean=self.norm_mean,
-            norm_std=self.norm_std, sparse=self.sparse,
-            overlapping=self.overlapping, alphabet=self.alphabet
+            norm_std=self.norm_std, overlapping=self.overlapping,
+            alphabet=self.alphabet
         )
         X_bow = bow.transform(X)
 
@@ -172,8 +173,8 @@ class BagOfPatterns(BaseEstimator, TransformerMixin):
             n_bins=self.n_bins, strategy=self.strategy,
             numerosity_reduction=self.numerosity_reduction,
             window_step=self.window_step, norm_mean=self.norm_mean,
-            norm_std=self.norm_std, sparse=self.sparse,
-            overlapping=self.overlapping, alphabet=self.alphabet
+            norm_std=self.norm_std, overlapping=self.overlapping,
+            alphabet=self.alphabet
         )
         X_bow = bow.transform(X)
 
@@ -206,8 +207,8 @@ class BagOfPatterns(BaseEstimator, TransformerMixin):
             n_bins=self.n_bins, strategy=self.strategy,
             numerosity_reduction=self.numerosity_reduction,
             window_step=self.window_step, norm_mean=self.norm_mean,
-            norm_std=self.norm_std, sparse=self.sparse,
-            overlapping=self.overlapping, alphabet=self.alphabet
+            norm_std=self.norm_std, overlapping=self.overlapping,
+            alphabet=self.alphabet
         )
         X_bow = bow.transform(X)
 

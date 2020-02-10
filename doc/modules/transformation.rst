@@ -76,6 +76,44 @@ below, we use a Support Vector Machine with a linear kernel::
       289-297 (2012).
 
 
+BagOfPatterns
+-------------
+
+:class:`BagOfPatterns` is built on top of :ref:`bag_of_words_w`. First it
+transforms each time series into a bag of words, then the frequency of
+each word for each time series is computed. Therefore, it transforms each
+time series into a histogram. The ``vocabulary_`` attribute is a mapping from
+the feature indices to the corresponding words.
+
+.. figure:: ../auto_examples/transformation/images/sphx_glr_plot_bop_001.png
+   :target: ../auto_examples/transformation/plot_bop.html
+   :align: center
+   :scale: 80%
+
+Classification can be performed with any standard classifier. In the example
+below, we use a k-nearest neighbors classifier with the Euclidean distance::
+
+   >>> from pyts.transformation import BagOfPatterns
+   >>> from pyts.datasets import load_gunpoint
+   >>> from sklearn.neighbors import KNeighborsClassifier
+   >>> from sklearn.pipeline import make_pipeline
+   >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
+   >>> clf = make_pipeline(
+   ...    BagOfPatterns(window_size=32, word_size=4, n_bins=4,
+                        strategy='normal', numerosity_reduction=False),
+   ...    KNeighborsClassifier(n_neighbors=1)
+   ... )
+   >>> clf.fit(X_train, y_train)
+   >>> clf.score(X_test, y_test)
+   0.98
+
+.. topic:: References
+
+   * J. Lin, R. Khade and Y. Li, "Rotation-invariant similarity in time
+     series using bag-of-patterns representation". Journal of Intelligent
+     Information Systems, 39 (2), 287-315 (2012).
+
+
 BOSS
 ----
 
