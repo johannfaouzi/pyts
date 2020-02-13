@@ -105,7 +105,7 @@ def _windowed_view(X, n_samples, n_timestamps, window_size, window_step):
     overlap = window_size - window_step
     shape_new = (n_samples,
                  (n_timestamps - overlap) // window_step,
-                 window_size)
+                 window_size // 1)
     s0, s1 = X.strides
     strides_new = (s0, window_step * s1, s1)
     return as_strided(X, shape=shape_new, strides=strides_new)

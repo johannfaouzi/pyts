@@ -1,9 +1,9 @@
-[![Build Status](https://travis-ci.org/johannfaouzi/pyts.svg?branch=master)](https://travis-ci.org/johannfaouzi/pyts)
-[![Build Status](https://img.shields.io/appveyor/ci/johannfaouzi/pyts/master.svg)](https://ci.appveyor.com/project/johannfaouzi/pyts)
+[![Build Status](https://dev.azure.com/johannfaouzi0034/johannfaouzi/_apis/build/status/johannfaouzi.pyts?branchName=master)](https://dev.azure.com/johannfaouzi0034/johannfaouzi/_build/latest?definitionId=1&branchName=master)
 [![Documentation Status](https://readthedocs.org/projects/pyts/badge/?version=latest)](https://pyts.readthedocs.io/en/latest/?badge=latest)
 [![Codecov](https://codecov.io/gh/johannfaouzi/pyts/branch/master/graph/badge.svg)](https://codecov.io/gh/johannfaouzi/pyts)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyts.svg)](https://img.shields.io/pypi/pyversions/pyts.svg)
 [![PyPI version](https://badge.fury.io/py/pyts.svg)](https://badge.fury.io/py/pyts)
+[![Conda Version](https://img.shields.io/conda/vn/conda-forge/pyts.svg)](https://anaconda.org/conda-forge/pyts)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/johannfaouzi/pyts.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/johannfaouzi/pyts/context:python)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1244152.svg)](https://doi.org/10.5281/zenodo.1244152)
 
@@ -25,16 +25,17 @@ pyts requires:
 - Python (>= 3.5)
 - NumPy (>= 1.15.4)
 - SciPy (>= 1.3.0)
-- Scikit-Learn (>=0.20.1)
-- Numba (>=0.41.0)
+- Scikit-Learn (>=0.22.1)
+- Joblib (>=0.12)
+- Numba (==0.46.0)
 
 To run the examples Matplotlib (>=2.0.0) is required.
 
 
 #### User installation
 
-If you already have a working installation of numpy, scipy, scikit-learn and
-numba, you can easily install pyts using ``pip``
+If you already have a working installation of numpy, scipy, scikit-learn,
+joblib and numba, you can easily install pyts using ``pip``
 
     pip install pyts
 
@@ -65,9 +66,8 @@ for a history of notable changes to pyts.
 ### Development
 
 The development of this package is in line with the one of the scikit-learn
-community. Therefore, you can refer to their
-[Development Guide](https://scikit-learn.org/stable/developers/). A slight
-difference is the use of Numba instead of Cython for optimization.
+community. Fore more information about our contributing guidelines, please
+refer to the [documentation](https://pyts.readthedocs.io/en/latest/contribute.html).
 
 ### Documentation
 
@@ -95,6 +95,7 @@ in time series classification.
 - `classification`: This module provides implementations of algorithms that
 can classify time series. Implemented algorithms are
 [KNeighborsClassifier](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.KNeighborsClassifier.html#),
+[LearningShapelets](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.LearningShapelets.html#),
 [SAXVSM](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.SAXVSM.html#) and
 [BOSSVS](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.BOSSVS.html#).
 
@@ -139,7 +140,10 @@ of missing values using interpolation. More information is available at the
 - `transformation`: This module provides implementations of algorithms that
 transform a data set of time series with shape `(n_samples, n_timestamps)` into
 a data set with shape `(n_samples, n_features)`. Implemented algorithms are
-[BOSS](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.BOSS.html#) and
+[BOSS](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.BOSS.html#),
+[BagOfPatterns](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.BagOfPatterns.html#),
+[ROCKET](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.ROCKET.html#),
+[ShapeletTransform](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.ShapeletTransform.html) and
 [WEASEL](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.WEASEL.html#).
 
 - `utils`: a simple module with

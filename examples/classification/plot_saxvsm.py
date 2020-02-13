@@ -8,9 +8,12 @@ consisting of time series and their corresponding labels into a
 document-term matrix using tf-idf statistics. Each class is represented
 as a tfidf vector. For an unlabeled time series, the predicted label is
 the label of the tfidf vector giving the highest cosine similarity with
-the tf vector of the unlabeled time series. SAX-VSM algorithm is
-implemented as :class:`pyts.classification.SAXVSM`.
+the tf vector of the unlabeled time series.
+It is implemented as :class:`pyts.classification.SAXVSM`.
 """
+
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -21,8 +24,8 @@ from pyts.datasets import load_gunpoint
 X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
 
 # SAXVSM transformation
-saxvsm = SAXVSM(n_bins=4, strategy='uniform', window_size=2,
-                sublinear_tf=True)
+saxvsm = SAXVSM(window_size=15, word_size=3, n_bins=2,
+                strategy='uniform')
 saxvsm.fit(X_train, y_train)
 tfidf = saxvsm.tfidf_
 vocabulary_length = len(saxvsm.vocabulary_)
@@ -40,7 +43,7 @@ plt.bar(np.arange(vocabulary_length) + width / 2, tfidf[1],
 plt.xticks(np.arange(vocabulary_length),
            np.vectorize(saxvsm.vocabulary_.get)(np.arange(vocabulary_length)),
            fontsize=14)
-plt.ylim((0, 5.5))
+plt.ylim((0, 7))
 plt.xlabel("Words", fontsize=14)
 plt.ylabel("tf-idf", fontsize=14)
 plt.title("tf-idf vector for each class (training set)", fontsize=15)
@@ -57,7 +60,7 @@ plt.ylim((0, 1.2))
 plt.xlabel("True label", fontsize=14)
 plt.ylabel("Cosine similarity", fontsize=14)
 plt.title(("Cosine similarity between tf-idf vectors for each class\n"
-           "and tf vectors for each sample (tets set)"), fontsize=15)
+           "and tf vectors for each sample (test set)"), fontsize=15)
 plt.legend(loc='best')
 
 plt.suptitle("SAX-VSM", y=0.95, fontsize=22)

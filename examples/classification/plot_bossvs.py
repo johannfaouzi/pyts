@@ -8,9 +8,12 @@ consisting of time series and their corresponding labels into a
 document-term matrix using tf-idf statistics. Each class is represented
 as a tfidf vector. For an unlabeled time series, the predicted label is
 the label of the tfidf vector giving the highest cosine similarity with
-the tf vector of the unlabeled time series. BOSSVS algorithm is
-implemented as :class:`pyts.classification.BOSSVS`.
+the tf vector of the unlabeled time series.
+It is implemented as :class:`pyts.classification.BOSSVS`.
 """
+
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
 
 import numpy as np
 import matplotlib.pyplot as plt

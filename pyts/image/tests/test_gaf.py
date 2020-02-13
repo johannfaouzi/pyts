@@ -91,25 +91,25 @@ def test_parameter_check(params, error, err_msg):
 
 @pytest.mark.parametrize(
     'params, X, arr_desired',
-    [({}, [[-1, 0, 1]], [[[1,  0, -1], [0, -1,  0], [-1,  0,  1]]]),
+    [({}, [[-1, 0, 1]], [[[1, 0, -1], [0, -1, 0], [-1, 0, 1]]]),
 
      ({'sample_range': None}, [[-1, 0, 1]],
-      [[[1,  0, -1], [0, -1,  0], [-1,  0,  1]]]),
+      [[[1, 0, -1], [0, -1, 0], [-1, 0, 1]]]),
 
      ({'image_size': 3}, [[-1, 0, 1]],
-      [[[1,  0, -1], [0, -1,  0], [-1,  0,  1]]]),
+      [[[1, 0, -1], [0, -1, 0], [-1, 0, 1]]]),
 
      ({'image_size': 3}, [np.arange(9)],
-      [[[1,  0, -1], [0, -1,  0], [-1,  0,  1]]]),
+      [[[1, 0, -1], [0, -1, 0], [-1, 0, 1]]]),
 
      ({'image_size': 3, 'overlapping': True}, [np.arange(9)],
-      [[[1,  0, -1], [0, -1,  0], [-1,  0,  1]]]),
+      [[[1, 0, -1], [0, -1, 0], [-1, 0, 1]]]),
 
      ({'method': 'd'}, [[-1, 0, 1]],
-      [[[0,  1,  0], [-1,  0,  1], [0, -1,  0]]]),
+      [[[0, 1, 0], [-1, 0, 1], [0, -1, 0]]]),
 
      ({'image_size': 3, 'method': 'd'}, [np.arange(9)],
-      [[[0,  1,  0], [-1,  0,  1], [0, -1,  0]]]),
+      [[[0, 1, 0], [-1, 0, 1], [0, -1, 0]]]),
 
      ({'sample_range': (0, 1)}, [[-1, 0, 1]],
       [[[-1, -pi_6, 0], [-pi_6, -0.5, 0.5], [0, 0.5, 1]]]),
@@ -121,3 +121,10 @@ def test_actual_results(params, X, arr_desired):
     """Test that the actual results are the expected ones."""
     arr_actual = GramianAngularField(**params).fit_transform(X)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+
+def test_flatten():
+    """Test the 'flatten' parameter."""
+    arr_false = GramianAngularField().transform(X).reshape(1, -1)
+    arr_true = GramianAngularField(flatten=True).transform(X)
+    np.testing.assert_allclose(arr_false, arr_true, atol=1e-5, rtol=0.)

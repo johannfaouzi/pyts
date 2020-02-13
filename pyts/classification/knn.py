@@ -11,12 +11,9 @@ from ..metrics import boss, dtw, sakoe_chiba_band, itakura_parallelogram
 from ..metrics.dtw import (_dtw_classic, _dtw_region, _dtw_fast,
                            _dtw_multiscale)
 
-import sklearn
-SKLEARN_VERSION = sklearn.__version__
-
 
 class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
-    """k nearest neighbors classifier.
+    """k-nearest neighbors classifier.
 
     Parameters
     ----------
@@ -223,10 +220,7 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
             Probability estimates.
 
         """
-        if SKLEARN_VERSION >= '0.22':
-            check_is_fitted(self)
-        else:
-            check_is_fitted(self, '_clf')
+        check_is_fitted(self, '_clf')
         return self._clf.predict_proba(X)
 
     def predict(self, X):
@@ -243,8 +237,5 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
             Class labels for each data sample.
 
         """
-        if SKLEARN_VERSION >= '0.22':
-            check_is_fitted(self)
-        else:
-            check_is_fitted(self, '_clf')
+        check_is_fitted(self, '_clf')
         return self._clf.predict(X)

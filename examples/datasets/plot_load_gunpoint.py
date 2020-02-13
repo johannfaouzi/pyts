@@ -18,6 +18,9 @@ data in the archive is just the X-axis.
 It is implemented as :func:`pyts.datasets.load_gunpoint`.
 """
 
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 import matplotlib.pyplot as plt
 from pyts.datasets import load_gunpoint
 
@@ -34,8 +37,8 @@ for i, (X, y, set_, class_,) in enumerate(zip(
     [1, 2, 1, 2]
 )):
     plt.subplot(2, 2, i + 1)
-    for i in range(n_samples_per_plot):
-        plt.plot(X[y == class_][i], 'C0')
+    for j in range(n_samples_per_plot):
+        plt.plot(X[y == class_][j], 'C0')
     plt.title('{} set - class {}'.format(set_, class_), fontsize=16)
 
 plt.suptitle('GunPoint dataset', fontsize=20)

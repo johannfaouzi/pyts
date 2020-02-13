@@ -25,7 +25,7 @@ class SymbolicAggregateApproximation(BaseEstimator, TransformerMixin):
         - 'quantile': All bins in each sample have the same number of points
         - 'normal': Bin edges are quantiles from a standard normal distribution
 
-    alphabet : None or array-like, shape = (n_bins,)
+    alphabet : None, 'ordinal' or array-like, shape = (n_bins,)
         Alphabet to use. If None, the first `n_bins` letters of the Latin
         alphabet are used. If 'ordinal', integers are used.
 
@@ -72,9 +72,6 @@ class SymbolicAggregateApproximation(BaseEstimator, TransformerMixin):
         ----------
         X : array-like, shape = (n_samples, n_timestamps)
             Data to transform.
-
-        y
-            Ignored
 
         Returns
         -------

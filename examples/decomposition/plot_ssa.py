@@ -3,9 +3,17 @@
 Singular Spectrum Analysis
 ==========================
 
-This example shows how you can decompose a time series into several time series
-using :class:`pyts.decomposition.SingularSpectrumAnalysis`.
+Signals such as time series can be seen as a sum of different signals such
+as trends and noise. Decomposing time series into several time series can
+be useful in order to keep the most important information. One decomposition
+algorithm is Singular Spectrum Analysis. This example illustrates the
+decomposition of a time series into several subseries using this algorithm and
+visualizes the different subseries extracted.
+It is implemented as :class:`pyts.decomposition.SingularSpectrumAnalysis`.
 """
+
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
 
 import numpy as np
 import matplotlib.pyplot as plt

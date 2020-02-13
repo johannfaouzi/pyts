@@ -13,9 +13,6 @@ from sklearn.feature_selection import chi2
 from ..approximation import SymbolicFourierApproximation
 from ..utils.utils import _windowed_view
 
-import sklearn
-SKLEARN_VERSION = sklearn.__version__
-
 
 class WEASEL(BaseEstimator, TransformerMixin):
     """Word ExtrAction for time SEries cLassification.
@@ -134,7 +131,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
         self : object
 
         """
-        X, y = check_X_y(X, y)
+        X, y = check_X_y(X, y, dtype='float64')
         check_classification_targets(y)
         n_samples, n_timestamps = X.shape
         window_sizes, window_steps = self._check_params(n_timestamps)
@@ -201,13 +198,10 @@ class WEASEL(BaseEstimator, TransformerMixin):
             Document-term matrix with relevant features only.
 
         """
-        if SKLEARN_VERSION >= '0.22':
-            check_is_fitted(self)
-        else:
-            check_is_fitted(self, ['_relevant_features_list', '_sfa_list',
-                                   '_vectorizer_list', 'vocabulary_'])
+        check_is_fitted(self, ['_relevant_features_list', '_sfa_list',
+                               '_vectorizer_list', 'vocabulary_'])
 
-        X = check_array(X)
+        X = check_array(X, dtype='float64')
         n_samples, n_timestamps = X.shape
 
         X_features = coo_matrix((n_samples, 0), dtype=np.int64)
@@ -253,7 +247,7 @@ class WEASEL(BaseEstimator, TransformerMixin):
             Document-term matrix.
 
         """
-        X, y = check_X_y(X, y)
+        X, y = check_X_y(X, y, dtype='float64')
         check_classification_targets(y)
         n_samples, n_timestamps = X.shape
         window_sizes, window_steps = self._check_params(n_timestamps)

@@ -10,9 +10,6 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.utils.validation import check_is_fitted
 from ..utils import check_3d_array
 
-import sklearn
-SKLEARN_VERSION = sklearn.__version__
-
 
 @njit()
 def _hard_vote(y_pred, weights):
@@ -114,10 +111,7 @@ class MultivariateClassifier(BaseEstimator, ClassifierMixin):
 
         """
         X = check_3d_array(X)
-        if SKLEARN_VERSION >= '0.22':
-            check_is_fitted(self)
-        else:
-            check_is_fitted(self, 'estimators_')
+        check_is_fitted(self, 'estimators_')
         n_samples, n_features, _ = X.shape
 
         y_pred = np.empty((n_samples, n_features))
@@ -129,8 +123,9 @@ class MultivariateClassifier(BaseEstimator, ClassifierMixin):
 
     def _check_params(self, n_features):
         """Check parameters."""
-        if (isinstance(self.estimator, BaseEstimator)
-            and hasattr(self.estimator, 'predict')):
+        classifier = (isinstance(self.estimator, BaseEstimator)
+                      and hasattr(self.estimator, 'predict'))
+        if classifier:
             self.estimators_ = [clone(self.estimator)
                                 for _ in range(n_features)]
 

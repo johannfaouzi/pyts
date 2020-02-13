@@ -43,6 +43,10 @@ extensions = [
     'sphinx_gallery.gen_gallery',
 ]
 
+# Use svg images for math stuff
+extensions.append('sphinx.ext.imgmath')
+imgmath_image_format = 'svg'
+
 # this is needed for some reason...
 # see https://github.com/numpy/numpydoc/issues/69
 numpydoc_show_class_members = False
@@ -154,15 +158,17 @@ html_theme_options = {
     'github_user': 'johannfaouzi',
 
     # Page and sidebar widths
-    'page_width': '1250px',
+    'page_width': '1300px',
+    'body_max_width': '850px',
     'sidebar_width': '250px',
 
     # Related links
     'show_related': 'true',
+    'show_relbar_bottom': 'true',
 
     # Font sizes
     'font_size': '15px',
-    'code_font_size': '14px'
+    'code_font_size': '13px'
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
@@ -256,6 +262,7 @@ htmlhelp_basename = 'pytsdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
+latex_engine = 'pdflatex'
 
 latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
@@ -265,7 +272,6 @@ latex_elements = {
 #'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
-#'preamble': '',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
@@ -343,7 +349,7 @@ intersphinx_mapping = {
     'numpy': ('https://docs.scipy.org/doc/numpy/', None),
     'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
     'matplotlib': ('https://matplotlib.org/', None),
-    'sklearn': ('http://scikit-learn.org/stable', None)
+    'sklearn': ('https://scikit-learn.org/stable', None)
 }
 
 # sphinx-gallery configuration

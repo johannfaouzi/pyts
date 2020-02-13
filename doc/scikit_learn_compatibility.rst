@@ -39,7 +39,7 @@ with scikit-learn API, we do not need to reimplement them, and can use them
 directly. We will illustrate this compatibility with two popular modules from
 scikit-learn:
 `Model selection <https://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection>`_ and
-`Pipeline <https://scikit-learn.org/stable/modules/classes.html#module-sklearn.pipeline>`_
+`Pipeline <https://scikit-learn.org/stable/modules/classes.html#module-sklearn.pipeline>`_.
 
 Model selection
 ^^^^^^^^^^^^^^^
@@ -88,11 +88,11 @@ Here is a self-contained example:
     ...     iid=False, cv=5
     ... )
     >>> clf.fit(X_train, y_train)
-    # GridSearchCV(...)
+    GridSearchCV(...)
     >>> clf.best_params_
-    # {'strategy': 'uniform', 'window_size': 0.5}
+    {'strategy': 'uniform', 'window_size': 0.5}
     >>> clf.score(X_test, y_test)
-    # 0.846...
+    0.846...
 
 
 Pipeline
@@ -108,19 +108,19 @@ We will illustrate this functionality with the following example. Let's say
 that we want to build a composite estimator with the following steps:
 
 1. Standardization of each time series using
-`pyts.preprocessing.StandardScaler <https://pyts.readthedocs.io/en/latest/generated/pyts.preprocessing.StandardScaler.html#pyts.preprocessing.StandardScaler>`_
+`pyts.preprocessing.StandardScaler <https://pyts.readthedocs.io/en/latest/generated/pyts.preprocessing.StandardScaler.html#pyts.preprocessing.StandardScaler>`_,
 
 
 2. Feature extraction using
-`pyts.transformation.WEASEL <https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.WEASEL.html#pyts-transformation-weasel>`_
+`pyts.transformation.WEASEL <https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.WEASEL.html#pyts-transformation-weasel>`_,
 
 
 3. Scaling of each feature using
-`sklearn.preprocessing.MinMaxScaler <https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html#sklearn-preprocessing-minmaxscaler>`_
+`sklearn.preprocessing.MinMaxScaler <https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html#sklearn-preprocessing-minmaxscaler>`_,
 
 
 4. Classification using
-`sklearn.ensemble.RandomForestClassifier <https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html#sklearn-ensemble-randomforestclassifier>`_
+`sklearn.ensemble.RandomForestClassifier <https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html#sklearn-ensemble-randomforestclassifier>`_.
 
 We just have to create a Pipeline instance with these estimators:
 
@@ -151,6 +151,6 @@ Here is a self-contained example:
     ...                 ('scaler_2', MinMaxScaler()),
     ...                 ('forest', RandomForestClassifier(random_state=42))])
     >>> clf.fit(X_train, y_train)
-    # Pipeline(...)
+    Pipeline(...)
     >>> clf.score(X_test, y_test)
-    # 0.543...
+    0.543...

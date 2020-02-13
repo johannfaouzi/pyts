@@ -50,6 +50,9 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
         maximum distance for threshold if ``threshold='distance'``.
         Ignored if ``threshold`` is a float or None.
 
+    flatten : bool (default = False)
+        If True, images are flattened to be one-dimensional.
+
     Notes
     -----
     Given a time series :math:`(x_1, \ldots, x_n)`, the extracted
@@ -60,8 +63,8 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
         \vec{x}_i = (x_i, x_{i + \tau}, \ldots, x_{i + (m - 1)\tau}), \quad
         \forall i \in \{1, \ldots, n - (m - 1)\tau \}
 
-    where `m` is the `dimension` of the trajectories and :math:`\tau` is the
-    `time_delay`. The recurrence plot, denoted :math:`R`, is the
+    where :math:`m` is the ``dimension`` of the trajectories and :math:`\tau`
+    is the ``time_delay``. The recurrence plot, denoted :math:`R`, is the
     pairwise distance between the trajectories
 
     .. math::
@@ -70,11 +73,11 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
         \forall i,j \in \{1, \ldots, n - (m - 1)\tau \}
 
     where :math:`\Theta` is the Heaviside function and :math:`\varepsilon`
-    is the `threshold`.
+    is the ``threshold``.
 
     References
     ----------
-    .. [1] J.-P Eckmann and S. Oliffson Kamphorst and D Ruelle, "Recurrence
+    .. [1] J.-P Eckmann, S. Oliffson Kamphorst and D Ruelle, "Recurrence
            Plots of Dynamical Systems". Europhysics Letters (1987).
 
     Examples
@@ -90,11 +93,12 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
     """
 
     def __init__(self, dimension=1, time_delay=1,
-                 threshold=None, percentage=10):
+                 threshold=None, percentage=10, flatten=False):
         self.dimension = dimension
         self.time_delay = time_delay
         self.threshold = threshold
         self.percentage = percentage
+        self.flatten = flatten
 
     def fit(self, X=None, y=None):
         """Pass.
@@ -126,6 +130,8 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
             Recurrence plots. ``image_size`` is the number of
             trajectories and is equal to
             ``n_timestamps - (dimension - 1) * time_delay``.
+            If ``flatten=True``, the shape is
+            `(n_samples, image_size * image_size)`.
 
         """
         X = check_array(X)
@@ -154,6 +160,9 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
             X_rp = X_dist < percents[:, None, None]
         else:
             X_rp = X_dist < self.threshold
+
+        if self.flatten:
+            return X_rp.reshape(n_samples, -1).astype('float64')
         return X_rp.astype('float64')
 
     def _check_params(self, n_timestamps):
@@ -208,8 +217,9 @@ class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
                                (int, np.integer, float, np.floating))):
             raise TypeError("'threshold' must be either None, 'point', "
                             "'distance', a float or an integer.")
-        if ((isinstance(self.threshold, (int, np.integer, float, np.floating)))
-            and (self.threshold <= 0)):
+        threshold_number = isinstance(self.threshold,
+                                      (int, np.integer, float, np.floating))
+        if threshold_number and (self.threshold <= 0):
             raise ValueError("If 'threshold' is a float or an integer, "
                              "it must be greater than or equal to 0.")
 
