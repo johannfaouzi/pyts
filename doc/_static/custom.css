@@ -170,6 +170,23 @@ div.body dl.function dt[id^="pyts"] {
   margin-bottom: 15px;
 }
 
+div[id^="dtw-method"] table.docutils dl dt {
+  border-radius: 0px !important;
+  padding: 0px !important;
+  background-color: transparent !important;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+
+div[id^="dtw-method"] dl.function dt {
+  border-radius: 5px;
+  padding: 10px;
+  background-color: rgba(47, 47, 47, 0.08);
+  margin-top: 0px;
+  margin-bottom: 15px;
+}
+
 
 /* Properties for code blocks in Examples section of an object */
 
@@ -285,4 +302,21 @@ div.sphx-glr-download-link-note.admonition.note p.admonition-title {
   font-size: 18px;
   font-weight: 900;
   color: rgba(47, 79, 79, 1);
+}
+
+/* Properties for See also blocks */
+
+div.admonition.seealso {
+  background-color: rgba(226, 237, 33, 0.4);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+div.admonition.seealso p.first.admonition-title{
+  font-size: 14px;
+  font-weight: bold;
+}
+
+div.admonition.seealso code {
+  background-color: transparent;
 }
