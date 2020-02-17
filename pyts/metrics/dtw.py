@@ -412,6 +412,7 @@ def dtw_region(x=None, y=None, dist='square', region=None,
 
     .. deprecated:: 0.11
         This function is deprecated and will be removed in 0.12.
+        Use :func:`dtw` with ``method='region'`` instead.
 
     Parameters
     ----------
