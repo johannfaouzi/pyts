@@ -199,6 +199,14 @@ div[id^="dtw-method"] dl.function dt {
 }
 
 
+/* Properties for rubric in autodoc */
+
+p.rubric {
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+
 /* Properties for code blocks in Examples section of an object */
 
 dl pre {
@@ -216,7 +224,7 @@ div.highlight pre {
 /* Properties for tables */
 
 table.docutils.citation {
-  padding: 0px;
+  margin: 0px !important;
 }
 
 table.docutils col.field-name {

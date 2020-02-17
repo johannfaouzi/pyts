@@ -1,3 +1,5 @@
+:orphan:
+
 .. _metrics.dtw-classic:
 
 dtw(method='classic')

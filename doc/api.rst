@@ -144,6 +144,7 @@ Full API documentation of the *pyts* Python package.
   metrics.dtw_sakoechiba
   metrics.itakura_parallelogram
   metrics.sakoe_chiba_band
+  metrics.show_options
 
 
 :mod:`pyts.multivariate`: Multivariate time series tools

@@ -1,3 +1,5 @@
+:orphan:
+
 .. _metrics.dtw-sakoechiba:
 
 dtw(method='sakoechiba')

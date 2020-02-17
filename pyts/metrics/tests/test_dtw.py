@@ -14,7 +14,9 @@ from pyts.metrics.dtw import (
     _dtw_classic, _dtw_region, _dtw_sakoechiba, _dtw_itakura,
     _dtw_multiscale, _dtw_fast
 )
-from pyts.metrics import dtw, itakura_parallelogram, sakoe_chiba_band
+from pyts.metrics import (
+    dtw, itakura_parallelogram, sakoe_chiba_band, show_options
+)
 
 
 x = np.array([0, 1, 2])
@@ -669,3 +671,40 @@ def test_dtw_methods(method, dtw_func):
     value_specific = dtw_func(x, y)
     value_generic = dtw(x, y, method=method)
     assert value_specific == value_generic
+
+
+@pytest.mark.parametrize(
+    'params', [{'method': 'whoops'}, {'method': 'sakoe'}]
+)
+def test_parameter_check_show_options(params):
+    """Test parameter validation."""
+    err_msg = ("'method' must be either None, 'classic', 'sakoechiba', "
+               "'itakura', 'region', 'multiscale' or 'fast'.")
+    with pytest.raises(ValueError, match=re.escape(err_msg)):
+        show_options(**params)
+
+
+@pytest.mark.parametrize(
+    'params',
+    [{},
+     {'disp': False},
+     {'method': 'classic'},
+     {'method': 'classic', 'disp': False},
+     {'method': 'sakoechiba'},
+     {'method': 'sakoechiba', 'disp': False},
+     {'method': 'itakura'},
+     {'method': 'itakura', 'disp': False},
+     {'method': 'region'},
+     {'method': 'region', 'disp': False},
+     {'method': 'multiscale'},
+     {'method': 'multiscale', 'disp': False},
+     {'method': 'fast'},
+     {'method': 'fast', 'disp': False}]
+)
+def test_actual_results_show_options(params):
+    """Test that the actual results are the expected ones."""
+    res_actual = show_options(**params)
+    if ('disp' in params.keys()) and (not params['disp']):
+        assert isinstance(res_actual, str)
+    else:
+        assert res_actual is None

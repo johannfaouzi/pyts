@@ -134,11 +134,11 @@ corresponding words::
     >>> from pyts.transformation import BOSS
     >>> X_train, X_test, _, _ = load_gunpoint(return_X_y=True)
     >>> boss = BOSS(word_size=2, n_bins=2, sparse=False)
-    >>> boss.fit(X_train) # doctest: +ELLIPSIS
+    >>> boss.fit(X_train)
     BOSS(...)
     >>> sorted(boss.vocabulary_.values())
     ['aa', 'ab', 'ba', 'bb']
-    >>> boss.transform(X_test) # doctest: +ELLIPSIS
+    >>> boss.transform(X_test)
     array(...)
 
 Classification can be performed with any standard classifier. In the example
@@ -153,7 +153,7 @@ below, we use a k-nearest neighbors classifier with the
     >>> boss = BOSS(word_size=8, window_size=40, norm_mean=True, drop_sum=True, sparse=False)
     >>> knn = KNeighborsClassifier(metric='boss')
     >>> clf = make_pipeline(boss, knn)
-    >>> clf.fit(X_train, y_train) # doctest: +ELLIPSIS
+    >>> clf.fit(X_train, y_train)
     Pipeline(...)
     >>> clf.score(X_test, y_test)
     1.0

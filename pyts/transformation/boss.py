@@ -91,11 +91,11 @@ class BOSS(BaseEstimator, TransformerMixin):
     >>> from pyts.transformation import BOSS
     >>> X_train, X_test, _, _ = load_gunpoint(return_X_y=True)
     >>> boss = BOSS(word_size=2, n_bins=2, sparse=False)
-    >>> boss.fit(X_train) # doctest: +ELLIPSIS
+    >>> boss.fit(X_train)
     BOSS(...)
     >>> sorted(boss.vocabulary_.values())
     ['aa', 'ab', 'ba', 'bb']
-    >>> boss.transform(X_test) # doctest: +ELLIPSIS
+    >>> boss.transform(X_test)
     array(...)
 
     """

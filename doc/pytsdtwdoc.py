@@ -67,7 +67,7 @@ class PytsMetricsInterfaceDomain(PythonDomain):
 
 
 BLURB = """
-.. seealso:: For documentation for the rest of the parameters, see :func:`dtw`
+.. seealso:: For documentation for the rest of the parameters, see :func:`dtw`.
 """
 
 

@@ -27,7 +27,7 @@ a good baseline for time series classification::
     >>> from pyts.datasets import load_gunpoint
     >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
     >>> clf = KNeighborsClassifier(metric='dtw')
-    >>> clf.fit(X_train, y_train) # doctest: +ELLIPSIS
+    >>> clf.fit(X_train, y_train)
     KNeighborsClassifier(...)
     >>> clf.score(X_test, y_test)
     0.91...
@@ -63,7 +63,7 @@ is the class yielding the highest cosine similarity.
     >>> from pyts.datasets import load_gunpoint
     >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
     >>> clf = SAXVSM(window_size=34, sublinear_tf=False, use_idf=False)
-    >>> clf.fit(X_train, y_train) # doctest: +ELLIPSIS
+    >>> clf.fit(X_train, y_train)
     SAXVSM(...)
     >>> clf.score(X_test, y_test)
     0.76
@@ -96,7 +96,7 @@ the words are generated with the :ref:`approximation_sfa` algorithm.
     >>> from pyts.datasets import load_gunpoint
     >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
     >>> clf = BOSSVS(window_size=28)
-    >>> clf.fit(X_train, y_train) # doctest: +ELLIPSIS
+    >>> clf.fit(X_train, y_train)
     BOSSVS(...)
     >>> clf.score(X_test, y_test)
     0.98

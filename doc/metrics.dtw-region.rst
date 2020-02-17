@@ -1,3 +1,5 @@
+:orphan:
+
 .. _metrics.dtw-region:
 
 dtw(method='region')

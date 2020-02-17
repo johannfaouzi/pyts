@@ -1,3 +1,5 @@
+:orphan:
+
 .. _metrics.dtw-multiscale:
 
 dtw(method='multiscale')

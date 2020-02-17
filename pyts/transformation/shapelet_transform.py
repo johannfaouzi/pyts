@@ -258,7 +258,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
     ...      [1, 2, 2, 1, 0, 3, 5]]
     >>> y = [0, 0, 1, 1]
     >>> st = ShapeletTransform(n_shapelets=2, window_sizes=[3])
-    >>> st.fit(X, y) # doctest: +ELLIPSIS
+    >>> st.fit(X, y)
     ShapeletTransform(...)
     >>> len(st.shapelets_)
     2

@@ -1,3 +1,5 @@
+:orphan:
+
 .. _metrics.dtw-itakura:
 
 dtw(method='itakura')
