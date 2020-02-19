@@ -69,8 +69,8 @@ identical consecutive words. Removed words are almost transparent.
     >>> X = [['a', 'a', 'b', 'a', 'b', 'b', 'b', 'b', 'a'],
     ...      ['a', 'b', 'c', 'c', 'c', 'c', 'a', 'a', 'c']]
     >>> word = WordExtractor(window_size=2)
-    >>> print(bow.transform(X))
+    >>> print(word.transform(X))
     ['aa ab ba ab bb ba' 'ab bc cc ca aa ac']
     >>> word = WordExtractor(window_size=2, numerosity_reduction=False)
-    >>> print(bow.transform(X))
+    >>> print(word.transform(X))
     ['aa ab ba ab bb bb bb ba' 'ab bc cc cc cc ca aa ac']
