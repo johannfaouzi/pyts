@@ -40,6 +40,7 @@ Full API documentation of the *pyts* Python package.
   :template: class.rst
 
   bag_of_words.BagOfWords
+  bag_of_words.WordExtractor
 
 
 :mod:`pyts.classification`: Classification algorithms
