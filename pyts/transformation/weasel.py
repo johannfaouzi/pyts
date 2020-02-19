@@ -90,9 +90,9 @@ class WEASEL(BaseEstimator, TransformerMixin):
     >>> from pyts.transformation import WEASEL
     >>> X_train, _, y_train, _ = load_gunpoint(return_X_y=True)
     >>> weasel = WEASEL(sparse=False)
-    >>> weasel.fit(X_train, y_train) # doctest: +ELLIPSIS
+    >>> weasel.fit(X_train, y_train)
     WEASEL(...)
-    >>> weasel.transform(X_train) # doctest: +ELLIPSIS
+    >>> weasel.transform(X_train)
     array(...)
 
     """

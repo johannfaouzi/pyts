@@ -108,7 +108,7 @@ class SAXVSM(BaseEstimator, ClassifierMixin):
     >>> from pyts.datasets import load_gunpoint
     >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
     >>> clf = SAXVSM(window_size=64, word_size=12, n_bins=5, strategy='normal')
-    >>> clf.fit(X_train, y_train) # doctest: +ELLIPSIS
+    >>> clf.fit(X_train, y_train)
     SAXVSM(...)
     >>> clf.score(X_test, y_test)
     0.9933...

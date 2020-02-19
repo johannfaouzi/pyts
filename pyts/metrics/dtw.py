@@ -7,6 +7,7 @@ import numpy as np
 from math import ceil, log2, sqrt
 from numba import njit, prange
 from sklearn.utils import check_array
+from ..utils import deprecated
 
 
 @njit()
@@ -275,10 +276,50 @@ def _return_results(dtw_dist, cost_mat, acc_cost_mat,
         return res
 
 
+def _dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
+                 return_cost=False, return_accumulated=False,
+                 return_path=False):
+    """Classic Dynamic Time Warping (DTW) distance between two time series.
+
+    The classic version of DTW has no constraint region, allowing for possibly
+    very large time shifts. This can be an upside or a downside depending on
+    the application. If you do not want to allow large time shifts,
+    consider using another method with a constraint region.
+
+    Options
+    -------
+    This method has no options.
+
+    References
+    ----------
+    .. [1] H. Sakoe and S. Chiba, "Dynamic programming algorithm optimization
+           for spoken word recognition". IEEE Transactions on Acoustics,
+           Speech, and Signal Processing, 26(1), 43-49 (1978).
+
+    """
+    x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
+        _check_input_dtw(x, y, precomputed_cost, dist, method="classic")
+    cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=None)
+    acc_cost_mat = accumulated_cost_matrix(cost_mat, region=None)
+    dtw_dist = acc_cost_mat[-1, -1]
+    if dist == 'square':
+        dtw_dist = sqrt(dtw_dist)
+
+    res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
+                          return_cost, return_accumulated, return_path)
+    return res
+
+
+@deprecated("dtw_classic is deprecated in 0.11 and will be removed in 0.12. "
+            "Use dtw(method='classic') instead.")
 def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
                 return_cost=False, return_accumulated=False,
                 return_path=False):
     """Classic Dynamic Time Warping (DTW) distance between two time series.
+
+    .. deprecated:: 0.11
+        This function is deprecated and will be removed in 0.12.
+        Use :func:`dtw` with ``method='classic'`` instead.
 
     Parameters
     ----------
@@ -296,7 +337,7 @@ def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
         as input two numbers (two arguments) and returns a number.
 
     precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2) \
-            (default = None).
+            (default = None)
         Precomputed cost matrix between the time series.
         Ignored if ``dist != 'precomputed'``.
 
@@ -326,25 +367,33 @@ def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
 
-    References
-    ----------
-    .. [1] H. Sakoe and S. Chiba, “Dynamic programming algorithm optimization
-           for spoken word recognition”. IEEE Transactions on Acoustics,
-           Speech, and Signal Processing, 26(1), 43-49 (1978).
+    """
+    return _dtw_classic(x, y, dist, precomputed_cost, return_cost,
+                        return_accumulated, return_path)
 
-    Examples
-    --------
-    >>> from pyts.metrics import dtw_classic
-    >>> x = [0, 1, 1]
-    >>> y = [2, 0, 1]
-    >>> dtw_classic(x, y)
-    2.0
+
+def _dtw_region(x=None, y=None, dist='square', region=None,
+                precomputed_cost=None, return_cost=False,
+                return_accumulated=False, return_path=False):
+    """Dynamic Time Warping (DTW) distance with a constraint region.
+
+    This version of DTW allows users to provide their own constraint region.
+    If not provided, no constraint region is used, which is exactly the
+    classic DTW.
+
+    Options
+    -------
+    region : None or array-like, shape = (2, n_timestamps_1) (default = None)
+        Constraint region. If None, no constraint region is used. Otherwise,
+        the first row consists of the starting indices (included) and the
+        second row consists of the ending indices (excluded) of the valid rows
+        for each column.
 
     """
     x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
-        _check_input_dtw(x, y, precomputed_cost, dist, method="classic")
-    cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=None)
-    acc_cost_mat = accumulated_cost_matrix(cost_mat, region=None)
+        _check_input_dtw(x, y, precomputed_cost, dist, method="region")
+    cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
+    acc_cost_mat = accumulated_cost_matrix(cost_mat, region)
     dtw_dist = acc_cost_mat[-1, -1]
     if dist == 'square':
         dtw_dist = sqrt(dtw_dist)
@@ -354,10 +403,16 @@ def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
     return res
 
 
+@deprecated("dtw_region is deprecated in 0.11 and will be removed in 0.12. "
+            "Use dtw(method='region') instead.")
 def dtw_region(x=None, y=None, dist='square', region=None,
                precomputed_cost=None, return_cost=False,
                return_accumulated=False, return_path=False):
     """Dynamic Time Warping (DTW) distance with a constraint region.
+
+    .. deprecated:: 0.11
+        This function is deprecated and will be removed in 0.12.
+        Use :func:`dtw` with ``method='region'`` instead.
 
     Parameters
     ----------
@@ -374,14 +429,14 @@ def dtw_region(x=None, y=None, dist='square', region=None,
         it must be a function with a numba.njit() decorator that takes
         as input two numbers (two arguments) and returns a number.
 
-     region : None or array-like, shape = (2, n_timestamps_1)
-         Constraint region. If None, no constraint region is used. Otherwise,
-         the first row consists of the starting indices (included) and the
-         second row consists of the ending indices (excluded) of the valid rows
-         for each column.
+    region : None or array-like, shape = (2, n_timestamps_1)
+        Constraint region. If None, no constraint region is used. Otherwise,
+        the first row consists of the starting indices (included) and the
+        second row consists of the ending indices (excluded) of the valid rows
+        for each column.
 
     precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2) \
-            (default = None).
+            (default = None)
         Precomputed cost matrix between the time series.
         Ignored if ``dist != 'precomputed'``.
 
@@ -411,27 +466,9 @@ def dtw_region(x=None, y=None, dist='square', region=None,
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
 
-    Examples
-    --------
-    >>> from pyts.metrics import dtw_region
-    >>> x = [0, 1, 1]
-    >>> y = [2, 0, 1]
-    >>> region = [[0, 1, 1], [2, 2, 3]]
-    >>> dtw_region(x, y, region=region)
-    2.23...
-
     """
-    x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
-        _check_input_dtw(x, y, precomputed_cost, dist, method="region")
-    cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
-    acc_cost_mat = accumulated_cost_matrix(cost_mat, region)
-    dtw_dist = acc_cost_mat[-1, -1]
-    if dist == 'square':
-        dtw_dist = sqrt(dtw_dist)
-
-    res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
-                          return_cost, return_accumulated, return_path)
-    return res
+    return _dtw_region(x, y, dist, region, precomputed_cost, return_cost,
+                       return_accumulated, return_path)
 
 
 def _check_sakoe_chiba_params(n_timestamps_1, n_timestamps_2, window_size):
@@ -537,10 +574,59 @@ def sakoe_chiba_band(n_timestamps_1, n_timestamps_2=None, window_size=0.1):
     return region
 
 
+def _dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
+                    precomputed_cost=None, return_cost=False,
+                    return_accumulated=False, return_path=False):
+    """Dynamic Time Warping (DTW) distance with Sakoe-Chiba band constraint.
+
+    The Sakoe-Chiba constraint region is a band centered around the main
+    diagonal. Any cell whose distance to the diagonale is lower than a
+    given value is valid for the path.
+
+    Options
+    -------
+    window_size : float or int (default = 0.1)
+        The window size above and below the diagonal.
+        If float, `window_size` must be between 0 and
+        1, and the actual window size will be computed as
+        ``ceil(window_size * max((n_timestamps_1, n_timestamps_2) - 1))``.
+        If int, `window_size` must be the largest temporal shift allowed.
+        Each cell whose distance with the diagonal is lower than or equal to
+        `window_size` becomes a valid cell for the path.
+
+    References
+    ----------
+    .. [1] H. Sakoe and S. Chiba, "Dynamic programming algorithm optimization
+           for spoken word recognition". IEEE Transactions on Acoustics,
+           Speech, and Signal Processing, 26(1), 43-49 (1978).
+
+
+    """
+    x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
+        _check_input_dtw(x, y, precomputed_cost, dist, method="sakoechiba")
+    region = sakoe_chiba_band(n_timestamps_1, n_timestamps_2, window_size)
+    cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
+
+    acc_cost_mat = accumulated_cost_matrix(cost_mat, region)
+    dtw_dist = acc_cost_mat[-1, -1]
+    if dist == 'square':
+        dtw_dist = sqrt(dtw_dist)
+
+    res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
+                          return_cost, return_accumulated, return_path)
+    return res
+
+
+@deprecated("dtw_sakoechiba is deprecated in 0.11 and will be removed in "
+            "0.12. Use dtw(method='sakoechiba') instead.")
 def dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
                    precomputed_cost=None, return_cost=False,
                    return_accumulated=False, return_path=False):
     """Dynamic Time Warping (DTW) distance with Sakoe-Chiba band constraint.
+
+    .. deprecated:: 0.11
+        This function is deprecated and will be removed in 0.12.
+        Use :func:`dtw` with ``method='sakoechiba'`` instead.
 
     Parameters
     ----------
@@ -567,7 +653,7 @@ def dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
         'window_size' becomes a valid cell for the path.
 
     precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2) \
-            (default = None).
+            (default = None)
         Precomputed cost matrix between the time series.
         Ignored if ``dist != 'precomputed'``.
 
@@ -597,34 +683,9 @@ def dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
 
-    References
-    ----------
-    .. [1] H. Sakoe and S. Chiba, “Dynamic programming algorithm optimization
-           for spoken word recognition”. IEEE Transactions on Acoustics,
-           Speech, and Signal Processing, 26(1), 43-49 (1978).
-
-    Examples
-    --------
-    >>> from pyts.metrics import dtw_sakoechiba
-    >>> x = [0, 1, 1]
-    >>> y = [2, 0, 1]
-    >>> dtw_sakoechiba(x, y, window_size=1)
-    2.0
-
     """
-    x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
-        _check_input_dtw(x, y, precomputed_cost, dist, method="sakoechiba")
-    region = sakoe_chiba_band(n_timestamps_1, n_timestamps_2, window_size)
-    cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
-
-    acc_cost_mat = accumulated_cost_matrix(cost_mat, region)
-    dtw_dist = acc_cost_mat[-1, -1]
-    if dist == 'square':
-        dtw_dist = sqrt(dtw_dist)
-
-    res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
-                          return_cost, return_accumulated, return_path)
-    return res
+    return _dtw_sakoechiba(x, y, dist, window_size, precomputed_cost,
+                           return_cost, return_accumulated, return_path)
 
 
 def _get_itakura_slopes(n_timestamps_1, n_timestamps_2, max_slope):
@@ -678,9 +739,9 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
 
     References
     ----------
-    .. [1] F. Itakura, “Minimum prediction residual principle applied to speech
-           recognition”. IEEE Transactions on Acoustics, Speech, and Signal
-           Processing, 23(1), 67–72 (1975).
+    .. [1] F. Itakura, "Minimum prediction residual principle applied to
+           speech recognition". IEEE Transactions on Acoustics,
+           Speech, and Signal Processing, 23(1), 67–72 (1975).
 
     Examples
     --------
@@ -731,10 +792,52 @@ def itakura_parallelogram(n_timestamps_1, n_timestamps_2=None, max_slope=2.):
     return region
 
 
+def _dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
+                 precomputed_cost=None, return_cost=False,
+                 return_accumulated=False, return_path=False):
+    """Dynamic Time Warping distance with Itakura parallelogram constraint.
+
+    The Itakura constraint region is a parallelogram. Contrary to the
+    Sakoe-Chiba band, whose width is constant, the Itakura parallelogram
+    has a varying width, allowing for larger time shifts in the middle than
+    at the first and last time points.
+
+    Options
+    -------
+    max_slope : float (default = 2.)
+        Maximum slope of the parallelogram.
+
+    References
+    ----------
+    .. [1] F. Itakura, "Minimum prediction residual principle applied to
+           speech recognition". IEEE Transactions on Acoustics,
+           Speech, and Signal Processing, 23(1), 67–72 (1975).
+
+    """
+    x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
+        _check_input_dtw(x, y, precomputed_cost, dist, method="itakura")
+    region = itakura_parallelogram(n_timestamps_1, n_timestamps_2, max_slope)
+    cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
+    acc_cost_mat = accumulated_cost_matrix(cost_mat, region)
+    dtw_dist = acc_cost_mat[-1, -1]
+    if dist == 'square':
+        dtw_dist = sqrt(dtw_dist)
+
+    res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
+                          return_cost, return_accumulated, return_path)
+    return res
+
+
+@deprecated("dtw_itakura is deprecated in 0.11 and will be removed in 0.12. "
+            "Use dtw(method='itakura') instead.")
 def dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
                 precomputed_cost=None, return_cost=False,
                 return_accumulated=False, return_path=False):
     """Dynamic Time Warping distance with Itakura parallelogram constraint.
+
+    .. deprecated:: 0.11
+        This function is deprecated and will be removed in 0.12.
+        Use :func:`dtw` with ``method='itakura'`` instead.
 
     Parameters
     ----------
@@ -755,7 +858,7 @@ def dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
         Maximum slope for the parallelogram.
 
     precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2) \
-            (default = None).
+            (default = None)
         Precomputed cost matrix between the time series.
         Ignored if ``dist != 'precomputed'``.
 
@@ -785,33 +888,9 @@ def dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
 
-    References
-    ----------
-    .. [1] F. Itakura, “Minimum prediction residual principle applied to speech
-           recognition”. IEEE Transactions on Acoustics, Speech, and Signal
-           Processing, 23(1), 67–72 (1975).
-
-    Examples
-    --------
-    >>> from pyts.metrics import dtw_itakura
-    >>> x = [0, 1, 1]
-    >>> y = [2, 0, 1]
-    >>> dtw_itakura(x, y, max_slope=1.5)
-    2.23...
-
     """
-    x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
-        _check_input_dtw(x, y, precomputed_cost, dist, method="itakura")
-    region = itakura_parallelogram(n_timestamps_1, n_timestamps_2, max_slope)
-    cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
-    acc_cost_mat = accumulated_cost_matrix(cost_mat, region)
-    dtw_dist = acc_cost_mat[-1, -1]
-    if dist == 'square':
-        dtw_dist = sqrt(dtw_dist)
-
-    res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
-                          return_cost, return_accumulated, return_path)
-    return res
+    return _dtw_itakura(x, y, dist, max_slope, precomputed_cost, return_cost,
+                        return_accumulated, return_path)
 
 
 def _blurred_path_region(n_timestamps_1, n_timestamps_2, resolution_level,
@@ -958,10 +1037,62 @@ def _compute_region(n_timestamps_1, n_timestamps_2, method, dist,
     return region
 
 
+def _dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
+                    return_cost=False, return_accumulated=False,
+                    return_path=False):
+    """Multiscale Dynamic Time Warping (DTW) distance.
+
+    This version of DTW builds an adaptive constraint region. First both time
+    series are downsampled, with the sizes of the original times series being
+    divided by ``resolution``. Then the optimal path between the two
+    downsampled time series is computed. Finally this optimal path is
+    projected on the orginal scale and used as the constraint region.
+
+    Options
+    -------
+    resolution : int (default = 2)
+        The resolution level.
+
+    radius : int (default = 0)
+        The radius used to expand the constraint region. The optimal path
+        computed at the resolution level is expanded with `radius` cells to the
+        top, bottom, left and right of every cell belonging to the optimal
+        path. It is computed at the resolution level.
+
+    References
+    ----------
+    .. [1] M. Müller, H. Mattes and F. Kurth, "An efficient multiscale approach
+           to audio synchronization". International Conference on Music
+           Information Retrieval, 6(1), 192-197 (2006).
+
+    """
+    x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
+        _check_input_dtw(x, y, precomputed_cost=None, dist=dist,
+                         method="multiscale")
+
+    region = _multiscale_region(x, y, dist, resolution=resolution,
+                                radius=radius)
+    cost_mat = cost_matrix(x, y, dist=dist, region=region)
+    acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
+    dtw_dist = acc_cost_mat[-1, -1]
+    if dist == 'square':
+        dtw_dist = sqrt(dtw_dist)
+
+    res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
+                          return_cost, return_accumulated, return_path)
+    return res
+
+
+@deprecated("dtw_multiscale is deprecated in 0.11 and will be removed in "
+            "0.12. Use dtw(method='multiscale') instead.")
 def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
                    return_cost=False, return_accumulated=False,
                    return_path=False):
     """Multiscale Dynamic Time Warping distance.
+
+    .. deprecated:: 0.11
+        This function is deprecated and will be removed in 0.12.
+        Use :func:`dtw` with ``method='multiscale'`` instead.
 
     Parameters
     ----------
@@ -1012,27 +1143,38 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
 
+    """
+    return _dtw_multiscale(x, y, dist, resolution, radius, return_cost,
+                           return_accumulated, return_path)
+
+
+def _dtw_fast(x, y, dist='square', radius=0, return_cost=False,
+              return_accumulated=False, return_path=False):
+    """Fast Dynamic Time Warping distance.
+
+    This version of DTW builds an adaptive constraint region. The constraint
+    region is created recursively by downsampling the time series, computing
+    the optimal path and projecting it to a higher resolution. This process
+    is repeated until the resolution matches the original resolution.
+
+    Options
+    -------
+    radius : int (default = 0)
+        The radius used to expand the constraint region. The optimal path
+        computed at the resolution level is expanded with `radius` cells to the
+        top, bottom, left and right of every cell belonging to the optimal
+        path. It is computed at the resolution level.
+
     References
     ----------
-    .. [1] M. Müller, H. Mattes and F. Kurth, “An efficient multiscale approach
-           to audio synchronization”. International Conference on Music
-           Information Retrieval, 6(1), 192-197 (2006).
-
-    Examples
-    --------
-    >>> from pyts.metrics import dtw_multiscale
-    >>> x = [0, 1, 1]
-    >>> y = [2, 0, 1]
-    >>> dtw_multiscale(x, y, resolution=2)
-    2.23...
+    .. [1] S. Salvador ans P. Chan, "FastDTW: Toward Accurate Dynamic Time
+           Warping in Linear Time and Space". KDD Workshop on Mining Temporal
+           and Sequential Data, 70–80 (2004).
 
     """
     x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
-        _check_input_dtw(x, y, precomputed_cost=None, dist=dist,
-                         method="multiscale")
-
-    region = _multiscale_region(x, y, dist, resolution=resolution,
-                                radius=radius)
+        _check_input_dtw(x, y, precomputed_cost=None, dist=dist, method="fast")
+    region = _fast_region(x, y, dist, radius=radius)
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
     dtw_dist = acc_cost_mat[-1, -1]
@@ -1044,9 +1186,15 @@ def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
     return res
 
 
+@deprecated("dtw_fast is deprecated in 0.11 and will be removed in 0.12. "
+            "Use dtw(method='fast') instead.")
 def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
              return_accumulated=False, return_path=False):
     """Fast Dynamic Time Warping distance.
+
+    .. deprecated:: 0.11
+        This function is deprecated and will be removed in 0.12.
+        Use :func:`dtw` with ``method='fast'`` instead.
 
     Parameters
     ----------
@@ -1095,33 +1243,9 @@ def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
 
-    References
-    ----------
-    .. [1] S. Salvador ans P. Chan, “FastDTW: Toward Accurate Dynamic Time
-           Warping in Linear Time and Space”. KDD Workshop on Mining Temporal
-           and Sequential Data, 70–80 (2004).
-
-    Examples
-    --------
-    >>> from pyts.metrics import dtw_fast
-    >>> x = [0, 1, 1]
-    >>> y = [2, 0, 1]
-    >>> dtw_multiscale(x, y, resolution=2, radius=1)
-    2.0
-
     """
-    x, y, precomputed_cost, n_timestamps_1, n_timestamps_2 = \
-        _check_input_dtw(x, y, precomputed_cost=None, dist=dist, method="fast")
-    region = _fast_region(x, y, dist, radius=radius)
-    cost_mat = cost_matrix(x, y, dist=dist, region=region)
-    acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
-    dtw_dist = acc_cost_mat[-1, -1]
-    if dist == 'square':
-        dtw_dist = sqrt(dtw_dist)
-
-    res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
-                          return_cost, return_accumulated, return_path)
-    return res
+    return _dtw_fast(x, y, dist, radius, return_cost, return_accumulated,
+                     return_path)
 
 
 def dtw(x=None, y=None, dist='square', method='classic', options=None,
@@ -1146,28 +1270,30 @@ def dtw(x=None, y=None, dist='square', method='classic', options=None,
         ``method`` must be 'classic', 'sakoechiba' or 'itakura'.
 
     method : str (default = 'classic')
-        Method used.  Should be one of
+        Method used. Should be one of
 
-            - 'classic': Classic DTW
-            - 'sakoechiba': DTW with Sakoe-Chiba band constraint
-            - 'itakura': DTW with Itakura parallelogram constraint
-            - 'multiscale': MultiscaleDTW
-            - 'fast': FastDTW
+            - 'classic': :ref:`(see here) <metrics.dtw-classic>`
+            - 'sakoechiba': :ref:`(see here) <metrics.dtw-sakoechiba>`
+            - 'itakura': :ref:`(see here) <metrics.dtw-itakura>`
+            - 'region': :ref:`(see here) <metrics.dtw-region>`
+            - 'multiscale': :ref:`(see here) <metrics.dtw-multiscale>`
+            - 'fast': :ref:`(see here) <metrics.dtw-fast>`
 
     options : None or dict (default = None)
-        Dictionary of method options
+        Dictionary of method options. Here is a quick summary of the available
+        options for each method:
 
             - 'classic': None
             - 'sakoechiba': window_size (int or float)
             - 'itakura': max_slope (float)
+            - 'region' : region (array-like)
             - 'multiscale': resolution (int) and radius (int)
             - 'fast': radius (int)
 
-        For more information on these parameters, see the `Other Parameters`
-        section.
+        For more information on these options, see :func:`show_options()`.
 
     precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2) \
-            (default = None).
+            (default = None)
         Precomputed cost matrix between the time series.
         Ignored if ``dist != 'precomputed'``.
 
@@ -1197,28 +1323,53 @@ def dtw(x=None, y=None, dist='square', method='classic', options=None,
         consists of the indices of the optimal path for y. Only returned
         if ``return_path=True``.
 
-    Other Parameters
-    ----------------
-    window_size : float or int (default = 0.1)
-        The window size above and below the diagonale.
-        If float, `window_size must be between 0 and
-        1, and the actual window size will be computed as
-        ``ceil(window_size * max((n_timestamps_1, n_timestamps_2) - 1))``.
-        If int, `window_size` must be the largest temporal shift allowed.
-        Each cell whose distance with the diagonale is lower than or equal to
-        'window_size' becomes a valid cell for the path.
+    Notes
+    -----
+    This section describes the available versions of Dynamic Time Warping (DTW)
+    that can be selected by the `method` parameter.
 
-    max_slope : float (default = 2.)
-        Maximum slope for the parallelogram.
+    **Unconstrained path**
 
-    resolution : int (default = 2)
-        The resolution level.
+    Method :ref:`'classic'<metrics.dtw-classic>` computes the original DTW
+    score between two time series with no constraint region: each cell is a
+    valid cell to find the optimal path minimizing the total cost.
 
-    radius : int (default = 0)
-        The radius used to expand the constraint region. The optimal path
-        computed at the resolution level is expanded with `radius` cells to the
-        top, bottom, left and right of every cell belonging to the optimal
-        path. It is computed at the resolution level.
+    **Global constraint region**
+
+    Using no constraint region allows for very large distortion between both
+    time series, which may be ill-suited for some cases. One possible solution
+    to this issue is to use a global constraint region for the optimal path.
+    A cell can be part of the optimal path if and only if this cell is in the
+    constraint region. Another advantage of using a global constraint region is
+    to decrease the computational complexity to find the optimal path.
+
+    Method :ref:`'sakoechiba'<metrics.dtw-sakoechiba>` uses a band as the
+    constraint region, allowing for a maximum fixed time shift at every time
+    point.
+
+    Method :ref:`'itakura'<metrics.dtw-itakura>` uses a parallelogram as
+    the constraint region, allowing for time shifts of varying length: small
+    time shifts at the beginning and at the end of the time series, larger
+    time shifts in the middle.
+
+    **Adaptative constraint region**
+
+    One drawback of global constraint regions is that they do not depend on
+    the time series and might be ill-suited for some time series. Adaptative
+    constraint regions are regions that are specific to the two provided
+    time series. However, their computational complexities are larger that
+    the ones of global regions.
+
+    Method :ref:`'multiscale'<metrics.dtw-multiscale>` downsamples both time
+    series by a given factor, computes the optimal path with no constraint
+    region for the downsampled time series, and projects the optimal path on
+    the original scale to define the constraint region.
+
+    Method :ref:`'fast'<metrics.dtw-fast>` can be seen as a recursive version
+    of 'multiscale': the time series are downsampled so that the new time
+    series are very small, the optimal path for these time series is computed
+    and is projected at the scale that is two times larger. This process is
+    repeated until the original scale of the time series is reached.
 
     References
     ----------
@@ -1265,7 +1416,8 @@ def dtw(x=None, y=None, dist='square', method='classic', options=None,
 
 
 def show_options(method=None, disp=True):
-    """Show documentation for additional options of DTW methods.
+    """Show documentation for additional options of Dynamic Time Warping
+    methods.
 
     These are method-specific options that can be supplied through the
     ``options`` dict.
@@ -1273,46 +1425,70 @@ def show_options(method=None, disp=True):
     Parameters
     ----------
     method : None or str (default = None)
-        If None, shows all methods of the specified solver. Otherwise,
-        show only the options for the specified method. If str, it must be
-        either 'classic', 'sakoechiba', 'itakura', 'multiscale' or 'fast'.
+        If None, shows all methods. Otherwise, shows only the options for the
+        specified method. If str, it must be either 'classic', 'sakoechiba',
+        'itakura', 'region', 'multiscale' or 'fast'.
 
     disp : bool (default = True)
         Whether to print the result rather than returning it.
 
     Returns
     -------
-    text
-        Either None (for disp=True) or the text string (disp=False).
+    text : None or str
+        Either None (if ``disp=True``) or the text string (if ``disp=False``).
+
+    Notes
+    -----
+    The available methods are:
+
+    - :ref:`'classic' <metrics.dtw-classic>`
+    - :ref:`'sakoechiba' <metrics.dtw-sakoechiba>`
+    - :ref:`'itakura' <metrics.dtw-itakura>`
+    - :ref:`'region' <metrics.dtw-region>`
+    - :ref:`'multiscale' <metrics.dtw-multiscale>`
+    - :ref:`'fast' <metrics.dtw-fast>`
 
     """
     import textwrap
 
-    text = """\n\n"""
+    def get_options(string):
+        start = '    Options'
+        end = '    References'
+        str_lines = string.splitlines()
+        start_idx = str_lines.index(start)
+        end_idx = str_lines.index(end)
+        doc = textwrap.dedent('\n'.join(str_lines[:start_idx])) + '\n'
+        doc += textwrap.dedent('\n'.join(str_lines[start_idx:end_idx])) + '\n'
+        return doc
+
+    text = """\n"""
     if method is None:
-        text += "classic\n=======\n\n" + dtw_classic.__doc__ + "\n"
-        text += "sakoechiba\n==========\n\n" + dtw_sakoechiba.__doc__ + "\n"
-        text += "itakura\n=======\n\n" + dtw_itakura.__doc__ + "\n"
-        text += "multiscale\n==========\n\n" + dtw_multiscale.__doc__ + "\n"
-        text += "fast\n====\n\n" + dtw_fast.__doc__ + "\n"
+        methods = ('classic', 'sakoechiba', 'itakura', 'region',
+                   'multiscale', 'fast')
+        for met in methods:
+            text += show_options(met, disp=False)
     elif method == 'classic':
-        doc = textwrap.dedent(dtw_classic.__doc__).strip()
-        text += doc
+        text += "classic\n=======\n\n"
+        text += get_options(_dtw_classic.__doc__)
     elif method == 'sakoechiba':
-        doc = textwrap.dedent(dtw_sakoechiba.__doc__).strip()
-        text += doc
+        text += "sakoechiba\n==========\n\n"
+        text += get_options(_dtw_sakoechiba.__doc__)
     elif method == 'itakura':
-        doc = textwrap.dedent(dtw_itakura.__doc__).strip()
-        text += doc
+        text += "itakura\n=======\n\n"
+        text += get_options(_dtw_itakura.__doc__)
+    elif method == 'region':
+        text += "region\n=======\n\n"
+        text += get_options(_dtw_itakura.__doc__)
     elif method == 'multiscale':
-        doc = textwrap.dedent(dtw_multiscale.__doc__).strip()
-        text += doc
+        text += "multiscale\n==========\n\n"
+        text += get_options(_dtw_multiscale.__doc__)
     elif method == 'fast':
-        doc = textwrap.dedent(dtw_fast.__doc__).strip()
-        text += doc
+        text += "fast\n====\n\n"
+        text += get_options(_dtw_fast.__doc__)
     else:
         raise ValueError("'method' must be either None, 'classic', "
-                         "'sakoechiba', 'itakura', 'multiscale' or 'fast'.")
+                         "'sakoechiba', 'itakura', 'region', 'multiscale' "
+                         "or 'fast'.")
     if disp:
         print(text)
         return

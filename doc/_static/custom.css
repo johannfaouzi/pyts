@@ -10,6 +10,34 @@ div.topic ul{
   margin-top: -10px;
 }
 
+
+/* Properties for API changes */
+
+.deprecated {
+  color: rgba(190, 0, 0, 1);
+  background-color: rgba(255, 0, 0, 0.2);
+  border: 1px solid;
+  border-color: rgba(255, 0, 0, 1);
+  padding: 8px 8px 0px 8px;
+  border-radius: 5px;
+  margin-bottom: 8px;
+}
+
+.deprecated p span.versionmodified {
+    font-weight: bold;
+}
+
+.deprecated p a code {
+  background-color: transparent;
+  border-bottom: none;
+}
+
+.deprecated span.pre {
+  background-color: transparent;
+  border-bottom: none;
+}
+
+
 /* Properties for hyperlinks */
 
 a.reference {
@@ -153,6 +181,31 @@ div.body dl.function dt[id^="pyts"] {
   margin-bottom: 15px;
 }
 
+div[id^="dtw-method"] table.docutils dl dt {
+  border-radius: 0px !important;
+  padding: 0px !important;
+  background-color: transparent !important;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+
+div[id^="dtw-method"] dl.function dt {
+  border-radius: 5px;
+  padding: 10px;
+  background-color: rgba(47, 47, 47, 0.08);
+  margin-top: 0px;
+  margin-bottom: 15px;
+}
+
+
+/* Properties for rubric in autodoc */
+
+p.rubric {
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
 
 /* Properties for code blocks in Examples section of an object */
 
@@ -169,6 +222,10 @@ div.highlight pre {
 
 
 /* Properties for tables */
+
+table.docutils.citation {
+  margin: 0px !important;
+}
 
 table.docutils col.field-name {
   background-color: rgba(47, 79, 79, 0.1);
@@ -264,4 +321,21 @@ div.sphx-glr-download-link-note.admonition.note p.admonition-title {
   font-size: 18px;
   font-weight: 900;
   color: rgba(47, 79, 79, 1);
+}
+
+/* Properties for See also blocks */
+
+div.admonition.seealso {
+  background-color: rgba(226, 237, 33, 0.4);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+div.admonition.seealso p.first.admonition-title{
+  font-size: 14px;
+  font-weight: bold;
+}
+
+div.admonition.seealso code {
+  background-color: transparent;
 }

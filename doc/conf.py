@@ -30,6 +30,8 @@ import sphinx_gallery
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
@@ -37,6 +39,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
     'numpydoc',
+    'pytsdtwdoc',
     'sphinx_gallery.gen_gallery',
 ]
 

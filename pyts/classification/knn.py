@@ -7,8 +7,9 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.neighbors import KNeighborsClassifier as SklearnKNN
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils.validation import check_X_y, check_is_fitted
-from ..metrics import (boss, dtw, dtw_classic, dtw_region, dtw_fast,
-                       dtw_multiscale, sakoe_chiba_band, itakura_parallelogram)
+from ..metrics import boss, dtw, sakoe_chiba_band, itakura_parallelogram
+from ..metrics.dtw import (_dtw_classic, _dtw_region, _dtw_fast,
+                           _dtw_multiscale)
 
 
 class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
@@ -49,9 +50,10 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
         The distance metric to use for the tree.  The default metric is
         minkowski, and with p=2 is equivalent to the standard Euclidean
         metric. See the documentation of the DistanceMetric class from
-        scikit-learn for a list of available metrics. For Dynamic Time
-        Warping, the available metrics are 'dtw', 'dtw_sakoechiba',
-        'dtw_itakura', 'dtw_multiscale', 'dtw_fast' and 'boss'.
+        scikit-learn for a list of available metrics.
+        For Dynamic Time Warping, the available metrics are 'dtw',
+        'dtw_sakoechiba', 'dtw_itakura', 'dtw_multiscale' and 'dtw_fast'.
+        For BOSS metric, one can use 'boss'.
 
     p : integer, optional (default = 2)
         Power parameter for the Minkowski metric. When p = 1, this is
@@ -77,7 +79,7 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
     >>> from pyts.datasets import load_gunpoint
     >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
     >>> clf = KNeighborsClassifier()
-    >>> clf.fit(X_train, y_train) # doctest: +ELLIPSIS
+    >>> clf.fit(X_train, y_train)
     KNeighborsClassifier(...)
     >>> clf.score(X_test, y_test)
     0.91...
@@ -128,7 +130,7 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
         elif self.metric == 'dtw_classic':
             self._clf = SklearnKNN(
                 n_neighbors=self.n_neighbors, weights=self.weights,
-                algorithm='brute', metric=dtw_classic,
+                algorithm='brute', metric=_dtw_classic,
                 metric_params=self.metric_params,
                 n_jobs=self.n_jobs, **self.kwargs
             )
@@ -146,7 +148,7 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
                                           window_size=window_size)
             self._clf = SklearnKNN(
                 n_neighbors=self.n_neighbors, weights=self.weights,
-                algorithm='brute', metric=dtw_region,
+                algorithm='brute', metric=_dtw_region,
                 metric_params={'region': region},
                 n_jobs=self.n_jobs, **self.kwargs
             )
@@ -164,7 +166,7 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
                                                max_slope=max_slope)
             self._clf = SklearnKNN(
                 n_neighbors=self.n_neighbors, weights=self.weights,
-                algorithm='brute', metric=dtw_region,
+                algorithm='brute', metric=_dtw_region,
                 metric_params={'region': region},
                 n_jobs=self.n_jobs, **self.kwargs
             )
@@ -172,7 +174,7 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
         elif self.metric == 'dtw_multiscale':
             self._clf = SklearnKNN(
                 n_neighbors=self.n_neighbors, weights=self.weights,
-                algorithm='brute', metric=dtw_multiscale,
+                algorithm='brute', metric=_dtw_multiscale,
                 metric_params=self.metric_params,
                 n_jobs=self.n_jobs, **self.kwargs
             )
@@ -180,7 +182,7 @@ class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
         elif self.metric == 'dtw_fast':
             self._clf = SklearnKNN(
                 n_neighbors=self.n_neighbors, weights=self.weights,
-                algorithm='brute', metric=dtw_fast,
+                algorithm='brute', metric=_dtw_fast,
                 metric_params=self.metric_params,
                 n_jobs=self.n_jobs, **self.kwargs
             )

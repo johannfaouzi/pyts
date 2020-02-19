@@ -28,7 +28,7 @@ performed at prediction time.
     >>> from pyts.multivariate.classification import MultivariateClassifier
     >>> X_train, X_test, y_train, y_test = load_basic_motions(return_X_y=True)
     >>> clf = MultivariateClassifier(BOSSVS())
-    >>> clf.fit(X_train, y_train) # doctest: +ELLIPSIS
+    >>> clf.fit(X_train, y_train)
     MultivariateClassifier(...)
     >>> clf.score(X_test, y_test)
     1.0

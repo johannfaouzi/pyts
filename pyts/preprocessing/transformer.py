@@ -148,7 +148,7 @@ class QuantileTransformer(BaseEstimator, TransformerMixin):
     >>> from pyts.preprocessing import QuantileTransformer
     >>> X, _, _, _  = load_gunpoint(return_X_y=True)
     >>> qt = QuantileTransformer(n_quantiles=10)
-    >>> qt.transform(X) # doctest: +ELLIPSIS
+    >>> qt.transform(X)
     array([...])
 
     """
