@@ -282,13 +282,13 @@ def _dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
     """Classic Dynamic Time Warping (DTW) distance between two time series.
 
     The classic version of DTW has no constraint region, allowing for possibly
-    very large time shifts. This can be an upside or an downside depending on
+    very large time shifts. This can be an upside or a downside depending on
     the application. If you do not want to allow large time shifts,
     consider using another method with a constraint region.
 
     Options
     -------
-    This method has no option.
+    This method has no options.
 
     References
     ----------
@@ -580,18 +580,18 @@ def _dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
     """Dynamic Time Warping (DTW) distance with Sakoe-Chiba band constraint.
 
     The Sakoe-Chiba constraint region is a band centered around the main
-    diagonale. Any cell whose distance to the diagonale is lower than a
-    given value is a valid for the path.
+    diagonal. Any cell whose distance to the diagonale is lower than a
+    given value is valid for the path.
 
     Options
     -------
     window_size : float or int (default = 0.1)
-        The window size above and below the diagonale.
+        The window size above and below the diagonal.
         If float, `window_size` must be between 0 and
         1, and the actual window size will be computed as
         ``ceil(window_size * max((n_timestamps_1, n_timestamps_2) - 1))``.
         If int, `window_size` must be the largest temporal shift allowed.
-        Each cell whose distance with the diagonale is lower than or equal to
+        Each cell whose distance with the diagonal is lower than or equal to
         `window_size` becomes a valid cell for the path.
 
     References
@@ -805,7 +805,7 @@ def _dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
     Options
     -------
     max_slope : float (default = 2.)
-        Maximum slope for the parallelogram.
+        Maximum slope of the parallelogram.
 
     References
     ----------
