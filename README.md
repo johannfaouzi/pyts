@@ -67,7 +67,7 @@ for a history of notable changes to pyts.
 
 The development of this package is in line with the one of the scikit-learn
 community. Fore more information about our contributing guidelines, please
-refer to the [documentation](https://pyts.readthedocs.io/en/latest/contribute.html).
+refer to the [documentation](https://pyts.readthedocs.io/en/stable/contribute.html).
 
 ### Documentation
 
