@@ -15,10 +15,10 @@ URL = 'https://github.com/johannfaouzi/pyts'
 LICENSE = 'new BSD'
 DOWNLOAD_URL = 'https://github.com/johannfaouzi/pyts'
 VERSION = pyts.__version__
-INSTALL_REQUIRES = ['numpy>=1.15.4'
-                    'scipy>=1.3.0'
-                    'scikit-learn>=0.22.1'
-                    'joblib>=0.12'
+INSTALL_REQUIRES = ['numpy>=1.15.4',
+                    'scipy>=1.3.0',
+                    'scikit-learn>=0.22.1',
+                    'joblib>=0.12',
                     'numba==0.46.0']
 CLASSIFIERS = ['Development Status :: 3 - Alpha',
                'Intended Audience :: Science/Research',
@@ -39,7 +39,7 @@ EXTRAS_REQUIRE = {
         'pytest',
         'pytest-cov'],
     'docs': [
-        'sphinx==1.8.2',
+        'sphinx==1.8.5',
         'sphinx-gallery',
         'numpydoc',
         'matplotlib'

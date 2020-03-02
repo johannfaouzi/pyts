@@ -1,5 +1,5 @@
 [![Build Status](https://dev.azure.com/johannfaouzi0034/johannfaouzi/_apis/build/status/johannfaouzi.pyts?branchName=master)](https://dev.azure.com/johannfaouzi0034/johannfaouzi/_build/latest?definitionId=1&branchName=master)
-[![Documentation Status](https://readthedocs.org/projects/pyts/badge/?version=latest)](https://pyts.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/pyts/badge/?version=latest)](https://pyts.readthedocs.io/)
 [![Codecov](https://codecov.io/gh/johannfaouzi/pyts/branch/master/graph/badge.svg)](https://codecov.io/gh/johannfaouzi/pyts)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyts.svg)](https://img.shields.io/pypi/pyversions/pyts.svg)
 [![PyPI version](https://badge.fury.io/py/pyts.svg)](https://badge.fury.io/py/pyts)
@@ -60,22 +60,26 @@ directory using pytest:
 
 ### Changelog
 
-See the [changelog](https://pyts.readthedocs.io/en/latest/changelog.html)
+See the [changelog](https://pyts.readthedocs.io/en/stable/changelog.html)
 for a history of notable changes to pyts.
 
 ### Development
 
 The development of this package is in line with the one of the scikit-learn
 community. Fore more information about our contributing guidelines, please
-refer to the [documentation](https://pyts.readthedocs.io/en/latest/contribute.html).
+refer to the [documentation](https://pyts.readthedocs.io/en/stable/contribute.html).
 
 ### Documentation
 
 The section below gives some information about the implemented algorithms in pyts.
 For more information, please have a look at the
-[HTML documentation available via ReadTheDocs](https://pyts.readthedocs.io/en/latest/).
+[HTML documentation available via ReadTheDocs](https://pyts.readthedocs.io/).
 
 ### Implemented features
+
+**Note: the content described in this section corresponds to the master branch,
+not the latest released version. You may have to install the latest version
+to use some of these features.**
 
 pyts consists of the following modules:
 
