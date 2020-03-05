@@ -9,12 +9,12 @@ Dependencies
 
 pyts requires:
 
-- Python (>= 3.5)
-- NumPy (>= 1.15.4)
+- Python (>= 3.6)
+- NumPy (>= 1.17.5)
 - SciPy (>= 1.3.0)
 - Scikit-Learn (>=0.22.1)
 - Joblib (>=0.12)
-- Numba (==0.46.0)
+- Numba (>=0.48.0)
 
 To run the examples Matplotlib (>=2.0.0) is required.
 

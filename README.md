@@ -1,10 +1,11 @@
-[![Build Status](https://dev.azure.com/johannfaouzi0034/johannfaouzi/_apis/build/status/johannfaouzi.pyts?branchName=master)](https://dev.azure.com/johannfaouzi0034/johannfaouzi/_build/latest?definitionId=1&branchName=master)
-[![Documentation Status](https://readthedocs.org/projects/pyts/badge/?version=latest)](https://pyts.readthedocs.io/)
+[![Build Status](https://travis-ci.org/johannfaouzi/pyts.svg?branch=master)](https://travis-ci.org/johannfaouzi/pyts)
+[![Build Status](https://img.shields.io/appveyor/ci/johannfaouzi/pyts/master.svg)](https://ci.appveyor.com/project/johannfaouzi/pyts)
+[![Documentation Status](https://readthedocs.org/projects/pyts/badge/?version=latest)](https://pyts.readthedocs.io/en/latest/?badge=latest)
 [![Codecov](https://codecov.io/gh/johannfaouzi/pyts/branch/master/graph/badge.svg)](https://codecov.io/gh/johannfaouzi/pyts)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyts.svg)](https://img.shields.io/pypi/pyversions/pyts.svg)
 [![PyPI version](https://badge.fury.io/py/pyts.svg)](https://badge.fury.io/py/pyts)
-[![Conda Version](https://img.shields.io/conda/vn/conda-forge/pyts.svg)](https://anaconda.org/conda-forge/pyts)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/johannfaouzi/pyts.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/johannfaouzi/pyts/context:python)
+[![Gitter](https://badges.gitter.im/johann-faouzi/community.svg)](https://gitter.im/johann-faouzi/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1244152.svg)](https://doi.org/10.5281/zenodo.1244152)
 
 ## pyts: a Python package for time series classification
@@ -22,12 +23,12 @@ thus pyts provides several tools to perform these transformations.
 
 pyts requires:
 
-- Python (>= 3.5)
-- NumPy (>= 1.15.4)
+- Python (>= 3.6)
+- NumPy (>= 1.17.5)
 - SciPy (>= 1.3.0)
 - Scikit-Learn (>=0.22.1)
 - Joblib (>=0.12)
-- Numba (==0.46.0)
+- Numba (>=0.48.0)
 
 To run the examples Matplotlib (>=2.0.0) is required.
 
@@ -60,26 +61,23 @@ directory using pytest:
 
 ### Changelog
 
-See the [changelog](https://pyts.readthedocs.io/en/stable/changelog.html)
+See the [changelog](https://pyts.readthedocs.io/en/latest/changelog.html)
 for a history of notable changes to pyts.
 
 ### Development
 
 The development of this package is in line with the one of the scikit-learn
-community. Fore more information about our contributing guidelines, please
-refer to the [documentation](https://pyts.readthedocs.io/en/stable/contribute.html).
+community. Therefore, you can refer to their
+[Development Guide](https://scikit-learn.org/stable/developers/). A slight
+difference is the use of Numba instead of Cython for optimization.
 
 ### Documentation
 
 The section below gives some information about the implemented algorithms in pyts.
 For more information, please have a look at the
-[HTML documentation available via ReadTheDocs](https://pyts.readthedocs.io/).
+[HTML documentation available via ReadTheDocs](https://pyts.readthedocs.io/en/latest/).
 
 ### Implemented features
-
-**Note: the content described in this section corresponds to the master branch,
-not the latest released version. You may have to install the latest version
-to use some of these features.**
 
 pyts consists of the following modules:
 
@@ -99,7 +97,6 @@ in time series classification.
 - `classification`: This module provides implementations of algorithms that
 can classify time series. Implemented algorithms are
 [KNeighborsClassifier](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.KNeighborsClassifier.html#),
-[LearningShapelets](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.LearningShapelets.html#),
 [SAXVSM](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.SAXVSM.html#) and
 [BOSSVS](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.BOSSVS.html#).
 
@@ -145,8 +142,6 @@ of missing values using interpolation. More information is available at the
 transform a data set of time series with shape `(n_samples, n_timestamps)` into
 a data set with shape `(n_samples, n_features)`. Implemented algorithms are
 [BOSS](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.BOSS.html#),
-[BagOfPatterns](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.BagOfPatterns.html#),
-[ROCKET](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.ROCKET.html#),
 [ShapeletTransform](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.ShapeletTransform.html) and
 [WEASEL](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.WEASEL.html#).
 

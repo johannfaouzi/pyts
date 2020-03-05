@@ -36,22 +36,20 @@ jobs:
     vmImage: 'ubuntu-latest'
   strategy:
     matrix:
-      Python35:
-        python.version: '3.5'
-        numpy.version: '1.15.4'
+      Python36:
+        python.version: '3.6'
+        numpy.version: '1.17.5'
         scipy.version: '1.3.0'
         scikit-learn.version: '0.22.1'
         joblib.version: '0.12'
-        numba.version: '0.46.0'
-        llvmlite.version: '0.30.0'
-      Python37:
-        python.version: '3.7'
+        numba.version: '0.48.0'
+      Python38:
+        python.version: '3.8'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '0.*'
         joblib.version: '0.*'
-        numba.version: '0.46.0'
-        llvmlite.version: '0.30.0'
+        numba.version: '0.*'
 
   steps:
   - task: UsePythonVersion@0
@@ -61,7 +59,7 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
       pip install .
     displayName: 'Install dependencies and package'
 
@@ -75,57 +73,13 @@ jobs:
     vmImage: 'ubuntu-latest'
   strategy:
     matrix:
-      Python36:
-        python.version: '3.6'
-        numpy.version: '1.*'
-        scipy.version: '1.*'
-        scikit-learn.version: '0.*'
-        joblib.version: '0.*'
-        numba.version: '0.46.0'
-        llvmlite.version: '0.30.0'
-
-  steps:
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: '$(python.version)'
-    displayName: 'Use Python $(python.version)'
-
-  - script: |
-      python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
-      pip install -e .
-    displayName: 'Install dependencies and package'
-
-  - script: |
-      pip install pytest pytest-cov
-      export NUMBA_DISABLE_JIT=1
-      mkdir for_test
-      cd for_test
-      pytest -v --cov=pyts --pyargs pyts
-      bash <(curl -s https://codecov.io/bash)
-    displayName: 'Run test suite and publish results'
-
-- job: MacOS_JIT
-  pool:
-    vmImage: 'macOS-latest'
-  strategy:
-    matrix:
-      Python35:
-        python.version: '3.5'
-        numpy.version: '1.15.4'
-        scipy.version: '1.3.0'
-        scikit-learn.version: '0.22.1'
-        joblib.version: '0.12'
-        numba.version: '0.46.0'
-        llvmlite.version: '0.30.0'
       Python37:
         python.version: '3.7'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '0.*'
         joblib.version: '0.*'
-        numba.version: '0.46.0'
-        llvmlite.version: '0.30.0'
+        numba.version: '0.*'
 
   steps:
   - task: UsePythonVersion@0
@@ -135,7 +89,49 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+      pip install .
+    displayName: 'Install dependencies and package'
+
+  - script: |
+      pip install pytest pytest-cov
+      export NUMBA_DISABLE_JIT=1
+      pytest -v --cov=pyts --pyargs pyts
+    displayName: 'Run test suite'
+
+  - script: |
+      bash <(curl -s https://codecov.io/bash)
+    displayName: 'Publish code coverage results'
+
+- job: MacOS_JIT
+  pool:
+    vmImage: 'macOS-latest'
+  strategy:
+    matrix:
+      Python36:
+        python.version: '3.6'
+        numpy.version: '1.17.5'
+        scipy.version: '1.3.0'
+        scikit-learn.version: '0.22.1'
+        joblib.version: '0.12'
+        numba.version: '0.48.0'
+      Python38:
+        python.version: '3.8'
+        numpy.version: '1.*'
+        scipy.version: '1.*'
+        scikit-learn.version: '0.*'
+        joblib.version: '0.*'
+        numba.version: '0.*'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
       pip install .
     displayName: 'Install dependencies and package'
 
@@ -149,57 +145,13 @@ jobs:
     vmImage: 'macOS-latest'
   strategy:
     matrix:
-      Python36:
-        python.version: '3.6'
-        numpy.version: '1.*'
-        scipy.version: '1.*'
-        scikit-learn.version: '0.*'
-        joblib.version: '0.*'
-        numba.version: '0.46.0'
-        llvmlite.version: '0.30.0'
-
-  steps:
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: '$(python.version)'
-    displayName: 'Use Python $(python.version)'
-
-  - script: |
-      python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
-      pip install -e .
-    displayName: 'Install dependencies and package'
-
-  - script: |
-      pip install pytest pytest-cov
-      export NUMBA_DISABLE_JIT=1
-      mkdir for_test
-      cd for_test
-      pytest -v --cov=pyts --pyargs pyts
-      bash <(curl -s https://codecov.io/bash)
-    displayName: 'Run test suite and publish results'
-
-- job: Windows_JIT
-  pool:
-    vmImage: 'windows-latest'
-  strategy:
-    matrix:
-      Python35:
-        python.version: '3.5'
-        numpy.version: '1.15.4'
-        scipy.version: '1.3.0'
-        scikit-learn.version: '0.22.1'
-        joblib.version: '0.12'
-        numba.version: '0.46.0'
-        llvmlite.version: '0.30.0'
       Python37:
         python.version: '3.7'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '0.*'
         joblib.version: '0.*'
-        numba.version: '0.46.0'
-        llvmlite.version: '0.30.0'
+        numba.version: '0.*'
 
   steps:
   - task: UsePythonVersion@0
@@ -209,7 +161,49 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+      pip install .
+    displayName: 'Install dependencies and package'
+
+  - script: |
+      pip install pytest pytest-cov
+      export NUMBA_DISABLE_JIT=1
+      pytest -v --cov=pyts --pyargs pyts
+    displayName: 'Run test suite'
+
+  - script: |
+      bash <(curl -s https://codecov.io/bash)
+    displayName: 'Publish code coverage results'
+
+- job: Windows_JIT
+  pool:
+    vmImage: 'windows-latest'
+  strategy:
+    matrix:
+      Python36:
+        python.version: '3.6'
+        numpy.version: '1.17.5'
+        scipy.version: '1.3.0'
+        scikit-learn.version: '0.22.1'
+        joblib.version: '0.12'
+        numba.version: '0.48.0'
+      Python38:
+        python.version: '3.8'
+        numpy.version: '1.*'
+        scipy.version: '1.*'
+        scikit-learn.version: '0.*'
+        joblib.version: '0.*'
+        numba.version: '0.*'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
       pip install .
     displayName: 'Install dependencies and package'
 
@@ -223,14 +217,13 @@ jobs:
     vmImage: 'windows-latest'
   strategy:
     matrix:
-      Python36:
-        python.version: '3.6'
+      Python37:
+        python.version: '3.7'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '0.*'
         joblib.version: '0.*'
-        numba.version: '0.46.0'
-        llvmlite.version: '0.30.0'
+        numba.version: '0.*'
 
   steps:
   - task: UsePythonVersion@0
@@ -240,7 +233,7 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version) llvmlite==$(llvmlite.version)
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
       pip install .
     displayName: 'Install dependencies and package'
 
