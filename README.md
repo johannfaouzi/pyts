@@ -61,7 +61,7 @@ directory using pytest:
 
 ### Changelog
 
-See the [changelog](https://pyts.readthedocs.io/en/latest/changelog.html)
+See the [changelog](https://pyts.readthedocs.io/en/stable/changelog.html)
 for a history of notable changes to pyts.
 
 ### Development
@@ -75,9 +75,13 @@ difference is the use of Numba instead of Cython for optimization.
 
 The section below gives some information about the implemented algorithms in pyts.
 For more information, please have a look at the
-[HTML documentation available via ReadTheDocs](https://pyts.readthedocs.io/en/latest/).
+[HTML documentation available via ReadTheDocs](https://pyts.readthedocs.io/).
 
 ### Implemented features
+
+**Note: the content described in this section corresponds to the master branch,
+not the latest released version. You may have to install the latest version
+to use some of these features.**
 
 pyts consists of the following modules:
 
