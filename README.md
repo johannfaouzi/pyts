@@ -5,6 +5,7 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyts.svg)](https://img.shields.io/pypi/pyversions/pyts.svg)
 [![PyPI version](https://badge.fury.io/py/pyts.svg)](https://badge.fury.io/py/pyts)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/johannfaouzi/pyts.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/johannfaouzi/pyts/context:python)
+[![Gitter](https://badges.gitter.im/johann-faouzi/community.svg)](https://gitter.im/johann-faouzi/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1244152.svg)](https://doi.org/10.5281/zenodo.1244152)
 
 ## pyts: a Python package for time series classification
@@ -22,12 +23,12 @@ thus pyts provides several tools to perform these transformations.
 
 pyts requires:
 
-- Python (>= 3.5)
-- NumPy (>= 1.15.4)
+- Python (>= 3.6)
+- NumPy (>= 1.17.4)
 - SciPy (>= 1.3.0)
-- Scikit-Learn (>=0.20.4)
+- Scikit-Learn (>=0.22.1)
 - Joblib (>=0.12)
-- Numba (>=0.45.1)
+- Numba (>=0.48.0)
 
 To run the examples Matplotlib (>=2.0.0) is required.
 
