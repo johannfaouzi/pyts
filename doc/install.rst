@@ -10,7 +10,7 @@ Dependencies
 pyts requires:
 
 - Python (>= 3.6)
-- NumPy (>= 1.17.4)
+- NumPy (>= 1.17.5)
 - SciPy (>= 1.3.0)
 - Scikit-Learn (>=0.22.1)
 - Joblib (>=0.12)
