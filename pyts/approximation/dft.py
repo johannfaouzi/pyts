@@ -11,9 +11,6 @@ from math import ceil
 from warnings import warn
 from ..preprocessing import StandardScaler
 
-import sklearn
-SKLEARN_VERSION = sklearn.__version__
-
 
 class DiscreteFourierTransform(BaseEstimator, TransformerMixin):
     """Discrete Fourier Transform.
@@ -131,10 +128,7 @@ class DiscreteFourierTransform(BaseEstimator, TransformerMixin):
             The selected Fourier coefficients for each sample.
 
         """
-        if SKLEARN_VERSION >= '0.22':
-            check_is_fitted(self)
-        else:
-            check_is_fitted(self, 'support_')
+        check_is_fitted(self, 'support_')
         X = check_array(X, dtype='float64')
         n_samples, n_timestamps = X.shape
 
@@ -222,8 +216,7 @@ class DiscreteFourierTransform(BaseEstimator, TransformerMixin):
                 or (self.n_coefs is None)):
             raise TypeError("'n_coefs' must be None, an integer or a float.")
         if isinstance(self.n_coefs, (int, np.integer)):
-            if ((self.drop_sum)
-                and (not (1 <= self.n_coefs <= (n_timestamps - 1)))):
+            if self.drop_sum and not (1 <= self.n_coefs <= n_timestamps - 1):
                 raise ValueError(
                     "If 'n_coefs' is an integer, it must be greater than or "
                     "equal to 1 and lower than or equal to (n_timestamps - 1) "

@@ -13,9 +13,6 @@ from sklearn.feature_selection import chi2
 from ..approximation import SymbolicFourierApproximation
 from ..utils.utils import _windowed_view
 
-import sklearn
-SKLEARN_VERSION = sklearn.__version__
-
 
 class WEASEL(BaseEstimator, TransformerMixin):
     """Word ExtrAction for time SEries cLassification.
@@ -93,9 +90,9 @@ class WEASEL(BaseEstimator, TransformerMixin):
     >>> from pyts.transformation import WEASEL
     >>> X_train, _, y_train, _ = load_gunpoint(return_X_y=True)
     >>> weasel = WEASEL(sparse=False)
-    >>> weasel.fit(X_train, y_train) # doctest: +ELLIPSIS
+    >>> weasel.fit(X_train, y_train)
     WEASEL(...)
-    >>> weasel.transform(X_train) # doctest: +ELLIPSIS
+    >>> weasel.transform(X_train)
     array(...)
 
     """
@@ -201,11 +198,8 @@ class WEASEL(BaseEstimator, TransformerMixin):
             Document-term matrix with relevant features only.
 
         """
-        if SKLEARN_VERSION >= '0.22':
-            check_is_fitted(self)
-        else:
-            check_is_fitted(self, ['_relevant_features_list', '_sfa_list',
-                                   '_vectorizer_list', 'vocabulary_'])
+        check_is_fitted(self, ['_relevant_features_list', '_sfa_list',
+                               '_vectorizer_list', 'vocabulary_'])
 
         X = check_array(X, dtype='float64')
         n_samples, n_timestamps = X.shape

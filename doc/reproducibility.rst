@@ -81,7 +81,7 @@ The metrics used are:
 * Dynamic Time Warping (DTW), and
 * Dynamic Time Warping with a learned warping window (DTW(w)).
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.9.0/1NN%20-%20ED%2C%20DTW%20and%20DTW(w).ipynb>`__
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.10.0/KNN.ipynb>`__
 
 +------------------+---------------+-----------+----------------+------------+-------------------+----------------+
 | Name             | ED (reported) | ED (pyts) | DTW (reported) | DTW (pyts) | DTW(w) (reported) | DTW(w) (pyts)  |
@@ -103,7 +103,7 @@ The metrics used are:
 BOSS transformer followed by a 1NN classifier using the BOSS metric
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.9.0/BOSS.ipynb>`__
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.10.0/BOSS.ipynb>`__
 
 +------------------+-----------------+-------------+
 | Name             | BOSS (reported) | BOSS (pyts) |
@@ -125,7 +125,7 @@ BOSS transformer followed by a 1NN classifier using the BOSS metric
 BOSSVS classifier
 ^^^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.9.0/BOSSVS.ipynb>`__
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.10.0/BOSSVS.ipynb>`__
 
 +------------------+-------------------+---------------+
 | Name             | BOSSVS (reported) | BOSSVS (pyts) |
@@ -147,7 +147,7 @@ BOSSVS classifier
 WEASEL transformer followed by a logistic regression
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.9.0/WEASEL.ipynb>`__
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.10.0/WEASEL.ipynb>`__
 
 +------------------+-------------------+---------------+
 | Name             | WEASEL (reported) | WEASEL (pyts) |
@@ -164,3 +164,24 @@ WEASEL transformer followed by a logistic regression
 +------------------+-------------------+---------------+
 | SyntheticControl | 0.9933            | 0.973         |
 +------------------+-------------------+---------------+
+
+ShapeletTransform transformer followed by a Support Vector Machine with a linear kernel
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.10.0/ShapeletTransform.ipynb>`__
+
++------------------+------------------------------+--------------------------+
+| Name             | ShapeletTransform (reported) | ShapeletTransform (pyts) |
++==================+==============================+==========================+
+| Adiac            | 0.2379                       | 0.238                    |
++------------------+------------------------------+--------------------------+
+| ECG200           | 0.8402                       | 0.840                    |
++------------------+------------------------------+--------------------------+
+| GunPoint         | 1.0000                       | 0.967                    |
++------------------+------------------------------+--------------------------+
+| MiddlePhalanxTW  | 0.5793                       | 0.579                    |
++------------------+------------------------------+--------------------------+
+| Plane            | 1.0000                       | 1.000                    |
++------------------+------------------------------+--------------------------+
+| SyntheticControl | 0.8733                       | 0.873                    |
++------------------+------------------------------+--------------------------+

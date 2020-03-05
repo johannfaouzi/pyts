@@ -10,7 +10,8 @@ from pyts.metrics.lower_bounds import (
 )
 from pyts.metrics import (lower_bound_improved, lower_bound_keogh,
                           lower_bound_kim, lower_bound_yi)
-from pyts.metrics import dtw, dtw_sakoechiba, sakoe_chiba_band
+from pyts.metrics import dtw, sakoe_chiba_band
+from pyts.metrics.dtw import _dtw_sakoechiba
 from sklearn.metrics import pairwise_distances
 
 
@@ -223,7 +224,7 @@ def test_lower_bounds_inequalities():
     # DTW
     X_dtw = pairwise_distances(X_test, X_train, dtw)
     region = sakoe_chiba_band(n_timestamps, window_size=window_size)
-    X_dtw_window = pairwise_distances(X_test, X_train, dtw_sakoechiba,
+    X_dtw_window = pairwise_distances(X_test, X_train, _dtw_sakoechiba,
                                       window_size=window_size)
 
     # Lower bounds

@@ -4,7 +4,7 @@
 API Documentation
 =================
 
-Full API documentation of the :code:`pyts` Python package.
+Full API documentation of the *pyts* Python package.
 
 :mod:`pyts.approximation`: Approximation algorithms
 ===================================================
@@ -19,10 +19,10 @@ Full API documentation of the :code:`pyts` Python package.
    :toctree: generated/
    :template: class.rst
 
-   approximation.PiecewiseAggregateApproximation
-   approximation.SymbolicAggregateApproximation
    approximation.DiscreteFourierTransform
    approximation.MultipleCoefficientBinning
+   approximation.PiecewiseAggregateApproximation
+   approximation.SymbolicAggregateApproximation
    approximation.SymbolicFourierApproximation
 
 
@@ -40,6 +40,7 @@ Full API documentation of the :code:`pyts` Python package.
   :template: class.rst
 
   bag_of_words.BagOfWords
+  bag_of_words.WordExtractor
 
 
 :mod:`pyts.classification`: Classification algorithms
@@ -55,9 +56,10 @@ Full API documentation of the :code:`pyts` Python package.
   :toctree: generated/
   :template: class.rst
 
-  classification.KNeighborsClassifier
-  classification.SAXVSM
   classification.BOSSVS
+  classification.KNeighborsClassifier
+  classification.LearningShapelets
+  classification.SAXVSM
 
 
 :mod:`pyts.datasets`: Dataset loading utilities
@@ -115,9 +117,9 @@ Full API documentation of the :code:`pyts` Python package.
   :toctree: generated/
   :template: class.rst
 
-  image.RecurrencePlot
   image.GramianAngularField
   image.MarkovTransitionField
+  image.RecurrencePlot
 
 
 :mod:`pyts.metrics`: Metrics
@@ -136,11 +138,11 @@ Full API documentation of the :code:`pyts` Python package.
   metrics.boss
   metrics.dtw
   metrics.dtw_classic
-  metrics.dtw_region
-  metrics.dtw_sakoechiba
+  metrics.dtw_fast
   metrics.dtw_itakura
   metrics.dtw_multiscale
-  metrics.dtw_fast
+  metrics.dtw_region
+  metrics.dtw_sakoechiba
   metrics.itakura_parallelogram
   metrics.sakoe_chiba_band
   metrics.show_options
@@ -219,10 +221,10 @@ Scaling
   :toctree: generated/
   :template: class.rst
 
-  preprocessing.StandardScaler
-  preprocessing.MinMaxScaler
   preprocessing.MaxAbsScaler
+  preprocessing.MinMaxScaler
   preprocessing.RobustScaler
+  preprocessing.StandardScaler
 
 Transformation
 --------------
@@ -272,7 +274,9 @@ Imputation
   :toctree: generated/
   :template: class.rst
 
+  transformation.BagOfPatterns
   transformation.BOSS
+  transformation.ROCKET
   transformation.ShapeletTransform
   transformation.WEASEL
 

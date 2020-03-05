@@ -97,8 +97,8 @@ def test_parameter_check(params, error, err_msg):
       [[0, 11, 12, 11], [11, 0, 11, 12], [12, 11, 0, 3], [11, 12, 3, 0]]]),
 
      ({'dimension': 2, 'time_delay': 2},
-      [[[0, 2, 2, 4],  [2, 0, 4, 10],  [2, 4, 0, 2],  [4, 10, 2, 0]],
-       [[0, 2, 8, 10], [2, 0, 10, 8],  [8, 10, 0, 2], [10, 8, 2, 0]]]),
+      [[[0, 2, 2, 4], [2, 0, 4, 10], [2, 4, 0, 2], [4, 10, 2, 0]],
+       [[0, 2, 8, 10], [2, 0, 10, 8], [8, 10, 0, 2], [10, 8, 2, 0]]]),
 
      ({'dimension': 3, 'time_delay': 2},
       [[[0, 3], [3, 0]], [[0, 3], [3, 0]]]),
@@ -131,3 +131,10 @@ def test_actual_results_recurrence_plot(params, arr_desired):
     recurrence = RecurrencePlot(**params)
     arr_actual = recurrence.fit_transform(X) ** 2
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+
+
+def test_flatten():
+    """Test the 'flatten' parameter."""
+    arr_false = RecurrencePlot().transform(X).reshape(2, -1)
+    arr_true = RecurrencePlot(flatten=True).transform(X)
+    np.testing.assert_allclose(arr_false, arr_true, atol=1e-5, rtol=0.)

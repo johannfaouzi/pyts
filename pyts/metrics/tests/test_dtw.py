@@ -10,12 +10,12 @@ from math import sqrt
 from numba import njit
 from pyts.metrics.dtw import (
     _square, _absolute, _check_input_dtw, _blurred_path_region, _return_path,
-    _return_results, cost_matrix, accumulated_cost_matrix, _check_region
+    _return_results, cost_matrix, accumulated_cost_matrix, _check_region,
+    _dtw_classic, _dtw_region, _dtw_sakoechiba, _dtw_itakura,
+    _dtw_multiscale, _dtw_fast
 )
 from pyts.metrics import (
-    dtw_classic, dtw_region, sakoe_chiba_band, dtw_sakoechiba,
-    itakura_parallelogram, dtw_itakura, dtw_multiscale, dtw_fast, dtw,
-    show_options
+    dtw, itakura_parallelogram, sakoe_chiba_band, show_options
 )
 
 
@@ -205,7 +205,7 @@ def test_actual_results_return_results(params, res_desired):
 def test_actual_results_dtw_classic(params, res_desired):
     """Test that the actual results are the expected ones."""
     (dtw_actual, cost_mat_actual,
-     acc_cost_mat_actual, path_actual) = dtw_classic(
+     acc_cost_mat_actual, path_actual) = _dtw_classic(
         x, y, **params_return, **params
     )
     np.testing.assert_allclose(cost_mat_actual, res_desired['cost_mat'])
@@ -223,7 +223,7 @@ def test_actual_results_dtw_classic(params, res_desired):
 def test_parameter_check_dtw_region(params, err_msg):
     """Test parameter validation."""
     with pytest.raises(ValueError, match=re.escape(err_msg)):
-        dtw_region(x, y, **params)
+        _dtw_region(x, y, **params)
 
 
 @pytest.mark.parametrize(
@@ -255,7 +255,7 @@ def test_parameter_check_dtw_region(params, err_msg):
 def test_actual_results_dtw_region(params, res_desired):
     """Test that the actual results are the expected ones."""
     (dtw_actual, cost_mat_actual,
-     acc_cost_mat_actual, path_actual) = dtw_region(
+     acc_cost_mat_actual, path_actual) = _dtw_region(
         x, y, **params_return, **params
     )
     np.testing.assert_allclose(cost_mat_actual, res_desired['cost_mat'])
@@ -358,7 +358,7 @@ def test_actual_results_sakoe_chiba_band(params, arr_desired):
 def test_actual_results_dtw_sakoechiba(params, res_desired):
     """Test that the actual results are the expected ones."""
     (dtw_actual, cost_mat_actual,
-     acc_cost_mat_actual, path_actual) = dtw_sakoechiba(
+     acc_cost_mat_actual, path_actual) = _dtw_sakoechiba(
         x, y, **params_return, **params
     )
     np.testing.assert_allclose(cost_mat_actual, res_desired['cost_mat'])
@@ -445,7 +445,7 @@ def test_actual_results_itakura_parallelogram(params, arr_desired):
 def test_actual_results_dtw_itakura(params, res_desired):
     """Test that the actual results are the expected ones."""
     (dtw_actual, cost_mat_actual,
-     acc_cost_mat_actual, path_actual) = dtw_itakura(
+     acc_cost_mat_actual, path_actual) = _dtw_itakura(
         x, y, **params_return, **params
     )
     np.testing.assert_allclose(cost_mat_actual, res_desired['cost_mat'])
@@ -489,7 +489,7 @@ def test_actual_results_blurred_path_region(params, arr_desired):
 def test_parameter_check_dtw_multiscale(params, error, err_msg):
     """Test parameter validation."""
     with pytest.raises(error, match=re.escape(err_msg)):
-        dtw_multiscale(x, y, **params)
+        _dtw_multiscale(x, y, **params)
 
 
 @pytest.mark.parametrize(
@@ -530,7 +530,7 @@ def test_actual_results_dtw_multiscale(params, res_desired):
     y = np.arange(1, 5)
 
     (dtw_actual, cost_mat_actual,
-     acc_cost_mat_actual, path_actual) = dtw_multiscale(
+     acc_cost_mat_actual, path_actual) = _dtw_multiscale(
         x, y, **params_return, **params
     )
     np.testing.assert_allclose(cost_mat_actual, res_desired['cost_mat'])
@@ -554,30 +554,30 @@ def test_parameter_check_dtw(params, err_msg):
 
 @pytest.mark.parametrize(
     'params, res_desired',
-    [({}, dtw_classic(x, y, **params_return)),
+    [({}, _dtw_classic(x, y, **params_return)),
 
-     ({'method': 'sakoechiba'}, dtw_sakoechiba(x, y, **params_return)),
+     ({'method': 'sakoechiba'}, _dtw_sakoechiba(x, y, **params_return)),
 
      ({'method': 'sakoechiba', 'options': {'window_size': 0.5}},
-      dtw_sakoechiba(x, y, **params_return)),
+      _dtw_sakoechiba(x, y, **params_return)),
 
-     ({'method': 'itakura'}, dtw_itakura(x, y, **params_return)),
+     ({'method': 'itakura'}, _dtw_itakura(x, y, **params_return)),
 
      ({'method': 'itakura', 'options': {'max_slope': 8}},
-      dtw_itakura(x, y, max_slope=8, **params_return)),
+      _dtw_itakura(x, y, max_slope=8, **params_return)),
 
-     ({'method': 'multiscale'}, dtw_multiscale(x, y, **params_return)),
+     ({'method': 'multiscale'}, _dtw_multiscale(x, y, **params_return)),
 
      ({'method': 'multiscale', 'options': {'resolution': 1}},
-      dtw_multiscale(x, y, resolution=1, **params_return)),
+      _dtw_multiscale(x, y, resolution=1, **params_return)),
 
      ({'method': 'multiscale', 'options': {'radius': 2}},
-      dtw_multiscale(x, y, radius=2, **params_return)),
+      _dtw_multiscale(x, y, radius=2, **params_return)),
 
-     ({'method': 'fast'}, dtw_fast(x, y, **params_return)),
+     ({'method': 'fast'}, _dtw_fast(x, y, **params_return)),
 
      ({'method': 'fast', 'options': {'radius': 1}},
-      dtw_fast(x, y, radius=1, **params_return))]
+      _dtw_fast(x, y, radius=1, **params_return))]
 )
 def test_actual_results_dtw(params, res_desired):
     """Test that the actual results are the expected ones."""
@@ -591,58 +591,31 @@ def test_actual_results_dtw(params, res_desired):
 
 
 @pytest.mark.parametrize(
-    'params, err_msg',
-    [({'method': 'whoops'},
-      "'method' must be either None, 'classic', 'sakoechiba', 'itakura', "
-      "'multiscale' or 'fast'.")]
-)
-def test_parameter_check_show_options(params, err_msg):
-    """Test parameter validation."""
-    with pytest.raises(ValueError, match=re.escape(err_msg)):
-        show_options(**params)
-
-
-@pytest.mark.parametrize(
     'params, res_desired',
-    [({}, None),
-     ({'method': 'classic'}, None),
-     ({'method': 'sakoechiba'}, None),
-     ({'method': 'itakura'}, None),
-     ({'method': 'multiscale'}, None),
-     ({'method': 'fast'}, None)]
-)
-def test_actual_results_show_options(params, res_desired):
-    """Test that the actual results are the expected ones."""
-    res_actual = show_options(disp=True, **params)
-    np.testing.assert_equal(res_actual, res_desired)
-
-
-@pytest.mark.parametrize(
-    'params, res_desired',
-    [({}, dtw_classic(x_long, y, **params_return)),
-     ({}, dtw_classic(x_long, y, **params_return)),
-     ({'method': 'sakoechiba'}, dtw_sakoechiba(x_long, y, **params_return)),
+    [({}, _dtw_classic(x_long, y, **params_return)),
+     ({}, _dtw_classic(x_long, y, **params_return)),
+     ({'method': 'sakoechiba'}, _dtw_sakoechiba(x_long, y, **params_return)),
 
      ({'method': 'sakoechiba', 'options': {'window_size': 0.5}},
-      dtw_sakoechiba(x_long, y, window_size=0.5, **params_return)),
+      _dtw_sakoechiba(x_long, y, window_size=0.5, **params_return)),
 
-     ({'method': 'itakura'}, dtw_itakura(x_long, y, **params_return)),
+     ({'method': 'itakura'}, _dtw_itakura(x_long, y, **params_return)),
 
      ({'method': 'itakura', 'options': {'max_slope': 8}},
-      dtw_itakura(x_long, y, max_slope=8, **params_return)),
+      _dtw_itakura(x_long, y, max_slope=8, **params_return)),
 
-     ({'method': 'multiscale'}, dtw_multiscale(x_long, y, **params_return)),
+     ({'method': 'multiscale'}, _dtw_multiscale(x_long, y, **params_return)),
 
      ({'method': 'multiscale', 'options': {'resolution': 1}},
-      dtw_multiscale(x_long, y, resolution=1, **params_return)),
+      _dtw_multiscale(x_long, y, resolution=1, **params_return)),
 
      ({'method': 'multiscale', 'options': {'radius': 2}},
-      dtw_multiscale(x_long, y, radius=2, **params_return)),
+      _dtw_multiscale(x_long, y, radius=2, **params_return)),
 
-     ({'method': 'fast'}, dtw_fast(x_long, y, **params_return)),
+     ({'method': 'fast'}, _dtw_fast(x_long, y, **params_return)),
 
      ({'method': 'fast', 'options': {'radius': 1}},
-      dtw_fast(x_long, y, radius=1, **params_return))]
+      _dtw_fast(x_long, y, radius=1, **params_return))]
 )
 def test_actual_results_dtw_diff_lengths(params, res_desired):
     """Test that the actual results are the expected ones."""
@@ -689,12 +662,49 @@ def test_precomputed_cost_error(method):
 
 @pytest.mark.parametrize(
     "method, dtw_func",
-    [("classic", dtw_classic),
-     ("multiscale", dtw_multiscale),
-     ("itakura", dtw_itakura),
-     ("sakoechiba", dtw_sakoechiba),
-     ("fast", dtw_fast)])
+    [("classic", _dtw_classic),
+     ("multiscale", _dtw_multiscale),
+     ("itakura", _dtw_itakura),
+     ("sakoechiba", _dtw_sakoechiba),
+     ("fast", _dtw_fast)])
 def test_dtw_methods(method, dtw_func):
     value_specific = dtw_func(x, y)
     value_generic = dtw(x, y, method=method)
     assert value_specific == value_generic
+
+
+@pytest.mark.parametrize(
+    'params', [{'method': 'whoops'}, {'method': 'sakoe'}]
+)
+def test_parameter_check_show_options(params):
+    """Test parameter validation."""
+    err_msg = ("'method' must be either None, 'classic', 'sakoechiba', "
+               "'itakura', 'region', 'multiscale' or 'fast'.")
+    with pytest.raises(ValueError, match=re.escape(err_msg)):
+        show_options(**params)
+
+
+@pytest.mark.parametrize(
+    'params',
+    [{},
+     {'disp': False},
+     {'method': 'classic'},
+     {'method': 'classic', 'disp': False},
+     {'method': 'sakoechiba'},
+     {'method': 'sakoechiba', 'disp': False},
+     {'method': 'itakura'},
+     {'method': 'itakura', 'disp': False},
+     {'method': 'region'},
+     {'method': 'region', 'disp': False},
+     {'method': 'multiscale'},
+     {'method': 'multiscale', 'disp': False},
+     {'method': 'fast'},
+     {'method': 'fast', 'disp': False}]
+)
+def test_actual_results_show_options(params):
+    """Test that the actual results are the expected ones."""
+    res_actual = show_options(**params)
+    if ('disp' in params.keys()) and (not params['disp']):
+        assert isinstance(res_actual, str)
+    else:
+        assert res_actual is None

@@ -11,9 +11,6 @@ from sklearn.utils.validation import (check_array, check_is_fitted,
                                       check_random_state, check_X_y)
 from ..utils.utils import _windowed_view
 
-import sklearn
-SKLEARN_VERSION = sklearn.__version__
-
 
 @njit()
 def _extract_all_shapelets_raw(x, window_sizes, window_steps, n_timestamps):
@@ -261,7 +258,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
     ...      [1, 2, 2, 1, 0, 3, 5]]
     >>> y = [0, 0, 1, 1]
     >>> st = ShapeletTransform(n_shapelets=2, window_sizes=[3])
-    >>> st.fit(X, y) # doctest: +ELLIPSIS
+    >>> st.fit(X, y)
     ShapeletTransform(...)
     >>> len(st.shapelets_)
     2
@@ -340,10 +337,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
             Distances between the selected shapelets and the samples.
 
         """
-        if SKLEARN_VERSION >= '0.22':
-            check_is_fitted(self)
-        else:
-            check_is_fitted(self, ['shapelets_', 'indices_', 'scores_'])
+        check_is_fitted(self, ['shapelets_', 'indices_', 'scores_'])
         X = check_array(X, dtype='float64')
         return self._transform(X)
 
@@ -392,11 +386,10 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
         n_timestamps = X.shape[1]
 
         # Checking for 'n_shapelets'
-        if not (self.n_shapelets == 'auto' or
-                isinstance(self.n_shapelets, (int, np.integer))):
+        n_shapelets_int = isinstance(self.n_shapelets, (int, np.integer))
+        if not (self.n_shapelets == 'auto' or n_shapelets_int):
             raise TypeError("'n_shapelets' must be 'auto' or an integer.")
-        if (isinstance(self.n_shapelets, (int, np.integer))
-            and not self.n_shapelets > 0):
+        if (n_shapelets_int and not self.n_shapelets > 0):
             raise ValueError("If 'n_shapelets' is an integer, it must be a "
                              "positive integer (got {})."
                              .format(self.n_shapelets))

@@ -13,9 +13,6 @@ from sklearn.utils.multiclass import check_classification_targets
 from ..approximation import SymbolicFourierApproximation
 from ..utils.utils import _windowed_view
 
-import sklearn
-SKLEARN_VERSION = sklearn.__version__
-
 
 class BOSS(BaseEstimator, TransformerMixin):
     """Bag of Symbolic Fourier Approximation Symbols.
@@ -94,11 +91,11 @@ class BOSS(BaseEstimator, TransformerMixin):
     >>> from pyts.transformation import BOSS
     >>> X_train, X_test, _, _ = load_gunpoint(return_X_y=True)
     >>> boss = BOSS(word_size=2, n_bins=2, sparse=False)
-    >>> boss.fit(X_train) # doctest: +ELLIPSIS
+    >>> boss.fit(X_train)
     BOSS(...)
     >>> sorted(boss.vocabulary_.values())
     ['aa', 'ab', 'ba', 'bb']
-    >>> boss.transform(X_test) # doctest: +ELLIPSIS
+    >>> boss.transform(X_test)
     array(...)
 
     """
@@ -197,10 +194,7 @@ class BOSS(BaseEstimator, TransformerMixin):
             Document-term matrix.
 
         """
-        if SKLEARN_VERSION >= '0.22':
-            check_is_fitted(self)
-        else:
-            check_is_fitted(self, ['_sfa', '_vectorizer', 'vocabulary_'])
+        check_is_fitted(self, ['_sfa', '_vectorizer', 'vocabulary_'])
         X = check_array(X)
         n_samples, n_timestamps = X.shape
 

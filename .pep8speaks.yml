@@ -1,0 +1,16 @@
+scanner:
+    diff_only: True
+    linter: flake8
+
+flake8:
+    ignore:
+        - E121
+        - E123
+        - E126
+        - E226
+        - E24
+        - E704
+        - W503
+        - W504
+
+no_blank_comment: True
