@@ -77,6 +77,29 @@ The section below gives some information about the implemented algorithms in pyt
 For more information, please have a look at the
 [HTML documentation available via ReadTheDocs](https://pyts.readthedocs.io/).
 
+### Citation
+
+If you use pyts in a scientific publication, we would appreciate
+citations to the following [paper](http://www.jmlr.org/papers/v21/19-763.html):
+```
+Johann Faouzi and Hicham Janati. pyts: A python package for time series classification.
+Journal of Machine Learning Research, 21(46):1−6, 2020.
+```
+
+Bibtex entry:
+```
+@article{JMLR:v21:19-763,
+  author  = {Johann Faouzi and Hicham Janati},
+  title   = {pyts: A Python Package for Time Series Classification},
+  journal = {Journal of Machine Learning Research},
+  year    = {2020},
+  volume  = {21},
+  number  = {46},
+  pages   = {1-6},
+  url     = {http://jmlr.org/papers/v21/19-763.html}
+}
+```
+
 ### Implemented features
 
 **Note: the content described in this section corresponds to the master branch,

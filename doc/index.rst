@@ -32,6 +32,7 @@ Welcome to pyts documentation!
 
    reproducibility
    changelog
+   citation
 
 
 **pyts** is a Python package dedicated to time series classification.
