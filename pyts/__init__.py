@@ -7,7 +7,7 @@ algorithms. Most of these algorithms transform time series, thus pyts provides
 several tools to perform these transformations.
 """
 
-__version__ = '0.11.dev0'
+__version__ = '0.11.0'
 
 __all__ = ['approximation', 'bag_of_words', 'classification', 'datasets',
            'decomposition', 'image', 'metrics', 'multivariate',
