@@ -7,8 +7,11 @@ Change Log
 Version 0.11.0
 --------------
 
+- Add support for Python 3.8 and drop support for Python 3.5.
+
 - Rework the *BagOfWords* algorithm to match the description of the algorithm
-  in the original paper.
+  in the original paper. The former version of *BagOfWords* is available
+  as *WordExtractor* in the :mod:`pyts.bag_of_words` module.
 
 - Update the *SAXVSM* classifier with the new version of *BagOfWords*.
 
@@ -18,6 +21,9 @@ Version 0.11.0
 
 - Add the *LearningShapelets* algorithm in the :mod:`pyts.classification`
   module.
+
+- Deprecated specific functions for Dynamic Time Warping (all ``dtw_*`` functions),
+  only the main :func:`pyts.metrics.dtw` is kept.
 
 
 Version 0.10.0
