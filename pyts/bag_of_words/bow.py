@@ -243,7 +243,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         warnings.warn("BagOfWords has been reworked in 0.11 in order to match "
                       "its definition in the literature. To get the old "
                       "BagOfWords, use pyts.bag_of_words.WordExtractor "
-                      "instead.", UserWarning)
+                      "instead.", FutureWarning)
 
     def fit(self, X, y=None):
         """Pass.
