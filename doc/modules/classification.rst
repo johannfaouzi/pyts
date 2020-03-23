@@ -165,7 +165,7 @@ the extracted features as input data.
     >>> clf.fit(X_train, y_train)
     TimeSeriesForest(...)
     >>> clf.score(X_test, y_test)
-    0.96
+    0.973333...
 
 .. topic:: References
 
