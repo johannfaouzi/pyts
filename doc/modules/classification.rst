@@ -149,7 +149,11 @@ TimeSeriesForest
 :class:`TimeSeriesForest` is a 2-step algorithm. First it extracts three
 features from a given number of windows: the mean, the standard deviation and
 the slope of the simple linear regression. Then a random forest is used using
-the extracted features as input data.
+the extracted features as input data. These three statistics are fast to
+compute and give a lot of information about the window. The windows are
+generated randomly and the number of windows is controlled with the
+:code:`n_windows` parameter. Using the feature importance scores of the random
+forest, one can easily find the most important windows to classify time series.
 
 .. figure:: ../auto_examples/classification/images/sphx_glr_plot_time_series_forest_001.png
    :target: ../auto_examples/classification/plot_time_series_forest.html
