@@ -42,3 +42,5 @@ plt.plot(np.arange(start_idxmax, end_idxmax),
 plt.legend(loc='best', fontsize=14)
 plt.title('The most important window according to the feature importance '
           'scores', fontsize=16)
+plt.tight_layout()
+plt.show()
