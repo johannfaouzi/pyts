@@ -5,10 +5,11 @@ Time Series Forest
 
 This example illustrates which information is considered important
 by the algorithm in order to classify time series. The index of
-the most important window is retrieved via the `feature_importance_`
-and `indices_` attributes. The first time series for both classes
+the most important window is retrieved via the ``feature_importance_``
+and ``indices_`` attributes. The first time series for both classes
 are plotted and the most important window is highlighted with a
 larger line width.
+
 It is implemented as :class:`pyts.classification.TimeSeriesForest`.
 """
 
