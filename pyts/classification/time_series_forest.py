@@ -194,7 +194,7 @@ class TimeSeriesForest(BaseEstimator, ClassifierMixin):
     n_windows : int or float (default = 1.)
         The number of windows from which features are extracted.
 
-    min_window_size : int or float (default = 0.1)
+    min_window_size : int or float (default = 1)
         The minimum length of the windows. If float, it represents a percentage
         of the size of each time series.
 
