@@ -146,7 +146,7 @@ the coefficients of the logistic regression.
 TimeSeriesForest
 ----------------
 
-:class:`TimeSeriesForest` is a 2-step algorithm. First it extracts three
+:class:`TimeSeriesForest` is a two-stage algorithm. First it extracts three
 features from a given number of windows: the mean, the standard deviation and
 the slope of the simple linear regression. Then a random forest is used using
 the extracted features as input data. These three statistics are fast to
