@@ -183,7 +183,7 @@ class TimeSeriesForest(BaseEstimator, ClassifierMixin):
 
     This transformer extracts 3 features from each window: the mean, the
     standard deviation and the slope. The total number of features is thus
-    equal to `3 * n_windows`. Then a random forest is built using
+    equal to ``3 * n_windows``. Then a random forest is built using
     these features as input data.
 
     Parameters
@@ -211,9 +211,9 @@ class TimeSeriesForest(BaseEstimator, ClassifierMixin):
     min_samples_split : int or float (default = 2)
         The minimum number of samples required to split an internal node:
 
-        - If int, then consider `min_samples_split` as the minimum number.
-        - If float, then `min_samples_split` is a fraction and
-          `ceil(min_samples_split * n_samples)` are the minimum
+        - If int, then consider ``min_samples_split`` as the minimum number.
+        - If float, then ``min_samples_split`` is a fraction and
+          ``ceil(min_samples_split * n_samples)`` are the minimum
           number of samples for each split.
 
     min_samples_leaf : int or float (default = 1)
@@ -222,9 +222,9 @@ class TimeSeriesForest(BaseEstimator, ClassifierMixin):
         least ``min_samples_leaf`` training samples in each of the left and
         right branches.  This may have the effect of smoothing the model.
 
-        - If int, then consider `min_samples_leaf` as the minimum number.
-        - If float, then `min_samples_leaf` is a fraction and
-          `ceil(min_samples_leaf * n_samples)` are the minimum
+        - If int, then consider ``min_samples_leaf`` as the minimum number.
+        - If float, then ``min_samples_leaf`` is a fraction and
+          ``ceil(min_samples_leaf * n_samples)`` are the minimum
           number of samples for each node.
 
     min_weight_fraction_leaf : float (default = 0.)
@@ -234,14 +234,14 @@ class TimeSeriesForest(BaseEstimator, ClassifierMixin):
     max_features : int, float, str or None (default = "auto")
         The number of features to consider when looking for the best split:
 
-        - If int, then consider `max_features` features at each split.
-        - If float, then `max_features` is a fraction and
-          `int(max_features * n_features)` features are considered at each
+        - If int, then consider ``max_features`` features at each split.
+        - If float, then ``max_features`` is a fraction and
+          ``int(max_features * n_features)`` features are considered at each
           split.
-        - If "auto", then `max_features=sqrt(n_features)`.
-        - If "sqrt", then `max_features=sqrt(n_features)` (same as "auto").
-        - If "log2", then `max_features=log2(n_features)`.
-        - If None, then `max_features=n_features`.
+        - If "auto", then ``max_features=sqrt(n_features)``.
+        - If "sqrt", then ``max_features=sqrt(n_features)`` (same as "auto").
+        - If "log2", then ``max_features=log2(n_features)``.
+        - If None, then ``max_features=n_features``.
 
     max_leaf_nodes : int or None (default = None)
         Grow trees with ``max_leaf_nodes`` in best-first fashion.
@@ -271,7 +271,7 @@ class TimeSeriesForest(BaseEstimator, ClassifierMixin):
     n_jobs : int or None, optional (default = None)
         The number of jobs to run in parallel. :meth:`fit`, :meth:`predict`,
         :meth:`decision_path` and :meth:`apply` are all parallelized over the
-        trees. ``None`` means 1 unless in a :obj:`joblib.parallel_backend`
+        trees. ``None`` means 1 unless in a ``joblib.parallel_backend``
         context. ``-1`` means using all processors.
 
     random_state : int, RandomState instance or None (default = None)
@@ -304,10 +304,10 @@ class TimeSeriesForest(BaseEstimator, ClassifierMixin):
         If bootstrap is True, the number of samples to draw from X
         to train each base estimator:
 
-        - If None (default), then draw `X.shape[0]` samples.
-        - If int, then draw `max_samples` samples.
-        - If float, then draw `max_samples * X.shape[0]` samples. Thus,
-          `max_samples` should be in the interval `(0, 1)`.
+        - If None (default), then draw ``X.shape[0]`` samples.
+        - If int, then draw ``max_samples`` samples.
+        - If float, then draw ``max_samples * X.shape[0]`` samples. Thus,
+          ``max_samples`` should be in the interval `(0, 1)`.
 
     Attributes
     ----------
