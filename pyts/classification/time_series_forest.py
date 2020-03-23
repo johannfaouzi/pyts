@@ -38,8 +38,8 @@ def extract_features(X, n_samples, n_windows, indices):
 class WindowFeatureExtractor(BaseEstimator, TransformerMixin):
     """Feature extractor over a window.
 
-    This transformer extracts 3 features from each window:
-    the mean, the standard deviation and the slope.
+    This transformer extracts 3 features from each window: the mean, the
+    standard deviation and the slope.
 
     Parameters
     ----------
@@ -75,8 +75,8 @@ class WindowFeatureExtractor(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         """Fit the model according to the given training data.
 
-        It generates the indices of the windows from which
-        the features will be extracted.
+        It generates the indices of the windows from which the features will be
+        extracted.
 
         Parameters
         ----------
@@ -210,6 +210,7 @@ class TimeSeriesForest(BaseEstimator, ClassifierMixin):
 
     min_samples_split : int or float (default = 2)
         The minimum number of samples required to split an internal node:
+
         - If int, then consider `min_samples_split` as the minimum number.
         - If float, then `min_samples_split` is a fraction and
           `ceil(min_samples_split * n_samples)` are the minimum
@@ -251,8 +252,10 @@ class TimeSeriesForest(BaseEstimator, ClassifierMixin):
         A node will be split if this split induces a decrease of the impurity
         greater than or equal to this value.
         The weighted impurity decrease equation is the following::
+
             N_t / N * (impurity - N_t_R / N_t * right_impurity
                                 - N_t_L / N_t * left_impurity)
+
         where ``N`` is the total number of samples, ``N_t`` is the number of
         samples at the current node, ``N_t_L`` is the number of samples in the
         left child, and ``N_t_R`` is the number of samples in the right child.
@@ -299,7 +302,8 @@ class TimeSeriesForest(BaseEstimator, ClassifierMixin):
 
     max_samples : int, float or None (default = None)
         If bootstrap is True, the number of samples to draw from X
-        to train each base estimator.
+        to train each base estimator:
+
         - If None (default), then draw `X.shape[0]` samples.
         - If int, then draw `max_samples` samples.
         - If float, then draw `max_samples * X.shape[0]` samples. Thus,
@@ -559,7 +563,7 @@ class TimeSeriesForest(BaseEstimator, ClassifierMixin):
         p : array, shape = (n_samples, n_classes)
             The class probabilities of the input time series.
             The order of the classes corresponds to that in the
-            attribute classes_.
+            attribute `classes_`.
 
         """
         check_is_fitted(self)
