@@ -350,7 +350,7 @@ class TimeSeriesForest(BaseEstimator, ClassifierMixin):
     >>> clf.fit(X_train, y_train)
     TimeSeriesForest(...)
     >>> clf.score(X_test, y_test)
-    0.96
+    0.97333...
 
     Notes
     -----
