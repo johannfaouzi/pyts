@@ -60,6 +60,7 @@ Full API documentation of the *pyts* Python package.
   classification.KNeighborsClassifier
   classification.LearningShapelets
   classification.SAXVSM
+  classification.TimeSeriesForest
 
 
 :mod:`pyts.datasets`: Dataset loading utilities

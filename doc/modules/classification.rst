@@ -38,7 +38,7 @@ a good baseline for time series classification::
   * `Wikipedia entry on the k-nearest neighbors algorithm <https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm>`_
 
 
-SAX-VSM
+SAXVSM
 -------
 
 SAX-VSM stands for **S**\ ymbolic **A**\ ggregate appro\ **X**\ imation in
@@ -141,3 +141,38 @@ the coefficients of the logistic regression.
   * J. Grabocka, N. Schilling, M. Wistuba and L. Schmidt-Thieme,
     "Learning Time-Series Shapelets". International Conference on Data
     Mining, 14, 392-401 (2014).
+
+
+TimeSeriesForest
+----------------
+
+:class:`TimeSeriesForest` is a two-stage algorithm. First it extracts three
+features from a given number of windows: the mean, the standard deviation and
+the slope of the simple linear regression. Then a random forest is used using
+the extracted features as input data. These three statistics are fast to
+compute and give a lot of information about the window. The windows are
+generated randomly and the number of windows is controlled with the
+:code:`n_windows` parameter. Using the feature importance scores of the random
+forest, one can easily find the most important windows to classify time series.
+
+.. figure:: ../auto_examples/classification/images/sphx_glr_plot_time_series_forest_001.png
+   :target: ../auto_examples/classification/plot_time_series_forest.html
+   :align: center
+   :scale: 60%
+
+.. code-block:: python
+
+    >>> from pyts.datasets import load_gunpoint
+    >>> from pyts.classification import TimeSeriesForest
+    >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
+    >>> clf = TimeSeriesForest(random_state=43)
+    >>> clf.fit(X_train, y_train)
+    TimeSeriesForest(...)
+    >>> clf.score(X_test, y_test)
+    0.973333...
+
+.. topic:: References
+
+  * H. Deng, G. Runger, E. Tuv and M. Vladimir, "A Time Series Forest for
+    Classification and Feature Extraction". Information Sciences, 239, 142-153
+    (2013).
