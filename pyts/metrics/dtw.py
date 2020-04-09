@@ -905,10 +905,10 @@ def _blurred_path_region(n_timestamps_1, n_timestamps_2, resolution_level,
     for i in range(1, radius + 1):
         start = path_length * (i - 1)
         end = path_length * i
-        path_up[0, start: end] += i
-        path_down[0, start: end] -= i
-        path_left[1, start: end] -= i
-        path_right[1, start: end] += i
+        path_up[0, start: end] += radius
+        path_down[0, start: end] -= radius
+        path_left[1, start: end] -= radius
+        path_right[1, start: end] += radius
 
     path_radius = np.c_[path, path_up, path_down, path_left, path_right]
     path_radius[0] = np.clip(path_radius[0], 0, n_timestamps_reduced_1 - 1)
