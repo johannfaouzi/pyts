@@ -524,7 +524,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
 
         lengths_list = List()
         for x in lengths:
-            lengths_list.append(x.astype('float64'))
+            lengths_list.append(x)
 
         # Derive distances between shapelets and time series
         X_dist = _derive_all_distances(
@@ -585,9 +585,9 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
         # Concatenate the results
         X_dist = np.hstack(X_dist)
         scores = np.concatenate(scores)
+        shapelets = np.concatenate(shapelets)
         if shapelets.ndim > 1:
             shapelets = shapelets.astype('float64')
-        shapelets = np.concatenate(shapelets)
         start_idx = np.concatenate(start_idx)
         end_idx = np.concatenate(end_idx)
         time_series_idx = np.concatenate(time_series_idx)
@@ -621,7 +621,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
 
         lengths_list = List()
         for x in self.shapelets_:
-            lengths_list.append(x.astype('float64'))
+            lengths_list.append(x)
 
         X_new = _derive_all_distances(
             X, window_sizes, shapelets_list, lengths_list, fit=False)
