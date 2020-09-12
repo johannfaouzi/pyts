@@ -3,6 +3,7 @@
 from itertools import chain
 from joblib import delayed, Parallel
 from numba import njit, prange
+from numba.typed import List
 import numpy as np
 from numpy.lib.stride_tricks import as_strided
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -529,7 +530,8 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
 
         # Flatten the list of 2D arrays into an array of 1D arrays
         shapelets = [list(shapelet) for shapelet in shapelets]
-        shapelets = np.asarray(list(chain.from_iterable(shapelets)), dtype='object')
+        shapelets = np.asarray(list(chain.from_iterable(shapelets)),
+                               dtype='object')
 
         # Concatenate the list/tuple of 1D arrays into one 1D array
         start_idx = np.concatenate(start_idx)
@@ -575,6 +577,8 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
         # Concatenate the results
         X_dist = np.hstack(X_dist)
         scores = np.concatenate(scores)
+        if shapelets.ndim > 1:
+            shapelets = shapelets.astype('float64')
         shapelets = np.concatenate(shapelets)
         start_idx = np.concatenate(start_idx)
         end_idx = np.concatenate(end_idx)
@@ -603,8 +607,12 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
         lengths = self.indices_[:, 2] - self.indices_[:, 1]
         window_sizes = np.unique(lengths)
 
+        shapelets_list = List()
+        for x in self.shapelets_:
+            shapelets_list.append(x.astype('float64'))
+
         X_new = _derive_all_distances(
-            X, window_sizes, tuple(self.shapelets_), lengths, fit=False)
+            X, window_sizes, shapelets_list, lengths, fit=False)
         return X_new
 
     def _auto_length_computation(self, X, y, rng, n_jobs):

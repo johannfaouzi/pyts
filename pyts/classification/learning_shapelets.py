@@ -586,7 +586,7 @@ class CrossEntropyLearningShapelets(BaseEstimator, ClassifierMixin):
         self._lengths = lengths
         self.shapelets_ = [list(shapelet) for shapelet in shapelets]
         self.shapelets_ = np.asarray(
-            list(chain.from_iterable(self.shapelets_)))
+            list(chain.from_iterable(self.shapelets_)), dtype='object')
         if n_classes == 2:
             if self.fit_intercept:
                 self.intercept_ = np.array([weights[0]])
