@@ -529,7 +529,7 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
 
         # Flatten the list of 2D arrays into an array of 1D arrays
         shapelets = [list(shapelet) for shapelet in shapelets]
-        shapelets = np.asarray(list(chain.from_iterable(shapelets)))
+        shapelets = np.asarray(list(chain.from_iterable(shapelets)), dtype='object')
 
         # Concatenate the list/tuple of 1D arrays into one 1D array
         start_idx = np.concatenate(start_idx)
