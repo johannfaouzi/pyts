@@ -518,13 +518,9 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
         shapelets, lengths, start_idx, end_idx = _extract_all_shapelets(
             x, window_sizes, window_steps, n_timestamps)
 
-        shapelets_list = List()
-        for x in self.shapelets_:
-            shapelets_list.append(x.astype('float64'))
-
         # Derive distances between shapelets and time series
         X_dist = _derive_all_distances(
-            X, window_sizes, shapelets_list, lengths, fit=True)
+            X, window_sizes, shapelets, lengths, fit=True)
 
         if self.criterion == 'mutual_info':
             scores = mutual_info_classif(X_dist, y, discrete_features=False,
