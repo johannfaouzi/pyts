@@ -522,9 +522,13 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
         for x in shapelets:
             shapelets_list.append(x.astype('float64'))
 
+        lengths_list = List()
+        for x in lengths:
+            lengths_list.append(x.astype('float64'))
+
         # Derive distances between shapelets and time series
         X_dist = _derive_all_distances(
-            X, window_sizes, shapelets_list, lengths, fit=True)
+            X, window_sizes, shapelets_list, lengths_list, fit=True)
 
         if self.criterion == 'mutual_info':
             scores = mutual_info_classif(X_dist, y, discrete_features=False,
@@ -615,8 +619,12 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
         for x in self.shapelets_:
             shapelets_list.append(x.astype('float64'))
 
+        lengths_list = List()
+        for x in self.shapelets_:
+            lengths_list.append(x.astype('float64'))
+
         X_new = _derive_all_distances(
-            X, window_sizes, shapelets_list, lengths, fit=False)
+            X, window_sizes, shapelets_list, lengths_list, fit=False)
         return X_new
 
     def _auto_length_computation(self, X, y, rng, n_jobs):
