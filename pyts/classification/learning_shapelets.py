@@ -227,8 +227,8 @@ def _compute_shapelet_grad(
             diff = shapelet - X_window
             dist = np.empty((n_samples, n_windows))
             for k in prange(n_samples):
-                for l in prange(n_windows):
-                    dist[k, l] = np.mean(diff[k, l] ** 2)
+                for m in prange(n_windows):
+                    dist[k, m] = np.mean(diff[k, m] ** 2)
 
             # Derive the softmin gradient
             softmin_gradient = np.empty((n_samples, n_windows))
