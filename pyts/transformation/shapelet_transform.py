@@ -3,6 +3,7 @@
 from itertools import chain
 from joblib import delayed, Parallel
 from numba import njit, prange
+from numba.typed import List
 import numpy as np
 from numpy.lib.stride_tricks import as_strided
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -13,12 +14,12 @@ from ..utils.utils import _windowed_view
 
 
 @njit()
-def _extract_all_shapelets_raw(x, window_sizes, window_steps, n_timestamps):
+def _extract_all_shapelets(x, window_sizes, window_steps, n_timestamps):
     """Extract all the shapelets from a single time series."""
-    shapelets = []  # shapelets
-    lengths = []  # lengths of shapelets
-    start_idx = []  # start index of shapelets (included)
-    end_idx = []  # end index of shapelets (excluded)
+    shapelets = List()  # shapelets
+    lengths = List()  # lengths of shapelets
+    start_idx = List()  # start index of shapelets (included)
+    end_idx = List()  # end index of shapelets (excluded)
 
     for window_size, window_step in zip(window_sizes, window_steps):
         # Derive the new shape and strides
@@ -37,18 +38,6 @@ def _extract_all_shapelets_raw(x, window_sizes, window_steps, n_timestamps):
         start_idx.append(np.arange(0, n_timestamps - window_size + 1,
                                    window_step))
         end_idx.append(np.arange(window_size, n_timestamps + 1, window_step))
-
-    return shapelets, lengths, start_idx, end_idx
-
-
-def _extract_all_shapelets(x, window_sizes, window_steps, n_timestamps):
-    """Extract all the shapelets from a single time series."""
-    shapelets, lengths, start_idx, end_idx = _extract_all_shapelets_raw(
-        x, window_sizes, window_steps, n_timestamps)
-
-    # Convert list to tuple
-    shapelets = tuple(shapelets)
-    lengths = tuple(lengths)
 
     return shapelets, lengths, start_idx, end_idx
 
@@ -529,7 +518,8 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
 
         # Flatten the list of 2D arrays into an array of 1D arrays
         shapelets = [list(shapelet) for shapelet in shapelets]
-        shapelets = np.asarray(list(chain.from_iterable(shapelets)))
+        shapelets = np.asarray(list(chain.from_iterable(shapelets)),
+                               dtype='object')
 
         # Concatenate the list/tuple of 1D arrays into one 1D array
         start_idx = np.concatenate(start_idx)
@@ -576,6 +566,8 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
         X_dist = np.hstack(X_dist)
         scores = np.concatenate(scores)
         shapelets = np.concatenate(shapelets)
+        if shapelets.ndim > 1:
+            shapelets = shapelets.astype('float64')
         start_idx = np.concatenate(start_idx)
         end_idx = np.concatenate(end_idx)
         time_series_idx = np.concatenate(time_series_idx)
@@ -603,8 +595,13 @@ class ShapeletTransform(BaseEstimator, TransformerMixin):
         lengths = self.indices_[:, 2] - self.indices_[:, 1]
         window_sizes = np.unique(lengths)
 
+        # Convert the array of arrays of shapelets to a numba.typed.List object
+        shapelets_list = List()
+        for x in self.shapelets_:
+            shapelets_list.append(x.astype('float64'))
+
         X_new = _derive_all_distances(
-            X, window_sizes, tuple(self.shapelets_), lengths, fit=False)
+            X, window_sizes, shapelets_list, lengths, fit=False)
         return X_new
 
     def _auto_length_computation(self, X, y, rng, n_jobs):

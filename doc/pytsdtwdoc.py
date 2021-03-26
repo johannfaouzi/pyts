@@ -34,7 +34,13 @@ import warnings
 from numpydoc.numpydoc import mangle_docstrings
 from docutils.statemachine import ViewList
 from sphinx.domains.python import PythonDomain
-from scipy._lib._util import getargspec_no_self
+
+import scipy
+SCIPY_VERSION = scipy.__version__
+if SCIPY_VERSION < '1.5':
+    from scipy._lib._util import getargspec_no_self
+else:
+    from scipy._lib._util import getfullargspec_no_self
 
 
 def setup(app):
@@ -79,13 +85,21 @@ def wrap_mangling_directive(base_directive):
             # Interface function
             name = self.arguments[0].strip()
             obj = _import_object(name)
-            args, varargs, keywords, defaults = getargspec_no_self(obj)
+            if SCIPY_VERSION < '1.5':
+                args, varargs, keywords, defaults = getargspec_no_self(obj)
+            else:
+                (args, varargs, keywords,
+                 defaults, _, _, _) = getfullargspec_no_self(obj)
 
             # Implementation function
             impl_name = self.options['impl']
             impl_obj = _import_object(impl_name)
-            impl_args, impl_varargs, impl_keywords, impl_defaults = (
-                getargspec_no_self(impl_obj))
+            if SCIPY_VERSION < '1.5':
+                impl_args, impl_varargs, impl_keywords, impl_defaults = (
+                    getargspec_no_self(impl_obj))
+            else:
+                (impl_args, impl_varargs, impl_keywords, impl_defaults,
+                 _, _, _) = getfullargspec_no_self(impl_obj)
 
             # Format signature taking implementation into account
             args = list(args)

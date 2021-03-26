@@ -315,9 +315,8 @@ class TimeSeriesForest(BaseEstimator, ClassifierMixin):
         The child estimator template used to create the collection of fitted
         sub-estimators.
 
-    classes_ : array of shape (n_classes,) or a list of such arrays
-        The classes labels (single output problem), or a list of arrays of
-        class labels (multi-output problem).
+    classes_ : array, shape = (n_classes,)
+        The classes labels.
 
     estimators_ : list of DecisionTreeClassifier
         The collection of fitted sub-estimators.
@@ -334,7 +333,7 @@ class TimeSeriesForest(BaseEstimator, ClassifierMixin):
     n_features_ : int
         The number of features when ``fit`` is performed.
 
-    oob_decision_function_ : None array, shape = (n_samples, n_classes)
+    oob_decision_function_ : None or array, shape = (n_samples, n_classes)
         Decision function computed with out-of-bag estimate on the training
         set. If n_estimators is small it might be possible that a data point
         was never left out during the bootstrap. In this case,

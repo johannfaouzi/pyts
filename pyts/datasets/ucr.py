@@ -296,7 +296,8 @@ def _load_ucr_dataset(dataset, path):
         y_train = y_train.astype('float64').astype('int64')
         y_test = y_test.astype('float64').astype('int64')
     except ValueError:
-        pass
+        y_train = y_train.astype(str)
+        y_test = y_test.astype(str)
 
     bunch = Bunch(
         data_train=X_train, target_train=y_train,
