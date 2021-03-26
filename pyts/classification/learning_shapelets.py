@@ -586,7 +586,7 @@ class CrossEntropyLearningShapelets(BaseEstimator, ClassifierMixin):
         self._lengths = lengths
         self.shapelets_ = [list(shapelet) for shapelet in shapelets]
         self.shapelets_ = np.asarray(
-            list(chain.from_iterable(self.shapelets_)))
+            list(chain.from_iterable(self.shapelets_)), dtype='object')
         if n_classes == 2:
             if self.fit_intercept:
                 self.intercept_ = np.array([weights[0]])
@@ -794,7 +794,8 @@ class CrossEntropyLearningShapelets(BaseEstimator, ClassifierMixin):
             raise ValueError("'class_weight' must be None, a dictionary "
                              " or 'balanced' (got {})."
                              .format(self.class_weight))
-        class_weight = compute_class_weight(self.class_weight, classes, y)
+        class_weight = compute_class_weight(
+            self.class_weight, classes=classes, y=y)
 
         sample_weight = _check_sample_weight(sample_weight, X, dtype='float64')
         sample_weight *= class_weight[y_ind]
@@ -999,9 +1000,9 @@ class LearningShapelets(BaseEstimator, ClassifierMixin):
         params.pop('multi_class')
         clf = CrossEntropyLearningShapelets(**params)
         if multi_class == 'ovr':
-            clf = OneVsRestClassifier(clf, self.n_jobs)
+            clf = OneVsRestClassifier(clf, n_jobs=self.n_jobs)
         elif multi_class == 'ovo':
-            clf = OneVsOneClassifier(clf, self.n_jobs)
+            clf = OneVsOneClassifier(clf, n_jobs=self.n_jobs)
         clf.fit(X, y)
 
         self.classes_ = clf.classes_

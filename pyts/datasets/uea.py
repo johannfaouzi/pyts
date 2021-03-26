@@ -309,6 +309,6 @@ def _parse_relational_arff(data):
     try:
         y = y.astype('float64').astype('int64')
     except ValueError:
-        pass
+        y = y.astype(str)
 
     return X, y

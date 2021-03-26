@@ -44,9 +44,11 @@ plt.plot(X[5], 'o--', ms=4, label='Second time series')
 for x, y, s in zip(range(n_timestamps), X[5], X_mcb[5]):
     plt.text(x, y, s, ha='center', va='bottom', fontsize=14, color='C1')
 
-plt.hlines(mcb.bin_edges_.T, np.arange(n_timestamps) - 0.5,
-           np.arange(n_timestamps) + 0.5, color='g',
-           linestyles='--', linewidth=0.7)
+# Plot the bin edges
+for i in range(n_bins - 1):
+    plt.hlines(mcb.bin_edges_.T[i], np.arange(n_timestamps) - 0.5,
+               np.arange(n_timestamps) + 0.5, color='g',
+               linestyles='--', linewidth=0.7)
 plt.vlines(np.arange(n_timestamps + 1) - 0.5, X.min(), X.max(),
            linestyles='--', linewidth=0.5)
 
