@@ -11,7 +11,7 @@ from sklearn.utils.validation import check_array
 from ..utils import segmentation
 
 
-@njit(parallel=True)
+@njit()
 def _paa(X, n_samples, n_timestamps, start, end, n_timestamps_new):
     X_paa = np.empty((n_samples, n_timestamps_new))
     for i in prange(n_samples):
