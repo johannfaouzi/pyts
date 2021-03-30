@@ -39,6 +39,7 @@ EXTRAS_REQUIRE = {
         'pytest',
         'pytest-cov'],
     'docs': [
+        'docutils==0.14',
         'sphinx==1.8.5',
         'sphinx-gallery',
         'numpydoc',
