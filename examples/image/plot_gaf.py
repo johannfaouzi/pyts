@@ -43,9 +43,9 @@ grid = ImageGrid(fig, 111,
 images = [X_gasf[0], X_gadf[0]]
 titles = ['Summation', 'Difference']
 for image, title, ax in zip(images, titles, grid):
-    im = ax.imshow(image, cmap='rainbow', origin='lower')
+    im = ax.imshow(image, cmap='rainbow', origin='lower', vmin=-1, vmax=1)
     ax.set_title(title, fontdict={'fontsize': 12})
-ax.cax.colorbar(im)
+plt.colorbar(im, cax=grid.cbar_axes[0])
 ax.cax.toggle_label(True)
 plt.suptitle('Gramian Angular Fields', y=0.98, fontsize=16)
 plt.show()

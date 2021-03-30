@@ -36,11 +36,11 @@ timestamps_2 = np.arange(n_timestamps_2 + 1)
 # Dynamic Time Warping: classic
 dtw_classic, path_classic = dtw(x, y, dist='square',
                                 method='classic', return_path=True)
-matrix_classic = np.zeros((n_timestamps_2 + 1, n_timestamps_1 + 1))
-matrix_classic[tuple(path_classic)[::-1]] = 1.
+matrix_classic = np.zeros((n_timestamps_1, n_timestamps_2))
+matrix_classic[tuple(path_classic)] = 1.
 
 plt.subplot(2, 2, 1)
-plt.pcolor(timestamps_1, timestamps_2, matrix_classic,
+plt.pcolor(timestamps_1, timestamps_2, matrix_classic.T,
            edgecolors='k', cmap='Greys')
 plt.xlabel('x', fontsize=12)
 plt.ylabel('y', fontsize=12)
@@ -55,7 +55,7 @@ dtw_sakoechiba, path_sakoechiba = dtw(
 )
 band = sakoe_chiba_band(n_timestamps_1, n_timestamps_2,
                         window_size=window_size)
-matrix_sakoechiba = np.zeros((n_timestamps_1 + 1, n_timestamps_2 + 1))
+matrix_sakoechiba = np.zeros((n_timestamps_1, n_timestamps_2))
 for i in range(n_timestamps_1):
     matrix_sakoechiba[i, np.arange(*band[:, i])] = 0.5
 matrix_sakoechiba[tuple(path_sakoechiba)] = 1.
@@ -76,7 +76,7 @@ dtw_itakura, path_itakura = dtw(
 )
 parallelogram = itakura_parallelogram(n_timestamps_1, n_timestamps_2,
                                       max_slope=slope)
-matrix_itakura = np.zeros((n_timestamps_1 + 1, n_timestamps_2 + 1))
+matrix_itakura = np.zeros((n_timestamps_1, n_timestamps_2))
 for i in range(n_timestamps_1):
     matrix_itakura[i, np.arange(*parallelogram[:, i])] = 0.5
 matrix_itakura[tuple(path_itakura)] = 1.
@@ -107,7 +107,7 @@ multiscale_region = _blurred_path_region(
     path_res,
     radius=radius
 )
-matrix_multiscale = np.zeros((n_timestamps_1 + 1, n_timestamps_2 + 1))
+matrix_multiscale = np.zeros((n_timestamps_1, n_timestamps_2))
 for i in range(n_timestamps_1):
     matrix_multiscale[i, np.arange(*multiscale_region[:, i])] = 0.5
 matrix_multiscale[tuple(path_multiscale)] = 1.
