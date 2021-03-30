@@ -897,7 +897,7 @@ def _blurred_path_region(n_timestamps_1, n_timestamps_2, resolution_level,
                          n_timestamps_reduced_1, n_timestamps_reduced_2,
                          path, radius):
     path_length = path.shape[1]
-    path_up = np.repeat(path, radius, axis=1)
+    path_up = np.tile(path, radius)
     path_down = path_up.copy()
     path_left = path_up.copy()
     path_right = path_up.copy()
