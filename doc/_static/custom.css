@@ -339,3 +339,8 @@ div.admonition.seealso p.first.admonition-title{
 div.admonition.seealso code {
   background-color: transparent;
 }
+
+/* Justify text */
+p {
+  text-align: justify;
+}
