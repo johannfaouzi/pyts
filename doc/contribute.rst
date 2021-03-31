@@ -168,7 +168,7 @@ Building the documentation
 
 Building the documentation requires installing some additional packages::
 
-    pip install sphinx==1.8.2 sphinx-gallery numpydoc matplotlib
+    pip install docutils=0.14 sphinx==1.8.5 sphinx-gallery numpydoc matplotlib
 
 To build the documentation, you must be in the ``doc`` folder::
 

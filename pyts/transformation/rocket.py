@@ -131,7 +131,7 @@ def apply_one_kernel_one_sample(
     return np.max(x_conv), np.mean(x_conv > 0)
 
 
-@njit(parallel=True)
+@njit()
 def apply_all_kernels(X, weights, lengths, biases, dilations, paddings):
     """Apply one kernel to a data set of time series.
 
