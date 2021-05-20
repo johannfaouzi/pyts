@@ -176,3 +176,52 @@ forest, one can easily find the most important windows to classify time series.
   * H. Deng, G. Runger, E. Tuv and M. Vladimir, "A Time Series Forest for
     Classification and Feature Extraction". Information Sciences, 239, 142-153
     (2013).
+
+
+Time Series Bag-of-Features
+---------------------------
+
+:class:`TSBF` is a complex algorithm whose fitting procedure consists of the
+following steps:
+
+* Random subsequences are extracted from each input time series.
+* Each subsequence is split into several intervals.
+* Three features are extracted from each interval: the mean,
+  the standard deviation and the slope.
+* Four features are also extracted from the whole subsequence:
+  the mean, the standard deviation and the start and end indices.
+* A first random forest classifier is fitted on this dataset of
+  subsequences, and the label of a subsequence is given by the
+  label of the time series from which this subsequence has been
+  extracted.
+* Out-of-bag probabilities for each class are binned across all
+  the subsequences extracted from a given time series; the mean
+  probability for each class is also computed. They are the
+  features extracted from the original data set.
+* A second random forest classifier is finally fitted using the
+  extracted features.
+
+Since the final estimator is a random forest classifier, we can extract the
+feature importance scores:
+
+.. figure:: ../auto_examples/classification/images/sphx_glr_plot_tsbf_001.png
+   :target: ../auto_examples/classification/plot_tsbf.html
+   :align: center
+   :scale: 60%
+
+.. code-block:: python
+
+    >>> from pyts.datasets import load_gunpoint
+    >>> from pyts.classification import TimeSeriesForest
+    >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
+    >>> clf = TimeSeriesForest(random_state=43)
+    >>> clf.fit(X_train, y_train)
+    TimeSeriesForest(...)
+    >>> clf.score(X_test, y_test)
+    0.973333...
+
+.. topic:: References
+
+  * M.G. Baydogan, G. Runger and E. Tuv, "A Bag-of-Features Framework to
+    Classify Time Series". IEEE Transactions on Pattern Analysis and Machine
+    Intelligence, 35(11), 2796-2802 (2013).
