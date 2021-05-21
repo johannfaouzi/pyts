@@ -61,6 +61,7 @@ Full API documentation of the *pyts* Python package.
   classification.LearningShapelets
   classification.SAXVSM
   classification.TimeSeriesForest
+  classification.TSBF
 
 
 :mod:`pyts.datasets`: Dataset loading utilities
