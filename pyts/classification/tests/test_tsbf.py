@@ -328,7 +328,6 @@ def test_no_oob_score(params, error, err_msg):
      (X_arange, y, {'n_estimators': 30, 'random_state': 42, 'bins': 5}),
      (X_arange[:3], y[:3], {}),
      (X_ones, y, {'bins': 3}),
-     (X_ones, y, {'bins': np.linspace(0., 1., 4)}),
      (X_ones, y, {'n_estimators': 15, 'random_state': 42, 'bins': 5}),
      (X_ones[:3], y[:3], {'bins': np.linspace(0, 1, 13)})]
 )
@@ -366,6 +365,8 @@ def test_attributes_tsbf(X, y, params):
      (X_arange, y, {'n_estimators': 30, 'random_state': 42}),
      (X_arange[:3], y[:3], {}),
      (X_ones, y, {}),
+     (X_ones, y, {'bins': 3}),
+     (X_ones, y, {'bins': np.linspace(0., 1., 4)}),
      (X_ones, y, {'n_estimators': 15, 'random_state': 42}),
      (X_ones[:3], y[:3], {})]
 )
