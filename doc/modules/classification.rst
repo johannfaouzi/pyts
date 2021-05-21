@@ -181,8 +181,8 @@ forest, one can easily find the most important windows to classify time series.
 Time Series Bag-of-Features
 ---------------------------
 
-:class:`TSBF` is a complex algorithm whose fitting procedure consists of the
-following steps:
+:class:`TSBF` (acronym for Time Series Bag-of-Features) is a complex algorithm
+whose fitting procedure consists of the following steps:
 
 * Random subsequences are extracted from each input time series.
 * Each subsequence is split into several intervals.
@@ -207,7 +207,7 @@ feature importance scores:
 .. figure:: ../auto_examples/classification/images/sphx_glr_plot_tsbf_001.png
    :target: ../auto_examples/classification/plot_tsbf.html
    :align: center
-   :scale: 60%
+   :scale: 80%
 
 .. code-block:: python
 
