@@ -488,11 +488,11 @@ class TSBF(BaseEstimator, ClassifierMixin):
 
     References
     ----------
-    .. [1] M.G. Baydogan, G. Runger and E. Tuv, "A Bag-of-Features Framework
-           to Classify Time Series". IEEE Transactions on Pattern Analysis
-           and Machine Intelligence, 35(11), 2796-2802 (2013).
+    .. [R1] M.G. Baydogan, G. Runger and E. Tuv, "A Bag-of-Features Framework
+       to Classify Time Series". IEEE Transactions on Pattern Analysis
+       and Machine Intelligence, 35(11), 2796-2802 (2013).
 
-    .. [2] L. Breiman, "Random Forests", Machine Learning, 45(1), 5-32, 2001.
+    .. [R2] Leo Breiman, "Random Forests", Machine Learning, 45(1), 5-32, 2001.
 
     """  # noqa: E501
     def __init__(self,
