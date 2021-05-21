@@ -106,7 +106,7 @@ complements the `User Guide <user_guide.html>`_.
 
 History of notable changes to the pyts.
 
-See the `README <https://github.com/johannfaouzi/pyts/blob/master/README.md>`_
+See the `README <https://github.com/johannfaouzi/pyts/blob/main/README.md>`_
 for more information.
 
 
