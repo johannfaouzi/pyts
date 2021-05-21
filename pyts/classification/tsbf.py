@@ -463,11 +463,11 @@ class TSBF(BaseEstimator, ClassifierMixin):
     Examples
     --------
     >>> from pyts.datasets import load_gunpoint
-    >>> from pyts.classification import TimeSeriesForest
+    >>> from pyts.classification import TSBF
     >>> X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
-    >>> clf = TimeSeriesForest(random_state=43)
+    >>> clf = TSBF(random_state=43)
     >>> clf.fit(X_train, y_train)
-    TimeSeriesForest(...)
+    TSBF(...)
     >>> clf.score(X_test, y_test)
     0.97333...
 

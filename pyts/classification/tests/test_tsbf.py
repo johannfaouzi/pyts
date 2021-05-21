@@ -242,6 +242,8 @@ def test_parameter_check_interval_feature_extractor(params, error, err_msg):
        'n_subsequences': 4}, (4, 6), 10),
      ({'min_subsequence_size': 10, 'min_interval_size': 5,
        'n_subsequences': 6}, (6, 3), 10),
+     ({'min_subsequence_size': 10, 'min_interval_size': 5,
+       'n_subsequences': 0.3}, (6, 3), 10),
      ({'min_subsequence_size': 10, 'min_interval_size': 2,
        'n_subsequences': 'auto'}, (5, 6), 10),
      ({'min_subsequence_size': 10, 'min_interval_size': 5,
@@ -306,12 +308,27 @@ def test_parameter_check_tsbf(params, error, err_msg):
         clf.fit(X_arange, y)
 
 
+@pytest.mark.filterwarnings("ignore")
+@pytest.mark.parametrize(
+    'params, error, err_msg',
+    [({'n_estimators': 1}, ValueError,
+      "At least one sample was never left out during the bootstrap. "
+      "Increase the number of trees (n_estimators).")]
+)
+def test_no_oob_score(params, error, err_msg):
+    clf = TSBF(**params)
+    with pytest.raises(error, match=re.escape(err_msg)):
+        clf.fit(X_arange, y)
+
+
 @pytest.mark.parametrize(
     'X, y, params',
     [(X_arange, y, {}),
+     (X_arange, y, {'oob_score': True}),
      (X_arange, y, {'n_estimators': 30, 'random_state': 42, 'bins': 5}),
      (X_arange[:3], y[:3], {}),
      (X_ones, y, {'bins': 3}),
+     (X_ones, y, {'bins': np.linspace(0., 1., 4)}),
      (X_ones, y, {'n_estimators': 15, 'random_state': 42, 'bins': 5}),
      (X_ones[:3], y[:3], {'bins': np.linspace(0, 1, 13)})]
 )
