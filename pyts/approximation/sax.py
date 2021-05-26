@@ -4,12 +4,14 @@
 # License: BSD-3-Clause
 
 import numpy as np
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_array
+from ..base import UnivariateTransformerMixin
 from ..preprocessing import KBinsDiscretizer
 
 
-class SymbolicAggregateApproximation(BaseEstimator, TransformerMixin):
+class SymbolicAggregateApproximation(BaseEstimator,
+                                     UnivariateTransformerMixin):
     """Symbolic Aggregate approXimation.
 
     Parameters

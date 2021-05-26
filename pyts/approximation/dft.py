@@ -4,15 +4,16 @@
 # License: BSD-3-Clause
 
 import numpy as np
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.feature_selection import f_classif
 from sklearn.utils.validation import check_array, check_is_fitted, check_X_y
 from math import ceil
 from warnings import warn
+from ..base import UnivariateTransformerMixin
 from ..preprocessing import StandardScaler
 
 
-class DiscreteFourierTransform(BaseEstimator, TransformerMixin):
+class DiscreteFourierTransform(BaseEstimator, UnivariateTransformerMixin):
     """Discrete Fourier Transform.
 
     Parameters

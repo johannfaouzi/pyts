@@ -5,11 +5,9 @@
 
 from itertools import chain
 from math import ceil
-
 from numba import njit, prange
 import numpy as np
-
-from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.base import BaseEstimator
 from sklearn.cluster import KMeans
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.multiclass import OneVsOneClassifier, OneVsRestClassifier
@@ -19,10 +17,9 @@ from sklearn.utils import compute_class_weight, check_array
 from sklearn.utils.validation import (
     check_is_fitted, check_random_state, check_X_y, _check_sample_weight)
 from sklearn.utils.multiclass import check_classification_targets
-
 import warnings
-
 from ..utils.utils import _windowed_view
+from ..base import UnivariateClassifierMixin
 
 
 @njit(fastmath=True)
@@ -305,7 +302,7 @@ def _grad_shapelets(X, y, n_classes, weights, shapelets, lengths, alpha,
     return gradients
 
 
-class CrossEntropyLearningShapelets(BaseEstimator, ClassifierMixin):
+class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
     """Learning Shapelets algorithm with cross-entropy loss.
 
     Parameters
@@ -811,7 +808,7 @@ class CrossEntropyLearningShapelets(BaseEstimator, ClassifierMixin):
         return n_shapelets_per_size, min_shapelet_length, sample_weight, rng
 
 
-class LearningShapelets(BaseEstimator, ClassifierMixin):
+class LearningShapelets(BaseEstimator, UnivariateClassifierMixin):
     """Learning Shapelets algorithm.
 
     This estimator consists of two steps: computing the distances between the

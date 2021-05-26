@@ -6,14 +6,15 @@
 import numpy as np
 
 from scipy.sparse import csr_matrix, hstack
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.base import clone
 from sklearn.utils.validation import check_is_fitted
+from ...base import MultivariateTransformerMixin
 from ...transformation import WEASEL
 from ..utils import check_3d_array
 
 
-class WEASELMUSE(BaseEstimator, TransformerMixin):
+class WEASELMUSE(BaseEstimator, MultivariateTransformerMixin):
     r"""WEASEL+MUSE algorithm.
 
     Parameters

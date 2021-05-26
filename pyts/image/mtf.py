@@ -6,8 +6,9 @@
 import numpy as np
 from math import ceil
 from numba import njit, prange
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_array
+from ..base import UnivariateTransformerMixin
 from ..preprocessing import KBinsDiscretizer
 from ..utils import segmentation
 
@@ -46,7 +47,7 @@ def _aggregated_markov_transition_field(X_mtf, n_samples, image_size,
     return X_amtf
 
 
-class MarkovTransitionField(BaseEstimator, TransformerMixin):
+class MarkovTransitionField(BaseEstimator, UnivariateTransformerMixin):
     """Markov Transition Field.
 
     Parameters

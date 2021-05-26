@@ -3,16 +3,17 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.base import BaseEstimator
 from sklearn.neighbors import KNeighborsClassifier as SklearnKNN
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils.validation import check_X_y, check_is_fitted
+from ..base import UnivariateClassifierMixin
 from ..metrics import boss, dtw, sakoe_chiba_band, itakura_parallelogram
 from ..metrics.dtw import (_dtw_classic, _dtw_region, _dtw_fast,
                            _dtw_multiscale)
 
 
-class KNeighborsClassifier(BaseEstimator, ClassifierMixin):
+class KNeighborsClassifier(BaseEstimator, UnivariateClassifierMixin):
     """k-nearest neighbors classifier.
 
     Parameters

@@ -5,12 +5,13 @@
 
 import numpy as np
 from scipy.sparse import csr_matrix, hstack
-from sklearn.base import BaseEstimator, TransformerMixin, clone
+from sklearn.base import BaseEstimator, clone
 from sklearn.utils.validation import check_is_fitted
+from ...base import MultivariateTransformerMixin
 from ..utils import check_3d_array
 
 
-class MultivariateTransformer(BaseEstimator, TransformerMixin):
+class MultivariateTransformer(BaseEstimator, MultivariateTransformerMixin):
     r"""Transformer for multivariate time series.
 
     It provides a convenient class to transform multivariate time series with

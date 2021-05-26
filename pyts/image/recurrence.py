@@ -6,8 +6,9 @@
 import numpy as np
 from math import ceil
 from numpy.lib.stride_tricks import as_strided
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_array
+from ..base import UnivariateTransformerMixin
 
 
 def _trajectories(X, dimension, time_delay):
@@ -20,7 +21,7 @@ def _trajectories(X, dimension, time_delay):
     return as_strided(X, shape=shape_new, strides=strides_new)
 
 
-class RecurrencePlot(BaseEstimator, TransformerMixin):  # noqa: D207
+class RecurrencePlot(BaseEstimator, UnivariateTransformerMixin):  # noqa: D207
     r"""Recurrence Plot.
 
     A recurrence plot is an image representing the distances between

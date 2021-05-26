@@ -5,9 +5,10 @@
 
 import numpy as np
 from numba import njit, prange
-from sklearn.base import BaseEstimator, ClassifierMixin, clone
+from sklearn.base import BaseEstimator, clone
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils.validation import check_is_fitted
+from ...base import MultivariateClassifierMixin
 from ..utils import check_3d_array
 
 
@@ -20,7 +21,7 @@ def _hard_vote(y_pred, weights):
     return maj
 
 
-class MultivariateClassifier(BaseEstimator, ClassifierMixin):
+class MultivariateClassifier(BaseEstimator, MultivariateClassifierMixin):
     """Classifier for multivariate time series.
 
     It provides a convenient class to classify multivariate time series with

@@ -3,14 +3,15 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.pipeline import Pipeline
 from sklearn.utils.validation import check_is_fitted
 from .dft import DiscreteFourierTransform
 from .mcb import MultipleCoefficientBinning
+from ..base import UnivariateTransformerMixin
 
 
-class SymbolicFourierApproximation(BaseEstimator, TransformerMixin):
+class SymbolicFourierApproximation(BaseEstimator, UnivariateTransformerMixin):
     """Symbolic Fourier Approximation.
 
     Parameters
