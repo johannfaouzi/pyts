@@ -9,9 +9,10 @@ from sklearn.preprocessing import MinMaxScaler as SklearnMinMaxScaler
 from sklearn.preprocessing import MaxAbsScaler as SklearnMaxAbsScaler
 from sklearn.preprocessing import RobustScaler as SklearnRobustScaler
 from sklearn.utils.validation import check_array
+from ..base import UnivariateTransformerMixin
 
 
-class StandardScaler(BaseEstimator, TransformerMixin):
+class StandardScaler(BaseEstimator, UnivariateTransformerMixin):
     """Standardize time series by removing mean and scaling to unit variance.
 
     Parameters

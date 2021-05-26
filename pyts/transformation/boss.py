@@ -6,15 +6,16 @@
 import numpy as np
 from math import ceil
 from scipy.sparse import csr_matrix
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.utils.validation import check_array, check_is_fitted
 from sklearn.utils.multiclass import check_classification_targets
 from ..approximation import SymbolicFourierApproximation
+from ..base import UnivariateTransformerMixin
 from ..utils.utils import _windowed_view
 
 
-class BOSS(BaseEstimator, TransformerMixin):
+class BOSS(BaseEstimator, UnivariateTransformerMixin):
     """Bag of Symbolic Fourier Approximation Symbols.
 
     For each time series, subseries are extracted using a slidind window.

@@ -6,9 +6,10 @@
 import numpy as np
 from math import ceil
 from numba import njit, prange
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_array
 from ..approximation import PiecewiseAggregateApproximation
+from ..base import UnivariateTransformerMixin
 from ..preprocessing import MinMaxScaler
 
 
@@ -28,7 +29,7 @@ def _gadf(X_cos, X_sin, n_samples, image_size):
     return X_gadf
 
 
-class GramianAngularField(BaseEstimator, TransformerMixin):
+class GramianAngularField(BaseEstimator, UnivariateTransformerMixin):
     """Gramian Angular Field.
 
     Parameters

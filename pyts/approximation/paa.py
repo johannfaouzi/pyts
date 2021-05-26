@@ -6,8 +6,9 @@
 import numpy as np
 from math import ceil
 from numba import njit, prange
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_array
+from ..base import UnivariateTransformerMixin
 from ..utils import segmentation
 
 
@@ -20,7 +21,8 @@ def _paa(X, n_samples, n_timestamps, start, end, n_timestamps_new):
     return X_paa
 
 
-class PiecewiseAggregateApproximation(BaseEstimator, TransformerMixin):
+class PiecewiseAggregateApproximation(BaseEstimator,
+                                      UnivariateTransformerMixin):
     """Piecewise Aggregate Approximation.
 
     Parameters

@@ -6,9 +6,10 @@
 import numpy as np
 from numba import njit, prange
 from scipy.stats import norm
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_array
 from warnings import warn
+from ..base import UnivariateTransformerMixin
 
 
 @njit()
@@ -48,7 +49,7 @@ def _digitize(X, bins):
     return X_binned.astype('int64')
 
 
-class KBinsDiscretizer(BaseEstimator, TransformerMixin):
+class KBinsDiscretizer(BaseEstimator, UnivariateTransformerMixin):
     """Bin continuous data into intervals sample-wise.
 
     Parameters

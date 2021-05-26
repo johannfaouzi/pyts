@@ -5,12 +5,13 @@
 
 import numpy as np
 from scipy.interpolate import interp1d
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.impute import MissingIndicator
 from sklearn.utils.validation import check_array
+from ..base import UnivariateTransformerMixin
 
 
-class InterpolationImputer(BaseEstimator, TransformerMixin):
+class InterpolationImputer(BaseEstimator, UnivariateTransformerMixin):
     """Impute missing values using interpolation.
 
     Parameters

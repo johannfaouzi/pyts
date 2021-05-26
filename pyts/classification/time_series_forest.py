@@ -6,11 +6,12 @@
 from math import ceil
 from numba import njit
 import numpy as np
-from sklearn.base import BaseEstimator, ClassifierMixin, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.utils.validation import (
     check_array, check_is_fitted, check_random_state)
+from ..base import UnivariateClassifierMixin, UnivariateTransformerMixin
 
 
 @njit()
@@ -35,7 +36,7 @@ def extract_features(X, n_samples, n_windows, indices):
     return X_new
 
 
-class WindowFeatureExtractor(BaseEstimator, TransformerMixin):
+class WindowFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
     """Feature extractor over a window.
 
     This transformer extracts 3 features from each window: the mean, the
@@ -174,7 +175,7 @@ class WindowFeatureExtractor(BaseEstimator, TransformerMixin):
         return n_windows, min_window_size, rng
 
 
-class TimeSeriesForest(BaseEstimator, ClassifierMixin):
+class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
     """A random forest classifier for time series.
 
     A random forest is a meta estimator that fits a number of decision tree
@@ -376,7 +377,7 @@ class TimeSeriesForest(BaseEstimator, ClassifierMixin):
            Forest for Classification and Feature Extraction".
            Information Sciences, 239, 142-153 (2013).
 
-    .. [2] L. Breiman, "Random Forests", Machine Learning, 45(1), 5-32, 2001.
+    .. [2] Leo Breiman, "Random Forests", Machine Learning, 45(1), 5-32, 2001.
 
     """  # noqa: E501
     def __init__(self,

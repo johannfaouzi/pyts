@@ -7,15 +7,16 @@ import numpy as np
 from math import ceil
 from sklearn.utils.validation import check_array, check_X_y, check_is_fitted
 from sklearn.utils.multiclass import check_classification_targets
-from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.base import BaseEstimator
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
 from ..approximation import SymbolicFourierApproximation
+from ..base import UnivariateClassifierMixin
 from ..utils.utils import _windowed_view
 
 
-class BOSSVS(BaseEstimator, ClassifierMixin):
+class BOSSVS(BaseEstimator, UnivariateClassifierMixin):
     """Bag-of-SFA Symbols in Vector Space.
 
     Each time series is transformed into an histogram using the

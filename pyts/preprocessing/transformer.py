@@ -3,14 +3,15 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.preprocessing import PowerTransformer as SklearnPowerTransformer
 from sklearn.preprocessing import (QuantileTransformer as
                                    SklearnQuantileTransformer)
 from sklearn.utils.validation import check_array
+from ..base import UnivariateTransformerMixin
 
 
-class PowerTransformer(BaseEstimator, TransformerMixin):
+class PowerTransformer(BaseEstimator, UnivariateTransformerMixin):
     """Apply a power transform sample-wise to make data more Gaussian-like.
 
     Power transforms are a family of parametric, monotonic transformations
@@ -109,7 +110,7 @@ class PowerTransformer(BaseEstimator, TransformerMixin):
         return X_new
 
 
-class QuantileTransformer(BaseEstimator, TransformerMixin):
+class QuantileTransformer(BaseEstimator, UnivariateTransformerMixin):
     """Transform samples using quantiles information.
 
     This method transforms the samples to follow a uniform or a normal

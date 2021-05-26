@@ -6,10 +6,11 @@ from numba import njit, prange
 from numba.typed import List
 import numpy as np
 from numpy.lib.stride_tricks import as_strided
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.feature_selection import f_classif, mutual_info_classif
 from sklearn.utils.validation import (check_array, check_is_fitted,
                                       check_random_state, check_X_y)
+from ..base import UnivariateTransformerMixin
 from ..utils.utils import _windowed_view
 
 
@@ -143,7 +144,7 @@ def _remove_similar_shapelets(scores, start_idx, end_idx):
     return np.array(kept_idx)
 
 
-class ShapeletTransform(BaseEstimator, TransformerMixin):
+class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
     """Shapelet Transform Algorithm.
 
     The Shapelet Transform algorithm extracts the most discriminative

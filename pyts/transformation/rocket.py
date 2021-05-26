@@ -1,9 +1,14 @@
+"""Code for RandOm Convolutional KErnel Transformation."""
+
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
 from numba import njit, prange
 import numpy as np
-
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.utils.validation import (
     check_array, check_is_fitted, check_random_state)
+from ..base import UnivariateTransformerMixin
 
 
 @njit()
@@ -173,7 +178,7 @@ def apply_all_kernels(X, weights, lengths, biases, dilations, paddings):
     return X_new
 
 
-class ROCKET(BaseEstimator, TransformerMixin):
+class ROCKET(BaseEstimator, UnivariateTransformerMixin):
     """RandOm Convolutional KErnel Transformation.
 
     This algorithm randomly generates a great variety of convolutional kernels

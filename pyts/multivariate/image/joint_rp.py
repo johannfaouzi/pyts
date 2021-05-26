@@ -4,12 +4,13 @@
 # License: BSD-3-Clause
 
 import numpy as np
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
+from ...base import MultivariateTransformerMixin
 from ...image import RecurrencePlot
 from ..utils import check_3d_array
 
 
-class JointRecurrencePlot(BaseEstimator, TransformerMixin):
+class JointRecurrencePlot(BaseEstimator, MultivariateTransformerMixin):
     r"""Joint Recurrence Plot.
 
     A recurrence plot is an image representing the distances between

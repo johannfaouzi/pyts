@@ -11,11 +11,12 @@ from sklearn.utils.validation import check_array
 import warnings
 from ..approximation import (
     PiecewiseAggregateApproximation, SymbolicAggregateApproximation)
+from ..base import UnivariateTransformerMixin
 from ..preprocessing import StandardScaler
 from ..utils.utils import _windowed_view
 
 
-class WordExtractor(BaseEstimator, TransformerMixin):
+class WordExtractor(BaseEstimator, UnivariateTransformerMixin):
     r"""Transform discretized time series into sequences of words.
 
     Parameters

@@ -4,13 +4,14 @@
 # License: BSD-3-Clause
 
 from scipy.sparse import csr_matrix
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.utils.validation import check_array, check_is_fitted
 from ..bag_of_words import BagOfWords
+from ..base import UnivariateTransformerMixin
 
 
-class BagOfPatterns(BaseEstimator, TransformerMixin):
+class BagOfPatterns(BaseEstimator, UnivariateTransformerMixin):
     """Bag-of-patterns representation for time series.
 
     This algorithm uses a sliding window to extract subsequences from the

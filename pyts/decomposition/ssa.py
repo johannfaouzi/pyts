@@ -6,8 +6,9 @@
 import numpy as np
 from math import ceil
 from numba import njit, prange
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_array
+from ..base import UnivariateTransformerMixin
 from ..utils.utils import _windowed_view
 
 
@@ -36,7 +37,7 @@ def _diagonal_averaging(X, n_samples, n_timestamps, window_size,
     return X_new
 
 
-class SingularSpectrumAnalysis(BaseEstimator, TransformerMixin):
+class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
     """Singular Spectrum Analysis.
 
     Parameters

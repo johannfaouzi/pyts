@@ -6,12 +6,12 @@
 from math import ceil
 from numba import njit
 import numpy as np
-
-from sklearn.base import BaseEstimator, ClassifierMixin, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.utils.validation import (
     check_array, check_is_fitted, check_random_state, check_X_y
 )
+from ..base import UnivariateClassifierMixin, UnivariateTransformerMixin
 
 
 @njit
@@ -67,7 +67,7 @@ def histogram(X, bins, n_bins, n_samples, n_classes):
     return X_new
 
 
-class IntervalFeatureExtractor(BaseEstimator, TransformerMixin):
+class IntervalFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
     """Feature extractor over the intervals of a subsequence.
 
     This transformer extracts 3 features from each interval of each
@@ -283,7 +283,7 @@ class IntervalFeatureExtractor(BaseEstimator, TransformerMixin):
                 n_subsequences, rng)
 
 
-class TSBF(BaseEstimator, ClassifierMixin):
+class TSBF(BaseEstimator, UnivariateClassifierMixin):
     """Time Series Bag-of-Features algorithm.
 
     Parameters
@@ -488,11 +488,11 @@ class TSBF(BaseEstimator, ClassifierMixin):
 
     References
     ----------
-    .. [R1] M.G. Baydogan, G. Runger and E. Tuv, "A Bag-of-Features Framework
+    .. [1] M.G. Baydogan, G. Runger and E. Tuv, "A Bag-of-Features Framework
        to Classify Time Series". IEEE Transactions on Pattern Analysis
        and Machine Intelligence, 35(11), 2796-2802 (2013).
 
-    .. [R2] Leo Breiman, "Random Forests", Machine Learning, 45(1), 5-32, 2001.
+    .. [2] Leo Breiman, "Random Forests", Machine Learning, 45(1), 5-32, 2001.
 
     """  # noqa: E501
     def __init__(self,

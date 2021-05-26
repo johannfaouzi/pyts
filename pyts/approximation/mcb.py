@@ -6,7 +6,8 @@
 import numpy as np
 from numba import njit, prange
 from scipy.stats import norm
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
+from ..base import UnivariateTransformerMixin
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.utils.validation import check_array, check_is_fitted, check_X_y
 from sklearn.utils.multiclass import check_classification_targets
@@ -47,7 +48,7 @@ def _digitize(X, bins):
     return X_binned.astype('int64')
 
 
-class MultipleCoefficientBinning(BaseEstimator, TransformerMixin):
+class MultipleCoefficientBinning(BaseEstimator, UnivariateTransformerMixin):
     """Bin continuous data into intervals column-wise.
 
     Parameters
