@@ -42,8 +42,8 @@ where :math:`\Theta` is the Heaviside function and :math:`\varepsilon`
 is the ``threshold``. Different strategies can be used to choose the threshold,
 such as a given float or a quantile of the distances.
 
-.. figure:: ../auto_examples/image/images/sphx_glr_plot_rp_001.png
-   :target: ../auto_examples/image/plot_rp.html
+.. figure:: ../auto_examples/image/images/sphx_glr_plot_single_rp_001.png
+   :target: ../auto_examples/image/plot_single_rp.html
    :align: center
    :scale: 80%
 
