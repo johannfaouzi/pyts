@@ -42,8 +42,8 @@ where :math:`\Theta` is the Heaviside function and :math:`\varepsilon`
 is the ``threshold``. Different strategies can be used to choose the threshold,
 such as a given float or a quantile of the distances.
 
-.. figure:: ../auto_examples/image/images/sphx_glr_plot_rp_001.png
-   :target: ../auto_examples/image/plot_rp.html
+.. figure:: ../auto_examples/image/images/sphx_glr_plot_single_rp_001.png
+   :target: ../auto_examples/image/plot_single_rp.html
    :align: center
    :scale: 80%
 
@@ -107,8 +107,8 @@ Difference Field (GADF).
 The ``method`` parameter controls which type of Gramian angular fields are
 computed.
 
-.. figure:: ../auto_examples/image/images/sphx_glr_plot_gaf_001.png
-   :target: ../auto_examples/image/plot_gaf.html
+.. figure:: ../auto_examples/image/images/sphx_glr_plot_single_gaf_001.png
+   :target: ../auto_examples/image/plot_single_gaf.html
    :align: center
    :scale: 80%
 
@@ -153,8 +153,8 @@ It then computes the Markov Transition Matrix of the discretized time series.
 Finally it spreads out the transition matrix to a field in order to reduce
 the loss of temporal information.
 
-.. figure:: ../auto_examples/image/images/sphx_glr_plot_mtf_001.png
-   :target: ../auto_examples/image/plot_mtf.html
+.. figure:: ../auto_examples/image/images/sphx_glr_plot_single_mtf_001.png
+   :target: ../auto_examples/image/plot_single_mtf.html
    :align: center
    :scale: 80%
 

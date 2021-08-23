@@ -16,6 +16,7 @@ import sys
 import os
 import warnings
 import sphinx_gallery
+from sphinx_gallery.sorting import ExampleTitleSortKey
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -356,6 +357,7 @@ intersphinx_mapping = {
 sphinx_gallery_conf = {
     'doc_module': 'pyts',
     'backreferences_dir': os.path.join('generated'),
+    'within_subsection_order': ExampleTitleSortKey,
     'reference_url': {
         'pyts': None}
 }
