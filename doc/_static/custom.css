@@ -344,3 +344,7 @@ div.admonition.seealso code {
 p {
   text-align: justify;
 }
+
+p.blurb {
+  text-align: left;
+}

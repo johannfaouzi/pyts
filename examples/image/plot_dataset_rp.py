@@ -1,11 +1,13 @@
 """
-================
-Recurrence Plots
-================
+============================
+Data set of recurrence plots
+============================
 
 A recurrence plot is an image obtained from a time series, representing the
-distances between each time point. The image can be binarized using a
-threshold. It is implemented as :class:`pyts.image.RecurrencePlot`.
+pairwise Euclidean distances for each value (and more generally for each
+trajectory) in the time series.
+The image can be binarized using a threshold.
+It is implemented as :class:`pyts.image.RecurrencePlot`.
 
 In this example, we consider the training samples of the
 `GunPoint dataset <http://timeseriesclassification.com/description.php?Dataset=GunPoint>`_,

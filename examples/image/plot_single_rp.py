@@ -1,11 +1,13 @@
 r"""
 ======================
-Single Recurrence Plot
+Single recurrence plot
 ======================
 
 A recurrence plot is an image obtained from a time series, representing the
-distances between each time point. The image can be binarized using a
-threshold. It is implemented as :class:`pyts.image.RecurrencePlot`.
+pairwise Euclidean distances for each value (and more generally for each
+trajectory) in the time series.
+The image can be binarized using a threshold.
+It is implemented as :class:`pyts.image.RecurrencePlot`.
 
 In this example, the considered time series is the sequence of the sine
 function values for 1000 equally-spaced points in the interval
@@ -20,7 +22,7 @@ Since the API is designed for machine learning, the
 :class:`pyts.image.RecurrencePlot` class expects a data set of time series
 as input, so the time series is transformed into a data set with a single time
 series (``X = np.array([x])``) and the first element of the data set of
-recurrence plots is retrieved (``ax.imshow(X_rp[0], ...``).
+recurrence plots is retrieved (``ax_rp.imshow(X_rp[0], ...``).
 """
 
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
@@ -74,10 +76,10 @@ ax_top.set_yticklabels(value_ticks)
 ax_top.xaxis.tick_top()
 
 # Plot the recurrence plot on the bottom right
-ax = fig.add_subplot(gs[1, 1])
-ax.imshow(X_rp[0], cmap='binary', origin='lower',
-          extent=[0, 4 * np.pi, 0, 4 * np.pi])
-ax.set_xticks([])
-ax.set_yticks([])
+ax_rp = fig.add_subplot(gs[1, 1])
+ax_rp.imshow(X_rp[0], cmap='binary', origin='lower',
+             extent=[0, 4 * np.pi, 0, 4 * np.pi])
+ax_rp.set_xticks([])
+ax_rp.set_yticks([])
 
 plt.show()
