@@ -48,13 +48,10 @@ def _reshape_with_nan(X, n_samples, lengths, max_length):
 
 def _digitize(X, bins):
     n_samples, n_timestamps = X.shape
-    if isinstance(bins, List):
-        X_binned = _digitize_2d(X, bins, n_samples, n_timestamps)
+    if bins.ndim == 1:
+        X_binned = _digitize_1d(X, bins, n_samples, n_timestamps)
     else:
-        if bins.ndim == 1:
-            X_binned = _digitize_1d(X, bins, n_samples, n_timestamps)
-        else:
-            X_binned = _digitize_2d(X, bins, n_samples, n_timestamps)
+        X_binned = _digitize_2d(X, bins, n_samples, n_timestamps)
     return X_binned.astype('int64')
 
 
