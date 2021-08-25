@@ -5,6 +5,7 @@
 
 import numpy as np
 from numba import njit, prange
+from numba.typed import List
 from scipy.stats import norm
 from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_array
@@ -37,9 +38,17 @@ def _digitize_2d(X, bins, n_samples, n_timestamps):
     return X_digit
 
 
+@njit
+def _reshape_with_nan(X, n_samples, lengths, max_length):
+    X_fill = np.full((n_samples, max_length), np.nan)
+    for i in prange(n_samples):
+        X_fill[i, :lengths[i]] = X[i]
+    return X_fill
+
+
 def _digitize(X, bins):
     n_samples, n_timestamps = X.shape
-    if isinstance(bins, tuple):
+    if isinstance(bins, List):
         X_binned = _digitize_2d(X, bins, n_samples, n_timestamps)
     else:
         if bins.ndim == 1:
@@ -66,6 +75,11 @@ class KBinsDiscretizer(BaseEstimator, UnivariateTransformerMixin):
         - 'quantile': All bins in each sample have the same number of points
         - 'normal': Bin edges are quantiles from a standard normal distribution
 
+    raise_warning : bool (default = True)
+        If True, a warning is raised when the number of bins is smaller for
+        at least one sample. In this case, you should consider decreasing the
+        number of bins or removing these samples.
+
     Examples
     --------
     >>> from pyts.preprocessing import KBinsDiscretizer
@@ -78,9 +92,10 @@ class KBinsDiscretizer(BaseEstimator, UnivariateTransformerMixin):
 
     """
 
-    def __init__(self, n_bins=5, strategy='quantile'):
+    def __init__(self, n_bins=5, strategy='quantile', raise_warning=True):
         self.n_bins = n_bins
         self.strategy = strategy
+        self.raise_warning = raise_warning
 
     def fit(self, X=None, y=None):
         """Pass.
@@ -142,26 +157,31 @@ class KBinsDiscretizer(BaseEstimator, UnivariateTransformerMixin):
 
     def _compute_bins(self, X, n_samples, n_bins, strategy):
         if strategy == 'normal':
-            bins_edges = norm.ppf(np.linspace(0, 1, self.n_bins + 1)[1:-1])
+            bin_edges = norm.ppf(np.linspace(0, 1, self.n_bins + 1)[1:-1])
         elif strategy == 'uniform':
             sample_min, sample_max = np.min(X, axis=1), np.max(X, axis=1)
-            bins_edges = _uniform_bins(
+            bin_edges = _uniform_bins(
                 sample_min, sample_max, n_samples, n_bins).T
         else:
-            bins_edges = np.percentile(
+            bin_edges = np.percentile(
                 X, np.linspace(0, 100, self.n_bins + 1)[1:-1], axis=1
-            )
-            mask = np.r_[
-                ~np.isclose(0, np.diff(bins_edges, axis=0), rtol=0, atol=1e-8),
-                np.full((1, n_samples), True)
+            ).T
+            mask = np.c_[
+                ~np.isclose(0, np.diff(bin_edges, axis=1), rtol=0, atol=1e-8),
+                np.full((n_samples, 1), True)
             ]
             if (self.n_bins > 2) and np.any(~mask):
                 samples = np.where(np.any(~mask, axis=0))[0]
-                warn("Some quantiles are equal. The number of bins will be "
-                     "smaller for sample {0}. Consider decreasing the number "
-                     "of bins or removing these samples.".format(samples))
-            bins_edges = np.asarray([bins_edges[:, i][mask[:, i]]
-                                     for i in range(n_samples)])
-            if bins_edges.ndim == 1:
-                bins_edges = tuple(bins_edges)
-        return bins_edges
+                if self.raise_warning:
+                    warn("Some quantiles are equal. The number of bins will "
+                         "be smaller for sample {0}. Consider decreasing the "
+                         "number of bins or removing these samples."
+                         .format(samples))
+                lengths = np.sum(mask, axis=1)
+                max_length = np.max(lengths)
+                bin_edges = List(
+                    [bin_edges[i][mask[i]] for i in range(n_samples)]
+                )
+                bin_edges = _reshape_with_nan(bin_edges, n_samples,
+                                              lengths, max_length)
+        return bin_edges
