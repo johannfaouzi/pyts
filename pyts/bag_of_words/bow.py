@@ -327,16 +327,10 @@ class BagOfWords(BaseEstimator, TransformerMixin):
                 count = np.bincount(
                     np.floor_divide(np.nonzero(idx)[0], n_windows)
                 )
-                if isinstance(bin_edges, List):
-                    bin_edges = List([
-                        np.tile(bin_edges[i], (count[i], 1))
-                        for i in range(count.size) if count[i] != 0
-                    ])
-                else:
-                    bin_edges = np.vstack([
-                        np.tile(bin_edges[i], (count[i], 1))
-                        for i in range(count.size) if count[i] != 0
-                    ])
+                bin_edges = np.vstack([
+                    np.tile(bin_edges[i], (count[i], 1))
+                    for i in range(count.size) if count[i] != 0
+                ])
 
             X_sax_below_thresh = alphabet[_digitize(X_paa, bin_edges)]
 
