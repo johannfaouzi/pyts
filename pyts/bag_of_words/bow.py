@@ -5,14 +5,15 @@
 
 import numpy as np
 from math import ceil
+from numba.typed import List
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import make_pipeline
 from sklearn.utils.validation import check_array
-import warnings
 from ..approximation import (
     PiecewiseAggregateApproximation, SymbolicAggregateApproximation)
 from ..base import UnivariateTransformerMixin
-from ..preprocessing import StandardScaler
+from ..preprocessing import KBinsDiscretizer, StandardScaler
+from ..preprocessing.discretizer import _digitize
 from ..utils.utils import _windowed_view
 
 
@@ -189,6 +190,11 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         the size of each time series and must be between 0 and 1. The window
         size will be computed as ``ceil(window_step * n_timestamps)``.
 
+    threshold_std: float (default = 0.01)
+        Threshold used to determine whether a subsequence is standardized.
+        Subsequences whose standard deviations are lower than this threshold
+        are not standardized.
+
     norm_mean : bool (default = True)
         If True, center each subseries before scaling.
 
@@ -200,6 +206,12 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         of the subsequence with the Piecewise Aggregate Approximation
         algorithm. If False, each time point belong to one single bin, but
         the size of the bins may vary.
+
+    raise_warning : bool (default = False)
+        If True, a warning is raised when the number of bins is smaller for
+        at least one subsequence. In this case, you should consider decreasing
+        the number of bins, using another strategy to compute the bins or
+        removing the corresponding time series.
 
     alphabet : None or array-like, shape = (n_bins,)
         Alphabet to use. If None, the first `n_bins` letters of the Latin
@@ -228,23 +240,20 @@ class BagOfWords(BaseEstimator, TransformerMixin):
 
     def __init__(self, window_size=0.5, word_size=0.5, n_bins=4,
                  strategy='normal', numerosity_reduction=True, window_step=1,
-                 norm_mean=True, norm_std=True, overlapping=True,
-                 alphabet=None):
+                 threshold_std=0.01, norm_mean=True, norm_std=True,
+                 overlapping=True, raise_warning=False, alphabet=None):
         self.window_size = window_size
         self.word_size = word_size
         self.n_bins = n_bins
         self.strategy = strategy
         self.numerosity_reduction = numerosity_reduction
         self.window_step = window_step
+        self.threshold_std = threshold_std
         self.norm_mean = norm_mean
         self.norm_std = norm_std
         self.overlapping = overlapping
+        self.raise_warning = raise_warning
         self.alphabet = alphabet
-
-        warnings.warn("BagOfWords has been reworked in 0.11 in order to match "
-                      "its definition in the literature. To get the old "
-                      "BagOfWords, use pyts.bag_of_words.WordExtractor "
-                      "instead.", FutureWarning)
 
     def fit(self, X, y=None):
         """Pass.
@@ -284,12 +293,54 @@ class BagOfWords(BaseEstimator, TransformerMixin):
             n_timestamps)
         n_windows = (n_timestamps - window_size + window_step) // window_step
 
+        # Standardize time series if quantile from standard normal distribution
+        if self.strategy == 'normal':
+            X_scaled = StandardScaler().transform(X)
+        else:
+            X_scaled = X
+
         # Extract subsequences using a sliding window
         X_window = _windowed_view(
-            X, n_samples, n_timestamps, window_size, window_step
+            X_scaled, n_samples, n_timestamps, window_size, window_step
         ).reshape(n_samples * n_windows, window_size)
 
-        # Create a pipeline with three steps: standardization, PAA, SAX
+        # Identify subsequences whose standard deviation is below the threshold
+        idx = np.std(X_window, axis=1) < self.threshold_std
+
+        if np.any(idx):
+            # Subsequences with standard deviations below threshold
+            X_paa = PiecewiseAggregateApproximation(
+                window_size=None, output_size=word_size,
+                overlapping=self.overlapping
+            ).transform(X_window[idx])
+
+            # Compute the bin edges
+            discretizer = KBinsDiscretizer(
+                n_bins=self.n_bins, strategy=self.strategy,
+                raise_warning=self.raise_warning
+            )
+            bin_edges = discretizer._compute_bins(X_scaled, n_samples,
+                                                  self.n_bins, self.strategy)
+
+            # Tile the bin edges for each subsequence from the same time series
+            if self.strategy != 'normal':
+                count = np.bincount(
+                    np.floor_divide(np.nonzero(idx)[0], n_windows)
+                )
+                if isinstance(bin_edges, List):
+                    bin_edges = List([
+                        np.tile(bin_edges[i], (count[i], 1))
+                        for i in range(count.size) if count[i] != 0
+                    ])
+                else:
+                    bin_edges = np.vstack([
+                        np.tile(bin_edges[i], (count[i], 1))
+                        for i in range(count.size) if count[i] != 0
+                    ])
+
+            X_sax_below_thresh = alphabet[_digitize(X_paa, bin_edges)]
+
+        # Subsequences with standard deviations above threshold
         pipeline = make_pipeline(
             StandardScaler(
                 with_mean=self.norm_mean, with_std=self.norm_std
@@ -300,11 +351,19 @@ class BagOfWords(BaseEstimator, TransformerMixin):
             ),
             SymbolicAggregateApproximation(
                 n_bins=self.n_bins, strategy=self.strategy,
-                alphabet=self.alphabet
+                alphabet=self.alphabet, raise_warning=self.raise_warning
             )
         )
-        X_sax = pipeline.fit_transform(X_window).reshape(
-            n_samples, n_windows, word_size)
+        X_sax_above_thresh = pipeline.fit_transform(X_window[~idx])
+
+        # Concatenate SAX words
+        if np.any(idx):
+            X_sax = np.empty((n_samples * n_windows, word_size), dtype='<U1')
+            X_sax[idx] = X_sax_below_thresh
+            X_sax[~idx] = X_sax_above_thresh
+        else:
+            X_sax = X_sax_above_thresh
+        X_sax = X_sax.reshape(n_samples, n_windows, word_size)
 
         # Join letters to make words
         X_word = np.asarray([[''.join(X_sax[i, j])
@@ -395,6 +454,12 @@ class BagOfWords(BaseEstimator, TransformerMixin):
                     .format(self.window_step)
                 )
             window_step = ceil(self.window_step * n_timestamps)
+
+        if not isinstance(self.threshold_std, (float, np.floating)):
+            raise TypeError("'threshold_std' must be a float.")
+        if not self.threshold_std >= 0.:
+            raise ValueError("'threshold_std' must be non-negative "
+                             "(got {0}).".format(self.threshold_std))
 
         if not ((self.alphabet is None)
                 or (isinstance(self.alphabet, (list, tuple, np.ndarray)))):
