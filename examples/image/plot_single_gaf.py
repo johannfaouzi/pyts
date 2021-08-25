@@ -4,9 +4,9 @@ Single Gramian angular field
 ============================
 
 A Gramian angular field is an image obtained from a time series, representing
-some kind of temporal correlation between the values at each time point. Two
-methods are available: Gramian angular summation field and Gramian angular
-difference field.
+some kind of temporal correlation between each pair of values from the time
+series. Two methods are available: Gramian angular summation field and Gramian
+angular difference field.
 It is implemented as :class:`pyts.image.GramianAngularField`.
 
 In this example, the considered time series is the sequence of the sine
