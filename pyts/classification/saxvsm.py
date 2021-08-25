@@ -55,6 +55,11 @@ class SAXVSM(BaseEstimator, UnivariateClassifierMixin):
         sliding window will be computed as
         ``ceil(window_step * n_timestamps)``.
 
+    threshold_std: float (default = 0.01)
+        Threshold used to determine whether a subsequence is standardized.
+        Subsequences whose standard deviations are lower than this threshold
+        are not standardized.
+
     norm_mean : bool (default = True)
         If True, center each subseries before scaling.
 
@@ -112,20 +117,22 @@ class SAXVSM(BaseEstimator, UnivariateClassifierMixin):
     >>> clf.fit(X_train, y_train)
     SAXVSM(...)
     >>> clf.score(X_test, y_test)
-    0.9933...
+    1.0
 
     """
 
     def __init__(self, window_size=0.5, word_size=0.5, n_bins=4,
                  strategy='normal', numerosity_reduction=True, window_step=1,
-                 norm_mean=True, norm_std=True, use_idf=True, smooth_idf=False,
-                 sublinear_tf=True, overlapping=True, alphabet=None):
+                 threshold_std=0.01, norm_mean=True, norm_std=True,
+                 use_idf=True, smooth_idf=False, sublinear_tf=True,
+                 overlapping=True, alphabet=None):
         self.window_size = window_size
         self.word_size = word_size
         self.n_bins = n_bins
         self.strategy = strategy
         self.numerosity_reduction = numerosity_reduction
         self.window_step = window_step
+        self.threshold_std = threshold_std
         self.norm_mean = norm_mean
         self.norm_std = norm_std
         self.use_idf = use_idf
@@ -162,9 +169,9 @@ class SAXVSM(BaseEstimator, UnivariateClassifierMixin):
             window_size=self.window_size, word_size=self.word_size,
             n_bins=self.n_bins, strategy=self.strategy,
             numerosity_reduction=self.numerosity_reduction,
-            window_step=self.window_step, norm_mean=self.norm_mean,
-            norm_std=self.norm_std, overlapping=self.overlapping,
-            alphabet=self.alphabet
+            window_step=self.window_step, threshold_std=self.threshold_std,
+            norm_mean=self.norm_mean, norm_std=self.norm_std,
+            overlapping=self.overlapping, alphabet=self.alphabet
         )
         X_bow = bow.fit_transform(X)
 
