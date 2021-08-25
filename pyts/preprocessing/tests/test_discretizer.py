@@ -61,7 +61,7 @@ def test_digitize(X, bins, arr_desired):
        'n_samples':3, 'lengths': np.array([1, 3, 2]), 'max_length': 3},
       [[3, np.nan, np.nan], [2, 4, 8], [5, 7, np.nan]])]
 )
-def testing_reshape_with_nan(params, arr_desired):
+def test_reshape_with_nan(params, arr_desired):
     arr_actual = _reshape_with_nan(**params)
     np.testing.assert_array_equal(arr_actual, arr_desired)
 
