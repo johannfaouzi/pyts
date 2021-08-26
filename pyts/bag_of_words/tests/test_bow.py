@@ -160,7 +160,7 @@ def test_parameter_check_bag_of_words(params, error, err_msg):
       ['abcd', 'abcd', 'aaaa aaad']),
 
      ({'window_size': 8, 'word_size': 4, 'strategy': 'quantile'}, X_bow,
-      ['abcd', 'abcd', 'dddd aaac']),
+      ['abcd', 'abcd', 'aaaa aaac']),
 
      ({'window_size': 8, 'word_size': 4, 'alphabet': ['y', 'o', 'l', 'o']},
       X_bow, ['yolo', 'yolo', 'oooo']),
