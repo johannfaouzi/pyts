@@ -42,7 +42,7 @@ jobs:
         scipy.version: '1.3.0'
         scikit-learn.version: '0.22.1'
         joblib.version: '0.12'
-        numba.version: '0.49.0'
+        numba.version: '0.48.0'
       Python38:
         python.version: '3.8'
         numpy.version: '1.*'
@@ -107,7 +107,7 @@ jobs:
         scipy.version: '1.3.0'
         scikit-learn.version: '0.22.1'
         joblib.version: '0.12'
-        numba.version: '0.49.0'
+        numba.version: '0.48.0'
       Python38:
         python.version: '3.8'
         numpy.version: '1.*'
@@ -178,7 +178,7 @@ jobs:
         scipy.version: '1.3.0'
         scikit-learn.version: '0.22.1'
         joblib.version: '0.12'
-        numba.version: '0.49.0'
+        numba.version: '0.48.0'
       Python38:
         python.version: '3.8'
         numpy.version: '1.*'
