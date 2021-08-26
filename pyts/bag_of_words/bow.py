@@ -5,7 +5,6 @@
 
 import numpy as np
 from math import ceil
-from numba.typed import List
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import make_pipeline
 from sklearn.utils.validation import check_array
