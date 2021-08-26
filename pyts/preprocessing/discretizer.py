@@ -26,7 +26,7 @@ def _uniform_bins(sample_min, sample_max, n_samples, n_bins):
 def _digitize_1d(X, bins, n_samples, n_timestamps):
     X_digit = np.empty((n_samples, n_timestamps))
     for i in prange(n_samples):
-        X_digit[i] = np.digitize(X[i], bins, right=True)
+        X_digit[i] = np.searchsorted(bins, X[i], side='left')
     return X_digit
 
 
@@ -34,16 +34,8 @@ def _digitize_1d(X, bins, n_samples, n_timestamps):
 def _digitize_2d(X, bins, n_samples, n_timestamps):
     X_digit = np.empty((n_samples, n_timestamps))
     for i in prange(n_samples):
-        X_digit[i] = np.digitize(X[i], bins[i], right=True)
+        X_digit[i] = np.searchsorted(bins[i], X[i], side='left')
     return X_digit
-
-
-@njit
-def _reshape_with_nan(X, n_samples, lengths, max_length):
-    X_fill = np.full((n_samples, max_length), np.nan)
-    for i in prange(n_samples):
-        X_fill[i, :lengths[i]] = X[i]
-    return X_fill
 
 
 def _digitize(X, bins):
@@ -53,6 +45,14 @@ def _digitize(X, bins):
     else:
         X_binned = _digitize_2d(X, bins, n_samples, n_timestamps)
     return X_binned.astype('int64')
+
+
+@njit
+def _reshape_with_nan(X, n_samples, lengths, max_length):
+    X_fill = np.full((n_samples, max_length), np.nan)
+    for i in prange(n_samples):
+        X_fill[i, :lengths[i]] = X[i]
+    return X_fill
 
 
 class KBinsDiscretizer(BaseEstimator, UnivariateTransformerMixin):
