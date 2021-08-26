@@ -145,7 +145,6 @@ def test_parameter_check_bag_of_words(params, error, err_msg):
     """Test parameter validation."""
     bow = BagOfWords(**params)
     with pytest.raises(error, match=re.escape(err_msg)):
-        print(bow.get_params()['threshold_std'])
         bow.transform(X_bow)
 
 
