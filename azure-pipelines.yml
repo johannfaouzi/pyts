@@ -96,10 +96,6 @@ jobs:
       bash <(curl -s https://codecov.io/bash)
     displayName: 'Run test suite and publish results'
 
-  - script: |
-      bash <(curl -s https://codecov.io/bash)
-    displayName: 'Publish code coverage results'
-
 - job: MacOS_JIT
   pool:
     vmImage: 'macOS-latest'
