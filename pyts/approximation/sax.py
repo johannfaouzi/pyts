@@ -27,6 +27,11 @@ class SymbolicAggregateApproximation(BaseEstimator,
         - 'quantile': All bins in each sample have the same number of points
         - 'normal': Bin edges are quantiles from a standard normal distribution
 
+    raise_warning : bool (default = True)
+        If True, a warning is raised when the number of bins is smaller for
+        at least one sample. In this case, you should consider decreasing the
+        number of bins or removing these samples.
+
     alphabet : None, 'ordinal' or array-like, shape = (n_bins,)
         Alphabet to use. If None, the first `n_bins` letters of the Latin
         alphabet are used. If 'ordinal', integers are used.
@@ -49,9 +54,11 @@ class SymbolicAggregateApproximation(BaseEstimator,
 
     """
 
-    def __init__(self, n_bins=4, strategy='quantile', alphabet=None):
+    def __init__(self, n_bins=4, strategy='quantile', raise_warning=True,
+                 alphabet=None):
         self.n_bins = n_bins
         self.strategy = strategy
+        self.raise_warning = raise_warning
         self.alphabet = alphabet
 
     def fit(self, X=None, y=None):
@@ -85,7 +92,9 @@ class SymbolicAggregateApproximation(BaseEstimator,
         n_timestamps = X.shape[1]
         alphabet = self._check_params(n_timestamps)
         discretizer = KBinsDiscretizer(
-            n_bins=self.n_bins, strategy=self.strategy)
+            n_bins=self.n_bins, strategy=self.strategy,
+            raise_warning=self.raise_warning
+        )
         indices = discretizer.fit_transform(X)
         if isinstance(alphabet, str):
             return indices

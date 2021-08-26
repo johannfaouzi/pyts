@@ -67,7 +67,8 @@ def test_actual_results_word_extractor(params, arr_desired):
 
 # ######################### Tests for BagOfWords #########################
 
-X_bow = np.arange(20).reshape(2, 10)
+X_bow = np.arange(30).reshape(3, 10)
+X_bow[2, :8] = 20
 
 
 @pytest.mark.parametrize(
@@ -123,6 +124,14 @@ X_bow = np.arange(20).reshape(2, 10)
       "If 'window_step' is a float, it must be greater than 0 and lower "
       "than or equal to 1 (got {0}).".format(2.)),
 
+     ({'window_size': 6, 'word_size': 4, 'n_bins': 2, 'threshold_std': '-1'},
+      TypeError,
+      "'threshold_std' must be a float."),
+
+     ({'window_size': 6, 'word_size': 4, 'n_bins': 2, 'threshold_std': -1.},
+      ValueError,
+      "'threshold_std' must be non-negative (got -1.0)."),
+
      ({'window_size': 6, 'word_size': 4, 'n_bins': 2, 'alphabet': 'whoops'},
       TypeError,
       "'alphabet' must be None or array-like with shape (n_bins,) "
@@ -140,33 +149,40 @@ def test_parameter_check_bag_of_words(params, error, err_msg):
 
 
 @pytest.mark.parametrize(
-    'params, arr_desired',
-    [({'window_size': 6, 'word_size': 4}, ['abcd', 'abcd']),
+    'params, X, arr_desired',
+    [({'window_size': 8, 'word_size': 4}, X_bow,
+      ['abcd', 'abcd', 'bbbb bbbd']),
 
-     ({'window_size': 6, 'word_size': 4, 'numerosity_reduction': False},
-      ['abcd abcd abcd abcd abcd', 'abcd abcd abcd abcd abcd']),
+     ({'window_size': 8, 'word_size': 4, 'numerosity_reduction': False},
+      X_bow, ['abcd abcd abcd', 'abcd abcd abcd', 'bbbb bbbd bbbd']),
 
-     ({'window_size': 6, 'word_size': 4, 'alphabet': ['y', 'o', 'l', 'o']},
-      ['yolo', 'yolo']),
+     ({'window_size': 8, 'word_size': 4, 'strategy': 'uniform'}, X_bow,
+      ['abcd', 'abcd', 'aaaa aaad']),
 
-     ({'window_size': 0.5, 'word_size': 4}, ['abcd', 'abcd']),
+     ({'window_size': 8, 'word_size': 4, 'strategy': 'quantile'}, X_bow,
+      ['abcd', 'abcd', 'aaaa aaac']),
+
+     ({'window_size': 8, 'word_size': 4, 'alphabet': ['y', 'o', 'l', 'o']},
+      X_bow, ['yolo', 'yolo', 'oooo']),
+
+     ({'window_size': 0.5, 'word_size': 4}, X_bow[:2], ['abcd', 'abcd']),
 
      ({'window_size': 4, 'word_size': 1., 'numerosity_reduction': False},
-      ['abcd abcd abcd abcd abcd abcd abcd',
-       'abcd abcd abcd abcd abcd abcd abcd']),
+      X_bow[:2], ['abcd abcd abcd abcd abcd abcd abcd',
+                  'abcd abcd abcd abcd abcd abcd abcd']),
 
      ({'window_size': 4, 'word_size': 4, 'window_step': 2,
        'numerosity_reduction': False},
-      ['abcd abcd abcd abcd', 'abcd abcd abcd abcd']),
+      X_bow[:2], ['abcd abcd abcd abcd', 'abcd abcd abcd abcd']),
 
      ({'window_size': 4, 'word_size': 4, 'window_step': 0.2,
        'numerosity_reduction': False},
-      ['abcd abcd abcd abcd', 'abcd abcd abcd abcd']),
+      X_bow[:2], ['abcd abcd abcd abcd', 'abcd abcd abcd abcd']),
 
      ({'window_size': 4, 'word_size': 4, 'window_step': 0.5},
-      ['abcd', 'abcd'])]
+      X_bow[:2], ['abcd', 'abcd'])]
 )
-def test_actual_results_bag_of_words(params, arr_desired):
+def test_actual_results_bag_of_words(params, X, arr_desired):
     """Test that the actual results are the expected ones."""
-    arr_actual = BagOfWords(**params).fit_transform(X_bow)
+    arr_actual = BagOfWords(**params).fit_transform(X)
     np.testing.assert_array_equal(arr_actual, arr_desired)
