@@ -176,9 +176,11 @@ class KBinsDiscretizer(BaseEstimator, UnivariateTransformerMixin):
                          .format(samples))
                 lengths = np.sum(mask, axis=1)
                 max_length = np.max(lengths)
-                bin_edges = List(
-                    [bin_edges[i][mask[i]] for i in range(n_samples)]
-                )
-                bin_edges = _reshape_with_nan(bin_edges, n_samples,
+
+                bin_edges_ = List()
+                for i in range(n_samples):
+                    bin_edges_.append(bin_edges[i][mask[i]])
+
+                bin_edges = _reshape_with_nan(bin_edges_, n_samples,
                                               lengths, max_length)
         return bin_edges
