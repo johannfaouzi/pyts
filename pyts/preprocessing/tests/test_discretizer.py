@@ -4,7 +4,6 @@
 # License: BSD-3-Clause
 
 import numpy as np
-from numba.typed import List
 import pytest
 import re
 from pyts.preprocessing.discretizer import (
@@ -62,8 +61,6 @@ def test_digitize(X, bins, arr_desired):
       [[3, np.nan, np.nan], [2, 4, 8], [5, 7, np.nan]])]
 )
 def test_reshape_with_nan(params, arr_desired):
-    if isinstance(params['X'], List):
-        params['X'] = tuple(params['X'])
     arr_actual = _reshape_with_nan(**params)
     np.testing.assert_array_equal(arr_actual, arr_desired)
 
