@@ -129,7 +129,6 @@ class KBinsDiscretizer(BaseEstimator, UnivariateTransformerMixin):
         X = check_array(X, dtype='float64')
         n_samples, n_timestamps = X.shape
         self._check_params(n_timestamps)
-        self._check_constant(X)
 
         bin_edges = self._compute_bins(
             X, n_samples, self.n_bins, self.strategy)
@@ -139,18 +138,14 @@ class KBinsDiscretizer(BaseEstimator, UnivariateTransformerMixin):
     def _check_params(self, n_timestamps):
         if not isinstance(self.n_bins, (int, np.integer)):
             raise TypeError("'n_bins' must be an integer.")
-        if not 2 <= self.n_bins <= n_timestamps:
+        if not 2 <= self.n_bins:
             raise ValueError(
-                "'n_bins' must be greater than or equal to 2 and lower than "
-                "or equal to n_timestamps (got {0}).".format(self.n_bins)
+                "'n_bins' must be greater than or equal to 2 (got {0})."
+                .format(self.n_bins)
             )
         if self.strategy not in ['uniform', 'quantile', 'normal']:
             raise ValueError("'strategy' must be either 'uniform', 'quantile' "
                              "or 'normal' (got {0}).".format(self.strategy))
-
-    def _check_constant(self, X):
-        if np.any(np.max(X, axis=1) - np.min(X, axis=1) == 0):
-            raise ValueError("At least one sample is constant.")
 
     def _compute_bins(self, X, n_samples, n_bins, strategy):
         if strategy == 'normal':

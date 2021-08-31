@@ -22,11 +22,11 @@ X = np.arange(30).reshape(3, 10)
 
      ({'n_bins': 1}, ValueError,
       "'n_bins' must be greater than or equal to 2 and lower than "
-      "or equal to min(n_timestamps, 26) (got 1)."),
+      "or equal to 26 (got 1)."),
 
-     ({'n_bins': 15}, ValueError,
+     ({'n_bins': 27}, ValueError,
       "'n_bins' must be greater than or equal to 2 and lower than "
-      "or equal to min(n_timestamps, 26) (got 15)."),
+      "or equal to 26 (got 27)."),
 
      ({'strategy': 'whoops'}, ValueError,
       "'strategy' must be either 'uniform', 'quantile' or 'normal' "

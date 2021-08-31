@@ -103,7 +103,11 @@ X_bow[2, :8] = 20
 
      ({'n_bins': 1}, ValueError,
       "'n_bins' must be greater than or equal to 2 and lower than "
-      "or equal to min(word_size, 26) (got 1)."),
+      "or equal to 26 (got 1)."),
+
+     ({'n_bins': 27}, ValueError,
+      "'n_bins' must be greater than or equal to 2 and lower than "
+      "or equal to 26 (got 27)."),
 
      ({'window_size': 6, 'word_size': 4, 'n_bins': 2, 'strategy': 'whoops'},
       ValueError,

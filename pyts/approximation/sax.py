@@ -104,10 +104,10 @@ class SymbolicAggregateApproximation(BaseEstimator,
     def _check_params(self, n_timestamps):
         if not isinstance(self.n_bins, (int, np.integer)):
             raise TypeError("'n_bins' must be an integer.")
-        if not 2 <= self.n_bins <= min(n_timestamps, 26):
+        if not 2 <= self.n_bins <= 26:
             raise ValueError(
                 "'n_bins' must be greater than or equal to 2 and lower than "
-                "or equal to min(n_timestamps, 26) (got {0})."
+                "or equal to 26 (got {0})."
                 .format(self.n_bins)
             )
         if self.strategy not in ['uniform', 'quantile', 'normal']:

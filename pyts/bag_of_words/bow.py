@@ -430,10 +430,10 @@ class BagOfWords(BaseEstimator, TransformerMixin):
 
         if not isinstance(self.n_bins, (int, np.integer)):
             raise TypeError("'n_bins' must be an integer.")
-        if not 2 <= self.n_bins <= min(word_size, 26):
+        if not 2 <= self.n_bins <= 26:
             raise ValueError(
                 "'n_bins' must be greater than or equal to 2 and lower than "
-                "or equal to min(word_size, 26) (got {0})."
+                "or equal to 26 (got {0})."
                 .format(self.n_bins)
             )
 
