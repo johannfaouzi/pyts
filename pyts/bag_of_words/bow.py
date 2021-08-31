@@ -334,26 +334,31 @@ class BagOfWords(BaseEstimator, TransformerMixin):
             X_sax_below_thresh = alphabet[_digitize(X_paa, bin_edges)]
 
         # Subsequences with standard deviations above threshold
-        pipeline = make_pipeline(
-            StandardScaler(
-                with_mean=self.norm_mean, with_std=self.norm_std
-            ),
-            PiecewiseAggregateApproximation(
-                window_size=None, output_size=word_size,
-                overlapping=self.overlapping
-            ),
-            SymbolicAggregateApproximation(
-                n_bins=self.n_bins, strategy=self.strategy,
-                alphabet=self.alphabet, raise_warning=self.raise_warning
+        if not np.all(idx):
+            pipeline = make_pipeline(
+                StandardScaler(
+                    with_mean=self.norm_mean, with_std=self.norm_std
+                ),
+                PiecewiseAggregateApproximation(
+                    window_size=None, output_size=word_size,
+                    overlapping=self.overlapping
+                ),
+                SymbolicAggregateApproximation(
+                    n_bins=self.n_bins, strategy=self.strategy,
+                    alphabet=self.alphabet, raise_warning=self.raise_warning
+                )
             )
-        )
-        X_sax_above_thresh = pipeline.fit_transform(X_window[~idx])
+            X_sax_above_thresh = pipeline.fit_transform(X_window[~idx])
 
         # Concatenate SAX words
         if np.any(idx):
-            X_sax = np.empty((n_samples * n_windows, word_size), dtype='<U1')
-            X_sax[idx] = X_sax_below_thresh
-            X_sax[~idx] = X_sax_above_thresh
+            if not np.all(idx):
+                X_sax = np.empty((n_samples * n_windows, word_size),
+                                 dtype='<U1')
+                X_sax[idx] = X_sax_below_thresh
+                X_sax[~idx] = X_sax_above_thresh
+            else:
+                X_sax = X_sax_below_thresh
         else:
             X_sax = X_sax_above_thresh
         X_sax = X_sax.reshape(n_samples, n_windows, word_size)
