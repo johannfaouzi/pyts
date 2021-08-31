@@ -159,12 +159,12 @@ class BagOfWords(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    window_size : int, float or None (default = 0.5)
+    window_size : int or float (default = 0.5)
         Length of the sliding window. If float, it represents
         a percentage of the size of each time series and must be
         between 0 and 1.
 
-    word_size : int, float or None (default = 0.5)
+    word_size : int or float (default = 0.5)
         Length of the words. If float, it represents
         a percentage of the length of the sliding window and must be
         between 0. and 1.
@@ -189,10 +189,10 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         the size of each time series and must be between 0 and 1. The window
         size will be computed as ``ceil(window_step * n_timestamps)``.
 
-    threshold_std: float (default = 0.01)
+    threshold_std: int, float or None (default = 0.01)
         Threshold used to determine whether a subsequence is standardized.
         Subsequences whose standard deviations are lower than this threshold
-        are not standardized.
+        are not standardized. If None, all the subsequences are standardized.
 
     norm_mean : bool (default = True)
         If True, center each subseries before scaling.
@@ -303,57 +303,70 @@ class BagOfWords(BaseEstimator, TransformerMixin):
             X_scaled, n_samples, n_timestamps, window_size, window_step
         ).reshape(n_samples * n_windows, window_size)
 
-        # Identify subsequences whose standard deviation is below the threshold
-        idx = np.std(X_window, axis=1) < self.threshold_std
+        if self.threshold_std is not None:
 
-        if np.any(idx):
-            # Subsequences with standard deviations below threshold
-            X_paa = PiecewiseAggregateApproximation(
-                window_size=None, output_size=word_size,
-                overlapping=self.overlapping
-            ).transform(X_window[idx])
+            # Identify subsequences whose standard deviation below threshold
+            idx = np.std(X_window, axis=1) < self.threshold_std
 
-            # Compute the bin edges
-            discretizer = KBinsDiscretizer(
-                n_bins=self.n_bins, strategy=self.strategy,
-                raise_warning=self.raise_warning
-            )
-            bin_edges = discretizer._compute_bins(X_scaled, n_samples,
-                                                  self.n_bins, self.strategy)
+            if np.any(idx):
+                # Subsequences with standard deviations below threshold
+                X_paa = PiecewiseAggregateApproximation(
+                    window_size=None, output_size=word_size,
+                    overlapping=self.overlapping
+                ).transform(X_window[idx])
 
-            # Tile the bin edges for each subsequence from the same time series
-            if self.strategy != 'normal':
-                count = np.bincount(
-                    np.floor_divide(np.nonzero(idx)[0], n_windows)
+                # Compute the bin edges
+                discretizer = KBinsDiscretizer(
+                    n_bins=self.n_bins, strategy=self.strategy,
+                    raise_warning=self.raise_warning
                 )
-                bin_edges = np.vstack([
-                    np.tile(bin_edges[i], (count[i], 1))
-                    for i in range(count.size) if count[i] != 0
-                ])
+                bin_edges = discretizer._compute_bins(
+                    X_scaled, n_samples, self.n_bins, self.strategy)
 
-            X_sax_below_thresh = alphabet[_digitize(X_paa, bin_edges)]
+                # Tile the bin edges for subsequences from the same time series
+                if self.strategy != 'normal':
+                    count = np.bincount(
+                        np.floor_divide(np.nonzero(idx)[0], n_windows)
+                    )
+                    bin_edges = np.vstack([
+                        np.tile(bin_edges[i], (count[i], 1))
+                        for i in range(count.size) if count[i] != 0
+                    ])
+
+                X_sax_below_thresh = alphabet[_digitize(X_paa, bin_edges)]
 
         # Subsequences with standard deviations above threshold
-        pipeline = make_pipeline(
-            StandardScaler(
-                with_mean=self.norm_mean, with_std=self.norm_std
-            ),
-            PiecewiseAggregateApproximation(
-                window_size=None, output_size=word_size,
-                overlapping=self.overlapping
-            ),
-            SymbolicAggregateApproximation(
-                n_bins=self.n_bins, strategy=self.strategy,
-                alphabet=self.alphabet, raise_warning=self.raise_warning
+        if (self.threshold_std is None) or (not np.all(idx)):
+            pipeline = make_pipeline(
+                StandardScaler(
+                    with_mean=self.norm_mean, with_std=self.norm_std
+                ),
+                PiecewiseAggregateApproximation(
+                    window_size=None, output_size=word_size,
+                    overlapping=self.overlapping
+                ),
+                SymbolicAggregateApproximation(
+                    n_bins=self.n_bins, strategy=self.strategy,
+                    alphabet=self.alphabet, raise_warning=self.raise_warning
+                )
             )
-        )
-        X_sax_above_thresh = pipeline.fit_transform(X_window[~idx])
+            if self.threshold_std is None:
+                X_sax_above_thresh = pipeline.fit_transform(X_window)
+            else:
+                X_sax_above_thresh = pipeline.fit_transform(X_window[~idx])
 
         # Concatenate SAX words
-        if np.any(idx):
-            X_sax = np.empty((n_samples * n_windows, word_size), dtype='<U1')
-            X_sax[idx] = X_sax_below_thresh
-            X_sax[~idx] = X_sax_above_thresh
+        if self.threshold_std is not None:
+            if np.any(idx):
+                if not np.all(idx):
+                    X_sax = np.empty((n_samples * n_windows, word_size),
+                                     dtype='<U1')
+                    X_sax[idx] = X_sax_below_thresh
+                    X_sax[~idx] = X_sax_above_thresh
+                else:
+                    X_sax = X_sax_below_thresh
+            else:
+                X_sax = X_sax_above_thresh
         else:
             X_sax = X_sax_above_thresh
         X_sax = X_sax.reshape(n_samples, n_windows, word_size)
@@ -417,10 +430,10 @@ class BagOfWords(BaseEstimator, TransformerMixin):
 
         if not isinstance(self.n_bins, (int, np.integer)):
             raise TypeError("'n_bins' must be an integer.")
-        if not 2 <= self.n_bins <= min(word_size, 26):
+        if not 2 <= self.n_bins <= 26:
             raise ValueError(
                 "'n_bins' must be greater than or equal to 2 and lower than "
-                "or equal to min(word_size, 26) (got {0})."
+                "or equal to 26 (got {0})."
                 .format(self.n_bins)
             )
 
@@ -448,11 +461,17 @@ class BagOfWords(BaseEstimator, TransformerMixin):
                 )
             window_step = ceil(self.window_step * n_timestamps)
 
-        if not isinstance(self.threshold_std, (float, np.floating)):
-            raise TypeError("'threshold_std' must be a float.")
-        if not self.threshold_std >= 0.:
-            raise ValueError("'threshold_std' must be non-negative "
-                             "(got {0}).".format(self.threshold_std))
+        threshold_std_none = self.threshold_std is None
+        threshold_std_int_float = isinstance(
+            self.threshold_std, (int, np.integer, float, np.floating))
+        if not (threshold_std_none or threshold_std_int_float):
+            raise TypeError(
+                "'threshold_std' must be an integer, a float or None."
+            )
+        if threshold_std_int_float and (not self.threshold_std >= 0.):
+            raise ValueError("If 'threshold_std' is an integer or a float, it "
+                             "must be non-negative (got {0})."
+                             .format(self.threshold_std))
 
         if not ((self.alphabet is None)
                 or (isinstance(self.alphabet, (list, tuple, np.ndarray)))):

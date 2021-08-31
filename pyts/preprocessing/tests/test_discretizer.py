@@ -70,12 +70,10 @@ def test_reshape_with_nan(params, arr_desired):
     [({'n_bins': None}, TypeError, "'n_bins' must be an integer."),
 
      ({'n_bins': 1}, ValueError,
-      "'n_bins' must be greater than or equal to 2 and lower than "
-      "or equal to n_timestamps (got 1)."),
+      "'n_bins' must be greater than or equal to 2 (got 1)."),
 
-     ({'n_bins': n_timestamps + 1}, ValueError,
-      "'n_bins' must be greater than or equal to 2 and lower than "
-      "or equal to n_timestamps (got {0}).".format(n_timestamps + 1)),
+     ({'n_bins': 0}, ValueError,
+      "'n_bins' must be greater than or equal to 2 (got 0)."),
 
      ({'strategy': 'whoops'}, ValueError,
       "'strategy' must be either 'uniform', 'quantile' or 'normal' (got {0})."
@@ -86,13 +84,6 @@ def test_parameter_check(params, error, err_msg):
     discretizer = KBinsDiscretizer(**params)
     with pytest.raises(error, match=re.escape(err_msg)):
         discretizer.transform(X)
-
-
-def test_constant_sample():
-    """Test that a ValueError is raised with a constant sample."""
-    discretizer = KBinsDiscretizer()
-    with pytest.raises(ValueError, match="At least one sample is constant."):
-        discretizer.fit_transform(np.ones((10, 15)))
 
 
 def test_warning_smaller_n_bins():
