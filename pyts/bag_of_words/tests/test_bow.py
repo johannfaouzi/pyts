@@ -124,13 +124,14 @@ X_bow[2, :8] = 20
       "If 'window_step' is a float, it must be greater than 0 and lower "
       "than or equal to 1 (got {0}).".format(2.)),
 
-     ({'window_size': 6, 'word_size': 4, 'n_bins': 2, 'threshold_std': '-1'},
+     ({'window_size': 6, 'word_size': 4, 'n_bins': 2, 'threshold_std': '[-1]'},
       TypeError,
-      "'threshold_std' must be a float."),
+      "'threshold_std' must be an integer, a float or None."),
 
      ({'window_size': 6, 'word_size': 4, 'n_bins': 2, 'threshold_std': -1.},
       ValueError,
-      "'threshold_std' must be non-negative (got -1.0)."),
+      "If 'threshold_std' is an integer or a float, it must be non-negative "
+      "(got -1.0)."),
 
      ({'window_size': 6, 'word_size': 4, 'n_bins': 2, 'alphabet': 'whoops'},
       TypeError,
@@ -169,6 +170,14 @@ def test_parameter_check_bag_of_words(params, error, err_msg):
      ({'window_size': 8, 'word_size': 4, 'strategy': 'quantile',
        'threshold_std': np.inf}, X_bow,
       ['abbc abcd bbcd', 'abbc abcd bbcd', 'aaaa aaab']),
+
+     ({'window_size': 8, 'word_size': 4, 'strategy': 'uniform',
+       'threshold_std': None}, X_bow,
+      ['abcd', 'abcd', 'aaaa aaad']),
+
+     ({'window_size': 8, 'word_size': 4, 'strategy': 'quantile',
+       'threshold_std': None}, X_bow,
+      ['abcd', 'abcd', 'aaaa aaac']),
 
      ({'window_size': 8, 'word_size': 4, 'strategy': 'uniform',
        'threshold_std': 2.4}, X_bow,
