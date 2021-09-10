@@ -4,6 +4,32 @@
 Change Log
 ==========
 
+Version 0.12.0
+--------------
+
+- Add support for Python 3.9.
+
+- Add the *Time Series Forest* algorithm implemented as
+  :class:`pyts.classification.TimeSeriesForest`.
+
+- Add the *Time Series Bag-of-Features* algorithm implemented as
+  :class:`pyts.classification.TSBF`.
+
+- Replace ``scikit-learn`` mixin classes with ``pyts`` mixin classes to have
+  standardized docstrings.
+
+- Update the examples in the **Imaging time series** section of the gallery of
+  examples.
+
+- Remove some constraints when discretizing time series (number of bins, time
+  series with low variance) that impact the following classes:
+
+    + :class:`pyts.preprocessing.KBinsDiscretizer`
+    + :class:`pyts.approximation.SymbolicAggregateApproximation`
+    + :class:`pyts.bag_of_words.BagOfWords`
+    + :class:`pyts.classification.SAXVSM`
+
+
 Version 0.11.0
 --------------
 
