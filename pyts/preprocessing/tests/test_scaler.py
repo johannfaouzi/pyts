@@ -25,7 +25,7 @@ X = np.arange(10).reshape(2, 5)
 )
 def test_actual_results_standard_scaler(params, arr_desired):
     """Test that the actual results are the expected ones."""
-    arr_actual = StandardScaler(**params).transform(X)
+    arr_actual = StandardScaler(**params).fit_transform(X)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
 
@@ -41,13 +41,13 @@ def test_actual_results_standard_scaler(params, arr_desired):
 )
 def test_actual_results_min_max_scaler(params, arr_desired):
     """Test that the actual results are the expected ones."""
-    arr_actual = MinMaxScaler(**params).transform(X)
+    arr_actual = MinMaxScaler(**params).fit_transform(X)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
 
 def test_actual_results_max_abs_scaler():
     """Test that the actual results are the expected ones."""
-    arr_actual = MaxAbsScaler().transform(X)
+    arr_actual = MaxAbsScaler().fit_transform(X)
     arr_desired = X / np.abs(X).max(axis=1)[:, None]
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 

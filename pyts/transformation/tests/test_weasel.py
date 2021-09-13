@@ -97,6 +97,27 @@ def test_sparse_dense(sparse, instance):
     assert isinstance(weasel.fit_transform(X, y), instance)
 
 
+@pytest.mark.parametrize(
+    'params',
+    [{'window_sizes': [0.1, 0.2, 0.3], 'window_steps': [0.1, 0.2, 0.3]},
+     {'window_sizes': [0.1], 'window_steps': [0.2]}]
+)
+def test_fit_transform(params):
+    """Test that 'fit_transform' and 'fit' then 'transform' yield same res."""
+    weasel_1 = WEASEL(**params, sparse=False)
+    weasel_2 = WEASEL(**params, sparse=False)
+
+    X_fit_transform = weasel_1.fit_transform(X, y)
+    X_fit_then_transform = weasel_2.fit(X, y).transform(X)
+
+    # Test that the transformation are identical
+    np.testing.assert_allclose(X_fit_transform, X_fit_then_transform,
+                               atol=1e-5, rtol=0.)
+
+    # Test that the vocabulary_ attributes are identical
+    assert weasel_1.vocabulary_ == weasel_2.vocabulary_
+
+
 def test_accurate_results():
     """Test that the actual results are the expected ones."""
     X_features = csr_matrix((n_samples, 0), dtype=np.int64)

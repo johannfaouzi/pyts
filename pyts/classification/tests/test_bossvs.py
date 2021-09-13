@@ -119,10 +119,10 @@ def test_actual_results_no_numerosity_reduction():
 def test_actual_results_numerosity_reduction():
     """Test that the actual results are the expected ones."""
     bossvs = BOSSVS(
-        word_size=4, n_bins=3, window_size=10, window_step=10,
+        word_size=4, n_bins=3, window_size=0.5, window_step=0.5,
         anova=False, drop_sum=False, norm_mean=False, norm_std=False,
         strategy='quantile', alphabet=None, numerosity_reduction=True,
-        use_idf=True, smooth_idf=False, sublinear_tf=True
+        use_idf=False, smooth_idf=False, sublinear_tf=True
     )
 
     X_windowed = X.reshape(8, 2, 10).reshape(16, 10)
@@ -140,7 +140,7 @@ def test_actual_results_numerosity_reduction():
     X_class = np.array([' '.join(X_bow[y == i]) for i in range(2)])
 
     tfidf = TfidfVectorizer(
-        norm=None, use_idf=True, smooth_idf=False, sublinear_tf=True
+        norm=None, use_idf=False, smooth_idf=False, sublinear_tf=True
     )
     tfidf_desired = tfidf.fit_transform(X_class).toarray()
     vocabulary_desired = {value: key for key, value in
