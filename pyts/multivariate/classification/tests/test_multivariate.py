@@ -6,7 +6,7 @@
 import numpy as np
 import pytest
 import re
-from pyts.classification import SAXVSM
+from pyts.classification import SAXVSM, BOSSVS
 from pyts.multivariate.classification import MultivariateClassifier
 from pyts.transformation import BOSS
 
@@ -51,14 +51,24 @@ def test_input_check(params, X, error, err_msg):
         clf.fit(X, y)
 
 
-def test_actual_results_without_weights():
+@pytest.mark.parametrize(
+    'params',
+    [{'estimator': SAXVSM()},
+     {'estimator': [SAXVSM() for _ in range(n_features)]},
+     {'estimator': [SAXVSM(), SAXVSM(), BOSSVS()]}]
+)
+def test_actual_results_without_weights(params):
     """Test that the actual results are the expected ones."""
-    params = {'estimator': SAXVSM()}
     arr_actual = MultivariateClassifier(**params).fit(X, y).predict(X)
     predictions = []
-    for i in range(n_features):
-        predictions.append(
-            params['estimator'].fit(X[:, i], y).predict(X[:, i]))
+    if isinstance(params['estimator'], list):
+        for i in range(n_features):
+            predictions.append(
+                params['estimator'][i].fit(X[:, i], y).predict(X[:, i]))
+    else:
+        for i in range(n_features):
+            predictions.append(
+                params['estimator'].fit(X[:, i], y).predict(X[:, i]))
     predictions = np.asarray(predictions)
     arr_desired = []
     for i in range(n_samples):
@@ -66,14 +76,28 @@ def test_actual_results_without_weights():
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
 
 
-def test_actual_results_with_weights():
+@pytest.mark.parametrize(
+    'params',
+    [{'estimator': SAXVSM(), 'weights': [0.1, 0.7, 0.2]},
+
+     {'estimator': [SAXVSM() for _ in range(n_features)],
+      'weights': [0.1, 0.7, 0.2]},
+
+     {'estimator': [SAXVSM(), SAXVSM(), BOSSVS()],
+      'weights': [0.1, 0.7, 0.2]}]
+)
+def test_actual_results_with_weights(params):
     """Test that the actual results are the expected ones."""
-    params = {'estimator': SAXVSM(), 'weights': [0.1, 0.7, 0.2]}
     arr_actual = MultivariateClassifier(**params).fit(X, y).predict(X)
     predictions = []
-    for i in range(n_features):
-        predictions.append(
-            params['estimator'].fit(X[:, i], y).predict(X[:, i]))
+    if isinstance(params['estimator'], list):
+        for i in range(n_features):
+            predictions.append(
+                params['estimator'][i].fit(X[:, i], y).predict(X[:, i]))
+    else:
+        for i in range(n_features):
+            predictions.append(
+                params['estimator'].fit(X[:, i], y).predict(X[:, i]))
     predictions = np.asarray(predictions)
     arr_desired = []
     for i in range(n_samples):

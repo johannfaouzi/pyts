@@ -493,8 +493,6 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
 
         if self.window_steps is None:
             window_steps = np.ones_like(window_sizes)
-        else:
-            window_steps = np.asarray(window_steps)
 
         return n_shapelets, window_sizes, window_steps, n_jobs, rng
 

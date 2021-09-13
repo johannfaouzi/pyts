@@ -7,7 +7,6 @@ import numpy as np
 from math import ceil, log2, sqrt
 from numba import njit, prange
 from sklearn.utils import check_array
-from ..utils import deprecated
 
 
 @njit()
@@ -310,68 +309,6 @@ def _dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
     return res
 
 
-@deprecated("dtw_classic is deprecated in 0.11 and will be removed in 0.12. "
-            "Use dtw(method='classic') instead.")
-def dtw_classic(x=None, y=None, dist='square', precomputed_cost=None,
-                return_cost=False, return_accumulated=False,
-                return_path=False):
-    """Classic Dynamic Time Warping (DTW) distance between two time series.
-
-    .. deprecated:: 0.11
-        This function is deprecated and will be removed in 0.12.
-        Use :func:`dtw` with ``method='classic'`` instead.
-
-    Parameters
-    ----------
-    x : array-like, shape = (n_timestamps_1,)
-        First array. Ignored if ``dist == 'precomputed'``.
-
-    y : array-like, shape = (n_timestamps_2,)
-        Second array. Ignored if ``dist == 'precomputed'``.
-
-    dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
-        Distance used. If 'square', the squared difference is used.
-        If 'absolute', the absolute difference is used. If 'precomputed',
-        `precomputed_cost` must be the cost matrix. If callable,
-        it must be a function with a numba.njit() decorator that takes
-        as input two numbers (two arguments) and returns a number.
-
-    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2) \
-            (default = None)
-        Precomputed cost matrix between the time series.
-        Ignored if ``dist != 'precomputed'``.
-
-    return_cost : bool (default = False)
-        If True, the cost matrix is returned.
-
-    return_accumulated : bool (default = False)
-        If True, the accumulated cost matrix is returned.
-
-    return_path : bool (default = False)
-        If True, the optimal path is returned.
-
-    Returns
-    -------
-    dtw_dist : float
-        The DTW distance between the two arrays.
-
-    cost_mat : array, shape = (n_timestamps_1, n_timestamps_2)
-        Cost matrix. Only returned if ``return_cost=True``.
-
-    acc_cost_mat : array, shape = (n_timestamps_1, n_timestamps_2)
-        Accumulated cost matrix. Only returned if ``return_accumulated=True``.
-
-    path : array, shape = (2, path_length)
-        The optimal path along the cost matrix. The first row consists
-        of the indices of the optimal path for x while the second row
-        consists of the indices of the optimal path for y. Only returned
-        if ``return_path=True``.
-
-    """
-    return _dtw_classic(x, y, dist, precomputed_cost, return_cost,
-                        return_accumulated, return_path)
-
-
 def _dtw_region(x=None, y=None, dist='square', region=None,
                 precomputed_cost=None, return_cost=False,
                 return_accumulated=False, return_path=False):
@@ -401,74 +338,6 @@ def _dtw_region(x=None, y=None, dist='square', region=None,
     res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
                           return_cost, return_accumulated, return_path)
     return res
-
-
-@deprecated("dtw_region is deprecated in 0.11 and will be removed in 0.12. "
-            "Use dtw(method='region') instead.")
-def dtw_region(x=None, y=None, dist='square', region=None,
-               precomputed_cost=None, return_cost=False,
-               return_accumulated=False, return_path=False):
-    """Dynamic Time Warping (DTW) distance with a constraint region.
-
-    .. deprecated:: 0.11
-        This function is deprecated and will be removed in 0.12.
-        Use :func:`dtw` with ``method='region'`` instead.
-
-    Parameters
-    ----------
-    x : array-like, shape = (n_timestamps_1,)
-        First array. Ignored if ``dist == 'precomputed'``.
-
-    y : array-like, shape = (n_timestamps_2,)
-        Second array. Ignored if ``dist == 'precomputed'``.
-
-    dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
-        Distance used. If 'square', the squared difference is used.
-        If 'absolute', the absolute difference is used. If 'precomputed',
-        `precomputed_cost` must be the cost matrix. If callable,
-        it must be a function with a numba.njit() decorator that takes
-        as input two numbers (two arguments) and returns a number.
-
-    region : None or array-like, shape = (2, n_timestamps_1)
-        Constraint region. If None, no constraint region is used. Otherwise,
-        the first row consists of the starting indices (included) and the
-        second row consists of the ending indices (excluded) of the valid rows
-        for each column.
-
-    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2) \
-            (default = None)
-        Precomputed cost matrix between the time series.
-        Ignored if ``dist != 'precomputed'``.
-
-    return_cost : bool (default = False)
-        If True, the cost matrix is returned.
-
-    return_accumulated : bool (default = False)
-        If True, the accumulated cost matrix is returned.
-
-    return_path : bool (default = False)
-        If True, the optimal path is returned.
-
-    Returns
-    -------
-    dtw_dist : float
-        The DTW distance between the two arrays.
-
-    cost_mat : array, shape = (n_timestamps_1, n_timestamps_2)
-        Cost matrix. Only returned if ``return_cost=True``.
-
-    acc_cost_mat : array, shape = (n_timestamps_1 n_timestamps_2)
-        Accumulated cost matrix. Only returned if ``return_accumulated=True``.
-
-    path : array, shape = (2, path_length)
-        The optimal path along the cost matrix. The first row consists
-        of the indices of the optimal path for x while the second row
-        consists of the indices of the optimal path for y. Only returned
-        if ``return_path=True``.
-
-    """
-    return _dtw_region(x, y, dist, region, precomputed_cost, return_cost,
-                       return_accumulated, return_path)
 
 
 def _check_sakoe_chiba_params(n_timestamps_1, n_timestamps_2, window_size):
@@ -617,77 +486,6 @@ def _dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
     return res
 
 
-@deprecated("dtw_sakoechiba is deprecated in 0.11 and will be removed in "
-            "0.12. Use dtw(method='sakoechiba') instead.")
-def dtw_sakoechiba(x=None, y=None, dist='square', window_size=0.1,
-                   precomputed_cost=None, return_cost=False,
-                   return_accumulated=False, return_path=False):
-    """Dynamic Time Warping (DTW) distance with Sakoe-Chiba band constraint.
-
-    .. deprecated:: 0.11
-        This function is deprecated and will be removed in 0.12.
-        Use :func:`dtw` with ``method='sakoechiba'`` instead.
-
-    Parameters
-    ----------
-    x : array-like, shape = (n_timestamps_1,)
-        First array. Ignored if ``dist == 'precomputed'``.
-
-    y : array-like, shape = (n_timestamps_2,)
-        Second array. Ignored if ``dist == 'precomputed'``.
-
-    dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
-        Distance used. If 'square', the squared difference is used.
-        If 'absolute', the absolute difference is used. If 'precomputed',
-        `precomputed_cost` must be the cost matrix. If callable,
-        it must be a function with a numba.njit() decorator that takes
-        as input two numbers (two arguments) and returns a number.
-
-    window_size : float or int (default = 0.1)
-        The window size above and below the diagonale.
-        If float, `window_size must be between 0 and
-        1, and the actual window size will be computed as:
-        ``ceil(window_size * max((n_timestamps_1, n_timestamps_2) - 1))``.
-        If int, `window_size` must be the largest temporal shift allowed.
-        Each cell whose distance with the diagonale is lower than or equal to
-        'window_size' becomes a valid cell for the path.
-
-    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2) \
-            (default = None)
-        Precomputed cost matrix between the time series.
-        Ignored if ``dist != 'precomputed'``.
-
-    return_cost : bool (default = False)
-        If True, the cost matrix is returned.
-
-    return_accumulated : bool (default = False)
-        If True, the accumulated cost matrix is returned.
-
-    return_path : bool (default = False)
-        If True, the optimal path is returned.
-
-    Returns
-    -------
-    dtw_dist : float
-        The DTW distance between the two arrays.
-
-    cost_mat : array, shape = (n_timestamps_1, n_timestamps_2)
-        Cost matrix. Only returned if ``return_cost=True``.
-
-    acc_cost_mat : array, shape = (n_timestamps_1, n_timestamps_2)
-        Accumulated cost matrix. Only returned if ``return_accumulated=True``.
-
-    path : array, shape = (2, path_length)
-        The optimal path along the cost matrix. The first row consists
-        of the indices of the optimal path for x while the second row
-        consists of the indices of the optimal path for y. Only returned
-        if ``return_path=True``.
-
-    """
-    return _dtw_sakoechiba(x, y, dist, window_size, precomputed_cost,
-                           return_cost, return_accumulated, return_path)
-
-
 def _get_itakura_slopes(n_timestamps_1, n_timestamps_2, max_slope):
     """Compute the slopes of the parallelogram bounds."""
     if not isinstance(n_timestamps_1, (int, np.integer)):
@@ -828,71 +626,6 @@ def _dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
     return res
 
 
-@deprecated("dtw_itakura is deprecated in 0.11 and will be removed in 0.12. "
-            "Use dtw(method='itakura') instead.")
-def dtw_itakura(x=None, y=None, dist='square', max_slope=2.,
-                precomputed_cost=None, return_cost=False,
-                return_accumulated=False, return_path=False):
-    """Dynamic Time Warping distance with Itakura parallelogram constraint.
-
-    .. deprecated:: 0.11
-        This function is deprecated and will be removed in 0.12.
-        Use :func:`dtw` with ``method='itakura'`` instead.
-
-    Parameters
-    ----------
-    x : array-like, shape = (n_timestamps_1,)
-        First array. Ignored if ``dist == 'precomputed'``.
-
-    y : array-like, shape = (n_timestamps_2,)
-        Second array. Ignored if ``dist == 'precomputed'``.
-
-    dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
-        Distance used. If 'square', the squared difference is used.
-        If 'absolute', the absolute difference is used. If 'precomputed',
-        `precomputed_cost` must be the cost matrix. If callable,
-        it must be a function with a numba.njit() decorator that takes
-        as input two numbers (two arguments) and returns a number.
-
-    max_slope : float (default = 2.)
-        Maximum slope for the parallelogram.
-
-    precomputed_cost : array-like, shape = (n_timestamps_1, n_timestamps_2) \
-            (default = None)
-        Precomputed cost matrix between the time series.
-        Ignored if ``dist != 'precomputed'``.
-
-    return_cost : bool (default = False)
-        If True, the cost matrix is returned.
-
-    return_accumulated : bool (default = False)
-        If True, the accumulated cost matrix is returned.
-
-    return_path : bool (default = False)
-        If True, the optimal path is returned.
-
-    Returns
-    -------
-    dtw_dist : float
-        The DTW distance between the two arrays.
-
-    cost_mat : ndarray, shape = (n_timestamps_1, n_timestamps_2)
-        Cost matrix. Only returned if ``return_cost=True``.
-
-    acc_cost_mat : ndarray, shape = (n_timestamps_1, n_timestamps_2)
-        Accumulated cost matrix. Only returned if ``return_accumulated=True``.
-
-    path : array, shape = (2, path_length)
-        The optimal path along the cost matrix. The first row consists
-        of the indices of the optimal path for x while the second row
-        consists of the indices of the optimal path for y. Only returned
-        if ``return_path=True``.
-
-    """
-    return _dtw_itakura(x, y, dist, max_slope, precomputed_cost, return_cost,
-                        return_accumulated, return_path)
-
-
 def _blurred_path_region(n_timestamps_1, n_timestamps_2, resolution_level,
                          n_timestamps_reduced_1, n_timestamps_reduced_2,
                          path, radius):
@@ -1016,9 +749,6 @@ def _compute_region(n_timestamps_1, n_timestamps_2, method, dist,
                     x=None, y=None, **options):
     """Compute the region of feasible alignment paths."""
 
-    if options is None:
-        options = dict()
-
     if method == 'classic':
         region = None
     elif method == 'sakoechiba':
@@ -1083,71 +813,6 @@ def _dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
     return res
 
 
-@deprecated("dtw_multiscale is deprecated in 0.11 and will be removed in "
-            "0.12. Use dtw(method='multiscale') instead.")
-def dtw_multiscale(x, y, dist='square', resolution=2, radius=0,
-                   return_cost=False, return_accumulated=False,
-                   return_path=False):
-    """Multiscale Dynamic Time Warping distance.
-
-    .. deprecated:: 0.11
-        This function is deprecated and will be removed in 0.12.
-        Use :func:`dtw` with ``method='multiscale'`` instead.
-
-    Parameters
-    ----------
-    x : array-like, shape = (n_timestamps_1,)
-        First array.
-
-    y : array-like, shape = (n_timestamps_2,)
-        Second array.
-
-    dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
-        Distance used. If 'square', the squared difference is used.
-        If 'absolute', the absolute difference is used. If callable,
-        it must be a function with a numba.njit() decorator that takes
-        as input two numbers (two arguments) and returns a number.
-
-    resolution : int (default = 2)
-        The resolution level.
-
-    radius : int (default = 0)
-        The radius used to expand the constraint region. The optimal path
-        computed at the resolution level is expanded with `radius` cells to the
-        top, bottom, left and right of every cell belonging to the optimal
-        path. It is computed at the resolution level.
-
-    return_cost : bool (default = False)
-        If True, the cost matrix is returned.
-
-    return_accumulated : bool (default = False)
-        If True, the accumulated cost matrix is returned.
-
-    return_path : bool (default = False)
-        If True, the optimal path is returned.
-
-    Returns
-    -------
-    dtw_dist : float
-        The DTW distance between the two arrays.
-
-    cost_mat : ndarray, shape = (n_timestamps_1, n_timestamps_2)
-        Cost matrix. Only returned if ``return_cost=True``.
-
-    acc_cost_mat : ndarray, shape = (n_timestamps_1, n_timestamps_2)
-        Accumulated cost matrix. Only returned if ``return_accumulated=True``.
-
-    path : array, shape = (2, path_length)
-        The optimal path along the cost matrix. The first row consists
-        of the indices of the optimal path for x while the second row
-        consists of the indices of the optimal path for y. Only returned
-        if ``return_path=True``.
-
-    """
-    return _dtw_multiscale(x, y, dist, resolution, radius, return_cost,
-                           return_accumulated, return_path)
-
-
 def _dtw_fast(x, y, dist='square', radius=0, return_cost=False,
               return_accumulated=False, return_path=False):
     """Fast Dynamic Time Warping distance.
@@ -1184,68 +849,6 @@ def _dtw_fast(x, y, dist='square', radius=0, return_cost=False,
     res = _return_results(dtw_dist, cost_mat, acc_cost_mat,
                           return_cost, return_accumulated, return_path)
     return res
-
-
-@deprecated("dtw_fast is deprecated in 0.11 and will be removed in 0.12. "
-            "Use dtw(method='fast') instead.")
-def dtw_fast(x, y, dist='square', radius=0, return_cost=False,
-             return_accumulated=False, return_path=False):
-    """Fast Dynamic Time Warping distance.
-
-    .. deprecated:: 0.11
-        This function is deprecated and will be removed in 0.12.
-        Use :func:`dtw` with ``method='fast'`` instead.
-
-    Parameters
-    ----------
-    x : array-like, shape = (n_timestamps_1,)
-        First array.
-
-    y : array-like, shape = (n_timestamps_2,)
-        Second array.
-
-    dist : 'square', 'absolute', 'precomputed' or callable (default = 'square')
-        Distance used. If 'square', the squared difference is used.
-        If 'absolute', the absolute difference is used. If 'precomputed',
-        `precomputed_cost` must be the cost matrix. If callable,
-        it must be a function with a numba.njit() decorator that takes
-        as input two numbers (two arguments) and returns a number.
-
-    radius : int (default = 0)
-        The radius used to expand the constraint region. The optimal path
-        computed at the resolution level is expanded with `radius` cells to the
-        top, bottom, left and right of every cell belonging to the optimal
-        path. It is computed at the resolution level.
-
-    return_cost : bool (default = False)
-        If True, the cost matrix is returned.
-
-    return_accumulated : bool (default = False)
-        If True, the accumulated cost matrix is returned.
-
-    return_path : bool (default = False)
-        If True, the optimal path is returned.
-
-    Returns
-    -------
-    dtw_dist : float
-        The DTW distance between the two arrays.
-
-    cost_mat : ndarray, shape = (n_timestamps_1, n_timestamps_2)
-        Cost matrix. Only returned if ``return_cost=True``.
-
-    acc_cost_mat : ndarray, shape = (n_timestamps_1, n_timestamps_2)
-        Accumulated cost matrix. Only returned if ``return_accumulated=True``.
-
-    path : ndarray, shape = (2, path_length)
-        The optimal path along the cost matrix. The first row consists
-        of the indices of the optimal path for x while the second row
-        consists of the indices of the optimal path for y. Only returned
-        if ``return_path=True``.
-
-    """
-    return _dtw_fast(x, y, dist, radius, return_cost, return_accumulated,
-                     return_path)
 
 
 def dtw(x=None, y=None, dist='square', method='classic', options=None,

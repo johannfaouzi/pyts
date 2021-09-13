@@ -82,3 +82,16 @@ def test_actual_results_strategy_quantile():
     pred_actual = clf.fit(X, y).predict(X)
     pred_desired = cosine_similarity(freq, tf * idf[None, :]).argmax(axis=1)
     np.testing.assert_array_equal(pred_actual, pred_desired)
+
+    # Without IDF weighting
+    clf = SAXVSM(window_size=4, word_size=4, n_bins=2, strategy='quantile',
+                 numerosity_reduction=False, sublinear_tf=False, use_idf=False)
+    decision_function_actual = clf.fit(X, y).decision_function(X)
+
+    decision_function_desired = cosine_similarity(freq, tf)
+    np.testing.assert_allclose(decision_function_actual,
+                               decision_function_desired, atol=1e-5, rtol=0.)
+
+    pred_actual = clf.fit(X, y).predict(X)
+    pred_desired = cosine_similarity(freq, tf).argmax(axis=1)
+    np.testing.assert_array_equal(pred_actual, pred_desired)

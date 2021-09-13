@@ -196,6 +196,7 @@ def test_parameter_check(params, error, err_msg):
     'params',
     [{'window_sizes': [3, 5], 'sort': True},
      {'window_sizes': [0.5], 'window_steps': None, 'criterion': 'anova'},
+     {'window_sizes': [0.5], 'window_steps': [0.25], 'criterion': 'anova'},
      {}]
 )
 def test_fit_transform(params):

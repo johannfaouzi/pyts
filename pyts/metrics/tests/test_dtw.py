@@ -541,6 +541,65 @@ def test_actual_results_dtw_multiscale(params, res_desired):
 
 
 @pytest.mark.parametrize(
+    'params, error, err_msg',
+    [({'radius': '3'}, TypeError, "'radius' must be an integer."),
+     ({'radius': -3}, ValueError, "'radius' must be a non-negative integer.")]
+)
+def test_parameter_check_dtw_fast(params, error, err_msg):
+    """Test parameter validation."""
+    with pytest.raises(error, match=re.escape(err_msg)):
+        _dtw_fast(x, y, **params)
+
+
+@pytest.mark.parametrize(
+    'params, res_desired',
+    [({},
+      {'cost_mat':
+          [[1, 4, np.inf, np.inf], [0, 1, np.inf, np.inf],
+           [np.inf, np.inf, 1, 4], [np.inf, np.inf, 0, 1]],
+       'acc_cost_mat':
+           [[1, 5, np.inf, np.inf], [1, 2, np.inf, np.inf],
+            [np.inf, np.inf, 3, 7], [np.inf, np.inf, 3, 4]],
+       'path': [[0, 1, 2, 3], [0, 1, 2, 3]],
+       'dtw': 2}),
+
+     ({'radius': 1},
+      {'cost_mat':
+          [[1, 4, 9, 16], [0, 1, 4, 9],
+           [1, 0, 1, 4], [4, 1, 0, 1]],
+       'acc_cost_mat':
+           [[1, 5, 14, 30], [1, 2, 6, 15],
+            [2, 1, 2, 6], [6, 2, 1, 2]],
+       'path': [[0, 1, 2, 3, 3], [0, 0, 1, 2, 3]],
+       'dtw': sqrt(2)}),
+
+     ({'radius': 2},
+      {'cost_mat':
+          [[1, 4, 9, 16], [0, 1, 4, 9],
+           [1, 0, 1, 4], [4, 1, 0, 1]],
+       'acc_cost_mat':
+           [[1, 5, 14, 30], [1, 2, 6, 15],
+            [2, 1, 2, 6], [6, 2, 1, 2]],
+       'path': [[0, 1, 2, 3, 3], [0, 0, 1, 2, 3]],
+       'dtw': sqrt(2)})]
+)
+def test_actual_results_dtw_fast(params, res_desired):
+    """Test that the actual results are the expected ones."""
+    x = np.arange(4)
+    y = np.arange(1, 5)
+
+    (dtw_actual, cost_mat_actual,
+     acc_cost_mat_actual, path_actual) = _dtw_fast(
+        x, y, **params_return, **params
+    )
+    np.testing.assert_allclose(cost_mat_actual, res_desired['cost_mat'])
+    np.testing.assert_allclose(dtw_actual, res_desired['dtw'])
+    np.testing.assert_allclose(path_actual, res_desired['path'])
+    np.testing.assert_allclose(acc_cost_mat_actual,
+                               res_desired['acc_cost_mat'])
+
+
+@pytest.mark.parametrize(
     'params, err_msg',
     [({'method': 'loop'},
       "'method' must be either 'classic', 'sakoechiba', 'itakura', "
