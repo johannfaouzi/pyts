@@ -148,7 +148,7 @@ TimeSeriesForest
 
 :class:`TimeSeriesForest` is a two-stage algorithm. First it extracts three
 features from a given number of windows: the mean, the standard deviation and
-the slope of the simple linear regression. Then a random forest is used using
+the slope of the simple linear regression. Then a random forest is fitted using
 the extracted features as input data. These three statistics are fast to
 compute and give a lot of information about the window. The windows are
 generated randomly and the number of windows is controlled with the
@@ -184,11 +184,11 @@ Time Series Bag-of-Features
 :class:`TSBF` (acronym for Time Series Bag-of-Features) is a complex algorithm
 whose fitting procedure consists of the following steps:
 
-* Random subsequences are extracted from each input time series.
-* Each subsequence is split into several intervals.
-* Three features are extracted from each interval: the mean,
+* Random intervals are generated.
+* Each interval is split into several subintervals.
+* Three features are extracted from each subinterval: the mean,
   the standard deviation and the slope.
-* Four features are also extracted from the whole subsequence:
+* Four features are also extracted from the whole interval:
   the mean, the standard deviation and the start and end indices.
 * A first random forest classifier is fitted on this dataset of
   subsequences, and the label of a subsequence is given by the
@@ -198,10 +198,10 @@ whose fitting procedure consists of the following steps:
   the subsequences extracted from a given time series; the mean
   probability for each class is also computed. They are the
   features extracted from the original data set.
-* A second random forest classifier is finally fitted using the
+* A second random forest classifier is finally fitted using these
   extracted features.
 
-Since the final estimator is a random forest classifier, we can extract the
+Since the final estimator is a random forest classifier, one can extract the
 feature importance scores:
 
 .. figure:: ../auto_examples/classification/images/sphx_glr_plot_tsbf_001.png

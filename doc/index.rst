@@ -104,7 +104,7 @@ complements the `User Guide <user_guide.html>`_.
 `Changelog <changelog.html>`_
 ------------------------------
 
-History of notable changes to the pyts.
+History of notable changes to the package.
 
 See the `README <https://github.com/johannfaouzi/pyts/blob/main/README.md>`_
 for more information.

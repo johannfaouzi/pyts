@@ -79,7 +79,8 @@ so that classification can be directly performed::
       Plots of Dynamical Systems". Europhysics Letters (1987).
 
     * N. Hatami, Y. Gavet and J. Debayle, "Classification of Time-Series Images
-      Using Deep Convolutional Neural Networks". https://arxiv.org/abs/1710.00886
+      Using Deep Convolutional Neural Networks". International Conference on
+      Machine Vision, 10696, 242-249 (2018).
 
 
 Gramian Angular Field

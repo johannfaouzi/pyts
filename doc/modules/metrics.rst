@@ -20,11 +20,11 @@ been proposed because of downsides with the original formulation.
 Metrics for time series can be found in the :mod:`pyts.metrics` module.
 
 
-Classical Dynamic Time Warping
+Classic Dynamic Time Warping
 ------------------------------
 
 Given two time series :math:`X=(x_1,\ldots,x_n)` and :math:`Y=(y_1,\ldots,y_m)`,
-the cost matrix :math:`C` is defined as a cost for each combination:
+the cost matrix :math:`C` is defined as the cost for each pair of values:
 
 .. math::
 
@@ -36,18 +36,18 @@ where :math:`f` is the cost function.
 
 A warping path is a sequence :math:`p=(p_1,\ldots,p_L)` such that:
 
-- :math:`p_l = (i_l, j_l) \in \{1, \ldots, n\} \times \{1, \ldots, m\}, \quad \forall l \in \{1, \ldots, L\}`
+- Value condition: :math:`p_l = (i_l, j_l) \in \{1, \ldots, n\} \times \{1, \ldots, m\}, \quad \forall l \in \{1, \ldots, L\}`
 - Boundary condition: :math:`p_1 = (1, 1)` and :math:`p_L = (n, m)`
-- Monoticity and step-size condition: :math:`p_{l+1} - p_l \in \{(0, 1), (1, 0), (1, 1)\}, \quad \forall l \in \{1, \ldots, L-1\}`
+- Monotonicity and step-size condition: :math:`p_{l+1} - p_l \in \{(0, 1), (1, 0), (1, 1)\}, \quad \forall l \in \{1, \ldots, L-1\}`
 
 The cost associated with a warping path, denoted :math:`C_p`, is the sum of
-the elements of the cost matrix that belong in the warping path:
+the elements of the cost matrix that belong to the warping path:
 
 .. math::
 
     C_p(X, Y) = \sum_{l=1}^L C_{i_l, j_l}
 
-The Dynamic Time Warping score between is defined as the minimum of these costs
+The Dynamic Time Warping score is defined as the minimum of these costs
 among all the warping paths:
 
 .. math::
@@ -97,14 +97,15 @@ Global regions
 Global regions are regions that do not depend on the values of the time series
 :math:`X` and :math:`Y`, but only on their lengths.
 
-The most well-known global constraint region is the Sakoe-Chiba band.
-:func:`sakoe_chiba_band` is characterized by a ``window_size`` parameter.
+The most well-known global constraint region is the Sakoe-Chiba band and is
+implemented as :func:`sakoe_chiba_band` is characterized by a ``window_size``
+parameter.
 Indices that belong to the band are indices that are not too far away from
 the diagonal, that is:
 
 .. math::
 
-    R = \{(i, j), |i - j| <= r \}
+    R = \{(i, j), |i - j| \leq r \}
 
 where :math:`r` is the ``window_size``. The higher, the wider the region is.
 
@@ -147,7 +148,7 @@ Implementations
 The most convenient way to derive any Dynamic Time Warping score is to use
 the :func:`dtw` function. :func:`dtw` has a ``method`` parameter that lets
 you choose which variant to use (default is ``method='classic'``, which is
-the classical DTW score). Options for each method can be provided with the
+the classic DTW score). Options for each method can be provided with the
 ``options`` parameter.
 
 .. figure:: ../auto_examples/metrics/images/sphx_glr_plot_dtw_001.png
