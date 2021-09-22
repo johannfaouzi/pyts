@@ -98,8 +98,8 @@ Global regions are regions that do not depend on the values of the time series
 :math:`X` and :math:`Y`, but only on their lengths.
 
 The most well-known global constraint region is the Sakoe-Chiba band and is
-implemented as :func:`sakoe_chiba_band` is characterized by a ``window_size``
-parameter.
+implemented as :func:`sakoe_chiba_band`.
+It is characterized by the ``window_size`` parameter.
 Indices that belong to the band are indices that are not too far away from
 the diagonal, that is:
 
@@ -115,9 +115,11 @@ where :math:`r` is the ``window_size``. The higher, the wider the region is.
    :align: center
    :scale: 50%
 
-Another popular global constraint is the Itakura parallelogram.
-:func:`itakura_parallelogram` is characterized by the ``max_slope`` parameter,
-which defines how far away two points can be. The higher, the wider the region is.
+Another popular global constraint is the Itakura parallelogram and is
+implemented as :func:`itakura_parallelogram`.
+It is characterized by the ``max_slope`` parameter, which defines how far away
+two points can be.
+The higher, the wider the region is.
 
 
 .. figure:: ../auto_examples/metrics/images/sphx_glr_plot_itakura_001.png

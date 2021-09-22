@@ -88,8 +88,8 @@ Gramian Angular Field
 
 :class:`GramianAngularField` creates a matrix of temporal correlations for each
 :math:`(x_i, x_j)`. First it rescales the time series in a range :math:`[a, b]`
-where :math:`-1 \leq a < b \leq 1`. Then it computes the polar coordinates of
-the scaled time series by taking the :math:`arccos`. Finally it computes the
+with :math:`-1 \leq a < b \leq 1`. Then it computes the polar coordinates of
+the scaled time series by taking the :math:`:\arccos`. Finally it computes the
 cosine of the sum of the angles for the Gramian Angular Summation Field
 (GASF) or the sine of the difference of the angles for the Gramian Angular
 Difference Field (GADF).
