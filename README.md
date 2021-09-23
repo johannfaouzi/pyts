@@ -172,7 +172,7 @@ of missing values using interpolation. More information is available at the
 - `transformation`: This module provides implementations of algorithms that
 transform a data set of time series with shape `(n_samples, n_timestamps)` into
 a data set with shape `(n_samples, n_extracted_features)`. Implemented algorithms are
-[BagOfPatterns](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.BagOfPatterns.html)
+[BagOfPatterns](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.BagOfPatterns.html),
 [BOSS](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.BOSS.html),
 [ShapeletTransform](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.ShapeletTransform.html),
 [WEASEL](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.WEASEL.html) and
