@@ -110,22 +110,26 @@ pyts consists of the following modules:
 
 - `approximation`: This module provides implementations of algorithms that
 approximate time series. Implemented algorithms are
-[Piecewise Aggregate Approximation](https://pyts.readthedocs.io/en/latest/generated/pyts.approximation.PiecewiseAggregateApproximation.html#),
-[Symbolic Aggregate approXimation](https://pyts.readthedocs.io/en/latest/generated/pyts.approximation.SymbolicAggregateApproximation.html#),
-[Discrete Fourier Transform](https://pyts.readthedocs.io/en/latest/generated/pyts.approximation.DiscreteFourierTransform.html#),
-[Multiple Coefficient Binning](https://pyts.readthedocs.io/en/latest/generated/pyts.approximation.MultipleCoefficientBinning.html#) and
-[Symbolic Fourier Approximation](https://pyts.readthedocs.io/en/latest/generated/pyts.approximation.SymbolicFourierApproximation.html#).
+[Piecewise Aggregate Approximation](https://pyts.readthedocs.io/en/latest/generated/pyts.approximation.PiecewiseAggregateApproximation.html),
+[Symbolic Aggregate approXimation](https://pyts.readthedocs.io/en/latest/generated/pyts.approximation.SymbolicAggregateApproximation.html),
+[Discrete Fourier Transform](https://pyts.readthedocs.io/en/latest/generated/pyts.approximation.DiscreteFourierTransform.html),
+[Multiple Coefficient Binning](https://pyts.readthedocs.io/en/latest/generated/pyts.approximation.MultipleCoefficientBinning.html) and
+[Symbolic Fourier Approximation](https://pyts.readthedocs.io/en/latest/generated/pyts.approximation.SymbolicFourierApproximation.html).
 
-- `bag_of_words`: This module consists of a class
-[BagOfWords](https://pyts.readthedocs.io/en/latest/generated/pyts.bag_of_words.BagOfWords.html#)
-that transforms time series into bags of words. This approach is quite common
-in time series classification.
+- `bag_of_words`: This module provide tools to transform time series into bags
+of words. Implemented algorithms are
+[WordExtractor](https://pyts.readthedocs.io/en/latest/generated/pyts.bag_of_words.WordExtractor.html) and
+[BagOfWords](https://pyts.readthedocs.io/en/latest/generated/pyts.bag_of_words.BagOfWords.html).
+
 
 - `classification`: This module provides implementations of algorithms that
 can classify time series. Implemented algorithms are
-[KNeighborsClassifier](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.KNeighborsClassifier.html#),
-[SAXVSM](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.SAXVSM.html#) and
-[BOSSVS](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.BOSSVS.html#).
+[KNeighborsClassifier](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.KNeighborsClassifier.html),
+[SAXVSM](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.SAXVSM.html),
+[BOSSVS](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.BOSSVS.html),
+[LearningShapelets](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.LearningShapelets.html),
+[TimeSeriesForest](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.TimeSeriesForest.html) and
+[TSBF](https://pyts.readthedocs.io/en/latest/generated/pyts.classification.TSBF.html).
 
 - `datasets`: This module provides utilities to make or load toy datasets,
 as well as fetching datasets from the
@@ -134,19 +138,19 @@ as well as fetching datasets from the
 - `decomposition`: This module provides implementations of algorithms that
 decompose a time series into several time series. The only implemented
 algorithm is
-[Singular Spectrum Analysis](https://pyts.readthedocs.io/en/latest/generated/pyts.decomposition.SingularSpectrumAnalysis.html#).
+[Singular Spectrum Analysis](https://pyts.readthedocs.io/en/latest/generated/pyts.decomposition.SingularSpectrumAnalysis.html).
 
 - `image`: This module provides implementations of algorithms that transform
 time series into images. Implemented algorithms are
-[Recurrence Plot](https://pyts.readthedocs.io/en/latest/generated/pyts.image.RecurrencePlot.html#),
-[Gramian Angular Field](https://pyts.readthedocs.io/en/latest/generated/pyts.image.GramianAngularField.html#) and
-[Markov Transition Field](https://pyts.readthedocs.io/en/latest/generated/pyts.image.MarkovTransitionField.html#).
+[Recurrence Plot](https://pyts.readthedocs.io/en/latest/generated/pyts.image.RecurrencePlot.html),
+[Gramian Angular Field](https://pyts.readthedocs.io/en/latest/generated/pyts.image.GramianAngularField.html) and
+[Markov Transition Field](https://pyts.readthedocs.io/en/latest/generated/pyts.image.MarkovTransitionField.html).
 
 - `metrics`: This module provides implementations of metrics that are specific
 to time series. Implemented metrics are
-[Dynamic Time Warping](https://pyts.readthedocs.io/en/latest/generated/pyts.metrics.dtw.html#)
+[Dynamic Time Warping](https://pyts.readthedocs.io/en/latest/generated/pyts.metrics.dtw.html)
 with several variants and the
-[BOSS](https://pyts.readthedocs.io/en/latest/generated/pyts.metrics.boss.html#)
+[BOSS](https://pyts.readthedocs.io/en/latest/generated/pyts.metrics.boss.html)
 metric.
 
 - `multivariate`: This modules provides utilities to deal with multivariate
@@ -161,16 +165,18 @@ time series respectively, as well as
 - `preprocessing`: This module provides most of the scikit-learn preprocessing
 tools but applied sample-wise (i.e. to each time series independently) instead
 of feature-wise, as well as an
-[imputer](https://pyts.readthedocs.io/en/latest/generated/pyts.preprocessing.InterpolationImputer.html#)
+[imputer](https://pyts.readthedocs.io/en/latest/generated/pyts.preprocessing.InterpolationImputer.html)
 of missing values using interpolation. More information is available at the
 [pyts.preprocessing API documentation](https://pyts.readthedocs.io/en/latest/api.html#module-pyts.preprocessing).
 
 - `transformation`: This module provides implementations of algorithms that
 transform a data set of time series with shape `(n_samples, n_timestamps)` into
-a data set with shape `(n_samples, n_features)`. Implemented algorithms are
-[BOSS](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.BOSS.html#),
-[ShapeletTransform](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.ShapeletTransform.html) and
-[WEASEL](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.WEASEL.html#).
+a data set with shape `(n_samples, n_extracted_features)`. Implemented algorithms are
+[BagOfPatterns](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.BagOfPatterns.html)
+[BOSS](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.BOSS.html),
+[ShapeletTransform](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.ShapeletTransform.html),
+[WEASEL](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.WEASEL.html) and
+[ROCKET](https://pyts.readthedocs.io/en/latest/generated/pyts.transformation.ROCKET.html).
 
 - `utils`: a simple module with
 [utility functions](https://pyts.readthedocs.io/en/latest/api.html#module-pyts.utils).

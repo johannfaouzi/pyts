@@ -139,12 +139,6 @@ Full API documentation of the *pyts* Python package.
 
   metrics.boss
   metrics.dtw
-  metrics.dtw_classic
-  metrics.dtw_fast
-  metrics.dtw_itakura
-  metrics.dtw_multiscale
-  metrics.dtw_region
-  metrics.dtw_sakoechiba
   metrics.itakura_parallelogram
   metrics.sakoe_chiba_band
   metrics.show_options

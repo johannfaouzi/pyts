@@ -12,7 +12,8 @@ consecutive time points: treating time points as features may not be optimal.
 Therefore, algorithms that extract features from time series have been
 developed. These algorithms transforms a dataset of time series with shape
 ``(n_samples, n_timestamps)`` into a dataset of features with shape
-``(n_samples, n_features)`` that can be used to fit a standard classifier.
+``(n_samples, n_extracted_features)`` that can be used to fit a standard
+classifier.
 They can be found in the :mod:`pyts.transformation` module.
 The following sections describe the algorithms made available.
 
@@ -79,8 +80,9 @@ below, we use a Support Vector Machine with a linear kernel::
 BagOfPatterns
 -------------
 
-:class:`BagOfPatterns` is built on top of :ref:`bag_of_words_w`. First it
-transforms each time series into a bag of words, then the frequency of
+:class:`BagOfPatterns` is built on top of the :ref:`bag_of_words_w`.
+transformation.
+First it transforms each time series into a bag of words, then the frequency of
 each word for each time series is computed. Therefore, it transforms each
 time series into a histogram. The ``vocabulary_`` attribute is a mapping from
 the feature indices to the corresponding words.
@@ -250,4 +252,4 @@ transformation.
 
     * A. Dempster, F. Petitjean and G. I. Webb, "ROCKET: Exceptionally
       fast and accurate time series classification using random convolutional
-      kernels". https://arxiv.org/abs/1910.13051.
+      kernels". Data Mining and Knowledge Discovery, 34(5), 1454-1495 (2020).
