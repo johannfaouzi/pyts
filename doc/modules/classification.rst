@@ -44,10 +44,14 @@ SAXVSM
 SAX-VSM stands for **S**\ ymbolic **A**\ ggregate appro\ **X**\ imation in
 **V**\ ector **S**\ pace **M**\ odel.
 :class:`SAXVSM` is an algorithm based on the SAX representation of time
-series in a vector space model. It first transforms a time series of floats
-into a sequence of letters using the :ref:`approximation_sax` algorithm.
-Then each sequence of letters is transformed into a bag of words using a sliding
-window. Finally, a term-frequency inverse-term-frequency (tf-idf) vector is computed
+series in a vector space model. Subsequences are extracted using a sliding
+window and each subsequence of real numbers is transformed into a word
+(i.e., a sequence of symbols) using the :ref:`approximation_sax` algorithm.
+Each time series is thus transformed into a bag of words (the order of the
+words is not taken into account). For each class, all the bags of words from
+all the time series belonging to this class are combined into a single bag of
+words, leading to a bag of words for each class.
+Finally, a term-frequency inverse-term-frequency (tf-idf) vector is computed
 for each class. Predictions are made using the cosine similarity between
 the time series and the tf-idf vectors for each class. The predicted class
 is the class yielding the highest cosine similarity.

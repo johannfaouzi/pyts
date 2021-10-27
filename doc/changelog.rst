@@ -24,10 +24,13 @@ Version 0.12.0
 - Remove some constraints when discretizing time series (number of bins, time
   series with low variance) that impact the following classes:
 
-    + :class:`pyts.preprocessing.KBinsDiscretizer`
-    + :class:`pyts.approximation.SymbolicAggregateApproximation`
-    + :class:`pyts.bag_of_words.BagOfWords`
-    + :class:`pyts.classification.SAXVSM`
+  + :class:`pyts.preprocessing.KBinsDiscretizer`
+  + :class:`pyts.approximation.SymbolicAggregateApproximation`
+  + :class:`pyts.bag_of_words.BagOfWords`
+  + :class:`pyts.classification.SAXVSM`
+
+- Remove specific functions for the different variants of Dynamic Time Warping
+  (all ``dtw_*`` functions), only the main :func:`pyts.metrics.dtw` is kept.
 
 
 Version 0.11.0
