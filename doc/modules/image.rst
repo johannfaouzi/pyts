@@ -12,8 +12,8 @@ information for any pair of time points :math:`(x_i, x_j)` given a time series
 :math:`(x_1, \ldots, x_n)`.
 Deep neural networks, especially convolutional neural networks, have been
 used to classify these imaged time series. While *pyts* does not provide
-deep neural networks, it provides algorithms to transform time series into
-images in the :mod:`pyts.image` module.
+utilities to build and train deep neural networks, it provides algorithms to
+transform time series into images in the :mod:`pyts.image` module.
 
 .. _image_rp:
 

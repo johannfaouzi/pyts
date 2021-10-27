@@ -107,4 +107,5 @@ The set of labels is always represented as a one-dimensional array with shape
 
 .. topic:: References
 
-    * Travis E, Oliphant. A guide to NumPy, USA: Trelgol Publishing, (2006).
+    * C. R. Harris et al., "Array programming with NumPy". Nature, 585(7825),
+      357-362 (2020).
