@@ -38,6 +38,6 @@ for i, index in enumerate(st.indices_[:4]):
              lw=5, color='C{}'.format(i))
 
 plt.xlabel('Time', fontsize=12)
-plt.title('The four more discriminative shapelets', fontsize=14)
+plt.title('The four most discriminative shapelets', fontsize=14)
 plt.legend(loc='best', fontsize=8)
 plt.show()
