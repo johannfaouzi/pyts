@@ -47,7 +47,7 @@ jobs:
         python.version: '3.9'
         numpy.version: '1.*'
         scipy.version: '1.*'
-        scikit-learn.version: '0.*'
+        scikit-learn.version: '1.*'
         joblib.version: '0.*'
         numba.version: '0.*'
 
@@ -77,7 +77,7 @@ jobs:
         python.version: '3.8'
         numpy.version: '1.*'
         scipy.version: '1.*'
-        scikit-learn.version: '0.*'
+        scikit-learn.version: '1.*'
         joblib.version: '0.*'
         numba.version: '0.*'
 
@@ -112,7 +112,7 @@ jobs:
         python.version: '3.9'
         numpy.version: '1.*'
         scipy.version: '1.*'
-        scikit-learn.version: '0.*'
+        scikit-learn.version: '1.*'
         joblib.version: '0.*'
         numba.version: '0.*'
 
@@ -142,7 +142,7 @@ jobs:
         python.version: '3.8'
         numpy.version: '1.*'
         scipy.version: '1.*'
-        scikit-learn.version: '0.*'
+        scikit-learn.version: '1.*'
         joblib.version: '0.*'
         numba.version: '0.*'
 
@@ -183,7 +183,7 @@ jobs:
         python.version: '3.9'
         numpy.version: '1.*'
         scipy.version: '1.*'
-        scikit-learn.version: '0.*'
+        scikit-learn.version: '1.*'
         joblib.version: '0.*'
         numba.version: '0.*'
 
@@ -213,7 +213,7 @@ jobs:
         python.version: '3.8'
         numpy.version: '1.*'
         scipy.version: '1.*'
-        scikit-learn.version: '0.*'
+        scikit-learn.version: '1.*'
         joblib.version: '0.*'
         numba.version: '0.*'
 

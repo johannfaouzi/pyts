@@ -446,7 +446,7 @@ class TSBF(BaseEstimator, UnivariateClassifierMixin):
     min_subsequence_size_ : int
         The actual minimum length of the subsequences.
 
-    n_features_ : int
+    n_features_in_ : int
         The number of features when ``fit`` is performed.
 
     oob_decision_function_ : None or array, shape = (n_samples, n_classes)
@@ -660,7 +660,13 @@ class TSBF(BaseEstimator, UnivariateClassifierMixin):
         rfc.fit(X_features, y_features)
         X_oob_proba = rfc.oob_decision_function_.reshape(
             n_samples, n_subsequences, n_classes)
-        if np.isnan(X_oob_proba).any():
+
+        # Check for subsequences without OOB scores
+        no_oob_scores = (
+            (np.isnan(X_oob_proba).any() or
+             np.all(X_oob_proba == 0., axis=2).any())
+        )
+        if no_oob_scores:
             raise ValueError(
                 "At least one sample was never left out during the bootstrap. "
                 "Increase the number of trees (n_estimators)."
@@ -683,7 +689,11 @@ class TSBF(BaseEstimator, UnivariateClassifierMixin):
         self.feature_importances_ = clf.feature_importances_
         self.interval_indices_ = feature_extractor.interval_indices_
         self.min_subsequence_size_ = feature_extractor.min_subsequence_size_
-        self.n_features_ = clf.n_features_
+        self.n_features_in_ = (
+            clf.n_features_in_
+            if hasattr(clf, 'n_features_in_')
+            else clf.n_features_
+        )
         self.oob_decision_function_ = getattr(
             clf, 'oob_decision_function_', None)
         self.oob_score_ = getattr(clf, 'oob_score_', None)

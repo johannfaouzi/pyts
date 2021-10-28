@@ -77,6 +77,8 @@ class MultivariateTransformerMixin:
 class UnivariateClassifierMixin:
     """Mixin class for all univariate classifiers in pyts."""
 
+    _estimator_type = "classifier"
+
     def score(self, X, y, sample_weight=None):
         """
         Return the mean accuracy on the given test data and labels.
@@ -103,6 +105,8 @@ class UnivariateClassifierMixin:
 
 class MultivariateClassifierMixin:
     """Mixin class for all multivariate classifiers in pyts."""
+
+    _estimator_type = "classifier"
 
     def score(self, X, y, sample_weight=None):
         """

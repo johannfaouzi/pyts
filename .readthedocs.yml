@@ -4,7 +4,7 @@ formats:
   - none
 requirements_file: requirements.txt
 python:
-  version: 3.7
+  version: 3.8
   pip_install: true
   install:
     - requirements: docs/requirements.txt

@@ -350,7 +350,7 @@ def test_attributes_tsbf(X, y, params):
     assert clf.feature_importances_.shape == (n_features,)
     assert clf.interval_indices_.ndim == 2
     assert isinstance(clf.min_subsequence_size_, (int, np.integer))
-    assert clf.n_features_ == n_features
+    assert clf.n_features_in_ == n_features
     if params.get('oob_score', TSBF().get_params()['oob_score']):
         assert clf.oob_decision_function_.shape == (n_samples, n_classes)
         assert isinstance(clf.oob_score_, (float, np.floating))
