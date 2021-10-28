@@ -7,7 +7,7 @@ Change Log
 Version 0.12.0
 --------------
 
-- Add support for Python 3.9.
+- Add support for Python 3.9 and drop support for Python 3.6.
 
 - Add the *Time Series Forest* algorithm implemented as
   :class:`pyts.classification.TimeSeriesForest`.

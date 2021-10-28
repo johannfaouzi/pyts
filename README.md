@@ -23,7 +23,7 @@ thus pyts provides several tools to perform these transformations.
 
 pyts requires:
 
-- Python (>= 3.6)
+- Python (>= 3.7)
 - NumPy (>= 1.17.5)
 - SciPy (>= 1.3.0)
 - Scikit-Learn (>=0.22.1)
