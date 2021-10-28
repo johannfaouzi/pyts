@@ -144,7 +144,7 @@ def test_actual_results_fixed_indices(indices, arr_desired):
 def test_attributes_time_series_forest(params):
     """Test the attributes of a fitted instance of TimeSeriesForest."""
     real_attributes = ['base_estimator_', 'classes_', 'estimators_',
-                       'feature_importances_', 'indices_', 'n_features_',
+                       'feature_importances_', 'indices_', 'n_features_in_',
                        'oob_decision_function_', 'oob_score_']
     fake_attributes = ['yolo', 'whoopsy', 'mistake_were_made_']
 

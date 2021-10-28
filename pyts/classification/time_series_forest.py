@@ -331,7 +331,7 @@ class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
         of the windows. The second column consists of the ending indices
         (excluded) of the windows.
 
-    n_features_ : int
+    n_features_in_ : int
         The number of features when ``fit`` is performed.
 
     oob_decision_function_ : None or array, shape = (n_samples, n_classes)
@@ -516,7 +516,10 @@ class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
         self.estimators_ = self._pipeline['rfc'].estimators_
         self.feature_importances_ = self._pipeline['rfc'].feature_importances_
         self.indices_ = self._pipeline['fe'].indices_
-        self.n_features_ = self._pipeline['rfc'].n_features_
+        if getattr(self._pipeline['rfc'], 'n_features_in_'):
+            self.n_features_in_ = self._pipeline['rfc'].n_features_in_
+        else:
+            self.n_features_in_ = self._pipeline['rfc'].n_features_
         self.oob_decision_function_ = getattr(
             self._pipeline['rfc'], 'oob_decision_function_', None)
         self.oob_score_ = getattr(self._pipeline['rfc'], 'oob_score_', None)
