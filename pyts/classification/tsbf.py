@@ -689,10 +689,11 @@ class TSBF(BaseEstimator, UnivariateClassifierMixin):
         self.feature_importances_ = clf.feature_importances_
         self.interval_indices_ = feature_extractor.interval_indices_
         self.min_subsequence_size_ = feature_extractor.min_subsequence_size_
-        if getattr(clf, 'n_features_in_'):
-            self.n_features_in_ = clf.n_features_in_
-        else:
-            self.n_features_in_ = clf.n_features_
+        self.n_features_in_ = (
+            clf.n_features_in_
+            if hasattr(clf, 'n_features_in_')
+            else clf.n_features_
+        )
         self.oob_decision_function_ = getattr(
             clf, 'oob_decision_function_', None)
         self.oob_score_ = getattr(clf, 'oob_score_', None)

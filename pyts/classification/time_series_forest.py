@@ -516,10 +516,11 @@ class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
         self.estimators_ = self._pipeline['rfc'].estimators_
         self.feature_importances_ = self._pipeline['rfc'].feature_importances_
         self.indices_ = self._pipeline['fe'].indices_
-        if getattr(self._pipeline['rfc'], 'n_features_in_'):
-            self.n_features_in_ = self._pipeline['rfc'].n_features_in_
-        else:
-            self.n_features_in_ = self._pipeline['rfc'].n_features_
+        self.n_features_in_ = (
+            self._pipeline['rfc'].n_features_in_
+            if hasattr(self._pipeline['rfc'], 'n_features_in_')
+            else self._pipeline['rfc'].n_features_
+        )
         self.oob_decision_function_ = getattr(
             self._pipeline['rfc'], 'oob_decision_function_', None)
         self.oob_score_ = getattr(self._pipeline['rfc'], 'oob_score_', None)
