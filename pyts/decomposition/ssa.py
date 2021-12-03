@@ -8,6 +8,7 @@ from math import ceil
 from numba import njit, prange
 from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_array
+from scipy.signal import periodogram
 from ..base import UnivariateTransformerMixin
 from ..utils.utils import _windowed_view
 
@@ -48,11 +49,12 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
         between 0 and 1. The window size will be computed as
         ``max(2, ceil(window_size * n_timestamps))``.
 
-    groups : None, int or array-like (default = None)
+    groups : None, int, 'auto', or array-like (default = None)
         The way the elementary matrices are grouped. If None, no grouping is
         performed. If an integer, it represents the number of groups and the
         bounds of the groups are computed as
         ``np.linspace(0, window_size, groups + 1).astype('int64')``.
+        If 'auto', then three groups are determined, containing trend, seasonal and residuum.
         If array-like, each element must be array-like and contain the indices
         for each group.
 
@@ -147,6 +149,14 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
         if self.groups is None:
             grouping_size = window_size
             X_new = X
+        elif self.groups == "auto":
+            grouping_size = 3
+            X_new = np.zeros((n_samples, grouping_size,
+                              window_size, n_windows))
+            t = np.array([self._findgroup(X[i, :, 0]) for i in range(n_samples)])
+            for tsr in range(3):
+                X_new[:, tsr] = np.concatenate([X[i:i+1, t[i] == tsr].sum(axis=1)
+                                                for i in range(n_samples)])
         elif isinstance(self.groups, int):
             grouping = np.linspace(0, window_size,
                                    self.groups + 1).astype('int64')
@@ -162,6 +172,22 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             for i, group in enumerate(self.groups):
                 X_new[:, i] = X[:, group].sum(axis=1)
         return X_new, grouping_size
+
+    @staticmethod
+    def _findgroup(x, w0=0.1, c0=.85):
+        group = []
+        for j in range(len(x)):
+            xf, Pxx_den = periodogram(x[j])
+            sPxx = np.cumsum(Pxx_den)
+            trend = sPxx[np.where(xf<w0)[0][-1]] / sPxx[len(sPxx) -1] > c0
+            resid = sPxx[len(sPxx) // 2] / sPxx[len(sPxx)-1] < c0
+            if trend == 1:
+                group.append(0)
+            elif trend == 0 and resid == 0:
+                group.append(1)
+            else:
+                group.append(2)
+        return group
 
     def _check_params(self, n_timestamps):
         if not isinstance(self.window_size,
@@ -183,7 +209,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
                     "(got {0}).".format(self.window_size)
                 )
             window_size = max(2, ceil(self.window_size * n_timestamps))
-        if not (self.groups is None
+        if not (self.groups is None or self.groups == "auto"
                 or isinstance(self.groups, (int, list, tuple, np.ndarray))):
             raise TypeError("'groups' must be either None, an integer "
                             "or array-like.")
