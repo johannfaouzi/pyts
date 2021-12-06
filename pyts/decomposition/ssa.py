@@ -178,10 +178,9 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             idx_trend = np.where(f < self.lower_frequency_bound)[0][-1]
             idx_resid = Pxx_cumsum.shape[1] // 2
 
-            trend = Pxx_cumsum[:, idx_trend, :] / Pxx_cumsum[:, -1, :] > \
-                    self.lower_frequency_contribution
-            resid = Pxx_cumsum[:, idx_resid, :] / Pxx_cumsum[:, -1, :] < \
-                    self.lower_frequency_contribution
+            c = self.lower_frequency_contribution
+            trend = Pxx_cumsum[:, idx_trend, :] / Pxx_cumsum[:, -1, :] > c
+            resid = Pxx_cumsum[:, idx_resid, :] / Pxx_cumsum[:, -1, :] < c
             season = np.logical_and(~trend, ~resid)
 
             X_new = np.zeros((n_samples, grouping_size,
