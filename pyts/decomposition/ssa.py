@@ -8,7 +8,6 @@ from math import ceil
 from numba import njit, prange
 from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_array
-from scipy.signal import periodogram
 from ..base import UnivariateTransformerMixin
 from ..utils.utils import _windowed_view
 
@@ -54,14 +53,26 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
         performed. If an integer, it represents the number of groups and the
         bounds of the groups are computed as
         ``np.linspace(0, window_size, groups + 1).astype('int64')``.
-        If 'auto', then three groups are determined, containing trend, seasonal and residuum.
-        If array-like, each element must be array-like and contain the indices
-        for each group.
+        If 'auto', then three groups are determined, containing trend,
+        seasonal, and residual. If array-like, each element must be array-like
+        and contain the indices for each group.
+
+    lower_frequency_bound : float (default = 0.075)
+        The boundary of the periodogram to characterize trend, seasonal and
+        residual components. Ignored if 'groups' is not set to 'auto'.
+
+
+    lower_frequency_contribution : float (default = 0.85)
+        The relative threshold to characterize trend, seasonal and
+        residual components by considering the periodogram.
+        Ignored if 'groups' is not set to 'auto'.
 
     References
     ----------
     .. [1] N. Golyandina, and A. Zhigljavsky, "Singular Spectrum Analysis for
            Time Series". Springer-Verlag Berlin Heidelberg (2013).
+    .. [2] T. Alexandrov, "A Method of Trend Extraction Using Singular
+           Spectrum Analysis", REVSTAT (2008).
 
     Examples
     --------
@@ -75,9 +86,13 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
 
     """
 
-    def __init__(self, window_size=4, groups=None):
+    def __init__(self, window_size=4, groups=None,
+                 lower_frequency_bound=0.075,
+                 lower_frequency_contribution=0.85):
         self.window_size = window_size
         self.groups = groups
+        self.lower_frequency_bound = lower_frequency_bound
+        self.lower_frequency_contribution = lower_frequency_contribution
 
     def fit(self, X=None, y=None):
         """Pass.
@@ -110,9 +125,10 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             Transformed data. ``n_splits`` value depends on the value of
             ``groups``. If ``groups=None``, ``n_splits`` is equal to
             ``window_size``. If ``groups`` is an integer, ``n_splits`` is
-            equal to ``groups``. If ``groups`` is array-like, ``n_splits``
-            is equal to the length of ``groups``. If ``n_split=1``, ``X_new``
-            is squeezed and its shape is (n_samples, n_timestamps).
+            equal to ``groups``. If ``groups='auto'``, ``n_splits`` is equal
+            to three. If ``groups`` is array-like, ``n_splits`` is equal to
+            the length of ``groups``. If ``n_split=1``, ``X_new`` is squeezed
+            and its shape is (n_samples, n_timestamps).
 
         """
         X = check_array(X, dtype='float64')
@@ -131,7 +147,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
 
         X_elem = _outer_dot(v, X_window, n_samples, window_size, n_windows)
         X_groups, grouping_size = self._grouping(
-            X_elem, n_samples, window_size, n_windows
+            X_elem, n_samples, window_size, n_windows, v
         )
         if window_size >= n_windows:
             X_groups = np.transpose(X_groups, axes=(0, 1, 3, 2))
@@ -145,18 +161,34 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
         )
         return np.squeeze(X_ssa)
 
-    def _grouping(self, X, n_samples, window_size, n_windows):
+    def _grouping(self, X, n_samples, window_size, n_windows, v):
         if self.groups is None:
             grouping_size = window_size
             X_new = X
         elif self.groups == "auto":
             grouping_size = 3
+            f = np.arange(0, 1 + window_size // 2) / window_size
+            Pxx = np.abs(np.fft.rfft(v, axis=1, norm='ortho')) ** 2
+            if Pxx.shape[-1] % 2 == 0:
+                Pxx[:, 1:-1, :] *= 2
+            else:
+                Pxx[:, 1:, :] *= 2
+
+            Pxx_cumsum = np.cumsum(Pxx, axis=1)
+            idx_trend = np.where(f < self.lower_frequency_bound)[0][-1]
+            idx_resid = Pxx_cumsum.shape[1] // 2
+
+            trend = Pxx_cumsum[:, idx_trend, :] / Pxx_cumsum[:, -1, :] > \
+                    self.lower_frequency_contribution
+            resid = Pxx_cumsum[:, idx_resid, :] / Pxx_cumsum[:, -1, :] < \
+                    self.lower_frequency_contribution
+            season = np.logical_and(~trend, ~resid)
+
             X_new = np.zeros((n_samples, grouping_size,
                               window_size, n_windows))
-            t = np.array([self._findgroup(X[i, :, 0]) for i in range(n_samples)])
-            for tsr in range(3):
-                X_new[:, tsr] = np.concatenate([X[i:i+1, t[i] == tsr].sum(axis=1)
-                                                for i in range(n_samples)])
+            for i in range(n_samples):
+                for j, arr in enumerate((trend, season, resid)):
+                    X_new[i, j] = X[i, arr[i]].sum(axis=0)
         elif isinstance(self.groups, int):
             grouping = np.linspace(0, window_size,
                                    self.groups + 1).astype('int64')
@@ -172,22 +204,6 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             for i, group in enumerate(self.groups):
                 X_new[:, i] = X[:, group].sum(axis=1)
         return X_new, grouping_size
-
-    @staticmethod
-    def _findgroup(x, w0=0.1, c0=.85):
-        group = []
-        for j in range(len(x)):
-            xf, Pxx_den = periodogram(x[j])
-            sPxx = np.cumsum(Pxx_den)
-            trend = sPxx[np.where(xf<w0)[0][-1]] / sPxx[len(sPxx) -1] > c0
-            resid = sPxx[len(sPxx) // 2] / sPxx[len(sPxx)-1] < c0
-            if trend == 1:
-                group.append(0)
-            elif trend == 0 and resid == 0:
-                group.append(1)
-            else:
-                group.append(2)
-        return group
 
     def _check_params(self, n_timestamps):
         if not isinstance(self.window_size,
@@ -213,6 +229,23 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
                 or isinstance(self.groups, (int, list, tuple, np.ndarray))):
             raise TypeError("'groups' must be either None, an integer "
                             "or array-like.")
+        if not isinstance(self.lower_frequency_bound, (float, np.floating)):
+            raise TypeError("'lower_frequency_bound' must be a float.")
+        else:
+            if not 0 < self.lower_frequency_bound < 1:
+                raise ValueError(
+                    "'lower_frequency_bound' must be greater than 0 and "
+                    "lower than 1."
+                )
+        if not isinstance(self.lower_frequency_contribution,
+                          (float, np.floating)):
+            raise TypeError("'lower_frequency_contribution' must be a float.")
+        else:
+            if not 0 < self.lower_frequency_contribution < 1:
+                raise ValueError(
+                    "'lower_frequency_contribution' must be greater than 0 "
+                    "and lower than 1."
+                )
         if isinstance(self.groups, (int, np.integer)):
             if not 1 <= self.groups <= self.window_size:
                 raise ValueError(

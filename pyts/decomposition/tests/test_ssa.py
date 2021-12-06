@@ -67,6 +67,19 @@ def test_diagonal_averaging(X, arr_desired):
      ({'groups': '3'}, TypeError,
       "'groups' must be either None, an integer or array-like."),
 
+     ({'lower_frequency_bound': 1}, TypeError,
+      "'lower_frequency_bound' must be a float."),
+
+     ({'lower_frequency_bound': 1.2}, ValueError,
+      "'lower_frequency_bound' must be greater than 0 and lower than 1."),
+
+     ({'lower_frequency_contribution': 1}, TypeError,
+      "'lower_frequency_contribution' must be a float."),
+
+     ({'lower_frequency_contribution': 1.2}, ValueError,
+      "'lower_frequency_contribution' must be greater than "
+      "0 and lower than 1."),
+
      ({'window_size': 1}, ValueError,
       "If 'window_size' is an integer, it must be greater than or equal to 2 "
       "and lower than or equal to n_timestamps (got 1)."),
@@ -100,8 +113,12 @@ def test_parameter_check(params, error, err_msg):
      ({'window_size': 10, 'groups': 10}),
      ({'groups': [[0, 1], [2, 3]]}),
      ({'groups': [[0, 2], [1, 3]]}),
-     ({'window_size': 8, 'groups': [[0, 2, 4, 6], [1, 3, 5, 7]]})]
-)
+     ({'window_size': 8, 'groups': [[0, 2, 4, 6], [1, 3, 5, 7]]}),
+     ({'groups': 'auto'}),
+     ({'window_size': 2, 'groups': 'auto'}),
+     ({'window_size': 5, 'groups': 'auto'}),
+     ({'groups': 'auto', 'lower_frequency_contribution': 0.99}),
+     ({'groups': 'auto', 'lower_frequency_bound': 0.01})])
 def test_actual_results(params):
     """Test that the actual results are the expected ones."""
     ssa = SingularSpectrumAnalysis(**params)
