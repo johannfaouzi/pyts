@@ -59,13 +59,13 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
 
     lower_frequency_bound : float (default = 0.075)
         The boundary of the periodogram to characterize trend, seasonal and
-        residual components. Ignored if 'groups' is not set to 'auto'.
-
+        residual components. It must be between 0 and 0.5.
+        Ignored if 'groups' is not set to 'auto'.
 
     lower_frequency_contribution : float (default = 0.85)
         The relative threshold to characterize trend, seasonal and
         residual components by considering the periodogram.
-        Ignored if 'groups' is not set to 'auto'.
+        It must be between 0 and 1. Ignored if 'groups' is not set to 'auto'.
 
     References
     ----------
@@ -127,7 +127,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             ``window_size``. If ``groups`` is an integer, ``n_splits`` is
             equal to ``groups``. If ``groups='auto'``, ``n_splits`` is equal
             to three. If ``groups`` is array-like, ``n_splits`` is equal to
-            the length of ``groups``. If ``n_split=1``, ``X_new`` is squeezed
+            the length of ``groups``. If ``n_splits=1``, ``X_new`` is squeezed
             and its shape is (n_samples, n_timestamps).
 
         """
@@ -224,17 +224,18 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
                     "(got {0}).".format(self.window_size)
                 )
             window_size = max(2, ceil(self.window_size * n_timestamps))
-        if not (self.groups is None or self.groups == "auto"
+        if not (self.groups is None
+                or (isinstance(self.groups, str) and self.groups == "auto")
                 or isinstance(self.groups, (int, list, tuple, np.ndarray))):
-            raise TypeError("'groups' must be either None, an integer "
-                            "or array-like.")
+            raise TypeError("'groups' must be either None, an integer, "
+                            "'auto' or array-like.")
         if not isinstance(self.lower_frequency_bound, (float, np.floating)):
             raise TypeError("'lower_frequency_bound' must be a float.")
         else:
-            if not 0 < self.lower_frequency_bound < 1:
+            if not 0 < self.lower_frequency_bound < 0.5:
                 raise ValueError(
                     "'lower_frequency_bound' must be greater than 0 and "
-                    "lower than 1."
+                    "lower than 0.5."
                 )
         if not isinstance(self.lower_frequency_contribution,
                           (float, np.floating)):

@@ -65,13 +65,13 @@ def test_diagonal_averaging(X, arr_desired):
       "'window_size' must be an integer or a float."),
 
      ({'groups': '3'}, TypeError,
-      "'groups' must be either None, an integer or array-like."),
+      "'groups' must be either None, an integer, 'auto' or array-like."),
 
      ({'lower_frequency_bound': 1}, TypeError,
       "'lower_frequency_bound' must be a float."),
 
-     ({'lower_frequency_bound': 1.2}, ValueError,
-      "'lower_frequency_bound' must be greater than 0 and lower than 1."),
+     ({'lower_frequency_bound': 0.6}, ValueError,
+      "'lower_frequency_bound' must be greater than 0 and lower than 0.5."),
 
      ({'lower_frequency_contribution': 1}, TypeError,
       "'lower_frequency_contribution' must be a float."),
