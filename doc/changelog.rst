@@ -4,6 +4,13 @@
 Change Log
 ==========
 
+Version 0.13.0
+--------------
+
+- Add automatic components-grouping in the *Singular Spectrum Analysis*
+  for trend-seasonal decomposition with suitable example (by Lucas Plagwitz).
+
+
 Version 0.12.0
 --------------
 

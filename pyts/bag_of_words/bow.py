@@ -189,7 +189,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         the size of each time series and must be between 0 and 1. The window
         size will be computed as ``ceil(window_step * n_timestamps)``.
 
-    threshold_std: int, float or None (default = 0.01)
+    threshold_std : int, float or None (default = 0.01)
         Threshold used to determine whether a subsequence is standardized.
         Subsequences whose standard deviations are lower than this threshold
         are not standardized. If None, all the subsequences are standardized.

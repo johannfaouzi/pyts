@@ -2,7 +2,6 @@
 ==========================
 Singular Spectrum Analysis
 ==========================
-
 Signals such as time series can be seen as a sum of different signals such
 as trends and noise. Decomposing time series into several time series can
 be useful in order to keep the most important information. One decomposition
