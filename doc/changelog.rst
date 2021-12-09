@@ -10,6 +10,11 @@ Version 0.13.0
 - Add automatic components-grouping in the *Singular Spectrum Analysis*
   for trend-seasonal decomposition with suitable example (by Lucas Plagwitz).
 
+- Add two new parameters in :class:`pyts.decomposition.SingularSpectrumAnalysis`:
+  ``chunksize`` allows for computing the decomposition of all the input time
+  series using chunks (it should be a bit slower but use less memory), and
+  ``n_jobs`` allows for running the decomposition of each chunk in parallel.
+
 
 Version 0.12.0
 --------------

@@ -6,6 +6,7 @@
 import numpy as np
 from math import ceil
 from numba import njit, prange
+from joblib import Parallel, delayed
 from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_array
 from ..base import UnivariateTransformerMixin
@@ -60,17 +61,29 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
     lower_frequency_bound : float (default = 0.075)
         The boundary of the periodogram to characterize trend, seasonal and
         residual components. It must be between 0 and 0.5.
-        Ignored if 'groups' is not set to 'auto'.
+        Ignored if ``groups`` is not set to 'auto'.
 
     lower_frequency_contribution : float (default = 0.85)
         The relative threshold to characterize trend, seasonal and
         residual components by considering the periodogram.
-        It must be between 0 and 1. Ignored if 'groups' is not set to 'auto'.
+        It must be between 0 and 1. Ignored if ``groups`` is not set to 'auto'.
+
+    chunksize : int or None (default = None)
+        If int, the transformation of the whole dataset is performed using
+        chunks (batches) and ``chunksize`` corresponds to the maximum size of
+        each chunk (batch). If None, the transformation is performed on the
+        whole dataset at once. Performing the transformation with chunks is
+        likely to be a bit slower but requires less memory.
+
+    n_jobs : None or int (default = None)
+        The number of jobs to use for the computation. Only used if
+        ``chunksize`` is set to an integer.
 
     References
     ----------
     .. [1] N. Golyandina, and A. Zhigljavsky, "Singular Spectrum Analysis for
            Time Series". Springer-Verlag Berlin Heidelberg (2013).
+
     .. [2] T. Alexandrov, "A Method of Trend Extraction Using Singular
            Spectrum Analysis", REVSTAT (2008).
 
@@ -88,11 +101,14 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
 
     def __init__(self, window_size=4, groups=None,
                  lower_frequency_bound=0.075,
-                 lower_frequency_contribution=0.85):
+                 lower_frequency_contribution=0.85,
+                 chunksize=None, n_jobs=1):
         self.window_size = window_size
         self.groups = groups
         self.lower_frequency_bound = lower_frequency_bound
         self.lower_frequency_contribution = lower_frequency_contribution
+        self.chunksize = chunksize
+        self.n_jobs = n_jobs
 
     def fit(self, X=None, y=None):
         """Pass.
@@ -133,7 +149,48 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
         """
         X = check_array(X, dtype='float64')
         n_samples, n_timestamps = X.shape
-        window_size = self._check_params(n_timestamps)
+        window_size, grouping_size = self._check_params(n_timestamps)
+        n_windows = n_timestamps - window_size + 1
+
+        try:
+            # Get a rough estimation of the required memory
+            max_array = np.zeros((
+                n_samples + 1, window_size + grouping_size,
+                window_size, n_windows
+            ))
+            del max_array
+        except MemoryError:
+            msg = "The required memory is greater than the available memory. "
+            if self.chunksize is None:
+                msg += (
+                    "Set the `chunksize` parameter to an integer to perform "
+                    "the transformation using chunks (batches) to decrease "
+                    "the required memory."
+                )
+            else:
+                msg += (
+                    "Decrease the value of the `chunksize` parameter to "
+                    "to decrease the required memory."
+                )
+            raise MemoryError(msg)
+
+        if self.chunksize is not None:
+            return self._transform(X)
+        else:
+            idx = np.r_[
+                np.arange(0, n_samples, self.chunksize), n_samples
+            ]
+            return np.asarray(
+                Parallel(n_jobs=self.n_jobs)(
+                    delayed(self._transform)(X[i:j])
+                    for i, j in zip(idx[:-1], idx[1:])
+                )
+            )
+
+    def _transform(self, X):
+
+        n_samples, n_timestamps = X.shape
+        window_size, grouping_size = self._check_params(n_timestamps)
         n_windows = n_timestamps - window_size + 1
 
         X_window = np.transpose(
@@ -145,9 +202,11 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
         w, v = np.linalg.eigh(X_tranpose)
         w, v = w[:, ::-1], v[:, :, ::-1]
 
+        del X_tranpose
+
         X_elem = _outer_dot(v, X_window, n_samples, window_size, n_windows)
         X_groups, grouping_size = self._grouping(
-            X_elem, n_samples, window_size, n_windows, v
+            X_elem, v, n_samples, window_size, n_windows, grouping_size,
         )
         if window_size >= n_windows:
             X_groups = np.transpose(X_groups, axes=(0, 1, 3, 2))
@@ -155,18 +214,20 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
         else:
             gap = n_windows
 
+        del X_elem
+
         X_ssa = _diagonal_averaging(
             X_groups, n_samples, n_timestamps, window_size,
             n_windows, grouping_size, gap
         )
         return np.squeeze(X_ssa)
 
-    def _grouping(self, X, n_samples, window_size, n_windows, v):
+    def _grouping(
+        self, X, v, n_samples, window_size, n_windows, grouping_size
+    ):
         if self.groups is None:
-            grouping_size = window_size
             X_new = X
         elif self.groups == "auto":
-            grouping_size = 3
             f = np.arange(0, 1 + window_size // 2) / window_size
             Pxx = np.abs(np.fft.rfft(v, axis=1, norm='ortho')) ** 2
             if Pxx.shape[-1] % 2 == 0:
@@ -188,16 +249,14 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             for i in range(n_samples):
                 for j, arr in enumerate((trend, season, resid)):
                     X_new[i, j] = X[i, arr[i]].sum(axis=0)
-        elif isinstance(self.groups, int):
+        elif isinstance(self.groups, (int, np.integer)):
             grouping = np.linspace(0, window_size,
                                    self.groups + 1).astype('int64')
-            grouping_size = len(grouping) - 1
             X_new = np.zeros((n_samples, grouping_size,
                               window_size, n_windows))
             for i, (j, k) in enumerate(zip(grouping[:-1], grouping[1:])):
                 X_new[:, i] = X[:, j:k].sum(axis=1)
         else:
-            grouping_size = len(self.groups)
             X_new = np.zeros((n_samples, grouping_size,
                               window_size, n_windows))
             for i, group in enumerate(self.groups):
@@ -224,34 +283,25 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
                     "(got {0}).".format(self.window_size)
                 )
             window_size = max(2, ceil(self.window_size * n_timestamps))
+
         if not (self.groups is None
                 or (isinstance(self.groups, str) and self.groups == "auto")
                 or isinstance(self.groups, (int, list, tuple, np.ndarray))):
             raise TypeError("'groups' must be either None, an integer, "
                             "'auto' or array-like.")
-        if not isinstance(self.lower_frequency_bound, (float, np.floating)):
-            raise TypeError("'lower_frequency_bound' must be a float.")
-        else:
-            if not 0 < self.lower_frequency_bound < 0.5:
-                raise ValueError(
-                    "'lower_frequency_bound' must be greater than 0 and "
-                    "lower than 0.5."
-                )
-        if not isinstance(self.lower_frequency_contribution,
-                          (float, np.floating)):
-            raise TypeError("'lower_frequency_contribution' must be a float.")
-        else:
-            if not 0 < self.lower_frequency_contribution < 1:
-                raise ValueError(
-                    "'lower_frequency_contribution' must be greater than 0 "
-                    "and lower than 1."
-                )
-        if isinstance(self.groups, (int, np.integer)):
+        if self.groups is None:
+            grouping_size = window_size
+        elif (isinstance(self.groups, str) and self.groups == "auto"):
+            grouping_size = 3
+        elif isinstance(self.groups, (int, np.integer)):
             if not 1 <= self.groups <= self.window_size:
                 raise ValueError(
                     "If 'groups' is an integer, it must be greater than or "
                     "equal to 1 and lower than or equal to 'window_size'."
                 )
+            grouping = np.linspace(
+                0, window_size, self.groups + 1).astype('int64')
+            grouping_size = len(grouping) - 1
         if isinstance(self.groups, (list, tuple, np.ndarray)):
             idx = np.concatenate(self.groups)
             diff = np.setdiff1d(idx, np.arange(self.window_size))
@@ -263,4 +313,37 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
                     "If 'groups' is array-like, all the values in 'groups' "
                     "must be integers between 0 and ('window_size' - 1)."
                 )
-        return window_size
+            grouping_size = len(self.groups)
+
+        if not isinstance(self.lower_frequency_bound, (float, np.floating)):
+            raise TypeError("'lower_frequency_bound' must be a float.")
+        else:
+            if not 0 < self.lower_frequency_bound < 0.5:
+                raise ValueError(
+                    "'lower_frequency_bound' must be greater than 0 and "
+                    "lower than 0.5."
+                )
+
+        if not isinstance(self.lower_frequency_contribution,
+                          (float, np.floating)):
+            raise TypeError("'lower_frequency_contribution' must be a float.")
+        else:
+            if not 0 < self.lower_frequency_contribution < 1:
+                raise ValueError(
+                    "'lower_frequency_contribution' must be greater than 0 "
+                    "and lower than 1."
+                )
+
+        chunksize_int = isinstance(self.chunksize, (int, np.integer))
+        if not (self.chunksize is None or chunksize_int):
+            raise TypeError("'chunksize' must be None or an integer.")
+        if chunksize_int and self.chunksize < 1:
+            raise ValueError("If 'chunksize' is an integer, it must be "
+                             "positive (got {})".format(self.chunksize))
+
+        n_jobs_int = (isinstance(self.n_jobs, (int, np.integer)) and
+                      self.n_jobs != 0)
+        if not (self.n_jobs is None or n_jobs_int):
+            raise ValueError("'n_jobs' must be None or an integer not equal "
+                             "to zero (got {}).".format(self.n_jobs))
+        return window_size, grouping_size

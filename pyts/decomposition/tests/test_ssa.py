@@ -70,15 +70,11 @@ def test_diagonal_averaging(X, arr_desired):
      ({'lower_frequency_bound': 1}, TypeError,
       "'lower_frequency_bound' must be a float."),
 
-     ({'lower_frequency_bound': 0.6}, ValueError,
-      "'lower_frequency_bound' must be greater than 0 and lower than 0.5."),
-
      ({'lower_frequency_contribution': 1}, TypeError,
       "'lower_frequency_contribution' must be a float."),
 
-     ({'lower_frequency_contribution': 1.2}, ValueError,
-      "'lower_frequency_contribution' must be greater than "
-      "0 and lower than 1."),
+     ({'chunksize': 1.}, TypeError,
+      "'chunksize' must be None or an integer."),
 
      ({'window_size': 1}, ValueError,
       "If 'window_size' is an integer, it must be greater than or equal to 2 "
@@ -94,7 +90,23 @@ def test_diagonal_averaging(X, arr_desired):
 
      ({'groups': [[0, 2, 5]]}, ValueError,
       "If 'groups' is array-like, all the values in 'groups' must be integers "
-      "between 0 and ('window_size' - 1).")]
+      "between 0 and ('window_size' - 1)."),
+
+     ({'lower_frequency_bound': 0.6}, ValueError,
+      "'lower_frequency_bound' must be greater than 0 and lower than 0.5."),
+
+     ({'lower_frequency_contribution': 1.2}, ValueError,
+      "'lower_frequency_contribution' must be greater than "
+      "0 and lower than 1."),
+
+     ({'chunksize': 0}, ValueError,
+      "If 'chunksize' is an integer, it must be positive (got 0)"),
+
+     ({'n_jobs': 0}, ValueError,
+      "'n_jobs' must be None or an integer not equal to zero (got 0)."),
+
+     ({'n_jobs': [1, 2]}, ValueError,
+      "'n_jobs' must be None or an integer not equal to zero (got [1, 2]).")]
 )
 def test_parameter_check(params, error, err_msg):
     """Test parameter validation."""
@@ -118,7 +130,11 @@ def test_parameter_check(params, error, err_msg):
      ({'window_size': 2, 'groups': 'auto'}),
      ({'window_size': 5, 'groups': 'auto'}),
      ({'groups': 'auto', 'lower_frequency_contribution': 0.99}),
-     ({'groups': 'auto', 'lower_frequency_bound': 0.01})])
+     ({'groups': 'auto', 'lower_frequency_bound': 0.01}),
+     ({'chunksize': 1}),
+     ({'chunksize': 2}),
+     ({'chunksize': 2, 'n_jobs': 1}),
+     ({'chunksize': 2, 'n_jobs': 2})])
 def test_actual_results(params):
     """Test that the actual results are the expected ones."""
     ssa = SingularSpectrumAnalysis(**params)
