@@ -18,7 +18,7 @@ from ..utils.utils import _windowed_view
 class BOSS(BaseEstimator, UnivariateTransformerMixin):
     """Bag of Symbolic Fourier Approximation Symbols.
 
-    For each time series, subseries are extracted using a slidind window.
+    For each time series, subseries are extracted using a sliding window.
     Then the subseries are transformed into a word using the Symbolic
     Fourier Approximation (SFA) algorithm. For each time series, the words
     are grouped together and a histogram counting the occurences of each
