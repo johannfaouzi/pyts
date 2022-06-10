@@ -26,7 +26,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import euclidean
 from scipy.cluster.hierarchy import dendrogram
-from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import AgglomerativeClustering, SpectralClustering
+from sklearn.metrics import homogeneity_score
 
 
 from pyts.metrics import dtw, boss
@@ -59,7 +60,6 @@ def plot_dendrogram(model, **kwargs):
             else:
                 current_count += counts[child_idx - n_samples]
         counts[i] = current_count
-
     linkage_matrix = np.column_stack(
         [model.children_, model.distances_, counts]
     ).astype(float)
@@ -68,51 +68,43 @@ def plot_dendrogram(model, **kwargs):
     dendrogram(linkage_matrix, **kwargs)
 
 
-n_samples = 14
-X, y = make_cylinder_bell_funnel(n_samples=n_samples, random_state=42,
-                                 shuffle=False)
+n_samples = 12
+fig, axes = plt.subplots(1, 3, figsize=(16, 8))
 
+scores = {"Euclidean": 0, "DTW": 0, "BOSS": 0}
+n_runs = 10
 
-fig, axes = plt.subplots(2, 3, figsize=(16, 12))
-axes = np.ravel(axes)
-
-k_axis = 0
-for time_shift in [False, True]:
-    if time_shift:
-        for i in range(n_samples):
-            X[i] = np.roll(X[i], np.arange(0, 50, 10)[i % 5])
-
-    for metric in ["euc", "dtw", "boss"]:
-        if metric == "dtw":
-            dist_mat = create_dist_matrix(X, dtw, method="sakoechiba",
-                                          options={"window_size": 15})
-        elif metric == "boss":
+for seed in range(n_runs):
+    X, y = make_cylinder_bell_funnel(n_samples=n_samples, random_state=seed,
+                                     shuffle=False)
+    for k_axis, metric in enumerate(["Euclidean", "DTW", "BOSS"]):
+        if metric == "DTW":
+            dist_mat = create_dist_matrix(X, dtw)
+        elif metric == "BOSS":
             dist_mat = create_dist_matrix(BOSS(sparse=False, n_bins=3,
-                                               word_size=3).fit_transform(X),
+                                                word_size=3).fit_transform(X),
                                           boss)
         else:
             dist_mat = create_dist_matrix(X, euclidean)
 
-        model = AgglomerativeClustering(distance_threshold=0,
-                                        n_clusters=None,
-                                        affinity="precomputed",
-                                        linkage="complete")
-        cluster = model.fit_predict(dist_mat)
+        if seed == n_runs-1:
+            model = AgglomerativeClustering(distance_threshold=0,
+                                            n_clusters=None,
+                                            affinity="precomputed",
+                                            linkage="complete").fit(dist_mat)
 
-        plot_dendrogram(model, orientation='left',
-                        ax=axes[k_axis], labels=y)
-
-        if k_axis == 0:
-            axes[k_axis].set_ylabel("normal", rotation=90,
-                                    size='xx-large')
-            axes[k_axis].set_title("Euclidean", size='xx-large')
-        if k_axis == 1:
-            axes[k_axis].set_title("DTW", size='xx-large')
-        if k_axis == 2:
-            axes[k_axis].set_title("BOSS", size='xx-large')
-        if k_axis == 3:
-            axes[k_axis].set_ylabel("time shifted", rotation=90,
-                                    size='xx-large')
-        k_axis += 1
+            plot_dendrogram(model, orientation='left',
+                            ax=axes[k_axis], labels=y)
+            axes[k_axis].set_xticks([], [])
+            axes[k_axis].set_title(f"{metric} - "
+                                   f"{round(scores[metric]/(n_runs-1), 2)}",
+                                   size='xx-large')
+        else:
+            model = AgglomerativeClustering(n_clusters=3,
+                                            affinity="precomputed",
+                                            linkage="average")
+            cluster = model.fit_predict(dist_mat)
+            scores[metric] += homogeneity_score(labels_true=y,
+                                                labels_pred=cluster)
 
 plt.show()
