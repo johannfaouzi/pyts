@@ -7,11 +7,16 @@ This example shows the differences between various metrics
 related to time series clustering. Besides the Euclidean distance,
 :func:`pyts.metrics.dtw` and :func:`pyts.metrics.boss` are considered to
 analyze the :func:`pyts.datasets.make_cylinder_bell_funnel` dataset.
-While the Euclidean distance and DTW are locally sensitive, clustering
-with BOSS remains almost unchanged by a time shift. Thus, it depends strongly
-on the particular time series which metric is the more accurate one.
+In contrast to reference [1], DTW-based clustering shows the best results
+here - even when repeated over multiple seeds. The reason for this could be
+differences in the experimental setup, e.g., the hyperparameters of the methods
+or the number of considered samples. Depending on the time series structure, a
+suitable metric should be chosen: While the Euclidean distance and DTW are
+sensitive to time-dependent events, clustering with BOSS does not consider the
+temporal component outside the sliding window.
 
-The example is inspired by
+References
+----------
 
 [1] P. Schäfer, "The BOSS is concerned with time series classification
     in the presence of noise". Data Mining and Knowledge Discovery,
@@ -26,9 +31,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import euclidean
 from scipy.cluster.hierarchy import dendrogram
-from sklearn.cluster import AgglomerativeClustering, SpectralClustering
 from sklearn.metrics import homogeneity_score
-
+from sklearn.cluster import AgglomerativeClustering
 
 from pyts.metrics import dtw, boss
 from pyts.transformation import BOSS
@@ -65,46 +69,36 @@ def plot_dendrogram(model, **kwargs):
     ).astype(float)
 
     # Plot the corresponding dendrogram
-    dendrogram(linkage_matrix, **kwargs)
+    dendrogram(linkage_matrix,
+               color_threshold=sorted(model.distances_)[-2], **kwargs)
 
 
-n_samples = 12
+n_samples = 14
 fig, axes = plt.subplots(1, 3, figsize=(16, 8))
 
-scores = {"Euclidean": 0, "DTW": 0, "BOSS": 0}
-n_runs = 10
-
-for seed in range(n_runs):
-    X, y = make_cylinder_bell_funnel(n_samples=n_samples, random_state=seed,
+X, y = make_cylinder_bell_funnel(n_samples=n_samples, random_state=42,
                                      shuffle=False)
-    for k_axis, metric in enumerate(["Euclidean", "DTW", "BOSS"]):
-        if metric == "DTW":
-            dist_mat = create_dist_matrix(X, dtw)
-        elif metric == "BOSS":
-            dist_mat = create_dist_matrix(BOSS(sparse=False, n_bins=3,
-                                                word_size=3).fit_transform(X),
-                                          boss)
-        else:
-            dist_mat = create_dist_matrix(X, euclidean)
+for k_axis, metric in enumerate(["Euclidean", "DTW", "BOSS"]):
+    if metric == "DTW":
+        dist_mat = create_dist_matrix(X, dtw)
+    elif metric == "BOSS":
+        dist_mat = create_dist_matrix(BOSS(sparse=False, n_bins=3,
+                                           word_size=3).fit_transform(X),
+                                      boss)
+    else:
+        dist_mat = create_dist_matrix(X, euclidean)
 
-        if seed == n_runs-1:
-            model = AgglomerativeClustering(distance_threshold=0,
-                                            n_clusters=None,
-                                            affinity="precomputed",
-                                            linkage="complete").fit(dist_mat)
+    model = AgglomerativeClustering(compute_full_tree=True,
+                                    compute_distances=True,
+                                    n_clusters=3, affinity="precomputed",
+                                    linkage="complete")
+    cluster = model.fit_predict(dist_mat)
+    score = round(homogeneity_score(labels_true=y, labels_pred=cluster), 2)
 
-            plot_dendrogram(model, orientation='left',
-                            ax=axes[k_axis], labels=y)
-            axes[k_axis].set_xticks([], [])
-            axes[k_axis].set_title(f"{metric} - "
-                                   f"{round(scores[metric]/(n_runs-1), 2)}",
-                                   size='xx-large')
-        else:
-            model = AgglomerativeClustering(n_clusters=3,
-                                            affinity="precomputed",
-                                            linkage="average")
-            cluster = model.fit_predict(dist_mat)
-            scores[metric] += homogeneity_score(labels_true=y,
-                                                labels_pred=cluster)
+    plot_dendrogram(model, orientation='left',
+                    ax=axes[k_axis], labels=list(zip(y, cluster)))
+    axes[k_axis].set_xticks([], [])
+    axes[k_axis].set_title(metric, size='xx-large')
+    axes[k_axis].set_xlabel(f"homogeneity score: {score}", size='xx-large')
 
 plt.show()

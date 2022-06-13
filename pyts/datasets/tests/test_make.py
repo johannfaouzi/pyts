@@ -65,9 +65,9 @@ def test_return_params_make_cylinder_bell_funnel(params):
     if 'return_params' in params.keys() and params['return_params']:
         parameters = res[2]
         assert isinstance(parameters, dict)
-        assert isinstance(parameters['a'], (int, np.integer))
-        assert isinstance(parameters['b'], (int, np.integer))
-        assert isinstance(parameters['eta'], (float, np.floating))
+        assert isinstance(parameters['a'], np.ndarray)
+        assert isinstance(parameters['b'], np.ndarray)
+        assert isinstance(parameters['eta'], np.ndarray)
         assert isinstance(parameters['epsilon'], np.ndarray)
         if 'n_samples' in params:
             assert parameters['epsilon'].shape == (params['n_samples'], 128)
