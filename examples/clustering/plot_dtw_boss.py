@@ -8,17 +8,16 @@ related to time series clustering. Besides the Euclidean distance,
 :func:`pyts.metrics.dtw` and :func:`pyts.metrics.boss` are considered to
 analyze the :func:`pyts.datasets.make_cylinder_bell_funnel` dataset.
 In contrast to reference [1], DTW-based clustering shows the best results
-here - even when repeated over multiple seeds. The reason for this could be
-differences in the experimental setup, e.g., the hyperparameters of the methods
-or the number of considered samples. Depending on the time series structure, a
-suitable metric should be chosen: While the Euclidean distance and DTW are
-sensitive to time-dependent events, clustering with BOSS does not consider the
-temporal component outside the sliding window.
+here. The reason for this could be differences in the experimental setup,
+e.g., the hyperparameters of the methods or the number of considered samples.
+Depending on the time series structure, a suitable metric should be chosen:
+While the Euclidean distance and DTW are sensitive to time-dependent events,
+clustering with BOSS does not consider the temporal component outside the
+sliding window.
 
 References
 ----------
-
-[1] P. Schäfer, "The BOSS is concerned with time series classification
+[1] Patrick Schäfer, "The BOSS is concerned with time series classification
     in the presence of noise". Data Mining and Knowledge Discovery,
     29(6), 1505-1530 (2015).
 """
@@ -95,8 +94,7 @@ for k_axis, metric in enumerate(["Euclidean", "DTW", "BOSS"]):
     cluster = model.fit_predict(dist_mat)
     score = round(homogeneity_score(labels_true=y, labels_pred=cluster), 2)
 
-    plot_dendrogram(model, orientation='left',
-                    ax=axes[k_axis], labels=list(zip(y, cluster)))
+    plot_dendrogram(model, orientation='left', ax=axes[k_axis], labels=y)
     axes[k_axis].set_xticks([], [])
     axes[k_axis].set_title(metric, size='xx-large')
     axes[k_axis].set_xlabel(f"homogeneity score: {score}", size='xx-large')

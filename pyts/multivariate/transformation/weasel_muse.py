@@ -124,6 +124,8 @@ class WEASELMUSE(BaseEstimator, MultivariateTransformerMixin):
     def fit(self, X, y):
         """Fit the model according to the given training data.
 
+        Parameters
+        ----------
         X : array-like, shape = (n_samples, n_features, n_timestamps)
             Multivariate time series.
 
@@ -195,6 +197,8 @@ class WEASELMUSE(BaseEstimator, MultivariateTransformerMixin):
     def fit_transform(self, X, y):
         """Fit the data then transform it.
 
+        Parameters
+        ----------
         X : array-like, shape = (n_samples, n_features, n_timestamps)
             Multivariate time series.
 

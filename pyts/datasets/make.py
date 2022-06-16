@@ -9,8 +9,8 @@ from sklearn.utils import shuffle as utils_shuffle
 
 
 def make_cylinder_bell_funnel(
-    n_samples=30, weights=None, shuffle=True, random_state=None,
-    return_params=False
+        n_samples=30, weights=None, shuffle=True, random_state=None,
+        return_params=False
 ):
     r"""Make a Cylinder-Bell-Funnel dataset.
 
@@ -135,8 +135,9 @@ def make_cylinder_bell_funnel(
     epsilon = rng.randn(n_samples, 128)
 
     arange = np.tile(np.arange(1, 129), n_samples).reshape(n_samples, 128)
-    additional_term = (6 + eta) * np.logical_and(arange >= np.repeat(a, 128, axis=1),
-                                                 arange <= np.repeat(b, 128, axis=1))
+    additional_term = (6 + eta) * \
+        np.logical_and(arange >= np.repeat(a, 128, axis=1),
+                       arange <= np.repeat(b, 128, axis=1))
     i, j = n_samples_per_class[0], sum(n_samples_per_class[0:2])
     additional_term[i:j] *= (np.arange(1, 129) - a[i:j]) / (b[i:j] - a[i:j])
     additional_term[j:] *= (b[j:] - np.arange(1, 129)) / (b[j:] - a[j:])
