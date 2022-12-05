@@ -268,10 +268,10 @@ def _load_ucr_dataset(dataset, path):
     """
     new_path = path + dataset + '/'
     try:
-        with(open(new_path + dataset + '.txt', encoding='utf-8')) as f:
+        with open(new_path + dataset + '.txt', encoding='utf-8') as f:
             description = f.read()
     except UnicodeDecodeError:
-        with(open(new_path + dataset + '.txt', encoding='ISO-8859-1')) as f:
+        with open(new_path + dataset + '.txt', encoding='ISO-8859-1') as f:
             description = f.read()
     try:
         data_train = np.genfromtxt(new_path + dataset + '_TRAIN.txt')

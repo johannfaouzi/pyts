@@ -257,11 +257,11 @@ def _load_uea_dataset(dataset, path):
 
     if description_file is not None:
         try:
-            with(open(new_path + description_file, encoding='utf-8')) as f:
+            with open(new_path + description_file, encoding='utf-8') as f:
                 description = f.read()
         except UnicodeDecodeError:
-            with(open(new_path + description_file,
-                      encoding='ISO-8859-1')) as f:
+            with open(new_path + description_file,
+                      encoding='ISO-8859-1') as f:
                 description = f.read()
     else:
         description = None
