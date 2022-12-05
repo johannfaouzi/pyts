@@ -180,3 +180,6 @@ a data set with shape `(n_samples, n_extracted_features)`. Implemented algorithm
 
 - `utils`: a simple module with
 [utility functions](https://pyts.readthedocs.io/en/latest/api.html#module-pyts.utils).
+
+## License
+The contents of this repository is under a [BSD 3-Clause License](https://github.com/johannfaouzi/pyts/blob/main/LICENSE.txt).
