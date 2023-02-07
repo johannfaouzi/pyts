@@ -88,6 +88,12 @@ jobs:
     displayName: 'Use Python $(python.version)'
 
   - script: |
+      python -m pip install --upgrade pip
+      pip install numpy==$(numpy.version) scipy==$(scipy.version) scikit-learn==$(scikit-learn.version) joblib==$(joblib.version) numba==$(numba.version)
+      pip install .
+    displayName: 'Install dependencies and package'
+
+  - script: |
       pip install pytest pytest-cov
       export NUMBA_DISABLE_JIT=1
       mkdir for_test
