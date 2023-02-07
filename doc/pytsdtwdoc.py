@@ -29,7 +29,7 @@ import pydoc
 import inspect
 import textwrap
 import warnings
-
+from packaging.version import parse
 
 from numpydoc.numpydoc import mangle_docstrings
 from docutils.statemachine import ViewList
@@ -37,7 +37,7 @@ from sphinx.domains.python import PythonDomain
 
 import scipy
 SCIPY_VERSION = scipy.__version__
-if SCIPY_VERSION < '1.5':
+if parse(SCIPY_VERSION) < parse('1.5'):
     from scipy._lib._util import getargspec_no_self
 else:
     from scipy._lib._util import getfullargspec_no_self
