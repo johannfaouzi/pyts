@@ -43,7 +43,8 @@ EXTRAS_REQUIRE = {
         'sphinx==1.8.5',
         'sphinx-gallery',
         'numpydoc',
-        'matplotlib'
+        'matplotlib',
+        'packaging'
     ]
 }
 PACKAGE_DATA = {
