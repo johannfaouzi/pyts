@@ -85,7 +85,7 @@ def wrap_mangling_directive(base_directive):
             # Interface function
             name = self.arguments[0].strip()
             obj = _import_object(name)
-            if SCIPY_VERSION < '1.5':
+            if parse(SCIPY_VERSION) < parse('1.5'):
                 args, varargs, keywords, defaults = getargspec_no_self(obj)
             else:
                 (args, varargs, keywords,
@@ -94,7 +94,7 @@ def wrap_mangling_directive(base_directive):
             # Implementation function
             impl_name = self.options['impl']
             impl_obj = _import_object(impl_name)
-            if SCIPY_VERSION < '1.5':
+            if parse(SCIPY_VERSION) < parse('1.5'):
                 impl_args, impl_varargs, impl_keywords, impl_defaults = (
                     getargspec_no_self(impl_obj))
             else:
