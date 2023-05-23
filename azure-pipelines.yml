@@ -39,7 +39,7 @@ jobs:
       Python38:
         python.version: '3.8'
         numpy.version: '1.17.5'
-        scipy.version: '1.3.0'
+        scipy.version: '1.3.3'
         scikit-learn.version: '0.22.1'
         joblib.version: '0.12'
         numba.version: '0.48.0'
@@ -48,7 +48,7 @@ jobs:
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '1.*'
-        joblib.version: '0.*'
+        joblib.version: '1.*'
         numba.version: '0.*'
 
   steps:
@@ -78,7 +78,7 @@ jobs:
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '1.*'
-        joblib.version: '0.*'
+        joblib.version: '1.*'
         numba.version: '0.*'
 
   steps:
@@ -110,7 +110,7 @@ jobs:
       Python38:
         python.version: '3.8'
         numpy.version: '1.17.5'
-        scipy.version: '1.3.0'
+        scipy.version: '1.3.3'
         scikit-learn.version: '0.22.1'
         joblib.version: '0.12'
         numba.version: '0.48.0'
@@ -119,7 +119,7 @@ jobs:
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '1.*'
-        joblib.version: '0.*'
+        joblib.version: '1.*'
         numba.version: '0.*'
 
   steps:
@@ -149,7 +149,7 @@ jobs:
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '1.*'
-        joblib.version: '0.*'
+        joblib.version: '1.*'
         numba.version: '0.*'
 
   steps:
@@ -181,7 +181,7 @@ jobs:
       Python38:
         python.version: '3.8'
         numpy.version: '1.17.5'
-        scipy.version: '1.3.0'
+        scipy.version: '1.3.3'
         scikit-learn.version: '0.22.1'
         joblib.version: '0.12'
         numba.version: '0.48.0'
@@ -190,7 +190,7 @@ jobs:
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '1.*'
-        joblib.version: '0.*'
+        joblib.version: '1.*'
         numba.version: '0.*'
 
   steps:
@@ -220,7 +220,7 @@ jobs:
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '1.*'
-        joblib.version: '0.*'
+        joblib.version: '1.*'
         numba.version: '0.*'
 
   steps:

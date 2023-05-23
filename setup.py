@@ -16,7 +16,7 @@ LICENSE = 'new BSD'
 DOWNLOAD_URL = 'https://github.com/johannfaouzi/pyts'
 VERSION = pyts.__version__
 INSTALL_REQUIRES = ['numpy>=1.17.5',
-                    'scipy>=1.3.0',
+                    'scipy>=1.3.3',
                     'scikit-learn>=0.22.1',
                     'joblib>=0.12',
                     'numba>=0.48.0']

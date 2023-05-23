@@ -11,7 +11,7 @@ pyts requires:
 
 - Python (>= 3.8)
 - NumPy (>= 1.17.5)
-- SciPy (>= 1.3.0)
+- SciPy (>= 1.3.3)
 - Scikit-Learn (>=0.22.1)
 - Joblib (>=0.12)
 - Numba (>=0.48.0)
