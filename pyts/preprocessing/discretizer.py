@@ -168,7 +168,7 @@ class KBinsDiscretizer(BaseEstimator, UnivariateTransformerMixin):
                     warn("Some quantiles are equal. The number of bins will "
                          "be smaller for sample {0}. Consider decreasing the "
                          "number of bins or removing these samples."
-                         .format(samples))
+                         .format(samples), UserWarning)
                 lengths = np.sum(mask, axis=1)
                 max_length = np.max(lengths)
 
