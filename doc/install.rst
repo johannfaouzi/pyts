@@ -9,7 +9,7 @@ Dependencies
 
 pyts requires:
 
-- Python (>= 3.7)
+- Python (>= 3.8)
 - NumPy (>= 1.17.5)
 - SciPy (>= 1.3.0)
 - Scikit-Learn (>=0.22.1)

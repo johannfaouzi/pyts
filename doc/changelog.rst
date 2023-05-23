@@ -7,6 +7,12 @@ Change Log
 Version 0.13.0
 --------------
 
+- Add support for Python 3.10 and 3.11, and drop support for Python 3.7.
+
+- Add an example illustrating time series clustering using
+  :class:`pyts.transformation.BOSS` transformation with different metrics
+  (by Lucas Plagwitz).
+
 - Add automatic components-grouping in the *Singular Spectrum Analysis*
   for trend-seasonal decomposition with suitable example (by Lucas Plagwitz).
 

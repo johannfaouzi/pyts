@@ -4,8 +4,7 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyts.svg)](https://img.shields.io/pypi/pyversions/pyts.svg)
 [![PyPI version](https://badge.fury.io/py/pyts.svg)](https://badge.fury.io/py/pyts)
 [![Conda Version](https://img.shields.io/conda/vn/conda-forge/pyts.svg)](https://anaconda.org/conda-forge/pyts)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/johannfaouzi/pyts.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/johannfaouzi/pyts/context:python)
-[![Gitter](https://badges.gitter.im/johann-faouzi/community.svg)](https://gitter.im/johann-faouzi/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![CodeQL](https://github.com/johannfaouzi/pyts/workflows/CodeQL/badge.svg)](https://github.com/johannfaouzi/pyts/actions?query=workflow%3ACodeQL)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1244152.svg)](https://doi.org/10.5281/zenodo.1244152)
 
 ## pyts: a Python package for time series classification
@@ -23,7 +22,7 @@ thus pyts provides several tools to perform these transformations.
 
 pyts requires:
 
-- Python (>= 3.7)
+- Python (>= 3.8)
 - NumPy (>= 1.17.5)
 - SciPy (>= 1.3.0)
 - Scikit-Learn (>=0.22.1)
@@ -102,9 +101,9 @@ Bibtex entry:
 
 ### Implemented features
 
-**Note: the content described in this section corresponds to the main branch,
-not the latest released version. You may have to install the latest version
-to use some of these features.**
+**Note: the content described in this section corresponds to the main branch
+(i.e., the latest version), and not the latest released version. You may have to
+install the latest version to use some of these features.**
 
 pyts consists of the following modules:
 
