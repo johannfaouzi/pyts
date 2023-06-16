@@ -23,11 +23,11 @@ thus pyts provides several tools to perform these transformations.
 pyts requires:
 
 - Python (>= 3.8)
-- NumPy (>= 1.17.5)
-- SciPy (>= 1.3.0)
-- Scikit-Learn (>=0.22.1)
-- Joblib (>=0.12)
-- Numba (>=0.48.0)
+- NumPy (>= 1.22.4)
+- SciPy (>= 1.8.1)
+- Scikit-Learn (>= 1.2.0)
+- Joblib (>= 1.1.1)
+- Numba (>= 0.55.2)
 
 To run the examples Matplotlib (>=2.0.0) is required.
 

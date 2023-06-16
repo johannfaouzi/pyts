@@ -12,11 +12,11 @@ pyts requires:
 - Python (>= 3.8)
 - NumPy (>= 1.22.4)
 - SciPy (>= 1.8.1)
-- Scikit-Learn (>=1.2.0)
-- Joblib (>=1.1.1)
-- Numba (>=0.55.2)
+- Scikit-Learn (>= 1.2.0)
+- Joblib (>= 1.1.1)
+- Numba (>= 0.55.2)
 
-To run the examples Matplotlib (>=2.0.0) is required.
+To run the examples, Matplotlib (>= 2.0.0) is required.
 
 
 User installation
