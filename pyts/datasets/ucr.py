@@ -156,7 +156,7 @@ def fetch_ucr_dataset(dataset, use_cache=True, data_home=None,
 
     data_home : None or str (default = None)
         The path of the folder containing the cached data set.
-        If None, the ``pyts.datasets.cached_datasets/UCR/`` folder is
+        If None, the ``pyts/datasets/cached_datasets/UCR/`` folder is
         used. If the data set is not found, it is downloaded and cached
         in this path.
 
@@ -206,24 +206,26 @@ def fetch_ucr_dataset(dataset, use_cache=True, data_home=None,
         )
     if data_home is None:
         import pyts
-        home = '/'.join(pyts.__file__.split('/')[:-2]) + '/'
-        relative_path = 'pyts/datasets/cached_datasets/UCR/'
-        path = home + relative_path
+        home = os.sep.join(pyts.__file__.split(os.sep)[:-2])
+        path = os.path.join(home, 'pyts', 'datasets', 'cached_datasets', 'UCR')
     else:
         path = data_home
     if not os.path.exists(path):
         os.makedirs(path)
 
     correct_dataset = _correct_ucr_name_download(dataset)
-    if use_cache and os.path.exists(path + correct_dataset):
+    if use_cache and os.path.exists(os.path.join(path, correct_dataset)):
         bunch = _load_ucr_dataset(correct_dataset, path=path)
     else:
-        url = ("http://www.timeseriesclassification.com/Downloads/{0}.zip"
+        url = ("http://www.timeseriesclassification.com/"
+               "ClassificationDownloads/{0}.zip"
                .format(correct_dataset))
         filename = 'temp_{}'.format(correct_dataset)
-        _ = urlretrieve(url, path + filename)
-        zipfile.ZipFile(path + filename).extractall(path + correct_dataset)
-        os.remove(path + filename)
+        _ = urlretrieve(url, os.path.join(path, filename))
+        zipfile.ZipFile(os.path.join(path, filename)).extractall(
+            os.path.join(path, correct_dataset)
+        )
+        os.remove(os.path.join(path, filename))
         bunch = _load_ucr_dataset(correct_dataset, path)
 
     if return_X_y:
@@ -266,23 +268,31 @@ def _load_ucr_dataset(dataset, path):
     Padded values are represented as NaN's.
 
     """
-    new_path = path + dataset + '/'
+    new_path = os.path.join(path, dataset)
     try:
-        with open(new_path + dataset + '.txt', encoding='utf-8') as f:
+        with open(
+            os.path.join(new_path, f'{dataset}.txt'), encoding='utf-8'
+        ) as f:
             description = f.read()
     except UnicodeDecodeError:
-        with open(new_path + dataset + '.txt', encoding='ISO-8859-1') as f:
+        with open(
+            os.path.join(new_path, f'{dataset}.txt'), encoding='ISO-8859-1'
+        ) as f:
             description = f.read()
     try:
-        data_train = np.genfromtxt(new_path + dataset + '_TRAIN.txt')
-        data_test = np.genfromtxt(new_path + dataset + '_TEST.txt')
+        data_train = np.genfromtxt(
+            os.path.join(new_path, f'{dataset}_TRAIN.txt')
+        )
+        data_test = np.genfromtxt(
+            os.path.join(new_path, f'{dataset}_TEST.txt')
+        )
 
         X_train, y_train = data_train[:, 1:], data_train[:, 0]
         X_test, y_test = data_test[:, 1:], data_test[:, 0]
 
     except IndexError:
-        train = loadarff(new_path + dataset + '_TRAIN.arff')
-        test = loadarff(new_path + dataset + '_TEST.arff')
+        train = loadarff(os.path.join(new_path, f'{dataset}_TRAIN.txt'))
+        test = loadarff(os.path.join(new_path, f'{dataset}_TEST.txt'))
 
         data_train = np.asarray([train[0][name] for name in train[1].names()])
         X_train = data_train[:-1].T.astype('float64')
