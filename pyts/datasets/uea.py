@@ -185,24 +185,26 @@ def fetch_uea_dataset(dataset, use_cache=True, data_home=None,
         )
     if data_home is None:
         import pyts
-        home = '/'.join(pyts.__file__.split('/')[:-2]) + '/'
-        relative_path = 'pyts/datasets/cached_datasets/UEA/'
-        path = home + relative_path
+        home = os.sep.join(pyts.__file__.split(os.sep)[:-2])
+        path = os.path.join(home, 'pyts', 'datasets', 'cached_datasets', 'UEA')
     else:
         path = data_home
     if not os.path.exists(path):
         os.makedirs(path)
 
     correct_dataset = _correct_uea_name_download(dataset)
-    if use_cache and os.path.exists(path + correct_dataset):
+    if use_cache and os.path.exists(os.path.join(path, correct_dataset)):
         bunch = _load_uea_dataset(correct_dataset, path)
     else:
-        url = ("http://www.timeseriesclassification.com/Downloads/{0}.zip"
+        url = ("http://www.timeseriesclassification.com/"
+               "ClassificationDownloads/{0}.zip"
                .format(correct_dataset))
         filename = 'temp_{}'.format(correct_dataset)
-        _ = urlretrieve(url, path + filename)
-        zipfile.ZipFile(path + filename).extractall(path + correct_dataset)
-        os.remove(path + filename)
+        _ = urlretrieve(url, os.path.join(path, filename))
+        zipfile.ZipFile(os.path.join(path, filename)).extractall(
+            os.path.join(path, correct_dataset)
+        )
+        os.remove(os.path.join(path, filename))
         bunch = _load_uea_dataset(correct_dataset, path)
 
     if return_X_y:
@@ -245,31 +247,32 @@ def _load_uea_dataset(dataset, path):
     Missing values are represented as NaN's.
 
     """
-    new_path = path + dataset + '/'
+    new_path = os.path.join(path, dataset)
     try:
         description_file = [
             file for file in os.listdir(new_path)
             if ('Description.txt' in file
-                or dataset + '.txt' in file)
+                or f'{dataset}.txt' in file)
         ][0]
     except IndexError:
         description_file = None
 
     if description_file is not None:
         try:
-            with open(new_path + description_file, encoding='utf-8') as f:
+            with open(os.path.join(new_path, description_file),
+                      encoding='utf-8') as f:
                 description = f.read()
         except UnicodeDecodeError:
-            with open(new_path + description_file,
+            with open(os.path.join(new_path, description_file),
                       encoding='ISO-8859-1') as f:
                 description = f.read()
     else:
         description = None
 
-    data_train = loadarff(new_path + dataset + '_TRAIN.arff')
+    data_train = loadarff(os.path.join(new_path, f'{dataset}_TRAIN.arff'))
     X_train, y_train = _parse_relational_arff(data_train)
 
-    data_test = loadarff(new_path + dataset + '_TEST.arff')
+    data_test = loadarff(os.path.join(new_path, f'{dataset}_TEST.arff'))
     X_test, y_test = _parse_relational_arff(data_test)
 
     bunch = Bunch(

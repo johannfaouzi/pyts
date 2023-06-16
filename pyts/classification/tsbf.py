@@ -347,15 +347,14 @@ class TSBF(BaseEstimator, UnivariateClassifierMixin):
         The minimum weighted fraction of the sum total of weights (of all
         the input samples) required to be at a leaf node.
 
-    max_features : int, float, str or None (default = "auto")
+    max_features : int, float, str or None (default = "sqrt")
         The number of features to consider when looking for the best split:
 
         - If int, then consider ``max_features`` features at each split.
         - If float, then ``max_features`` is a fraction and
           ``int(max_features * n_features)`` features are considered at each
           split.
-        - If "auto", then ``max_features=sqrt(n_features)``.
-        - If "sqrt", then ``max_features=sqrt(n_features)`` (same as "auto").
+        - If "sqrt", then ``max_features=sqrt(n_features)``.
         - If "log2", then ``max_features=log2(n_features)``.
         - If None, then ``max_features=n_features``.
 
@@ -427,7 +426,7 @@ class TSBF(BaseEstimator, UnivariateClassifierMixin):
 
     Attributes
     ----------
-    base_estimator_ : DecisionTreeClassifier
+    estimator_ : DecisionTreeClassifier
         The child estimator template used to create the collection of fitted
         sub-estimators.
 
@@ -506,7 +505,7 @@ class TSBF(BaseEstimator, UnivariateClassifierMixin):
                  min_samples_split=2,
                  min_samples_leaf=1,
                  min_weight_fraction_leaf=0.,
-                 max_features="auto",
+                 max_features="sqrt",
                  max_leaf_nodes=None,
                  min_impurity_decrease=0.,
                  bootstrap=True,
@@ -683,7 +682,7 @@ class TSBF(BaseEstimator, UnivariateClassifierMixin):
         clf.fit(X_binned, y)
 
         # Get attributes
-        self.base_estimator_ = clf.base_estimator_
+        self.estimator_ = clf.estimator_
         self.classes_ = clf.classes_
         self.estimators_ = clf.estimators_
         self.feature_importances_ = clf.feature_importances_

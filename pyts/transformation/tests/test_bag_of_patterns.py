@@ -50,7 +50,7 @@ def test_actual_results(params, vocab_desired, arr_desired):
      {'window_size': 4, 'word_size': 4, 'sparse': False},
      {'window_size': 4, 'word_size': 4, 'n_bins': 2},
      {'window_size': 4, 'word_size': 4, 'numerosity_reduction': False},
-     {'window_size': 4, 'word_size': 4, 'norm_mean': 1, 'norm_std': 1},
+     {'window_size': 4, 'word_size': 4, 'norm_mean': True, 'norm_std': True},
      {'window_size': 4, 'word_size': 4, 'overlapping': False},
      {'window_size': 4, 'word_size': 4, 'strategy': 'normal'},
      {'window_size': 4, 'word_size': 4, 'window_step': 2},

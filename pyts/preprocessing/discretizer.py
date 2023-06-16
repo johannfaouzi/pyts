@@ -163,12 +163,12 @@ class KBinsDiscretizer(BaseEstimator, UnivariateTransformerMixin):
                 np.full((n_samples, 1), True)
             ]
             if (self.n_bins > 2) and np.any(~mask):
-                samples = np.where(np.any(~mask, axis=0))[0]
+                samples = np.where(np.any(~mask, axis=1))[0]
                 if self.raise_warning:
                     warn("Some quantiles are equal. The number of bins will "
                          "be smaller for sample {0}. Consider decreasing the "
                          "number of bins or removing these samples."
-                         .format(samples))
+                         .format(samples), UserWarning)
                 lengths = np.sum(mask, axis=1)
                 max_length = np.max(lengths)
 

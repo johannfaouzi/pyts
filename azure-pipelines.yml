@@ -13,8 +13,8 @@ jobs:
     vmImage: 'ubuntu-latest'
   strategy:
     matrix:
-      Python39:
-        python.version: '3.9'
+      Python311:
+        python.version: '3.11'
 
   steps:
   - task: UsePythonVersion@0
@@ -36,19 +36,19 @@ jobs:
     vmImage: 'ubuntu-latest'
   strategy:
     matrix:
-      Python37:
-        python.version: '3.7'
-        numpy.version: '1.17.5'
-        scipy.version: '1.3.0'
-        scikit-learn.version: '0.22.1'
-        joblib.version: '0.12'
-        numba.version: '0.48.0'
-      Python39:
-        python.version: '3.9'
+      Python38:
+        python.version: '3.8'
+        numpy.version: '1.22.4'
+        scipy.version: '1.8.1'
+        scikit-learn.version: '1.2.0'
+        joblib.version: '1.1.1'
+        numba.version: '0.55.2'
+      Python311:
+        python.version: '3.11'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '1.*'
-        joblib.version: '0.*'
+        joblib.version: '1.*'
         numba.version: '0.*'
 
   steps:
@@ -73,12 +73,12 @@ jobs:
     vmImage: 'ubuntu-latest'
   strategy:
     matrix:
-      Python38:
-        python.version: '3.8'
+      Python310:
+        python.version: '3.10'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '1.*'
-        joblib.version: '0.*'
+        joblib.version: '1.*'
         numba.version: '0.*'
 
   steps:
@@ -107,19 +107,19 @@ jobs:
     vmImage: 'macOS-latest'
   strategy:
     matrix:
-      Python37:
-        python.version: '3.7'
-        numpy.version: '1.17.5'
-        scipy.version: '1.3.0'
-        scikit-learn.version: '0.22.1'
-        joblib.version: '0.12'
-        numba.version: '0.48.0'
-      Python39:
-        python.version: '3.9'
+      Python38:
+        python.version: '3.8'
+        numpy.version: '1.22.4'
+        scipy.version: '1.8.1'
+        scikit-learn.version: '1.2.0'
+        joblib.version: '1.1.1'
+        numba.version: '0.55.2'
+      Python311:
+        python.version: '3.11'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '1.*'
-        joblib.version: '0.*'
+        joblib.version: '1.*'
         numba.version: '0.*'
 
   steps:
@@ -144,12 +144,12 @@ jobs:
     vmImage: 'macOS-latest'
   strategy:
     matrix:
-      Python38:
-        python.version: '3.8'
+      Python310:
+        python.version: '3.10'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '1.*'
-        joblib.version: '0.*'
+        joblib.version: '1.*'
         numba.version: '0.*'
 
   steps:
@@ -178,19 +178,19 @@ jobs:
     vmImage: 'windows-latest'
   strategy:
     matrix:
-      Python37:
-        python.version: '3.7'
-        numpy.version: '1.17.5'
-        scipy.version: '1.3.0'
-        scikit-learn.version: '0.22.1'
-        joblib.version: '0.12'
-        numba.version: '0.48.0'
-      Python39:
-        python.version: '3.9'
+      Python38:
+        python.version: '3.8'
+        numpy.version: '1.22.4'
+        scipy.version: '1.8.1'
+        scikit-learn.version: '1.2.0'
+        joblib.version: '1.1.1'
+        numba.version: '0.55.2'
+      Python311:
+        python.version: '3.11'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '1.*'
-        joblib.version: '0.*'
+        joblib.version: '1.*'
         numba.version: '0.*'
 
   steps:
@@ -215,12 +215,12 @@ jobs:
     vmImage: 'windows-latest'
   strategy:
     matrix:
-      Python38:
-        python.version: '3.8'
+      Python310:
+        python.version: '3.10'
         numpy.version: '1.*'
         scipy.version: '1.*'
         scikit-learn.version: '1.*'
-        joblib.version: '0.*'
+        joblib.version: '1.*'
         numba.version: '0.*'
 
   steps:

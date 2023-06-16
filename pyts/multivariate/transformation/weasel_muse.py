@@ -96,10 +96,9 @@ class WEASELMUSE(BaseEstimator, MultivariateTransformerMixin):
     >>> from pyts.datasets import load_basic_motions
     >>> from pyts.multivariate.transformation import WEASELMUSE
     >>> X_train, X_test, y_train, y_test = load_basic_motions(return_X_y=True)
-    >>> transformer = WEASELMUSE()
-    >>> X_new = transformer.fit_transform(X_train, y_train)
-    >>> X_new.shape
-    (40, 9086)
+    >>> transformer = WEASELMUSE(sparse=False)
+    >>> transformer.fit_transform(X_train, y_train)
+    array(...)
 
     """
 

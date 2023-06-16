@@ -95,7 +95,7 @@ def test_warning_smaller_n_bins():
         "smaller for sample {0}. Consider decreasing the number "
         "of bins or removing these samples.".format([0])
     )
-    with pytest.warns(None, match=re.escape(warning_msg)):
+    with pytest.warns(UserWarning, match=re.escape(warning_msg)):
         discretizer._compute_bins(
             X_new, n_samples + 1, n_bins=5, strategy='quantile'
         )

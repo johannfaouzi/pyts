@@ -15,11 +15,11 @@ URL = 'https://github.com/johannfaouzi/pyts'
 LICENSE = 'new BSD'
 DOWNLOAD_URL = 'https://github.com/johannfaouzi/pyts'
 VERSION = pyts.__version__
-INSTALL_REQUIRES = ['numpy>=1.17.5',
-                    'scipy>=1.3.0',
-                    'scikit-learn>=0.22.1',
-                    'joblib>=0.12',
-                    'numba>=0.48.0']
+INSTALL_REQUIRES = ['numpy>=1.22.4',
+                    'scipy>=1.8.1',
+                    'scikit-learn>=1.2.0',
+                    'joblib>=1.1.1',
+                    'numba>=0.55.2']
 CLASSIFIERS = ['Development Status :: 3 - Alpha',
                'Intended Audience :: Science/Research',
                'Intended Audience :: Developers',
@@ -31,13 +31,18 @@ CLASSIFIERS = ['Development Status :: 3 - Alpha',
                'Operating System :: POSIX',
                'Operating System :: Unix',
                'Operating System :: MacOS',
-               'Programming Language :: Python :: 3.7',
                'Programming Language :: Python :: 3.8',
-               'Programming Language :: Python :: 3.9']
+               'Programming Language :: Python :: 3.9',
+               'Programming Language :: Python :: 3.10',
+               'Programming Language :: Python :: 3.11']
 EXTRAS_REQUIRE = {
+    'linting': [
+        'flake8'
+    ],
     'tests': [
         'pytest',
-        'pytest-cov'],
+        'pytest-cov'
+    ],
     'docs': [
         'docutils==0.14',
         'sphinx==1.8.5',
