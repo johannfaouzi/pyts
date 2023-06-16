@@ -311,7 +311,7 @@ class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
 
     Attributes
     ----------
-    base_estimator_ : DecisionTreeClassifier
+    estimator_ : DecisionTreeClassifier
         The child estimator template used to create the collection of fitted
         sub-estimators.
 
@@ -510,7 +510,7 @@ class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
         self._pipeline.fit(X, y)
 
         # Get attributes
-        self.base_estimator_ = self._pipeline['rfc'].base_estimator_
+        self.estimator_ = self._pipeline['rfc'].estimator_
         self.classes_ = self._pipeline['rfc'].classes_
         self.estimators_ = self._pipeline['rfc'].estimators_
         self.feature_importances_ = self._pipeline['rfc'].feature_importances_

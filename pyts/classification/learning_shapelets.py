@@ -472,7 +472,9 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
             X_window = _windowed_view(
                 X, n_samples, n_timestamps, window_size, window_step=1)
             X_window = X_window.reshape(-1, window_size)
-            kmeans = KMeans(n_clusters=n_shapelets_per_size, random_state=rng)
+            kmeans = KMeans(
+                n_init=10, n_clusters=n_shapelets_per_size, random_state=rng
+            )
             kmeans.fit(X_window)
             shapelets.append(kmeans.cluster_centers_)
             lengths.append(np.full(n_shapelets_per_size, window_size))

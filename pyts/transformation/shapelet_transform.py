@@ -622,7 +622,7 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
                     [len(shapelet) for shapelet in shapelets])
 
             window_range = np.percentile(
-                shapelet_lengths, [25, 75], interpolation='lower'
+                shapelet_lengths, [25, 75], method='lower'
             ).astype('int64')
             window_sizes = np.arange(window_range[0], window_range[1] + 1)
 
@@ -633,7 +633,7 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
             )
             shapelet_lengths = [len(shapelet) for shapelet in shapelets]
             window_range = np.percentile(
-                shapelet_lengths, [25, 75], interpolation='lower'
+                shapelet_lengths, [25, 75], method='lower'
             ).astype('int64')
             window_sizes = np.arange(window_range[0], window_range[1] + 1)
 

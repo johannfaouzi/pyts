@@ -344,7 +344,7 @@ def test_attributes_tsbf(X, y, params):
 
     # Training phase
     clf.fit(X, y)
-    assert isinstance(clf.base_estimator_, DecisionTreeClassifier)
+    assert isinstance(clf.estimator_, DecisionTreeClassifier)
     np.testing.assert_array_equal(clf.classes_, np.unique(y))
     assert len(clf.estimators_) == n_estimators
     assert clf.feature_importances_.shape == (n_features,)

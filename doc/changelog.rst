@@ -9,6 +9,13 @@ Version 0.13.0
 
 - Add support for Python 3.10 and 3.11, and drop support for Python 3.7.
 
+- Update the minimal versions required of the dependencies:
+  * NumPy (>= 1.22.4)
+  * SciPy (>= 1.8.1)
+  * Scikit-Learn (>=1.2.0)
+  * Joblib (>=1.1.1)
+  * Numba (>=0.55.2)
+
 - Add an example illustrating time series clustering using
   :class:`pyts.transformation.BOSS` transformation with different metrics
   (by Lucas Plagwitz).
@@ -21,6 +28,13 @@ Version 0.13.0
   series using chunks (it should be a bit slower but use less memory), and
   ``n_jobs`` allows for running the decomposition of each chunk in parallel.
 
+- Set the number of initiations of K-means to compute the initial shapelets
+  in :class:`pyts.classification.LearningShapelets`: to 10 (to prevent a change
+  of the default value in scikit-learn).
+
+- Replace ``base_estimator_`` attribute with ``estimator_`` in 
+  :class:`pyts.classification.TimeSeriesForest` and 
+  :class:`pyts.classification.TSBF` (to match the changes made in scikit-learn).
 
 Version 0.12.0
 --------------

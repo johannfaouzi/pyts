@@ -143,7 +143,7 @@ def test_actual_results_fixed_indices(indices, arr_desired):
 @pytest.mark.parametrize('params', [{}, {'oob_score': True}, {'max_depth': 3}])
 def test_attributes_time_series_forest(params):
     """Test the attributes of a fitted instance of TimeSeriesForest."""
-    real_attributes = ['base_estimator_', 'classes_', 'estimators_',
+    real_attributes = ['estimator_', 'classes_', 'estimators_',
                        'feature_importances_', 'indices_', 'n_features_in_',
                        'oob_decision_function_', 'oob_score_']
     fake_attributes = ['yolo', 'whoopsy', 'mistake_were_made_']

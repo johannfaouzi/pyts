@@ -426,7 +426,7 @@ class TSBF(BaseEstimator, UnivariateClassifierMixin):
 
     Attributes
     ----------
-    base_estimator_ : DecisionTreeClassifier
+    estimator_ : DecisionTreeClassifier
         The child estimator template used to create the collection of fitted
         sub-estimators.
 
@@ -682,7 +682,7 @@ class TSBF(BaseEstimator, UnivariateClassifierMixin):
         clf.fit(X_binned, y)
 
         # Get attributes
-        self.base_estimator_ = clf.base_estimator_
+        self.estimator_ = clf.estimator_
         self.classes_ = clf.classes_
         self.estimators_ = clf.estimators_
         self.feature_importances_ = clf.feature_importances_
