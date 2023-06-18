@@ -81,7 +81,7 @@ The metrics used are:
 * Dynamic Time Warping (DTW), and
 * Dynamic Time Warping with a learned warping window (DTW(w)).
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.12.0/KNN.ipynb>`__
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.13.0/KNN.ipynb>`__
 
 +------------------+---------------+-----------+----------------+------------+-------------------+----------------+
 | Name             | ED (reported) | ED (pyts) | DTW (reported) | DTW (pyts) | DTW(w) (reported) | DTW(w) (pyts)  |
@@ -103,7 +103,7 @@ The metrics used are:
 Bag-of-Patterns transformer followed by a 1NN classifier using Euclidean distance
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.12.0/Bag-of-Patterns.ipynb>`__
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.13.0/Bag-of-Patterns.ipynb>`__
 
 +------------------+----------------------------+------------------------+
 | Name             | Bag-of-Patterns (reported) | Bag-of-Patterns (pyts) |
@@ -125,7 +125,7 @@ Bag-of-Patterns transformer followed by a 1NN classifier using Euclidean distanc
 BOSS transformer followed by a 1NN classifier using the BOSS metric
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.12.0/BOSS.ipynb>`__
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.13.0/BOSS.ipynb>`__
 
 +------------------+-----------------+-------------+
 | Name             | BOSS (reported) | BOSS (pyts) |
@@ -147,7 +147,7 @@ BOSS transformer followed by a 1NN classifier using the BOSS metric
 BOSSVS classifier
 ^^^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.12.0/BOSSVS.ipynb>`__
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.13.0/BOSSVS.ipynb>`__
 
 +------------------+-------------------+---------------+
 | Name             | BOSSVS (reported) | BOSSVS (pyts) |
@@ -169,20 +169,20 @@ BOSSVS classifier
 Learning-Shapelet classifier
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.12.0/LearningShapelet.ipynb>`__
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.13.0/LearningShapelet.ipynb>`__
 
 +------------------+------------------------------+--------------------------+
 | Name             | LearningShapelet (reported)  | LearningShapelet (pyts)  |
 +==================+==============================+==========================+
-| Adiac            | 0.5274                       | 0.527                    |
+| Adiac            | 0.5274                       | 0.537                    |
 +------------------+------------------------------+--------------------------+
 | ECG200           | 0.8714                       | 0.860                    |
 +------------------+------------------------------+--------------------------+
-| GunPoint         | 0.9826                       | 0.987                    |
+| GunPoint         | 0.9826                       | 0.973                    |
 +------------------+------------------------------+--------------------------+
-| MiddlePhalanxTW  | 0.5403                       | 0.552                    |
+| MiddlePhalanxTW  | 0.5403                       | 0.494                    |
 +------------------+------------------------------+--------------------------+
-| Plane            | 0.9948                       | 0.990                    |
+| Plane            | 0.9948                       | 0.981                    |
 +------------------+------------------------------+--------------------------+
 | SyntheticControl | 0.9946                       | 0.990                    |
 +------------------+------------------------------+--------------------------+
@@ -191,29 +191,29 @@ Learning-Shapelet classifier
 ROCKET transformer followed by a Ridge Classifier with built-in cross-validation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.12.0/ROCKET.ipynb>`__
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.13.0/ROCKET.ipynb>`__
 
 +------------------+------------------------------+--------------------------+
 | Name             | ROCKET (reported)            | ROCKET (pyts)            |
 +==================+==============================+==========================+
-| Adiac            | 0.7847                       | 0.785                    |
+| Adiac            | 0.7847                       | 0.808                    |
 +------------------+------------------------------+--------------------------+
-| ECG200           | 0.9060                       | 0.910                    |
+| ECG200           | 0.9060                       | 0.850                    |
 +------------------+------------------------------+--------------------------+
-| GunPoint         | 1.0000                       | 1.000                    |
+| GunPoint         | 1.0000                       | 0.987                    |
 +------------------+------------------------------+--------------------------+
-| MiddlePhalanxTW  | 0.5558                       | 0.565                    |
+| MiddlePhalanxTW  | 0.5558                       | 0.571                    |
 +------------------+------------------------------+--------------------------+
 | Plane            | 1.0000                       | 1.000                    |
 +------------------+------------------------------+--------------------------+
-| SyntheticControl | 0.8733                       | 1.000                    |
+| SyntheticControl | 0.8733                       | 0.983                    |
 +------------------+------------------------------+--------------------------+
 
 
 SAXVSM classifier
 ^^^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.12.0/SAXVSM.ipynb>`__
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.13.0/SAXVSM.ipynb>`__
 
 +------------------+------------------------------+--------------------------+
 | Name             | SAXVSM (reported)            | SAXVSM (pyts)            |
@@ -235,7 +235,7 @@ SAXVSM classifier
 ShapeletTransform transformer followed by a Support Vector Machine with a linear kernel
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.12.0/ShapeletTransform.ipynb>`__
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.13.0/ShapeletTransform.ipynb>`__
 
 +------------------+------------------------------+--------------------------+
 | Name             | ShapeletTransform (reported) | ShapeletTransform (pyts) |
@@ -257,7 +257,7 @@ ShapeletTransform transformer followed by a Support Vector Machine with a linear
 TimeSeriesForest classifier
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.12.0/TimeSeriesForest.ipynb>`__
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.13.0/TimeSeriesForest.ipynb>`__
 
 +------------------+------------------------------+--------------------------+
 | Name             | TimeSeriesForest (reported)  | TimeSeriesForest (pyts)  |
@@ -279,7 +279,7 @@ TimeSeriesForest classifier
 TSBF classifier
 ^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.12.0/TSBF.ipynb>`__
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.13.0/TSBF.ipynb>`__
 
 +------------------+------------------------------+--------------------------+
 | Name             | TSBF (reported)              | TSBF (pyts)              |
@@ -301,7 +301,7 @@ TSBF classifier
 WEASEL transformer followed by a logistic regression
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.12.0/WEASEL.ipynb>`__
+`Link to the notebook <https://github.com/johannfaouzi/pyts-repro/blob/master/0.13.0/WEASEL.ipynb>`__
 
 +------------------+-------------------+---------------+
 | Name             | WEASEL (reported) | WEASEL (pyts) |
