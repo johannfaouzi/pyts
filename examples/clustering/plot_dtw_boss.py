@@ -76,7 +76,7 @@ n_samples = 14
 fig, axes = plt.subplots(1, 3, figsize=(16, 8))
 
 X, y = make_cylinder_bell_funnel(n_samples=n_samples, random_state=42,
-                                     shuffle=False)
+                                 shuffle=False)
 for k_axis, metric in enumerate(["Euclidean", "DTW", "BOSS"]):
     if metric == "DTW":
         dist_mat = create_dist_matrix(X, dtw)
@@ -89,7 +89,7 @@ for k_axis, metric in enumerate(["Euclidean", "DTW", "BOSS"]):
 
     model = AgglomerativeClustering(compute_full_tree=True,
                                     compute_distances=True,
-                                    n_clusters=3, affinity="precomputed",
+                                    n_clusters=3, metric="precomputed",
                                     linkage="complete")
     cluster = model.fit_predict(dist_mat)
     score = round(homogeneity_score(labels_true=y, labels_pred=cluster), 2)
