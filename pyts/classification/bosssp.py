@@ -36,6 +36,9 @@ class BOSSSP(BaseEstimator, UnivariateClassifierMixin):
         the size of each time series and must be between 0 and 1. The window
         size will be computed as ``ceil(window_size * n_timestamps)``.
 
+    level : integer (default = 3)
+         Number of times the series is being divided. Maximum of 3.
+
     window_step : int or float (default = 1)
         Step of the sliding window. If float, it represents the percentage of
         the size of each time series and must be between 0 and 1. The window
@@ -82,9 +85,6 @@ class BOSSSP(BaseEstimator, UnivariateClassifierMixin):
     sublinear_tf : bool (default = True)
         Apply sublinear tf scaling, i.e. replace tf with 1 + log(tf).
 
-    level : integer (default = 3)
-         Number of times the series is being divided. Maximum of 3.
-
     References
     ----------
     .. [1] James Large et al., “On time series classification with
@@ -92,14 +92,15 @@ class BOSSSP(BaseEstimator, UnivariateClassifierMixin):
 
     """
 
-    def __init__(self, word_size=4, n_bins=4, window_size=10, window_step=1,
-                 anova=False, drop_sum=False, norm_mean=False, norm_std=False,
-                 strategy='quantile', alphabet=None,
+    def __init__(self, word_size=4, n_bins=4, window_size=10, level=3,
+                 window_step=1, anova=False, drop_sum=False, norm_mean=False,
+                 norm_std=False, strategy='quantile', alphabet=None,
                  numerosity_reduction=True, use_idf=True, smooth_idf=False,
-                 sublinear_tf=True, level=3):
+                 sublinear_tf=True):
         self.word_size = word_size
         self.n_bins = n_bins
         self.window_size = window_size
+        self.level = level
         self.window_step = window_step
         self.anova = anova
         self.drop_sum = drop_sum
@@ -111,7 +112,6 @@ class BOSSSP(BaseEstimator, UnivariateClassifierMixin):
         self.use_idf = use_idf
         self.smooth_idf = smooth_idf
         self.sublinear_tf = sublinear_tf
-        self.level = level
 
     def fit(self, X, y):
         """Compute the document-term matrix.
@@ -129,31 +129,40 @@ class BOSSSP(BaseEstimator, UnivariateClassifierMixin):
         self : object
 
         """
-        length = len(X)
-        words = self._boss_word_extractor(X, y)
+        length = len(X[0])
+        words = self._boss_word_extractor(X, y, 1)
+
         if self.level >= 2:
-            words_2 = self._boss_word_extractor(X[:length//2],
-                                                y[:length//2])
-            words_3 = self._boss_word_extractor(X[length//2:],
-                                                y[:length//2:])
-            words = words + words_2 + words_3
+            X_2 = [ts[:length//2] for ts in X]
+            X_3 = [ts[length//2:] for ts in X]
+            for ts in range(len(X)):
+                words_2 = self._boss_word_extractor(X_2, y, 2)[ts]
+                words_3 = self._boss_word_extractor(X_3, y, 3)[ts]
+                words[ts] = words[ts] + words_2 + words_3
+
         if self.level == 3:
-            words_4 = self._boss_word_extractor(X[:length//4],
-                                                y[:length//4])
-            words_5 = self._boss_word_extractor(X[length//4:length//2],
-                                                y[length//4:length//2])
-            words_6 = self._boss_word_extractor(X[length//2:length*3//4],
-                                                y[length//2:length*3//4])
-            words_7 = self._boss_word_extractor(X[length*3//4:],
-                                                y[length*3//4:])
-            words = words + words_4 + words_5 + words_6 + words_7
-        word_count = dict(Counter(words))
-        sorted_word_count = {key: value for key, value in sorted(
-                             word_count.items())}
-        self._word_count = sorted_word_count
+            X_4 = [ts[:length//4] for ts in X]
+            X_5 = [ts[length//4:length//2] for ts in X]
+            X_6 = [ts[length//2:length*3//4] for ts in X]
+            X_7 = [ts[length*3//4:] for ts in X]
+            for ts in range(len(X)):
+                words_4 = self._boss_word_extractor(X_4, y, 4)[ts]
+                words_5 = self._boss_word_extractor(X_5, y, 5)[ts]
+                words_6 = self._boss_word_extractor(X_6, y, 6)[ts]
+                words_7 = self._boss_word_extractor(X_7, y, 7)[ts]
+                words[ts] = words[ts] + words_4 + words_5 + words_6 + words_7
+
+        full_sorted_wordcount = []
+        for ts in words:
+            wordcount_current_ts = dict(Counter(ts))
+            sorted_wordcount_current_ts = {key: value for key, value in sorted(
+                                            wordcount_current_ts.items())}
+            full_sorted_wordcount.append(sorted_wordcount_current_ts)
+
+        self._word_count = full_sorted_wordcount
         return self
 
-    def _boss_word_extractor(self, X, y):
+    def _boss_word_extractor(self, X, y, distinguishing_stamp):
         X, y = check_X_y(X, y)
         n_samples, n_timestamps = X.shape
         check_classification_targets(y)
@@ -186,8 +195,13 @@ class BOSSSP(BaseEstimator, UnivariateClassifierMixin):
         else:
             X_bow = np.asarray([' '.join(X_word[i]) for i in range(n_samples)])
 
-        words_list = np.asarray(X_bow[0].split(' ')).tolist()
-        return words_list
+        full_words_list = []
+        for time_series in X_bow:
+            wl_current_ts = np.asarray(time_series.split(' ')).tolist()
+            wl_current_ts_with_stamp = [str(distinguishing_stamp) + '' + word
+                                        for word in wl_current_ts]
+            full_words_list.append(wl_current_ts_with_stamp)
+        return full_words_list
 
     def decision_function(self, X):
         pass
@@ -250,14 +264,18 @@ class BOSSSP(BaseEstimator, UnivariateClassifierMixin):
         if self.drop_sum:
             if not self.word_size <= (window_size - 1):
                 raise ValueError(
-                    "'word_size' must be lower than or equal to "
-                    "(window_size - 1) if 'drop_sum=True'."
+                    "If 'drop_sum=True', 'word size' must be lower than or"
+                    "equal to (window_size - 1) if 'level=1', lower than or"
+                    "equal to (window_size//2 - 1) if 'level = 2' and lower"
+                    "or equal to (window_size//4 - 1) if 'level = 3'"
                 )
         else:
             if not self.word_size <= window_size:
                 raise ValueError(
-                    "'word_size' must be lower than or equal to "
-                    "window_size if 'drop_sum=False'."
+                    "If 'drop_sum=False', 'word size' must be lower than or"
+                    "equal to window_size if 'level=1', lower than or"
+                    "equal to (window_size//2) if 'level = 2' and lower"
+                    "or equal to (window_size//4) if 'level = 3'"
                 )
 
         if not isinstance(self.level, (int, np.integer)):
