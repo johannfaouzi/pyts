@@ -187,7 +187,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
                 )
             )
 
-    def _transform(self, X):
+    def _transform(self, X, return_eig=False):
 
         n_samples, n_timestamps = X.shape
         window_size, grouping_size = self._check_params(n_timestamps)
@@ -220,7 +220,11 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             X_groups, n_samples, n_timestamps, window_size,
             n_windows, grouping_size, gap
         )
-        return np.squeeze(X_ssa)
+
+        if return_eig:
+            return np.squeeze(X_ssa), w, v
+        else:
+            return np.squeeze(X_ssa)
 
     def _grouping(
         self, X, v, n_samples, window_size, n_windows, grouping_size
