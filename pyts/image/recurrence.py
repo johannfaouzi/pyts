@@ -30,14 +30,14 @@ class RecurrencePlot(BaseEstimator, UnivariateTransformerMixin):  # noqa: D207
     Parameters
     ----------
     dimension : int or float (default = 1)
-        Dimension of the trajectory. If float, If float, it represents
-        a percentage of the size of each time series and must be between
+        Dimension of the trajectory. If float, it represents a
+        percentage of the size of each time series and must be between
         0 and 1.
 
     time_delay : int or float (default = 1)
         Time gap between two back-to-back points of the trajectory. If
-        float, If float, it represents a percentage of the size of each
-        time series and must be between 0 and 1.
+        float, it represents a percentage of the size of each time
+        series and must be between 0 and 1.
 
     threshold : float, 'point', 'distance' or None (default = None)
         Threshold for the minimum distance. If None, the recurrence plots
