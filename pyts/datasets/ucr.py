@@ -218,7 +218,7 @@ def fetch_ucr_dataset(dataset, use_cache=True, data_home=None,
         bunch = _load_ucr_dataset(correct_dataset, path=path)
     else:
         url = ("http://www.timeseriesclassification.com/"
-               "ClassificationDownloads/{0}.zip"
+               "aeon-toolkit/{0}.zip"
                .format(correct_dataset))
         filename = 'temp_{}'.format(correct_dataset)
         _ = urlretrieve(url, os.path.join(path, filename))
