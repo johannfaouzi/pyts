@@ -49,15 +49,15 @@ def test_digitize(X, bins, arr_desired):
 @pytest.mark.parametrize(
     'params, arr_desired',
     [({'X': (np.array([2., 4., 8.]), np.array([3., 5.])),
-       'n_samples':2, 'lengths': np.array([3, 2]), 'max_length': 3},
+       'n_samples': 2, 'lengths': np.array([3, 2]), 'max_length': 3},
       [[2, 4, 8], [3, 5, np.nan]]),
 
      ({'X': (np.array([2, 4, 8]), np.array([3]), np.array([5, 7])),
-       'n_samples':3, 'lengths': np.array([3, 1, 2]), 'max_length': 3},
+       'n_samples': 3, 'lengths': np.array([3, 1, 2]), 'max_length': 3},
       [[2, 4, 8], [3, np.nan, np.nan], [5, 7, np.nan]]),
 
      ({'X': (np.array([3]), np.array([2, 4, 8]), np.array([5, 7])),
-       'n_samples':3, 'lengths': np.array([1, 3, 2]), 'max_length': 3},
+       'n_samples': 3, 'lengths': np.array([1, 3, 2]), 'max_length': 3},
       [[3, np.nan, np.nan], [2, 4, 8], [5, 7, np.nan]])]
 )
 def test_reshape_with_nan(params, arr_desired):
