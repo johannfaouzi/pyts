@@ -44,7 +44,7 @@ EXTRAS_REQUIRE = {
         'pytest-cov'
     ],
     'docs': [
-        'docutils==0.14',
+        'docutils',
         'sphinx==1.8.5',
         'alabaster==0.7.12',
         'sphinx-gallery',
