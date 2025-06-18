@@ -45,7 +45,7 @@ EXTRAS_REQUIRE = {
     ],
     'docs': [
         'docutils==0.14',
-        'sphinx==1.8.5',
+        'sphinx==3.4.3',
         'sphinx-gallery',
         'numpydoc',
         'matplotlib',
