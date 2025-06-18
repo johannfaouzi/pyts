@@ -45,12 +45,12 @@ EXTRAS_REQUIRE = {
     ],
     'docs': [
         'docutils==0.14',
-        'sphinx==3.4.3',
+        'sphinx==1.8.5',
+        'alabaster==0.7.12',
         'sphinx-gallery',
         'numpydoc',
         'matplotlib',
         'packaging',
-        'jinja2<3.1'
     ]
 }
 PACKAGE_DATA = {
