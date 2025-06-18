@@ -218,7 +218,7 @@ class BOSS(BaseEstimator, UnivariateTransformerMixin):
 
         X_boss = self._vectorizer.transform(X_bow)
         if not self.sparse:
-            return X_boss.A
+            return X_boss.toarray()
         return csr_matrix(X_boss)
 
     def fit_transform(self, X, y=None):
@@ -284,7 +284,7 @@ class BOSS(BaseEstimator, UnivariateTransformerMixin):
         self._sfa = sfa
         self._vectorizer = vectorizer
         if not self.sparse:
-            return X_boss.A
+            return X_boss.toarray()
         return csr_matrix(X_boss)
 
     def _check_params(self, n_timestamps):

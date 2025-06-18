@@ -151,7 +151,7 @@ class MultivariateTransformer(BaseEstimator, MultivariateTransformerMixin):
     def _convert_to_array(X):
         """Convert the input data to an array if necessary."""
         if isinstance(X, csr_matrix):
-            return X.A
+            return X.toarray()
         elif isinstance(X, np.ndarray):
             return X
         else:
