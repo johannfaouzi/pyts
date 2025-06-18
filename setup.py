@@ -49,7 +49,8 @@ EXTRAS_REQUIRE = {
         'sphinx-gallery',
         'numpydoc',
         'matplotlib',
-        'packaging'
+        'packaging',
+        'jinja2<3.1'
     ]
 }
 PACKAGE_DATA = {
