@@ -41,7 +41,7 @@ def test_actual_results(params, vocab_desired, arr_desired):
     if isinstance(arr_actual, np.ndarray):
         np.testing.assert_array_equal(arr_actual, arr_desired)
     else:
-        np.testing.assert_array_equal(arr_actual.A, arr_desired)
+        np.testing.assert_array_equal(arr_actual.toarray(), arr_desired)
 
 
 @pytest.mark.parametrize(
@@ -65,4 +65,4 @@ def test_fit_transform(params):
     if isinstance(arr_1, np.ndarray):
         np.testing.assert_array_equal(arr_1, arr_2)
     else:
-        np.testing.assert_array_equal(arr_1.A, arr_2.A)
+        np.testing.assert_array_equal(arr_1.toarray(), arr_2.toarray())

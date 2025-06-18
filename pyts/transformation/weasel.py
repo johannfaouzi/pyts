@@ -228,7 +228,7 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
             X_features = hstack([X_features, X_counts])
 
         if not self.sparse:
-            return X_features.A
+            return X_features.toarray()
         return csr_matrix(X_features)
 
     def fit_transform(self, X, y):
@@ -303,7 +303,7 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
             self._vectorizer_list.append(vectorizer)
 
         if not self.sparse:
-            return X_features.A
+            return X_features.toarray()
         return csr_matrix(X_features)
 
     def _check_params(self, n_timestamps):

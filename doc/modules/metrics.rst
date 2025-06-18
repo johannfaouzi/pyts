@@ -59,13 +59,13 @@ the accumulated matrix, denoted as :math:`D`, defined as:
 
 .. math::
 
-    D_{1, j} = \sum_{k=1}^j C_{1, k}, \quad \forall j ∈ \{1,\ldots,m\}
+    D_{1, j} = \sum_{k=1}^j C_{1, k}, \quad \forall j \in \{1,\ldots,m\}
 
-    D_{i, 1} = \sum_{k=1}^i C_{k, 1}, \quad \forall i ∈ \{1,\ldots,n\}
+    D_{i, 1} = \sum_{k=1}^i C_{k, 1}, \quad \forall i \in \{1,\ldots,n\}
 
 .. math::
 
-    D_{i, j} = \min\{ D(i−1,j−1), D(i−1,j), D(i,j−1) \} + C_{i, j},
+    D_{i, j} = \min\{ D(i-1,j-1), D(i-1,j), D(i,j-1) \} + C_{i, j},
     \quad \forall i \in \{2, \ldots, n\}, \forall j \in \{2, \ldots, m\}
 
 The last entry of the accumulated cost matrix is the Dynamic Time Warping score:

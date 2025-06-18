@@ -40,7 +40,6 @@ for i, ax in enumerate(grid):
 grid[0].get_yaxis().set_ticks([])
 grid[0].get_xaxis().set_ticks([])
 plt.colorbar(im, cax=grid.cbar_axes[0])
-ax.cax.toggle_label(True)
 
 fig.suptitle("Markov transition fields for the 50 time series in the "
              "'GunPoint' dataset", y=0.92)

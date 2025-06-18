@@ -28,11 +28,10 @@ import sys
 import pydoc
 import inspect
 import textwrap
-import warnings
 from packaging.version import parse
 
 from numpydoc.numpydoc import mangle_docstrings
-from docutils.statemachine import ViewList
+from docutils.statemachine import StringList
 from sphinx.domains.python import PythonDomain
 
 import scipy
@@ -139,15 +138,11 @@ def wrap_mangling_directive(base_directive):
                 ):
                     remove_arg(arg)
 
-            # XXX deprecation that we should fix someday using Signature (?)
-            with warnings.catch_warnings(record=True):
-                warnings.simplefilter('ignore')
-                signature = inspect.formatargspec(
-                    args, varargs, keywords, defaults)
+            signature = str(inspect.signature(obj))
 
             # Produce output
             self.options['noindex'] = True
-            self.arguments[0] = name + signature
+            self.arguments[0] = name  + signature
             lines = textwrap.dedent(pydoc.getdoc(impl_obj)).splitlines()
             # Change "Options" to "Other Parameters", run numpydoc, reset
             new_lines = []
@@ -169,7 +164,7 @@ def wrap_mangling_directive(base_directive):
                     new_lines.append(':Options:')
                 else:
                     new_lines.append(line)
-            self.content = ViewList(new_lines, self.content.parent)
+            self.content = StringList(new_lines, self.content.parent)
             return base_directive.run(self)
 
         option_spec = dict(base_directive.option_spec)

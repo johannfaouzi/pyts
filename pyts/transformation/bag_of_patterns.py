@@ -180,7 +180,7 @@ class BagOfPatterns(BaseEstimator, UnivariateTransformerMixin):
         # Derive frequencies for each word in the vocabulary
         X_bop = self._vectorizer.transform(X_bow)
         if not self.sparse:
-            return X_bop.A
+            return X_bop.toarray()
         return csr_matrix(X_bop)
 
     def fit_transform(self, X, y=None):
@@ -218,5 +218,5 @@ class BagOfPatterns(BaseEstimator, UnivariateTransformerMixin):
                             vectorizer.vocabulary_.items()}
         self._vectorizer = vectorizer
         if not self.sparse:
-            return X_bop.A
+            return X_bop.toarray()
         return csr_matrix(X_bop)

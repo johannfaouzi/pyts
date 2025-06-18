@@ -110,7 +110,7 @@ class JointRecurrencePlot(BaseEstimator, MultivariateTransformerMixin):
         X_rp = [self._joint_recurrence_plot(
             X[:, i, :], self.dimension, self.time_delay,
             thresholds_[i], percentages_[i]) for i in range(n_features)]
-        X_jrp = np.product(X_rp, axis=0)
+        X_jrp = np.prod(X_rp, axis=0)
         return X_jrp
 
     @staticmethod

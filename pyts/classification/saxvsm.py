@@ -182,7 +182,7 @@ class SAXVSM(BaseEstimator, UnivariateClassifierMixin):
             norm=None, use_idf=self.use_idf, smooth_idf=self.smooth_idf,
             sublinear_tf=self.sublinear_tf
         )
-        self.tfidf_ = tfidf.fit_transform(X_class).A
+        self.tfidf_ = tfidf.fit_transform(X_class).toarray()
         self.vocabulary_ = {value: key for key, value in
                             tfidf.vocabulary_.items()}
         if self.use_idf:
