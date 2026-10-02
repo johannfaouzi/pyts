@@ -1305,6 +1305,11 @@ def dtw(
     return res
 
 
+# Intentionally mixes an implicit ``None`` return (when ``disp=True``,
+# the text is printed instead) with an explicit ``return text`` (when
+# ``disp=False``), the same dual-mode pattern as ``scipy.show_config``;
+# the ``-> str | None`` return type documents this on purpose.
+# codeql[py/mixed-returns]
 def show_options(method: str | None = None, disp: bool = True) -> str | None:
     """Show documentation for additional options of Dynamic Time Warping
     methods.

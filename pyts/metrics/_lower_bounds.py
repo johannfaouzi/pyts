@@ -66,6 +66,9 @@ def _lower_bound_yi_x_y(
 
 @njit(
     [
+        # Signature string split across two lines (implicit concatenation)
+        # to stay within the line length, not a missing comma.
+        # codeql[py/implicit-string-concatenation-in-list]
         "float64[:,:](float64[:,:], float64[:], float64[:], float64[:,:], "
         "float64[:], float64[:])",
         # Same rationale as ``_lower_bound_yi_x_y`` above: the direct unit
@@ -308,6 +311,9 @@ def _clip_2d(
 
 @njit(
     [
+        # Signature string split across two lines (implicit concatenation)
+        # to stay within the line length, not a missing comma.
+        # codeql[py/implicit-string-concatenation-in-list]
         "float64[:,:,:](float64[:,:], float64[:,:,:], float64[:,:,:], "
         "int64, int64, int64)",
         # Same rationale as ``_clip_2d`` above.
@@ -316,6 +322,7 @@ def _clip_2d(
         # float64 output) onto an X that ``check_array`` left as int64
         # (see ``_clip_2d`` above for the identical, actually-exercised
         # scenario in the 2D case; this covers the same pattern in 3D).
+        # codeql[py/implicit-string-concatenation-in-list]
         "float64[:,:,:](int64[:,:], float64[:,:,:], float64[:,:,:], "
         "int64, int64, int64)",
     ]
@@ -434,12 +441,19 @@ def _squared_lb_keogh(
 # are always float64, as in ``_squared_lb_keogh`` above. ``region`` is always
 # int64, matching ``_warping_envelope_2d``'s own signature.
 _SQUARED_LB_KEOGH_AND_IMPROVED_SIGNATURES = [
+    # Each entry below is a single numba signature string, split across
+    # two lines (implicit concatenation) only to stay within the line
+    # length; it is not a missing comma between list elements.
+    # codeql[py/implicit-string-concatenation-in-list]
     "UniTuple(float64[:,:], 2)(float64[:,:], float64[:,:], float64[:,:], "
     "float64[:,:], int64[:,:], int64, int64, int64)",
+    # codeql[py/implicit-string-concatenation-in-list]
     "UniTuple(float64[:,:], 2)(int64[:,:], float64[:,:], float64[:,:], "
     "float64[:,:], int64[:,:], int64, int64, int64)",
+    # codeql[py/implicit-string-concatenation-in-list]
     "UniTuple(float64[:,:], 2)(float64[:,:], int64[:,:], float64[:,:], "
     "float64[:,:], int64[:,:], int64, int64, int64)",
+    # codeql[py/implicit-string-concatenation-in-list]
     "UniTuple(float64[:,:], 2)(int64[:,:], int64[:,:], float64[:,:], "
     "float64[:,:], int64[:,:], int64, int64, int64)",
 ]

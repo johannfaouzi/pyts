@@ -24,8 +24,12 @@ class _SupportsFitPredict(Protocol):
     mixin) before being used for prediction.
     """
 
+    # The ``...`` body is PEP 544 ``Protocol`` stub syntax, not a no-op
+    # statement.
+    # codeql[py/ineffectual-statement]
     def fit(self, X: npt.ArrayLike, y: npt.ArrayLike) -> Self: ...
 
+    # codeql[py/ineffectual-statement]
     def predict(self, X: npt.ArrayLike) -> npt.NDArray[Any]: ...
 
 

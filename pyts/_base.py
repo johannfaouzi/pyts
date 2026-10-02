@@ -29,17 +29,22 @@ class _SupportsFitTransform(Protocol):
         self,
         X: npt.ArrayLike,
         y: npt.ArrayLike | None = ...,
+        # The ``...`` body is PEP 544 ``Protocol`` stub syntax, not a
+        # no-op statement.
+        # codeql[py/ineffectual-statement]
     ) -> Self: ...
 
     # Different concrete transformers return different dtypes (e.g. float64
     # for most, but int64 for KBinsDiscretizer and its callers), so this is
     # intentionally left as ``Any`` rather than a specific dtype.
+    # codeql[py/ineffectual-statement]
     def transform(self, X: npt.ArrayLike) -> npt.NDArray[Any]: ...
 
 
 class _SupportsPredict(Protocol):
     """Structural type for what the ``*ClassifierMixin`` classes need."""
 
+    # codeql[py/ineffectual-statement]
     def predict(self, X: npt.ArrayLike) -> npt.NDArray[Any]: ...
 
 

@@ -69,7 +69,8 @@ def ucr_dataset_list() -> list[str]:
     """
     module_path = os.path.dirname(__file__)
     finfo = os.path.join(module_path, 'info', 'ucr.pickle')
-    dictionary = pickle.load(open(finfo, 'rb'))
+    with open(finfo, 'rb') as f:
+        dictionary = pickle.load(f)
     datasets = sorted(dictionary.keys())
     return datasets
 
@@ -104,7 +105,8 @@ def ucr_dataset_info(
     """
     module_path = os.path.dirname(__file__)
     finfo = os.path.join(module_path, 'info', 'ucr.pickle')
-    dictionary = pickle.load(open(finfo, 'rb'))
+    with open(finfo, 'rb') as f:
+        dictionary = pickle.load(f)
     datasets = list(dictionary.keys())
 
     if dataset is None:
@@ -132,6 +134,11 @@ def ucr_dataset_info(
             for data in dataset:
                 info[data] = dictionary[data]
             return info
+    else:
+        raise TypeError(
+            "'dataset' must be None, a string, or array-like of strings "
+            f"(got {type(dataset)})."
+        )
 
 
 def fetch_ucr_dataset(

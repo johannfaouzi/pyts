@@ -1,0 +1,13 @@
+name: "pyts CodeQL config"
+
+# Paths excluded from analysis entirely, for the same reasons ruff's
+# ``[tool.ruff] extend-exclude`` (see pyproject.toml) skips them: these
+# files use a ``.py`` extension but are not executable/analyzable Python.
+paths-ignore:
+  # A numpydoc docstring template (``{{summary}}``-style Jinja
+  # placeholders), not executable Python, despite the ``.py`` extension.
+  - doc/_templates/numpydoc_docstring.py
+  # A Sphinx extension adapted from scipy's scipyoptdoc.py, kept close to
+  # its upstream form; pre-existing lint/analysis debt unrelated to pyts's
+  # own code and out of scope for its tooling modernization.
+  - doc/pytsdtwdoc.py

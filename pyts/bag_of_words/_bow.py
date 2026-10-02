@@ -363,6 +363,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         # `self.threshold_std is not None`, and short-circuit evaluation of
         # `or` means `idx` is only read when that same condition holds.
         if (self.threshold_std is None) or (
+            # codeql[py/uninitialized-local-variable]
             not np.all(idx)  # pyrefly: ignore[unbound-name]
         ):
             pipeline = make_pipeline(
@@ -398,8 +399,10 @@ class BagOfWords(BaseEstimator, TransformerMixin):
                 else:
                     X_sax = X_sax_below_thresh  # pyrefly: ignore[unbound-name]
             else:
+                # codeql[py/uninitialized-local-variable]
                 X_sax = X_sax_above_thresh  # pyrefly: ignore[unbound-name]
         else:
+            # codeql[py/uninitialized-local-variable]
             X_sax = X_sax_above_thresh  # pyrefly: ignore[unbound-name]
         X_sax = X_sax.reshape(n_samples, n_windows, word_size)
 

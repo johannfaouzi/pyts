@@ -50,6 +50,12 @@ def test_parameter_check_uea_dataset_info(dataset, err_msg):
         uea_dataset_info(dataset)
 
 
+def test_type_check_uea_dataset_info():
+    """Test that an unsupported 'dataset' type raises a TypeError."""
+    with pytest.raises(TypeError, match="'dataset' must be"):
+        uea_dataset_info(42)
+
+
 @pytest.mark.parametrize(
     'dataset, length_expected',
     [
