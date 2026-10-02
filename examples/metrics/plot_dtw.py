@@ -14,15 +14,15 @@ as :func:`pyts.metrics.dtw`.
 
 import matplotlib.pyplot as plt
 import numpy as np
-from pyts.metrics.dtw import (
+
+from pyts.datasets import load_gunpoint
+from pyts.metrics import dtw, itakura_parallelogram, sakoe_chiba_band
+from pyts.metrics._dtw import (
     _blurred_path_region,
     _return_path,
     accumulated_cost_matrix,
     cost_matrix,
 )
-
-from pyts.datasets import load_gunpoint
-from pyts.metrics import dtw, itakura_parallelogram, sakoe_chiba_band
 
 # Parameters
 X, _, _, _ = load_gunpoint(return_X_y=True)

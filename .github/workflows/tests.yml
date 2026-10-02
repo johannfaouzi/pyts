@@ -37,6 +37,22 @@ jobs:
       - run: pip install ".[typing,tests]"
       - run: pyrefly check --python-interpreter-path "$(which python)"
 
+  docs:
+    # ReadTheDocs builds the docs independently after a push, so without
+    # this job a Sphinx-Gallery failure (e.g. an example importing a
+    # module that got renamed) stays invisible here and only shows up
+    # later as a failing build / red badge on the published docs.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m pip install --upgrade pip
+      - run: pip install ".[docs]"
+      - name: Build documentation
+        run: sphinx-build -b html doc doc/_build/html
+
   test:
     name: test (${{ matrix.os }}, py${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}

@@ -27,9 +27,9 @@ The last two cases are equivalent since ``0.4 * 10 = 4``.
 
 import matplotlib.pyplot as plt
 import numpy as np
-from pyts.metrics.dtw import _check_sakoe_chiba_params
 
 from pyts.metrics import sakoe_chiba_band
+from pyts.metrics._dtw import _check_sakoe_chiba_params
 
 # #####################################################################
 # We write a function to visualize the sakoe-chiba band for different
