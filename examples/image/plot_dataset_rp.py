@@ -10,19 +10,20 @@ The image can be binarized using a threshold.
 It is implemented as :class:`pyts.image.RecurrencePlot`.
 
 In this example, we consider the training samples of the
-`GunPoint dataset <http://timeseriesclassification.com/description.php?Dataset=GunPoint>`_,
+`GunPoint dataset <https://timeseriesclassification.com/description.php?Dataset=GunPoint>`_,
 consisting of 50 univariate time series of length 150.
 The recurrence plot of each time series is independently computed and the
 50 recurrence plots are plotted.
-"""  # noqa:E501
+"""
 
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import ImageGrid
-from pyts.image import RecurrencePlot
+
 from pyts.datasets import load_gunpoint
+from pyts.image import RecurrencePlot
 
 # Load the GunPoint dataset
 X, _, _, _ = load_gunpoint(return_X_y=True)
@@ -41,8 +42,7 @@ grid[0].get_yaxis().set_ticks([])
 grid[0].get_xaxis().set_ticks([])
 
 fig.suptitle(
-    "Recurrence plots for the 50 time series in the 'GunPoint' dataset",
-    y=0.92
+    "Recurrence plots for the 50 time series in the 'GunPoint' dataset", y=0.92
 )
 
 plt.show()

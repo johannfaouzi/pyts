@@ -14,8 +14,9 @@ It is implemented as :class:`pyts.decomposition.SingularSpectrumAnalysis`.
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 from pyts.decomposition import SingularSpectrumAnalysis
 
 # Parameters
@@ -42,7 +43,7 @@ ax1.legend(loc='best', fontsize=14)
 
 ax2 = plt.subplot(122)
 for i in range(len(groups)):
-    ax2.plot(X_ssa[0, i], 'o--', label='SSA {0}'.format(i + 1))
+    ax2.plot(X_ssa[0, i], 'o--', label=f'SSA {i + 1}')
 ax2.legend(loc='best', fontsize=14)
 
 plt.suptitle('Singular Spectrum Analysis', fontsize=20)

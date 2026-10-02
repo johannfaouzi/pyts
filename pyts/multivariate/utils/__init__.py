@@ -1,3 +1,3 @@
-from .utils import check_3d_array
+from pyts.multivariate.utils._utils import check_3d_array
 
 __all__ = ['check_3d_array']

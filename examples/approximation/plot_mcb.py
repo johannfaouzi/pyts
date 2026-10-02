@@ -17,8 +17,9 @@ It is implemented as :class:`pyts.approximation.MultipleCoefficientBinning`.
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 from pyts.approximation import MultipleCoefficientBinning
 
 # Parameters
@@ -37,20 +38,30 @@ X_mcb = mcb.fit_transform(X)
 plt.figure(figsize=(6, 4))
 
 plt.plot(X[0], 'o--', ms=4, label='First time series')
-for x, y, s in zip(range(n_timestamps), X[0], X_mcb[0]):
+for x, y, s in zip(range(n_timestamps), X[0], X_mcb[0], strict=False):
     plt.text(x, y, s, ha='center', va='bottom', fontsize=14, color='C0')
 
 plt.plot(X[5], 'o--', ms=4, label='Second time series')
-for x, y, s in zip(range(n_timestamps), X[5], X_mcb[5]):
+for x, y, s in zip(range(n_timestamps), X[5], X_mcb[5], strict=False):
     plt.text(x, y, s, ha='center', va='bottom', fontsize=14, color='C1')
 
 # Plot the bin edges
 for i in range(n_bins - 1):
-    plt.hlines(mcb.bin_edges_.T[i], np.arange(n_timestamps) - 0.5,
-               np.arange(n_timestamps) + 0.5, color='g',
-               linestyles='--', linewidth=0.7)
-plt.vlines(np.arange(n_timestamps + 1) - 0.5, X.min(), X.max(),
-           linestyles='--', linewidth=0.5)
+    plt.hlines(
+        mcb.bin_edges_.T[i],
+        np.arange(n_timestamps) - 0.5,
+        np.arange(n_timestamps) + 0.5,
+        color='g',
+        linestyles='--',
+        linewidth=0.7,
+    )
+plt.vlines(
+    np.arange(n_timestamps + 1) - 0.5,
+    X.min(),
+    X.max(),
+    linestyles='--',
+    linewidth=0.5,
+)
 
 plt.legend(loc='best', fontsize=10)
 plt.xlabel('Time', fontsize=14)

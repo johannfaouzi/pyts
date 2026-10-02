@@ -47,10 +47,11 @@ It is implemented as :class:`pyts.classification.TSBF`.
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-import numpy as np
-from pyts.datasets import load_gunpoint
-from pyts.classification import TSBF
 import matplotlib.pyplot as plt
+import numpy as np
+
+from pyts.classification import TSBF
+from pyts.datasets import load_gunpoint
 
 X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
 clf = TSBF(random_state=43, bins=5)
@@ -58,9 +59,11 @@ clf.fit(X_train, y_train)
 
 plt.bar(np.arange(clf.n_features_in_), clf.feature_importances_)
 plt.title('Feature importance scores')
-plt.xticks(np.arange(clf.n_features_in_),
-           ['feature {}'.format(i) for i in range(clf.n_features_in_)],
-           rotation=90)
+plt.xticks(
+    np.arange(clf.n_features_in_),
+    [f'feature {i}' for i in range(clf.n_features_in_)],
+    rotation=90,
+)
 plt.ylabel("Mean decrease in impurity")
 plt.tight_layout()
 plt.show()

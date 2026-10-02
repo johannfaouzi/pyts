@@ -5,23 +5,42 @@
 
 import numpy as np
 import pytest
-from ..load import (load_basic_motions, load_coffee, load_gunpoint,
-                    load_pig_central_venous_pressure)
+
+from pyts.datasets._load import (
+    load_basic_motions,
+    load_coffee,
+    load_gunpoint,
+    load_pig_central_venous_pressure,
+)
 
 
 @pytest.mark.parametrize(
     'function, data_train_shape, data_test_shape, target_train_shape, '
     'target_test_shape, n_classes',
-    [(load_basic_motions, (40, 6, 100), (40, 6, 100), (40,), (40,), 4),
-     (load_coffee, (28, 286), (28, 286), (28,), (28,), 2),
-     (load_gunpoint, (50, 150), (150, 150), (50,), (150,), 2),
-     (load_pig_central_venous_pressure, (104, 2000), (208, 2000), (104,),
-      (208,), 52)]
+    [
+        (load_basic_motions, (40, 6, 100), (40, 6, 100), (40,), (40,), 4),
+        (load_coffee, (28, 286), (28, 286), (28,), (28,), 2),
+        (load_gunpoint, (50, 150), (150, 150), (50,), (150,), 2),
+        (
+            load_pig_central_venous_pressure,
+            (104, 2000),
+            (208, 2000),
+            (104,),
+            (208,),
+            52,
+        ),
+    ],
 )
 @pytest.mark.parametrize('return_X_y', [False, True])
-def test_load_functions(function, data_train_shape, data_test_shape,
-                        target_train_shape, target_test_shape, n_classes,
-                        return_X_y):
+def test_load_functions(
+    function,
+    data_train_shape,
+    data_test_shape,
+    target_train_shape,
+    target_test_shape,
+    n_classes,
+    return_X_y,
+):
     """Test the loading functions."""
     res = function(return_X_y=return_X_y)
     if return_X_y:

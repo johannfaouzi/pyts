@@ -1,11 +1,17 @@
 """The :mod:`pyts.classification` module includes classification algorithms."""
 
-from .bossvs import BOSSVS
-from .learning_shapelets import LearningShapelets
-from .knn import KNeighborsClassifier
-from .saxvsm import SAXVSM
-from .time_series_forest import TimeSeriesForest
-from .tsbf import TSBF
+from pyts.classification._bossvs import BOSSVS
+from pyts.classification._knn import KNeighborsClassifier
+from pyts.classification._learning_shapelets import LearningShapelets
+from pyts.classification._saxvsm import SAXVSM
+from pyts.classification._time_series_forest import TimeSeriesForest
+from pyts.classification._tsbf import TSBF
 
-__all__ = ['BOSSVS', 'KNeighborsClassifier', 'LearningShapelets', 'SAXVSM',
-           'TimeSeriesForest', 'TSBF']
+__all__ = [
+    'BOSSVS',
+    'SAXVSM',
+    'TSBF',
+    'KNeighborsClassifier',
+    'LearningShapelets',
+    'TimeSeriesForest',
+]

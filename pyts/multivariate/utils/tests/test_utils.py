@@ -3,9 +3,10 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
+import re
+
 import numpy as np
 import pytest
-import re
 
 from pyts.multivariate.utils import check_3d_array
 
@@ -16,8 +17,10 @@ X = rng.randn(n_samples, n_features, n_timestamps)
 
 @pytest.mark.parametrize(
     'X, err_msg',
-    [(X[0, 0], "X must be 3-dimensional (got 1)."),
-     (X[0], "X must be 3-dimensional (got 2).")]
+    [
+        (X[0, 0], "X must be 3-dimensional (got 1)."),
+        (X[0], "X must be 3-dimensional (got 2)."),
+    ],
 )
 def test_3d_input(X, err_msg):
     """Test input data validation."""

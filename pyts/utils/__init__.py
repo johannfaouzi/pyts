@@ -1,7 +1,6 @@
 """The :mod:`pyts.utils` module includes utility tools."""
 
-from .utils import segmentation, windowed_view
-from .deprecation import deprecated
+from pyts.utils._deprecation import deprecated
+from pyts.utils._utils import segmentation, windowed_view
 
-
-__all__ = ['segmentation', 'windowed_view', 'deprecated']
+__all__ = ['deprecated', 'segmentation', 'windowed_view']

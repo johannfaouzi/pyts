@@ -10,8 +10,8 @@ analysis. This simple example shows how to plot a single time series.
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Parameters
 n_samples, n_timestamps = 100, 48

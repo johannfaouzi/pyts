@@ -77,13 +77,15 @@ pull request:
 
    where ``yourusername`` is your GitHub username.
 
-3. Install the development dependencies::
+3. Install pyts in editable mode, along with the development dependencies
+   (testing, linting and type-checking tools)::
 
-      pip install pytest flake8
+      pip install -e ".[dev]"
 
-4. Install pyts in editable mode::
+4. Install the git hooks so that formatting, linting and type-checking run
+   automatically on every commit::
 
-      pip install -e .
+      pre-commit install
 
 5. Add the ``upstream`` remote. It creates a reference to the main repository
    that can be used to keep your repository synchronized with the latest changes
@@ -146,11 +148,19 @@ usually worth complying with.
 - **Make sure that the documentation renders properly**. To build the
   documentation, please refer to the :ref:`contribute_documentation` guidelines.
 
-- **Make sure that your PR does not add PEP8 violations**. On a Unix-like
-  system, you can run ``make flake8-diff`` to only test the modified code.
-  On any platform, you can run ``flake8`` to test the whole package, but it
-  is better to only fix PEP8 violations that are related to your changes.
-  Feel free to submit another pull request if you find other PEP8 violations.
+- **Make sure that your PR does not add linting, formatting or typing
+  violations**. pyts uses `ruff <https://docs.astral.sh/ruff/>`_ for linting
+  and formatting and `pyrefly <https://pyrefly.org/>`_ for static type
+  checking. If you installed the git hooks as described above, these run
+  automatically on every commit; you can also run them manually on the
+  whole package at any time::
+
+    ruff check pyts
+    ruff format pyts
+    pyrefly check
+
+  It is better to only fix violations that are related to your changes.
+  Feel free to submit another pull request if you find other violations.
 
 .. _contribute_documentation:
 
@@ -166,9 +176,9 @@ want to fix it.
 Building the documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Building the documentation requires installing some additional packages::
+Building the documentation requires installing the ``docs`` extra::
 
-    pip install docutils==0.14 sphinx==1.8.5 sphinx-gallery numpydoc matplotlib
+    pip install -e ".[docs]"
 
 To build the documentation, you must be in the ``doc`` folder::
 

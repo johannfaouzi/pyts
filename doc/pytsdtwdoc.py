@@ -8,7 +8,7 @@ Proper docstrings for pyts.metrics.dtw et al.
 Usage::
 
     .. pyts-metrics:function:: pyts.metrics.dtw
-       :impl: pyts.metrics.dtw._dtw_sakoe_chiba
+       :impl: pyts.metrics._dtw._dtw_sakoe_chiba
        :method: Sakoe-Chiba
 
 Produces output similar to autodoc, except
@@ -164,7 +164,13 @@ def wrap_mangling_directive(base_directive):
                     new_lines.append(':Options:')
                 else:
                     new_lines.append(line)
-            self.content = StringList(new_lines, self.content.parent)
+            # ``parent`` (not ``source``, which must be a path-like or
+            # None -- passing the parent ``StringList`` positionally into
+            # the ``source`` slot crashes recent docutils, which calls
+            # ``os.fspath()`` on it) keeps this replacement content linked
+            # to the directive's original content for source-position
+            # tracking in error messages.
+            self.content = StringList(new_lines, parent=self.content.parent)
             return base_directive.run(self)
 
         option_spec = dict(base_directive.option_spec)

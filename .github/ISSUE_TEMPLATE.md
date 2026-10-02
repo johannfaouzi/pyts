@@ -2,7 +2,7 @@
 <!-- A detailed description of your issue. -->
 
 #### Steps/Code to Reproduce
-<!-- 
+<!--
 A short self-contained code example that reproduces the problem/missing feature.
 -->
 ```python

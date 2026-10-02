@@ -6,5 +6,5 @@ dtw(method='itakura')
 ---------------------
 
 .. pyts-metrics:function:: pyts.metrics.dtw
-   :impl: pyts.metrics.dtw._dtw_itakura
+   :impl: pyts.metrics._dtw._dtw_itakura
    :method: itakura

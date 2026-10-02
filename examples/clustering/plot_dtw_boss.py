@@ -26,22 +26,22 @@ References
 # License: BSD-3-Clause
 
 import itertools
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.spatial.distance import euclidean
-from scipy.cluster.hierarchy import dendrogram
-from sklearn.metrics import homogeneity_score
-from sklearn.cluster import AgglomerativeClustering
 
-from pyts.metrics import dtw, boss
-from pyts.transformation import BOSS
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.cluster.hierarchy import dendrogram
+from scipy.spatial.distance import euclidean
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.metrics import homogeneity_score
+
 from pyts.datasets import make_cylinder_bell_funnel
+from pyts.metrics import boss, dtw
+from pyts.transformation import BOSS
 
 
 def create_dist_matrix(dataset, dist_func, **kwargs):
     distance_mat = np.zeros((len(dataset), len(dataset)))
-    for i, j in itertools.product(range(len(dataset)),
-                                  range(len(dataset))):
+    for i, j in itertools.product(range(len(dataset)), range(len(dataset))):
         distance_mat[i, j] = dist_func(dataset[i], dataset[j], **kwargs)
     return distance_mat
 
@@ -68,29 +68,34 @@ def plot_dendrogram(model, **kwargs):
     ).astype(float)
 
     # Plot the corresponding dendrogram
-    dendrogram(linkage_matrix,
-               color_threshold=sorted(model.distances_)[-2], **kwargs)
+    dendrogram(
+        linkage_matrix, color_threshold=sorted(model.distances_)[-2], **kwargs
+    )
 
 
 n_samples = 14
 fig, axes = plt.subplots(1, 3, figsize=(16, 8))
 
-X, y = make_cylinder_bell_funnel(n_samples=n_samples, random_state=42,
-                                 shuffle=False)
+X, y = make_cylinder_bell_funnel(
+    n_samples=n_samples, random_state=42, shuffle=False
+)
 for k_axis, metric in enumerate(["Euclidean", "DTW", "BOSS"]):
     if metric == "DTW":
         dist_mat = create_dist_matrix(X, dtw)
     elif metric == "BOSS":
-        dist_mat = create_dist_matrix(BOSS(sparse=False, n_bins=3,
-                                           word_size=3).fit_transform(X),
-                                      boss)
+        dist_mat = create_dist_matrix(
+            BOSS(sparse=False, n_bins=3, word_size=3).fit_transform(X), boss
+        )
     else:
         dist_mat = create_dist_matrix(X, euclidean)
 
-    model = AgglomerativeClustering(compute_full_tree=True,
-                                    compute_distances=True,
-                                    n_clusters=3, metric="precomputed",
-                                    linkage="complete")
+    model = AgglomerativeClustering(
+        compute_full_tree=True,
+        compute_distances=True,
+        n_clusters=3,
+        metric="precomputed",
+        linkage="complete",
+    )
     cluster = model.fit_predict(dist_mat)
     score = round(homogeneity_score(labels_true=y, labels_pred=cluster), 2)
 

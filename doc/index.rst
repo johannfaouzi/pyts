@@ -6,33 +6,33 @@ Welcome to pyts documentation!
    :hidden:
    :caption: Getting Started
 
-   install
-   contribute
+   Install <install>
+   Contribute <contribute>
 
 .. toctree::
    :maxdepth: 2
    :hidden:
    :caption: Documentation
 
-   user_guide
-   api
-   scikit_learn_compatibility
+   User Guide <user_guide>
+   API <api>
+   Compatibility <scikit_learn_compatibility>
 
 .. toctree::
    :maxdepth: 2
    :hidden:
    :caption: Tutorial - Examples
 
-   auto_examples/index
+   Examples <auto_examples/index>
 
 .. toctree::
    :maxdepth: 1
    :hidden:
    :caption: Additional Information
 
-   reproducibility
-   changelog
-   citation
+   Reproducibility <reproducibility>
+   Changelog <changelog>
+   Citation <citation>
 
 
 **pyts** is a Python package dedicated to time series classification.

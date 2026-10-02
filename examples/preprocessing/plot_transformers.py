@@ -18,6 +18,7 @@ This example illustrates the transformation from both algorithms.
 # License: BSD-3-Clause
 
 import matplotlib.pyplot as plt
+
 from pyts.datasets import load_gunpoint
 from pyts.preprocessing import PowerTransformer, QuantileTransformer
 

@@ -6,7 +6,7 @@ Dataset loading utilities
 
 .. currentmodule:: pyts.datasets
 
-The `UEA & UCR Time Series Classification Repository <http://www.timeseriesclassification.com>`_
+The `UEA & UCR Time Series Classification Repository <https://timeseriesclassification.com>`_
 hosts a lot of datasets for time series classification. A few datasets are
 available in the *pyts* repository itself, and functions to download the
 other datasets are made available.

@@ -1,25 +1,51 @@
-# This workflows will upload a Python Package using Twine when a release is created
-# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+# This workflow builds the package and uploads it to PyPI when a GitHub
+# Release is published, using PyPI's Trusted Publishing (OIDC): no API
+# token is stored as a secret.
+# For more information see:
+# https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
 
 name: Upload Python Package
 
 on:
   release:
-    types: [created]
+    types: [published]
 
 jobs:
-  deploy:
-
+  build:
+    name: Build distribution
     runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.x"
+
+    - name: Build the package
+      run: python3 -m pip install --upgrade build && python3 -m build
+
+    - name: Store the distribution packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+
+  publish:
+    name: Publish to PyPI
+    needs: [build]
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pyts
     permissions:
       id-token: write
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
-
-    - name: Build the package
-      run: python3 -m pip install --upgrade build && python3 -m build
+    - name: Download the distribution packages
+      uses: actions/download-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
 
     - name: Publish the package to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1

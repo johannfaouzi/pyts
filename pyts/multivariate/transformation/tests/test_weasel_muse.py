@@ -17,7 +17,7 @@ y = rng.randint(n_classes, size=n_samples)
 
 @pytest.mark.parametrize(
     'params, type_desired',
-    [({'sparse': True}, csr_matrix), ({'sparse': False}, np.ndarray)]
+    [({'sparse': True}, csr_matrix), ({'sparse': False}, np.ndarray)],
 )
 def test_output_dtype(params, type_desired):
     """Check that the output dtype is the expected one."""
@@ -26,9 +26,7 @@ def test_output_dtype(params, type_desired):
     assert isinstance(output, type_desired)
 
 
-@pytest.mark.parametrize(
-    'params', [{'sparse': True}, {'sparse': False}]
-)
+@pytest.mark.parametrize('params', [{'sparse': True}, {'sparse': False}])
 def test_output_ndim(params):
     """Check that the number of dimensions is always 2."""
     transformer = WEASELMUSE(**params)
@@ -43,9 +41,7 @@ def test_n_estimators():
     assert len(transformer._estimators_diff) == n_features
 
 
-@pytest.mark.parametrize(
-    'params', [{'sparse': True}, {'sparse': False}]
-)
+@pytest.mark.parametrize('params', [{'sparse': True}, {'sparse': False}])
 def test_fit_transform(params):
     """Check that fit and transform and fit_transform yield same results."""
     transformer = WEASELMUSE(**params)

@@ -16,8 +16,9 @@ This example illustrates this transformation. It is implemented as
 # License: BSD-3-Clause
 
 import matplotlib.pyplot as plt
-from pyts.multivariate.image import JointRecurrencePlot
+
 from pyts.datasets import load_basic_motions
+from pyts.multivariate.image import JointRecurrencePlot
 
 X, _, _, _ = load_basic_motions(return_X_y=True)
 

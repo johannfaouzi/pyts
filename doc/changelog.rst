@@ -4,6 +4,45 @@
 Change Log
 ==========
 
+Version 0.14.0
+--------------
+
+- Add support for Python 3.12, 3.13 and 3.14, and drop support for Python
+  3.8, 3.9 and 3.10 (all past end-of-life).
+
+- Update the minimal versions required of the dependencies to support
+  current releases of the scientific Python stack:
+  * NumPy (>= 1.24.0)
+  * SciPy (>= 1.10.0)
+  * Scikit-Learn (>= 1.6.0)
+  * Joblib (>= 1.3.0)
+  * Numba (>= 0.60.0, for NumPy 2 support)
+
+- Update the codebase for compatibility with NumPy 2.x, recent scikit-learn
+  releases and recent numba releases:
+
+  + Replace the removed ``force_all_finite`` parameter of
+    ``sklearn.utils.check_array`` with its replacement,
+    ``ensure_all_finite`` (renamed in scikit-learn 1.6, removed thereafter),
+    in :class:`pyts.preprocessing.InterpolationImputer`,
+    :class:`pyts.preprocessing.PowerTransformer` and :func:`pyts.metrics.dtw`.
+
+  + Fix :func:`pyts.metrics.show_options`, whose internal docstring parser
+    assumed a fixed indentation that no longer matches the docstring
+    whitespace produced by the Python 3.13+ compiler.
+
+  + Update the :class:`pyts.preprocessing.QuantileTransformer` doctest
+    example to match NumPy 2's array ``repr`` (which appends a
+    ``shape=(...)`` suffix to large truncated arrays).
+
+  + Remove a ``distutils`` import from the Sphinx configuration
+    (``doc/conf.py``); ``distutils`` was removed from the standard library
+    in Python 3.12.
+
+- Migrate packaging from ``setup.py``/``setup.cfg`` to a PEP 621
+  ``pyproject.toml``, and replace the Azure Pipelines CI configuration
+  with GitHub Actions.
+
 Version 0.13.0
 --------------
 
@@ -32,8 +71,8 @@ Version 0.13.0
   in :class:`pyts.classification.LearningShapelets`: to 10 (to prevent a change
   of the default value in scikit-learn).
 
-- Replace ``base_estimator_`` attribute with ``estimator_`` in 
-  :class:`pyts.classification.TimeSeriesForest` and 
+- Replace ``base_estimator_`` attribute with ``estimator_`` in
+  :class:`pyts.classification.TimeSeriesForest` and
   :class:`pyts.classification.TSBF` (to match the changes made in scikit-learn).
 
 Version 0.12.0

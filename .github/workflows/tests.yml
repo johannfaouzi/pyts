@@ -1,0 +1,124 @@
+name: Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m pip install --upgrade pip
+      - run: pip install ".[linting]"
+      - run: ruff check pyts
+      - run: ruff format --check pyts
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m pip install --upgrade pip
+      # pyrefly needs the runtime dependencies importable to resolve types
+      # from their source (they ship no stubs of their own), not just the
+      # typing tool itself.
+      - run: pip install ".[typing,tests]"
+      - run: pyrefly check --python-interpreter-path "$(which python)"
+
+  test:
+    name: test (${{ matrix.os }}, py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install pyts and latest dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ".[tests]"
+
+      - name: Run test suite
+        run: pytest -v --pyargs pyts
+
+  test-minimum-versions:
+    # Verifies that the floors declared in pyproject.toml are actually
+    # installable and working, not just "latest works".
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pyts with minimum supported dependency versions
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy==1.24.0 scipy==1.10.0 scikit-learn==1.6.0 joblib==1.3.0 numba==0.60.0 platformdirs==4.0.0
+          pip install --no-deps -e .
+          pip install pytest
+      - name: Run test suite
+        run: pytest -v --pyargs pyts
+
+  coverage:
+    # A separate NUMBA_DISABLE_JIT=1 run: numba-compiled functions run as
+    # native code and are invisible to coverage.py, so this run measures
+    # actual line coverage while the jobs above exercise the real
+    # (JIT-compiled) code path.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install ".[tests]"
+      - name: Run test suite with coverage (JIT disabled)
+        env:
+          NUMBA_DISABLE_JIT: "1"
+        run: pytest -v --cov=pyts --cov-report=xml --pyargs pyts
+      - uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+
+  test-python315-preview:
+    # Python 3.15 hasn't shipped yet, and not every dependency has a
+    # stable wheel for it. This job is allowed to fail so it doesn't
+    # block CI, but it starts passing automatically the moment the
+    # ecosystem (numpy/scipy/scikit-learn/numba) catches up, without
+    # needing another pyts release just to raise the ceiling.
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.15"
+          allow-prereleases: true
+      - name: Install pyts and latest dependencies (pre-releases allowed)
+        run: |
+          python -m pip install --upgrade pip
+          pip install --pre ".[tests]"
+      - name: Run test suite
+        run: pytest -v --pyargs pyts

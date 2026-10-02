@@ -26,10 +26,10 @@ Gramian angular fields is retrieved (``ax_gasf.imshow(X_gasf[0], ...``).
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-import numpy as np
 import matplotlib.pyplot as plt
-from pyts.image import GramianAngularField
+import numpy as np
 
+from pyts.image import GramianAngularField
 
 # Create a toy time series using the sine function
 time_points = np.linspace(0, 4 * np.pi, 1000)
@@ -49,16 +49,32 @@ height_ratios = (2, 7)
 width = 10
 height = width * sum(height_ratios) / sum(width_ratios)
 fig = plt.figure(figsize=(width, height))
-gs = fig.add_gridspec(2, 4,  width_ratios=width_ratios,
-                      height_ratios=height_ratios,
-                      left=0.1, right=0.9, bottom=0.1, top=0.9,
-                      wspace=0.1, hspace=0.1)
+gs = fig.add_gridspec(
+    2,
+    4,
+    width_ratios=width_ratios,
+    height_ratios=height_ratios,
+    left=0.1,
+    right=0.9,
+    bottom=0.1,
+    top=0.9,
+    wspace=0.1,
+    hspace=0.1,
+)
 
 # Define the ticks and their labels for both axes
 time_ticks = np.linspace(0, 4 * np.pi, 9)
-time_ticklabels = [r'$0$', r'$\frac{\pi}{2}$', r'$\pi$',
-                   r'$\frac{3\pi}{2}$', r'$2\pi$', r'$\frac{5\pi}{2}$',
-                   r'$3\pi$', r'$\frac{7\pi}{2}$', r'$4\pi$']
+time_ticklabels = [
+    r'$0$',
+    r'$\frac{\pi}{2}$',
+    r'$\pi$',
+    r'$\frac{3\pi}{2}$',
+    r'$2\pi$',
+    r'$\frac{5\pi}{2}$',
+    r'$3\pi$',
+    r'$\frac{7\pi}{2}$',
+    r'$4\pi$',
+]
 value_ticks = [-1, 0, 1]
 reversed_value_ticks = value_ticks[::-1]
 
@@ -87,15 +103,23 @@ ax_top2.set_yticklabels([])
 
 # Plot the Gramian angular fields on the bottom right
 ax_gasf = fig.add_subplot(gs[1, 1])
-ax_gasf.imshow(X_gasf[0], cmap='rainbow', origin='lower',
-               extent=[0, 4 * np.pi, 0, 4 * np.pi])
+ax_gasf.imshow(
+    X_gasf[0],
+    cmap='rainbow',
+    origin='lower',
+    extent=[0, 4 * np.pi, 0, 4 * np.pi],
+)
 ax_gasf.set_xticks([])
 ax_gasf.set_yticks([])
 ax_gasf.set_title('Gramian Angular Summation Field', y=-0.09)
 
 ax_gadf = fig.add_subplot(gs[1, 2])
-im = ax_gadf.imshow(X_gadf[0], cmap='rainbow', origin='lower',
-                    extent=[0, 4 * np.pi, 0, 4 * np.pi])
+im = ax_gadf.imshow(
+    X_gadf[0],
+    cmap='rainbow',
+    origin='lower',
+    extent=[0, 4 * np.pi, 0, 4 * np.pi],
+)
 ax_gadf.set_xticks([])
 ax_gadf.set_yticks([])
 ax_gadf.set_title('Gramian Angular Difference Field', y=-0.09)

@@ -6,5 +6,5 @@ dtw(method='fast')
 ------------------
 
 .. pyts-metrics:function:: pyts.metrics.dtw
-   :impl: pyts.metrics.dtw._dtw_fast
+   :impl: pyts.metrics._dtw._dtw_fast
    :method: fast

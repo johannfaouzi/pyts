@@ -1,9 +1,10 @@
-:mod:`{{module}}`.{{objname}}
-{{ underline }}==============
+{{ objname }}
+{{ underline }}
 
 .. currentmodule:: {{ module }}
 
 .. autoclass:: {{ objname }}
+    :members:
 
     {% block attributes %}
     {% if attributes %}

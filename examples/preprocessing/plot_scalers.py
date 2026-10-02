@@ -13,10 +13,15 @@ This example illustrates several scaling algorithms made available in
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-import numpy as np
 import matplotlib.pyplot as plt
-from pyts.preprocessing import (StandardScaler, MinMaxScaler,
-                                MaxAbsScaler, RobustScaler)
+import numpy as np
+
+from pyts.preprocessing import (
+    MaxAbsScaler,
+    MinMaxScaler,
+    RobustScaler,
+    StandardScaler,
+)
 
 # Parameters
 n_samples, n_timestamps = 100, 48
@@ -41,8 +46,9 @@ ax1.set_title('Original time series', fontsize=16)
 ax1.legend(loc='best', fontsize=12)
 
 ax2 = plt.subplot(122)
-ax2.plot(X_standard[0], 'o--', ms=marker_size, color='C1',
-         label='StandardScaler')
+ax2.plot(
+    X_standard[0], 'o--', ms=marker_size, color='C1', label='StandardScaler'
+)
 ax2.plot(X_minmax[0], 'o--', ms=marker_size, color='C2', label='MinMaxScaler')
 ax2.plot(X_maxabs[0], 'o--', ms=marker_size, color='C3', label='MaxAbsScaler')
 ax2.plot(X_robust[0], 'o--', ms=marker_size, color='C4', label='RobustScaler')

@@ -14,8 +14,8 @@ It is implemented as :func:`pyts.datasets.make_cylinder_bell_funnel`.
 # License: BSD-3-Clause
 
 import matplotlib.pyplot as plt
-from pyts.datasets import make_cylinder_bell_funnel
 
+from pyts.datasets import make_cylinder_bell_funnel
 
 X, y = make_cylinder_bell_funnel(n_samples=12, random_state=42)
 
@@ -24,7 +24,7 @@ for i, classe in enumerate(['cylinder', 'bell', 'funnel']):
     plt.subplot(3, 1, i + 1)
     for x in X[y == i]:
         plt.plot(x, color='C0', linewidth=0.9)
-    plt.title('Class: {}'.format(classe), fontsize=16)
+    plt.title(f'Class: {classe}', fontsize=16)
 
 plt.tight_layout()
 plt.subplots_adjust(hspace=0.4)

@@ -15,8 +15,9 @@ It is implemented as :class:`pyts.transformation.WEASEL`.
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 from pyts.datasets import load_gunpoint
 from pyts.transformation import WEASEL
 
@@ -31,15 +32,27 @@ X_weasel = weasel.fit_transform(X_train, y_train)
 plt.figure(figsize=(6, 4))
 vocabulary_length = len(weasel.vocabulary_)
 width = 0.3
-plt.bar(np.arange(vocabulary_length) - width / 2, X_weasel[y_train == 1][0],
-        width=width, label='First time series in class 1')
-plt.bar(np.arange(vocabulary_length) + width / 2, X_weasel[y_train == 2][0],
-        width=width, label='First time series in class 2')
-plt.xticks(np.arange(vocabulary_length),
-           np.vectorize(weasel.vocabulary_.get)(np.arange(X_weasel[0].size)),
-           fontsize=12, rotation=60)
-y_max = np.max(np.concatenate([X_weasel[y_train == 1][0],
-                               X_weasel[y_train == 2][0]]))
+plt.bar(
+    np.arange(vocabulary_length) - width / 2,
+    X_weasel[y_train == 1][0],
+    width=width,
+    label='First time series in class 1',
+)
+plt.bar(
+    np.arange(vocabulary_length) + width / 2,
+    X_weasel[y_train == 2][0],
+    width=width,
+    label='First time series in class 2',
+)
+plt.xticks(
+    np.arange(vocabulary_length),
+    np.vectorize(weasel.vocabulary_.get)(np.arange(X_weasel[0].size)),
+    fontsize=12,
+    rotation=60,
+)
+y_max = np.max(
+    np.concatenate([X_weasel[y_train == 1][0], X_weasel[y_train == 2][0]])
+)
 plt.yticks(np.arange(y_max + 1), fontsize=12)
 plt.xlabel("Words", fontsize=14)
 plt.ylabel("Frequencies", fontsize=14)

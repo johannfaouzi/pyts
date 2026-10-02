@@ -19,8 +19,10 @@ time series and both shapelets. Note that the tolerance parameter is set to a
 high value so that the algorithm converges early (and the example runs faster).
 It is implemented as :class:`pyts.classification.LearningShapelets`.
 """
+
 import matplotlib.pyplot as plt
 import numpy as np
+
 from pyts.classification import LearningShapelets
 from pyts.datasets import load_gunpoint
 from pyts.utils import windowed_view
@@ -36,8 +38,9 @@ shapelets = np.asarray([clf.shapelets_[0, -9], clf.shapelets_[0, -12]])
 # Derive the distances between the time series and the shapelets
 shapelet_size = shapelets.shape[1]
 X_window = windowed_view(X, window_size=shapelet_size, window_step=1)
-X_dist = np.mean(
-    (X_window[:, :, None] - shapelets[None, :]) ** 2, axis=3).min(axis=1)
+X_dist = np.mean((X_window[:, :, None] - shapelets[None, :]) ** 2, axis=3).min(
+    axis=1
+)
 
 plt.figure(figsize=(14, 4))
 
@@ -49,10 +52,13 @@ plt.title('Two learned shapelets', fontsize=14)
 
 # Plot the distances
 plt.subplot(1, 2, 2)
-for color, label in zip('br', (1, 2)):
-    plt.scatter(X_dist[y == label, 0], X_dist[y == label, 1],
-                c=color, label='Class {}'.format(label))
-plt.title('Distances between the time series and both shapelets',
-          fontsize=14)
+for color, label in zip('br', (1, 2), strict=False):
+    plt.scatter(
+        X_dist[y == label, 0],
+        X_dist[y == label, 1],
+        c=color,
+        label=f'Class {label}',
+    )
+plt.title('Distances between the time series and both shapelets', fontsize=14)
 plt.legend()
 plt.show()
