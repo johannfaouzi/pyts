@@ -16,10 +16,11 @@ It is implemented as
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-import numpy as np
 import matplotlib.lines as mlines
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.stats import norm
+
 from pyts.approximation import SymbolicAggregateApproximation
 
 # Parameters
@@ -42,12 +43,15 @@ bottom_bool = np.r_[True, X_sax[0, 1:] > X_sax[0, :-1]]
 
 plt.figure(figsize=(6, 4))
 plt.plot(X[0], 'o--', label='Original')
-for x, y, s, bottom in zip(range(n_timestamps), X[0], X_sax[0], bottom_bool):
+for x, y, s, bottom in zip(
+    range(n_timestamps), X[0], X_sax[0], bottom_bool, strict=False
+):
     va = 'bottom' if bottom else 'top'
     plt.text(x, y, s, ha='center', va=va, fontsize=14, color='#ff7f0e')
 plt.hlines(bins, 0, n_timestamps, color='g', linestyles='--', linewidth=0.5)
-sax_legend = mlines.Line2D([], [], color='#ff7f0e', marker='*',
-                           label='SAX - {0} bins'.format(n_bins))
+sax_legend = mlines.Line2D(
+    [], [], color='#ff7f0e', marker='*', label=f'SAX - {n_bins} bins'
+)
 first_legend = plt.legend(handles=[sax_legend], fontsize=8, loc=(0.76, 0.86))
 ax = plt.gca().add_artist(first_legend)
 plt.legend(loc=(0.81, 0.93), fontsize=8)

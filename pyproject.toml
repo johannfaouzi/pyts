@@ -1,0 +1,136 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyts"
+version = "0.14.0"
+description = "A python package for time series classification"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = "BSD-3-Clause"
+license-files = ["LICENSE.txt"]
+maintainers = [
+    { name = "Johann Faouzi", email = "johann.faouzi@gmail.com" },
+]
+requires-python = ">=3.11,<3.16"
+dependencies = [
+    "numpy>=1.24.0",
+    "scipy>=1.15.0",
+    "scikit-learn>=1.6.0",
+    "joblib>=1.3.0",
+    "numba>=0.60.0",
+    "platformdirs>=4.0.0",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Topic :: Software Development",
+    "Topic :: Scientific/Engineering",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+]
+
+[project.urls]
+Homepage = "https://github.com/johannfaouzi/pyts"
+Documentation = "https://pyts.readthedocs.io/"
+Source = "https://github.com/johannfaouzi/pyts"
+Download = "https://github.com/johannfaouzi/pyts"
+"Bug Tracker" = "https://github.com/johannfaouzi/pyts/issues"
+
+[project.optional-dependencies]
+linting = ["ruff>=0.14"]
+typing = ["pyrefly>=0.1"]
+tests = ["pytest", "pytest-cov"]
+docs = [
+    "docutils",
+    "sphinx>=8.0",
+    "pydata-sphinx-theme>=0.16",
+    "sphinx-design>=0.6",
+    "sphinx-copybutton>=0.5",
+    "sphinx-gallery>=0.18",
+    "numpydoc>=1.8",
+    "matplotlib>=3.7",
+    "packaging",
+]
+dev = ["pyts[linting,typing,tests]", "pre-commit"]
+
+[tool.setuptools]
+zip-safe = false
+
+[tool.setuptools.packages.find]
+include = ["pyts*"]
+
+[tool.setuptools.package-data]
+pyts = [
+    "py.typed",
+    "datasets/cached_datasets/UCR/Coffee/*.txt",
+    "datasets/cached_datasets/UCR/GunPoint/*.txt",
+    "datasets/cached_datasets/UCR/PigCVP/*.txt",
+    "datasets/cached_datasets/UEA/BasicMotions/*.arff",
+    "datasets/cached_datasets/UEA/BasicMotions/*.txt",
+    "datasets/info/*.pickle",
+]
+
+[tool.pytest.ini_options]
+doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
+addopts = "--doctest-modules"
+filterwarnings = []
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+extend-exclude = [
+    "doc/_build",
+    "doc/auto_examples",
+    "doc/modules/generated",
+    # A numpydoc docstring template (``{{summary}}``-style placeholders),
+    # not executable Python, despite the ``.py`` extension.
+    "doc/_templates/numpydoc_docstring.py",
+    # A Sphinx extension adapted from scipy's scipyoptdoc.py, kept close to
+    # its upstream form; pre-existing lint debt unrelated to this pass and
+    # out of scope for pyts's own tooling modernization.
+    "doc/pytsdtwdoc.py",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort (import sorting)
+    "UP",   # pyupgrade (modern syntax)
+    "B",    # flake8-bugbear
+    "RUF",  # ruff-specific rules
+]
+ignore = [
+    "E203",   # whitespace before ':' (conflicts with ruff format)
+    "RUF002", # ambiguous unicode (en dashes in citation page ranges, e.g. 70-80)
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Numba's own zip() implementation inside @njit-compiled functions does not
+# support the `strict` keyword introduced in Python 3.10/B905, so it cannot
+# be added here the way it is in ordinary Python code.
+"pyts/transformation/_shapelet_transform.py" = ["B905"]
+
+[tool.ruff.format]
+quote-style = "preserve"
+
+[tool.pyrefly]
+project-includes = ["pyts"]
+project-excludes = ["**/tests/**", "**/*_test.py"]
+python-version = "3.11"
+# numba ships a py.typed marker, but its stubs are incomplete/incorrect for
+# constructs pyts relies on (e.g. numba.prange is not recognized as
+# iterable), which drowns real findings in unfixable noise. Force numba to
+# be treated as untyped (Any) rather than trusting its stubs.
+replace-imports-with-any = ["numba", "numba.*"]

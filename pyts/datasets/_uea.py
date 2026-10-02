@@ -1,0 +1,371 @@
+"""
+Utility functions for the UEA multivariate time series classification
+archive.
+"""
+
+# Author: Johann Faouzi <johann.faouzi@gmail.com>
+# License: BSD-3-Clause
+
+import os
+import pickle
+import zipfile
+from typing import Any
+from urllib.request import urlretrieve
+
+import numpy as np
+import numpy.typing as npt
+from scipy.io.arff import loadarff
+from sklearn.utils import Bunch
+
+from pyts.datasets._cache import _default_data_home
+from pyts.datasets._ts_format import parse_ts_file
+
+#: Per-dataset metadata, as stored in ``info/uea.pickle``.
+_DatasetInfo = dict[str, Any]
+
+
+def _correct_uea_name_download(dataset: str) -> str:
+    if dataset == 'Ering':
+        return 'ERing'
+    else:
+        return dataset
+
+
+def uea_dataset_list() -> list[str]:
+    """List of available UEA datasets.
+
+    Returns
+    -------
+    datasets : list
+        List of available datasets from the UEA Time Series
+        Classification Archive.
+
+    References
+    ----------
+    .. [1] `List of datasets on the UEA & UCR archive
+           <https://timeseriesclassification.com/dataset.php>`_
+
+    Examples
+    --------
+    >>> from pyts.datasets import uea_dataset_list
+    >>> uea_dataset_list()[:3]
+    ['ArticularyWordRecognition', 'AtrialFibrillation', 'BasicMotions']
+
+    """
+    module_path = os.path.dirname(__file__)
+    finfo = os.path.join(module_path, 'info', 'uea.pickle')
+    with open(finfo, 'rb') as f:
+        dictionary = pickle.load(f)
+    datasets = sorted(dictionary.keys())
+    return datasets
+
+
+def uea_dataset_info(
+    dataset: str | list[str] | tuple[str, ...] | npt.ArrayLike | None = None,
+) -> dict[str, _DatasetInfo] | _DatasetInfo | None:
+    """Information about the UEA datasets.
+
+    Parameters
+    ----------
+    dataset : str, list of str or None (default = None)
+        The data sets for which the information will be returned.
+        If None, the information for all the datasets is returned.
+
+    Returns
+    -------
+    dictionary : dict
+        Dictionary with the information for each dataset.
+
+    References
+    ----------
+    .. [1] `List of datasets on the UEA & UCR archive
+           <https://timeseriesclassification.com/dataset.php>`_
+
+    Examples
+    --------
+    >>> from pyts.datasets import uea_dataset_info
+    >>> uea_dataset_info('AtrialFibrillation')['n_timestamps']
+    640
+
+    """
+    module_path = os.path.dirname(__file__)
+    finfo = os.path.join(module_path, 'info', 'uea.pickle')
+    with open(finfo, 'rb') as f:
+        dictionary = pickle.load(f)
+    datasets = list(dictionary.keys())
+
+    if dataset is None:
+        return dictionary
+    elif isinstance(dataset, str):
+        if dataset not in datasets:
+            raise ValueError(
+                f"{dataset} is not a valid name. The list of available names "
+                "can be obtained by calling the "
+                "'pyts.datasets.uea_dataset_list' function."
+            )
+        else:
+            return dictionary[dataset]
+    elif isinstance(dataset, (list, tuple, np.ndarray)):
+        dataset = np.asarray(dataset)
+        invalid_datasets = np.setdiff1d(dataset, datasets)
+        if invalid_datasets.size > 0:
+            raise ValueError(
+                f"The following names are not valid: {invalid_datasets}. "
+                "The list of available names can be obtained by calling "
+                "the 'pyts.datasets.uea_dataset_list' function."
+            )
+        else:
+            info = {}
+            for data in dataset:
+                info[data] = dictionary[data]
+            return info
+    else:
+        raise TypeError(
+            "'dataset' must be None, a string, or array-like of strings "
+            f"(got {type(dataset)})."
+        )
+
+
+def fetch_uea_dataset(
+    dataset: str,
+    use_cache: bool = True,
+    data_home: str | None = None,
+    return_X_y: bool = False,
+) -> (
+    Bunch
+    | tuple[
+        npt.NDArray[np.float64],
+        npt.NDArray[np.float64],
+        npt.NDArray[Any],
+        npt.NDArray[Any],
+    ]
+):
+    """Fetch dataset from UEA TSC Archive by name.
+
+    Fetched data sets are automatically saved in the OS-appropriate
+    per-user cache directory (see ``data_home``). To avoid downloading the
+    same data set several times, it is highly recommended not to change
+    the default values of ``use_cache`` and ``data_home``.
+
+    Parameters
+    ----------
+    dataset : str
+        Name of the dataset.
+
+    use_cache : bool (default = True)
+        If True, look if the data set has already been fetched
+        and load the fetched version if it is the case. If False,
+        download the data set from the UCR Time Series Classification
+        Archive.
+
+    data_home : None or str (default = None)
+        The path of the folder containing the cached data set.
+        If None, the OS-appropriate per-user cache directory is used
+        (e.g. ``~/Library/Caches/pyts/UEA`` on macOS, ``~/.cache/pyts/UEA``
+        on Linux, ``%LOCALAPPDATA%\\pyts\\Cache\\UEA`` on Windows). If the
+        data set is not found, it is downloaded and cached in this path.
+
+    return_X_y : bool (default = False)
+        If True, returns ``(data_train, data_test, target_train, target_test)``
+        instead of a Bunch object. See below for more information about the
+        `data` and `target` object.
+
+    Returns
+    -------
+    data : Bunch
+        Dictionary-like object, with attributes:
+
+        data_train : array of floats
+            The time series in the training set.
+        data_test : array of floats
+            The time series in the test set.
+        target_train : array of integers
+            The classification labels in the training set.
+        target_test : array of integers
+            The classification labels in the test set.
+        DESCR : str
+            The full description of the dataset.
+        url : str
+            The url of the dataset.
+
+    (data_train, data_test, target_train, target_test) : tuple if \
+``return_X_y`` is True
+
+    Notes
+    -----
+    Missing values are represented as NaN's.
+
+    References
+    ----------
+    .. [1] A. Bagnall et al, "The UEA multivariate time series
+           classification archive, 2018". arXiv:1811.00075 [cs, stat],
+           2018.
+
+    .. [2] A. Bagnall et al, "The UEA & UCR Time Series Classification
+           Repository", timeseriesclassification.com.
+
+    """
+    if dataset not in uea_dataset_list():
+        raise ValueError(
+            f"{dataset} is not a valid name. The list of available names "
+            "can be obtained with ``pyts.datasets.uea_dataset_list()``"
+        )
+    path = _default_data_home('UEA') if data_home is None else data_home
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    correct_dataset = _correct_uea_name_download(dataset)
+    if use_cache and os.path.exists(os.path.join(path, correct_dataset)):
+        bunch = _load_uea_dataset(correct_dataset, path)
+    else:
+        # timeseriesclassification.com now serves every archive through the
+        # aeon-toolkit endpoint, which packages datasets as ``.ts`` files
+        # rather than the ARFF files served by the historical (now defunct)
+        # ``ClassificationDownloads`` endpoint.
+        url = f"https://timeseriesclassification.com/aeon-toolkit/{correct_dataset}.zip"
+        filename = f'temp_{correct_dataset}'
+        _ = urlretrieve(url, os.path.join(path, filename))
+        zipfile.ZipFile(os.path.join(path, filename)).extractall(
+            os.path.join(path, correct_dataset)
+        )
+        os.remove(os.path.join(path, filename))
+        bunch = _load_uea_dataset(correct_dataset, path)
+
+    if return_X_y:
+        return (
+            bunch.data_train,
+            bunch.data_test,
+            bunch.target_train,
+            bunch.target_test,
+        )
+    return bunch
+
+
+def _load_uea_dataset(dataset: str, path: str) -> Bunch:
+    """Load a UEA data set from a local folder.
+
+    Parameters
+    ----------
+    dataset : str
+        Name of the dataset.
+
+    path : str
+        The path of the folder containing the cached data set.
+
+    Returns
+    -------
+    data : Bunch
+        Dictionary-like object, with attributes:
+
+        data_train : array of floats
+            The time series in the training set.
+        data_test : array of floats
+            The time series in the test set.
+        target_train : array
+            The classification labels in the training set.
+        target_test : array
+            The classification labels in the test set.
+        DESCR : str
+            The full description of the dataset.
+        url : str
+            The url of the dataset.
+
+    Notes
+    -----
+    Missing values are represented as NaN's.
+
+    """
+    new_path = os.path.join(path, dataset)
+
+    if os.path.exists(os.path.join(new_path, f'{dataset}_TRAIN.ts')):
+        # Current format served by timeseriesclassification.com (the
+        # aeon-toolkit endpoint): one ``.ts`` file per split, with the
+        # description stored as leading '#' comment lines. The UEA archive
+        # is multivariate, so the parsed 3-D array is used as-is.
+        X_train, y_train, description = parse_ts_file(
+            os.path.join(new_path, f'{dataset}_TRAIN.ts')
+        )
+        X_test, y_test, _ = parse_ts_file(os.path.join(new_path, f'{dataset}_TEST.ts'))
+    else:
+        # Historical format served by the (now defunct) UEA
+        # ``ClassificationDownloads`` endpoint: a plain-text description
+        # file plus ARFF-formatted splits.
+        try:
+            description_file = next(
+                file
+                for file in os.listdir(new_path)
+                if ('Description.txt' in file or f'{dataset}.txt' in file)
+            )
+        except IndexError:
+            description_file = None
+
+        if description_file is not None:
+            try:
+                with open(
+                    os.path.join(new_path, description_file),
+                    encoding='utf-8',
+                ) as f:
+                    description = f.read()
+            except UnicodeDecodeError:
+                with open(
+                    os.path.join(new_path, description_file),
+                    encoding='ISO-8859-1',
+                ) as f:
+                    description = f.read()
+        else:
+            description = None
+
+        data_train = loadarff(os.path.join(new_path, f'{dataset}_TRAIN.arff'))
+        X_train, y_train = _parse_relational_arff(data_train)
+
+        data_test = loadarff(os.path.join(new_path, f'{dataset}_TEST.arff'))
+        X_test, y_test = _parse_relational_arff(data_test)
+
+    try:
+        y_train = y_train.astype('float64').astype('int64')
+        y_test = y_test.astype('float64').astype('int64')
+    except ValueError:
+        y_train = y_train.astype(str)
+        y_test = y_test.astype(str)
+
+    bunch = Bunch(
+        data_train=X_train,
+        target_train=y_train,
+        data_test=X_test,
+        target_test=y_test,
+        DESCR=description,
+        url=(f"https://timeseriesclassification.com/description.php?Dataset={dataset}"),
+    )
+
+    return bunch
+
+
+def _parse_relational_arff(
+    data: Any,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[Any]]:
+    X_data = np.asarray(data[0])
+    n_samples = len(X_data)
+    X, y = [], []
+
+    if X_data[0][0].dtype.names is None:
+        for i in range(n_samples):
+            X_sample = np.asarray([X_data[i][name] for name in X_data[i].dtype.names])
+            X.append(X_sample.T)
+            y.append(X_data[i][1])
+    else:
+        for i in range(n_samples):
+            X_sample = np.asarray(
+                [X_data[i][0][name] for name in X_data[i][0].dtype.names]
+            )
+            X.append(X_sample.T)
+            y.append(X_data[i][1])
+
+    X = np.asarray(X).astype('float64')
+    y = np.asarray(y)
+
+    try:
+        y = y.astype('float64').astype('int64')
+    except ValueError:
+        y = y.astype(str)
+
+    return X, y

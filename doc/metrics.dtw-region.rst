@@ -6,5 +6,5 @@ dtw(method='region')
 --------------------
 
 .. pyts-metrics:function:: pyts.metrics.dtw
-   :impl: pyts.metrics.dtw._dtw_region
+   :impl: pyts.metrics._dtw._dtw_region
    :method: region

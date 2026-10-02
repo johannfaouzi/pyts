@@ -9,18 +9,18 @@ Dependencies
 
 pyts requires:
 
-- Python (>= 3.8)
-- NumPy (>= 1.22.4)
-- SciPy (>= 1.8.1)
-- Scikit-Learn (>= 1.2.0)
-- Joblib (>= 1.1.1)
-- Numba (>= 0.55.2)
+- Python (>= 3.11, < 3.16)
+- NumPy (>= 1.24.0)
+- SciPy (>= 1.15.0)
+- Scikit-Learn (>= 1.6.0)
+- Joblib (>= 1.3.0)
+- Numba (>= 0.60.0)
 
-To run the examples, Matplotlib (>= 2.0.0) is required.
+To run the examples, Matplotlib (>= 3.7) is required.
 
 
 User installation
------------------
+------------------
 
 If you already have a working installation of numpy, scipy, scikit-learn,
 joblib and numba, you can easily install pyts using ``pip``::
@@ -41,8 +41,14 @@ You can also get the latest version of pyts by cloning the repository::
 Testing
 -------
 
+pyts uses `pytest <https://docs.pytest.org>`_ for testing. If you don't
+already have it installed, you can get it (along with ``pytest-cov``) with
+the ``tests`` extra::
+
+    pip install "pyts[tests]"
+
 After installation, you can launch the test suite from outside the source
-directory using ``pytest``::
+directory::
 
     pytest pyts
 
@@ -51,5 +57,8 @@ Development
 -----------
 
 The development of this package is in line with the one of the scikit-learn
-community. Fore more information about our contributing guidelines, please
-refer to the :ref:`contribute`.
+community. For more information about our contributing guidelines, please
+refer to the :ref:`contribute` guide, which covers setting up an editable
+installation with the development extras (``pip install -e ".[dev]"``),
+running the linter and type checker (``ruff``, ``pyrefly``), and building
+the documentation.

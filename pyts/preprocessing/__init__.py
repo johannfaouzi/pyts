@@ -1,16 +1,25 @@
 """The :mod:`pyts.preprocessing` module includes preprocessing algorithms."""
 
-from .scaler import StandardScaler, MinMaxScaler, MaxAbsScaler, RobustScaler
-from .transformer import PowerTransformer, QuantileTransformer
-from .discretizer import KBinsDiscretizer
-from .imputer import InterpolationImputer
+from pyts.preprocessing._discretizer import KBinsDiscretizer
+from pyts.preprocessing._imputer import InterpolationImputer
+from pyts.preprocessing._scaler import (
+    MaxAbsScaler,
+    MinMaxScaler,
+    RobustScaler,
+    StandardScaler,
+)
+from pyts.preprocessing._transformer import (
+    PowerTransformer,
+    QuantileTransformer,
+)
 
-
-__all__ = ['StandardScaler',
-           'MinMaxScaler',
-           'MaxAbsScaler',
-           'RobustScaler',
-           'PowerTransformer',
-           'QuantileTransformer',
-           'KBinsDiscretizer',
-           'InterpolationImputer']
+__all__ = [
+    'InterpolationImputer',
+    'KBinsDiscretizer',
+    'MaxAbsScaler',
+    'MinMaxScaler',
+    'PowerTransformer',
+    'QuantileTransformer',
+    'RobustScaler',
+    'StandardScaler',
+]

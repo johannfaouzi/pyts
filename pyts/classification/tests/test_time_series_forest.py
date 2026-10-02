@@ -3,12 +3,13 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
+import re
+
 import numpy as np
 import pytest
-import re
-from pyts.classification import TimeSeriesForest
-from pyts.classification.time_series_forest import WindowFeatureExtractor
 
+from pyts.classification import TimeSeriesForest
+from pyts.classification._time_series_forest import WindowFeatureExtractor
 
 n_samples, n_timestamps = 5, 20
 X_arange = np.arange(n_samples * n_timestamps).reshape(n_samples, n_timestamps)
@@ -18,47 +19,74 @@ y = [0, 0, 1, 1, 2]
 
 @pytest.mark.parametrize(
     'params, error, err_msg',
-    [({'n_windows': '4'}, TypeError,
-      "'n_windows' must be an integer or a float."),
-
-     ({'min_window_size': None}, TypeError,
-      "'min_window_size' must be an integer or a float."),
-
-     ({'n_windows': 0}, ValueError,
-      "If 'n_windows' is an integer, it must be positive (got 0)."),
-
-     ({'n_windows': -3}, ValueError,
-      "If 'n_windows' is an integer, it must be positive (got -3)."),
-
-     ({'n_windows': -0.5}, ValueError,
-      "If 'n_windows' is a float, it must be greater than 0 (got -0.5)."),
-
-     ({'n_windows': -2.}, ValueError,
-      "If 'n_windows' is a float, it must be greater than 0 (got -2.0)."),
-
-     ({'min_window_size': 0}, ValueError,
-      "If 'min_window_size' is an integer, it must be greater than or equal "
-      "to 1 and lower than or equal to n_timestamps (got 0)."),
-
-     ({'min_window_size': -87}, ValueError,
-      "If 'min_window_size' is an integer, it must be greater than or equal "
-      "to 1 and lower than or equal to n_timestamps (got -87)."),
-
-     ({'min_window_size': 32}, ValueError,
-      "If 'min_window_size' is an integer, it must be greater than or equal "
-      "to 1 and lower than or equal to n_timestamps (got 32)."),
-
-     ({'min_window_size': 0.}, ValueError,
-      "If 'min_window_size' is a float, it must be greater than 0 and "
-      "lower than or equal to 1 (got 0.0)."),
-
-     ({'min_window_size': 1.2}, ValueError,
-      "If 'min_window_size' is a float, it must be greater than 0 and "
-      "lower than or equal to 1 (got 1.2)."),
-
-     ({'min_window_size': -0.3}, ValueError,
-      "If 'min_window_size' is a float, it must be greater than 0 and "
-      "lower than or equal to 1 (got -0.3).")]
+    [
+        (
+            {'n_windows': '4'},
+            TypeError,
+            "'n_windows' must be an integer or a float.",
+        ),
+        (
+            {'min_window_size': None},
+            TypeError,
+            "'min_window_size' must be an integer or a float.",
+        ),
+        (
+            {'n_windows': 0},
+            ValueError,
+            "If 'n_windows' is an integer, it must be positive (got 0).",
+        ),
+        (
+            {'n_windows': -3},
+            ValueError,
+            "If 'n_windows' is an integer, it must be positive (got -3).",
+        ),
+        (
+            {'n_windows': -0.5},
+            ValueError,
+            "If 'n_windows' is a float, it must be greater than 0 (got -0.5).",
+        ),
+        (
+            {'n_windows': -2.0},
+            ValueError,
+            "If 'n_windows' is a float, it must be greater than 0 (got -2.0).",
+        ),
+        (
+            {'min_window_size': 0},
+            ValueError,
+            "If 'min_window_size' is an integer, it must be greater than or equal "
+            "to 1 and lower than or equal to n_timestamps (got 0).",
+        ),
+        (
+            {'min_window_size': -87},
+            ValueError,
+            "If 'min_window_size' is an integer, it must be greater than or equal "
+            "to 1 and lower than or equal to n_timestamps (got -87).",
+        ),
+        (
+            {'min_window_size': 32},
+            ValueError,
+            "If 'min_window_size' is an integer, it must be greater than or equal "
+            "to 1 and lower than or equal to n_timestamps (got 32).",
+        ),
+        (
+            {'min_window_size': 0.0},
+            ValueError,
+            "If 'min_window_size' is a float, it must be greater than 0 and "
+            "lower than or equal to 1 (got 0.0).",
+        ),
+        (
+            {'min_window_size': 1.2},
+            ValueError,
+            "If 'min_window_size' is a float, it must be greater than 0 and "
+            "lower than or equal to 1 (got 1.2).",
+        ),
+        (
+            {'min_window_size': -0.3},
+            ValueError,
+            "If 'min_window_size' is a float, it must be greater than 0 and "
+            "lower than or equal to 1 (got -0.3).",
+        ),
+    ],
 )
 def test_parameter_check(params, error, err_msg):
     """Test parameter validation."""
@@ -69,10 +97,12 @@ def test_parameter_check(params, error, err_msg):
 
 @pytest.mark.parametrize(
     'params',
-    [{'min_window_size': 5},
-     {'min_window_size': 15, 'n_windows': 80},
-     {'min_window_size': 0.5},
-     {'min_window_size': 0.5, 'n_windows': 20}]
+    [
+        {'min_window_size': 5},
+        {'min_window_size': 15, 'n_windows': 80},
+        {'min_window_size': 0.5},
+        {'min_window_size': 0.5, 'n_windows': 20},
+    ],
 )
 def test_indices_window_feature_extractor(params):
     """Test that the indices are compatible with the input parameters."""
@@ -85,15 +115,16 @@ def test_indices_window_feature_extractor(params):
 
     np.testing.assert_array_less(-1, indices[:, 0])
     np.testing.assert_array_less(indices[:, 1], n_timestamps + 1)
-    np.testing.assert_array_less(min_window_size,
-                                 indices[:, 1] - indices[:, 0] + 1)
+    np.testing.assert_array_less(min_window_size, indices[:, 1] - indices[:, 0] + 1)
 
 
 @pytest.mark.parametrize(
     'params',
-    [{'n_windows': 0.5},
-     {'n_windows': 1.8},
-     {'n_windows': 100, 'min_window_size': 0.2}]
+    [
+        {'n_windows': 0.5},
+        {'n_windows': 1.8},
+        {'n_windows': 100, 'min_window_size': 0.2},
+    ],
 )
 def test_actual_results_random_indices(params):
     """Test the actual results with random indices."""
@@ -124,16 +155,23 @@ def test_actual_results_random_indices(params):
 
 @pytest.mark.parametrize(
     'indices, arr_desired',
-    [([[0, 12]], [[2.125, 1.29301005, 0.25], [2.5, 1.32287566, 0]]),
-
-     ([[0, 1], [0, 2], [8, 12]],
-      [[0, 0, 0, 0.5, 0.5, 1, 3.25, 1.08972474, 0.9],
-       [4, 0, 0, 3, 1, -2, 2.25, 1.08972474, 0.5]])]
+    [
+        ([[0, 12]], [[2.125, 1.29301005, 0.25], [2.5, 1.32287566, 0]]),
+        (
+            [[0, 1], [0, 2], [8, 12]],
+            [
+                [0, 0, 0, 0.5, 0.5, 1, 3.25, 1.08972474, 0.9],
+                [4, 0, 0, 3, 1, -2, 2.25, 1.08972474, 0.5],
+            ],
+        ),
+    ],
 )
 def test_actual_results_fixed_indices(indices, arr_desired):
     """Test the actual results with fixed indices."""
-    X = [[0, 1, 3, 2, 1, 3, 1.5, 1, 2, 3, 3, 5],
-         [4, 2, 0, 2, 3, 5, 3.0, 2, 1, 2, 4, 2]]
+    X = [
+        [0, 1, 3, 2, 1, 3, 1.5, 1, 2, 3, 3, 5],
+        [4, 2, 0, 2, 3, 5, 3.0, 2, 1, 2, 4, 2],
+    ]
     fe = WindowFeatureExtractor()
     fe.indices_ = np.asarray(indices)
     arr_actual = fe.transform(X)
@@ -143,9 +181,16 @@ def test_actual_results_fixed_indices(indices, arr_desired):
 @pytest.mark.parametrize('params', [{}, {'oob_score': True}, {'max_depth': 3}])
 def test_attributes_time_series_forest(params):
     """Test the attributes of a fitted instance of TimeSeriesForest."""
-    real_attributes = ['estimator_', 'classes_', 'estimators_',
-                       'feature_importances_', 'indices_', 'n_features_in_',
-                       'oob_decision_function_', 'oob_score_']
+    real_attributes = [
+        'estimator_',
+        'classes_',
+        'estimators_',
+        'feature_importances_',
+        'indices_',
+        'n_features_in_',
+        'oob_decision_function_',
+        'oob_score_',
+    ]
     fake_attributes = ['yolo', 'whoopsy', 'mistake_were_made_']
 
     clf = TimeSeriesForest(n_estimators=30, random_state=42, **params)

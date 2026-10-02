@@ -3,12 +3,13 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
+import re
+
 import numpy as np
 import pytest
-import re
 from sklearn.feature_selection import f_classif
-from pyts.approximation import DiscreteFourierTransform
 
+from pyts.approximation import DiscreteFourierTransform
 
 rng = np.random.RandomState(42)
 n_samples, n_timestamps = 5, 8
@@ -17,8 +18,15 @@ X_odd = X_even[:, :-1]
 y = rng.randint(2, size=n_samples)
 
 
-def _compute_expected_results(X, y=None, n_coefs=None, drop_sum=False,
-                              anova=False, norm_mean=False, norm_std=False):
+def _compute_expected_results(
+    X,
+    y=None,
+    n_coefs=None,
+    drop_sum=False,
+    anova=False,
+    norm_mean=False,
+    norm_std=False,
+):
     """Compute the expected results."""
     X = np.asarray(X)
     n_samples, n_timestamps = X.shape
@@ -49,29 +57,55 @@ def _compute_expected_results(X, y=None, n_coefs=None, drop_sum=False,
 
 @pytest.mark.parametrize(
     'params, X, error, err_msg',
-    [({'n_coefs': '3'}, X_even, TypeError,
-      "'n_coefs' must be None, an integer or a float."),
-
-     ({'n_coefs': 0}, X_even, ValueError,
-      "If 'n_coefs' is an integer, it must be greater than or equal to 1 and "
-      "lower than or equal to n_timestamps if 'drop_sum=False'."),
-
-     ({'n_coefs': 8, 'drop_sum': True}, X_even, ValueError,
-      "If 'n_coefs' is an integer, it must be greater than or equal to 1 and "
-      "lower than or equal to (n_timestamps - 1) if 'drop_sum=True'."),
-
-     ({'n_coefs': 2.}, X_even, ValueError,
-      ("If 'n_coefs' is a float, it must be greater than 0 and lower than or "
-       "equal to 1.")),
-
-     ({'anova': True, 'n_coefs': 2}, np.zeros_like(X_even), ValueError,
-      ("All the Fourier coefficients are constant. Your input data is weirdly "
-       "homogeneous.")),
-
-     ({'anova': True, 'n_coefs': 2, 'drop_sum': True},
-      np.arange(100).reshape(5, 20), ValueError,
-      ("All the Fourier coefficients are constant. Your input data is weirdly "
-       "homogeneous."))]
+    [
+        (
+            {'n_coefs': '3'},
+            X_even,
+            TypeError,
+            "'n_coefs' must be None, an integer or a float.",
+        ),
+        (
+            {'n_coefs': 0},
+            X_even,
+            ValueError,
+            "If 'n_coefs' is an integer, it must be greater than or equal to 1 and "
+            "lower than or equal to n_timestamps if 'drop_sum=False'.",
+        ),
+        (
+            {'n_coefs': 8, 'drop_sum': True},
+            X_even,
+            ValueError,
+            "If 'n_coefs' is an integer, it must be greater than or equal to 1 and "
+            "lower than or equal to (n_timestamps - 1) if 'drop_sum=True'.",
+        ),
+        (
+            {'n_coefs': 2.0},
+            X_even,
+            ValueError,
+            (
+                "If 'n_coefs' is a float, it must be greater than 0 and lower than or "
+                "equal to 1."
+            ),
+        ),
+        (
+            {'anova': True, 'n_coefs': 2},
+            np.zeros_like(X_even),
+            ValueError,
+            (
+                "All the Fourier coefficients are constant. Your input data is weirdly "
+                "homogeneous."
+            ),
+        ),
+        (
+            {'anova': True, 'n_coefs': 2, 'drop_sum': True},
+            np.arange(100).reshape(5, 20),
+            ValueError,
+            (
+                "All the Fourier coefficients are constant. Your input data is weirdly "
+                "homogeneous."
+            ),
+        ),
+    ],
 )
 def test_parameter_check(params, X, error, err_msg):
     """Test parameter validation."""
@@ -82,16 +116,18 @@ def test_parameter_check(params, X, error, err_msg):
 
 @pytest.mark.parametrize(
     'params, X, n_non_zeros',
-    [({'n_coefs': 3}, np.arange(100).reshape(5, 20), 1),
-     ({'n_coefs': 4}, np.arange(100).reshape(5, 20), 1),
-     ({'n_coefs': 5}, np.arange(100).reshape(5, 20), 1)]
+    [
+        ({'n_coefs': 3}, np.arange(100).reshape(5, 20), 1),
+        ({'n_coefs': 4}, np.arange(100).reshape(5, 20), 1),
+        ({'n_coefs': 5}, np.arange(100).reshape(5, 20), 1),
+    ],
 )
 def test_parameter_check_anova_warning(params, X, n_non_zeros):
     dft = DiscreteFourierTransform(**params, anova=True)
     msg = (
-        "The number of non constant Fourier coefficients \\({0}\\) "
-        "is lower than the number of coefficients to keep \\({1}\\). "
-        "The number of coefficients to keep is truncated to {2}."
+        "The number of non constant Fourier coefficients \\({}\\) "
+        "is lower than the number of coefficients to keep \\({}\\). "
+        "The number of coefficients to keep is truncated to {}."
     ).format(n_non_zeros, params['n_coefs'], n_non_zeros)
     with pytest.warns(UserWarning, match=msg):
         dft.fit(X, np.random.randint(2, size=X.shape[0]))
@@ -100,14 +136,16 @@ def test_parameter_check_anova_warning(params, X, n_non_zeros):
 @pytest.mark.parametrize('X', [X_even, X_odd])
 @pytest.mark.parametrize(
     'params',
-    [({}),
-     ({'n_coefs': 3}),
-     ({'drop_sum': True}),
-     ({'anova': True}),
-     ({'norm_mean': True}),
-     ({'norm_std': True}),
-     ({'norm_mean': True, 'norm_std': True}),
-     ({'n_coefs': 2, 'drop_sum': True, 'anova': True})]
+    [
+        ({}),
+        ({'n_coefs': 3}),
+        ({'drop_sum': True}),
+        ({'anova': True}),
+        ({'norm_mean': True}),
+        ({'norm_std': True}),
+        ({'norm_mean': True, 'norm_std': True}),
+        ({'n_coefs': 2, 'drop_sum': True, 'anova': True}),
+    ],
 )
 def test_actual_results(X, params):
     """Test that the actual results are the expected ones."""
@@ -119,16 +157,18 @@ def test_actual_results(X, params):
 @pytest.mark.parametrize('X', [X_even, X_odd])
 @pytest.mark.parametrize(
     'params',
-    [({}),
-     ({'n_coefs': 3}),
-     ({'n_coefs': 0.5}),
-     ({'n_coefs': 0.5, 'drop_sum': True}),
-     ({'drop_sum': True}),
-     ({'anova': True}),
-     ({'norm_mean': True}),
-     ({'norm_std': True}),
-     ({'norm_mean': True, 'norm_std': True}),
-     ({'n_coefs': 2, 'drop_sum': True, 'anova': True})]
+    [
+        ({}),
+        ({'n_coefs': 3}),
+        ({'n_coefs': 0.5}),
+        ({'n_coefs': 0.5, 'drop_sum': True}),
+        ({'drop_sum': True}),
+        ({'anova': True}),
+        ({'norm_mean': True}),
+        ({'norm_std': True}),
+        ({'norm_mean': True, 'norm_std': True}),
+        ({'n_coefs': 2, 'drop_sum': True, 'anova': True}),
+    ],
 )
 def test_fit_transform(X, params):
     """Test that fit and transform yield the same results as fit_transform."""

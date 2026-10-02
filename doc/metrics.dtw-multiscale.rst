@@ -6,5 +6,5 @@ dtw(method='multiscale')
 ------------------------
 
 .. pyts-metrics:function:: pyts.metrics.dtw
-   :impl: pyts.metrics.dtw._dtw_multiscale
+   :impl: pyts.metrics._dtw._dtw_multiscale
    :method: multiscale

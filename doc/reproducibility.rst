@@ -11,7 +11,7 @@ To do so, we created another
 `repository <https://github.com/johannfaouzi/pyts-repro>`_ where we compare
 the performance of several algorithms using pyts with the performance published
 in the original papers or on the
-`UEA & UCR Time Series Classification Repository <http://www.timeseriesclassification.com>`_.
+`UEA & UCR Time Series Classification Repository <https://timeseriesclassification.com>`_.
 We summarize the results on this page. The scripts to generate these results
 are notebooks that are made available on the
 `repository <https://github.com/johannfaouzi/pyts-repro>`_.
@@ -29,7 +29,7 @@ articles are usually not done for computational reasons and randomness.**
 UEA & UCR Time Series Classification Repository
 -----------------------------------------------
 
-The `UEA & UCR Time Series Classification Repository <http://www.timeseriesclassification.com>`_
+The `UEA & UCR Time Series Classification Repository <https://timeseriesclassification.com>`_
 is an ongoing project to develop a comprehensive repository for research into
 time series classification providing datasets as well as code and results for
 many algorithms.

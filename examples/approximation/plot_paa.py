@@ -15,8 +15,9 @@ It is implemented as
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 from pyts.approximation import PiecewiseAggregateApproximation
 
 # Parameters
@@ -34,11 +35,21 @@ X_paa = paa.transform(X)
 # Show the results for the first time series
 plt.figure(figsize=(6, 4))
 plt.plot(X[0], 'o--', ms=4, label='Original')
-plt.plot(np.arange(window_size // 2,
-                   n_timestamps + window_size // 2,
-                   window_size), X_paa[0], 'o--', ms=4, label='PAA')
-plt.vlines(np.arange(0, n_timestamps, window_size) - 0.5,
-           X[0].min(), X[0].max(), color='g', linestyles='--', linewidth=0.5)
+plt.plot(
+    np.arange(window_size // 2, n_timestamps + window_size // 2, window_size),
+    X_paa[0],
+    'o--',
+    ms=4,
+    label='PAA',
+)
+plt.vlines(
+    np.arange(0, n_timestamps, window_size) - 0.5,
+    X[0].min(),
+    X[0].max(),
+    color='g',
+    linestyles='--',
+    linewidth=0.5,
+)
 plt.legend(loc='best', fontsize=10)
 plt.xlabel('Time', fontsize=12)
 plt.title('Piecewise Aggregate Approximation', fontsize=16)

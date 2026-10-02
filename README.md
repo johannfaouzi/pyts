@@ -1,4 +1,4 @@
-[![Build Status](https://dev.azure.com/johannfaouzi0034/johannfaouzi/_apis/build/status/johannfaouzi.pyts?branchName=main)](https://dev.azure.com/johannfaouzi0034/johannfaouzi/_build/latest?definitionId=1&branchName=main)
+[![Tests](https://github.com/johannfaouzi/pyts/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/johannfaouzi/pyts/actions/workflows/tests.yml)
 [![Documentation Status](https://readthedocs.org/projects/pyts/badge/?version=latest)](https://pyts.readthedocs.io/)
 [![Codecov](https://codecov.io/gh/johannfaouzi/pyts/branch/main/graph/badge.svg)](https://codecov.io/gh/johannfaouzi/pyts)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyts.svg)](https://img.shields.io/pypi/pyversions/pyts.svg)
@@ -22,14 +22,14 @@ thus pyts provides several tools to perform these transformations.
 
 pyts requires:
 
-- Python (>= 3.8)
-- NumPy (>= 1.22.4)
-- SciPy (>= 1.8.1)
-- Scikit-Learn (>= 1.2.0)
-- Joblib (>= 1.1.1)
-- Numba (>= 0.55.2)
+- Python (>= 3.11, < 3.16)
+- NumPy (>= 1.24.0)
+- SciPy (>= 1.15.0)
+- Scikit-Learn (>= 1.6.0)
+- Joblib (>= 1.3.0)
+- Numba (>= 0.60.0)
 
-To run the examples Matplotlib (>=2.0.0) is required.
+To run the examples Matplotlib (>= 3.7) is required.
 
 
 #### User installation

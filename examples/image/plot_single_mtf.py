@@ -26,10 +26,10 @@ set of Gramian angular fields is retrieved (``ax_mtf.imshow(X_mtf[0], ...``).
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-import numpy as np
 import matplotlib.pyplot as plt
-from pyts.image import MarkovTransitionField
+import numpy as np
 
+from pyts.image import MarkovTransitionField
 
 # Create a toy time series using the sine function
 time_points = np.linspace(0, 4 * np.pi, 1000)
@@ -46,16 +46,32 @@ height_ratios = (2, 7)
 width = 6
 height = width * sum(height_ratios) / sum(width_ratios)
 fig = plt.figure(figsize=(width, height))
-gs = fig.add_gridspec(2, 3,  width_ratios=width_ratios,
-                      height_ratios=height_ratios,
-                      left=0.1, right=0.9, bottom=0.1, top=0.9,
-                      wspace=0.05, hspace=0.05)
+gs = fig.add_gridspec(
+    2,
+    3,
+    width_ratios=width_ratios,
+    height_ratios=height_ratios,
+    left=0.1,
+    right=0.9,
+    bottom=0.1,
+    top=0.9,
+    wspace=0.05,
+    hspace=0.05,
+)
 
 # Define the ticks and their labels for both axes
 time_ticks = np.linspace(0, 4 * np.pi, 9)
-time_ticklabels = [r'$0$', r'$\frac{\pi}{2}$', r'$\pi$',
-                   r'$\frac{3\pi}{2}$', r'$2\pi$', r'$\frac{5\pi}{2}$',
-                   r'$3\pi$', r'$\frac{7\pi}{2}$', r'$4\pi$']
+time_ticklabels = [
+    r'$0$',
+    r'$\frac{\pi}{2}$',
+    r'$\pi$',
+    r'$\frac{3\pi}{2}$',
+    r'$2\pi$',
+    r'$\frac{5\pi}{2}$',
+    r'$3\pi$',
+    r'$\frac{7\pi}{2}$',
+    r'$4\pi$',
+]
 value_ticks = [-1, 0, 1]
 reversed_value_ticks = value_ticks[::-1]
 
@@ -82,8 +98,14 @@ ax_top.set_yticklabels(value_ticks)
 
 # Plot the Gramian angular fields on the bottom right
 ax_mtf = fig.add_subplot(gs[1, 1])
-im = ax_mtf.imshow(X_mtf[0], cmap='rainbow', origin='lower', vmin=0., vmax=1.,
-                   extent=[0, 4 * np.pi, 0, 4 * np.pi])
+im = ax_mtf.imshow(
+    X_mtf[0],
+    cmap='rainbow',
+    origin='lower',
+    vmin=0.0,
+    vmax=1.0,
+    extent=[0, 4 * np.pi, 0, 4 * np.pi],
+)
 ax_mtf.set_xticks([])
 ax_mtf.set_yticks([])
 ax_mtf.set_title('Markov Transition Field', y=-0.09)

@@ -3,13 +3,14 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
+import re
+
 import numpy as np
 import pytest
-import re
-from pyts.classification import SAXVSM, BOSSVS
+
+from pyts.classification import BOSSVS, SAXVSM
 from pyts.multivariate.classification import MultivariateClassifier
 from pyts.transformation import BOSS
-
 
 n_samples, n_features, n_timestamps, n_classes = 40, 3, 30, 2
 rng = np.random.RandomState(42)
@@ -19,16 +20,25 @@ y = rng.randint(n_classes, size=n_samples)
 
 @pytest.mark.parametrize(
     'params, error, err_msg',
-    [({'estimator': [SAXVSM(), SAXVSM(), BOSS()]},
-      ValueError, "Estimator 2 must be a classifier."),
-
-     ({'estimator': [SAXVSM()]}, ValueError,
-      "If 'estimator' is a list, its length must be equal to "
-      "the number of features (1 != 3)"),
-
-     ({'estimator': None}, TypeError,
-      "'estimator' must be a classifier that inherits from "
-      "sklearn.base.BaseEstimator or a list thereof.")]
+    [
+        (
+            {'estimator': [SAXVSM(), SAXVSM(), BOSS()]},
+            ValueError,
+            "Estimator 2 must be a classifier.",
+        ),
+        (
+            {'estimator': [SAXVSM()]},
+            ValueError,
+            "If 'estimator' is a list, its length must be equal to "
+            "the number of features (1 != 3)",
+        ),
+        (
+            {'estimator': None},
+            TypeError,
+            "'estimator' must be a classifier that inherits from "
+            "sklearn.base.BaseEstimator or a list thereof.",
+        ),
+    ],
 )
 def test_parameter_check(params, error, err_msg):
     """Test parameter validation."""
@@ -39,10 +49,20 @@ def test_parameter_check(params, error, err_msg):
 
 @pytest.mark.parametrize(
     'params, X, error, err_msg',
-    [({'estimator': BOSS()}, X[0, 0], ValueError,
-      "X must be 3-dimensional (got 1)."),
-     ({'estimator': BOSS()}, X[0], ValueError,
-      "X must be 3-dimensional (got 2).")]
+    [
+        (
+            {'estimator': BOSS()},
+            X[0, 0],
+            ValueError,
+            "X must be 3-dimensional (got 1).",
+        ),
+        (
+            {'estimator': BOSS()},
+            X[0],
+            ValueError,
+            "X must be 3-dimensional (got 2).",
+        ),
+    ],
 )
 def test_input_check(params, X, error, err_msg):
     """Test input data validation."""
@@ -53,9 +73,11 @@ def test_input_check(params, X, error, err_msg):
 
 @pytest.mark.parametrize(
     'params',
-    [{'estimator': SAXVSM()},
-     {'estimator': [SAXVSM() for _ in range(n_features)]},
-     {'estimator': [SAXVSM(), SAXVSM(), BOSSVS()]}]
+    [
+        {'estimator': SAXVSM()},
+        {'estimator': [SAXVSM() for _ in range(n_features)]},
+        {'estimator': [SAXVSM(), SAXVSM(), BOSSVS()]},
+    ],
 )
 def test_actual_results_without_weights(params):
     """Test that the actual results are the expected ones."""
@@ -63,28 +85,30 @@ def test_actual_results_without_weights(params):
     predictions = []
     if isinstance(params['estimator'], list):
         for i in range(n_features):
-            predictions.append(
-                params['estimator'][i].fit(X[:, i], y).predict(X[:, i]))
+            predictions.append(params['estimator'][i].fit(X[:, i], y).predict(X[:, i]))
     else:
         for i in range(n_features):
-            predictions.append(
-                params['estimator'].fit(X[:, i], y).predict(X[:, i]))
+            predictions.append(params['estimator'].fit(X[:, i], y).predict(X[:, i]))
     predictions = np.asarray(predictions)
     arr_desired = []
     for i in range(n_samples):
         arr_desired.append(np.argmax(np.bincount(predictions[:, i])))
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.0)
 
 
 @pytest.mark.parametrize(
     'params',
-    [{'estimator': SAXVSM(), 'weights': [0.1, 0.7, 0.2]},
-
-     {'estimator': [SAXVSM() for _ in range(n_features)],
-      'weights': [0.1, 0.7, 0.2]},
-
-     {'estimator': [SAXVSM(), SAXVSM(), BOSSVS()],
-      'weights': [0.1, 0.7, 0.2]}]
+    [
+        {'estimator': SAXVSM(), 'weights': [0.1, 0.7, 0.2]},
+        {
+            'estimator': [SAXVSM() for _ in range(n_features)],
+            'weights': [0.1, 0.7, 0.2],
+        },
+        {
+            'estimator': [SAXVSM(), SAXVSM(), BOSSVS()],
+            'weights': [0.1, 0.7, 0.2],
+        },
+    ],
 )
 def test_actual_results_with_weights(params):
     """Test that the actual results are the expected ones."""
@@ -92,15 +116,12 @@ def test_actual_results_with_weights(params):
     predictions = []
     if isinstance(params['estimator'], list):
         for i in range(n_features):
-            predictions.append(
-                params['estimator'][i].fit(X[:, i], y).predict(X[:, i]))
+            predictions.append(params['estimator'][i].fit(X[:, i], y).predict(X[:, i]))
     else:
         for i in range(n_features):
-            predictions.append(
-                params['estimator'].fit(X[:, i], y).predict(X[:, i]))
+            predictions.append(params['estimator'].fit(X[:, i], y).predict(X[:, i]))
     predictions = np.asarray(predictions)
     arr_desired = []
     for i in range(n_samples):
-        arr_desired.append(np.argmax(
-            np.bincount(predictions[:, i], params['weights'])))
-    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.)
+        arr_desired.append(np.argmax(np.bincount(predictions[:, i], params['weights'])))
+    np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.0)

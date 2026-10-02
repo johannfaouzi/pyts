@@ -6,9 +6,11 @@
 import numpy as np
 import pytest
 from sklearn.feature_selection import f_classif
-from pyts.approximation import MultipleCoefficientBinning
-from pyts.approximation import SymbolicFourierApproximation
 
+from pyts.approximation import (
+    MultipleCoefficientBinning,
+    SymbolicFourierApproximation,
+)
 
 rng = np.random.RandomState(42)
 n_samples, n_timestamps = 5, 8
@@ -16,9 +18,18 @@ X = rng.randn(n_samples, n_timestamps)
 y = rng.randint(2, size=n_samples)
 
 
-def _compute_expected_results(X, y=None, n_coefs=None, n_bins=4,
-                              strategy='quantile', drop_sum=False, anova=False,
-                              norm_mean=False, norm_std=False, alphabet=None):
+def _compute_expected_results(
+    X,
+    y=None,
+    n_coefs=None,
+    n_bins=4,
+    strategy='quantile',
+    drop_sum=False,
+    anova=False,
+    norm_mean=False,
+    norm_std=False,
+    alphabet=None,
+):
     """Compute the expected results."""
     X = np.asarray(X)
     if norm_mean:
@@ -40,24 +51,27 @@ def _compute_expected_results(X, y=None, n_coefs=None, n_bins=4,
         else:
             X_fft = X_fft[:, :n_coefs]
 
-    mcb = MultipleCoefficientBinning(n_bins=n_bins, strategy=strategy,
-                                     alphabet=alphabet)
+    mcb = MultipleCoefficientBinning(
+        n_bins=n_bins, strategy=strategy, alphabet=alphabet
+    )
     arr_desired = mcb.fit_transform(X_fft)
     return arr_desired
 
 
 @pytest.mark.parametrize(
     'params',
-    [({}),
-     ({'n_coefs': 3}),
-     ({'n_bins': 2}),
-     ({'strategy': 'uniform'}),
-     ({'drop_sum': True}),
-     ({'anova': True}),
-     ({'norm_mean': True, 'drop_sum': True}),
-     ({'norm_std': True}),
-     ({'norm_mean': True, 'norm_std': True, 'drop_sum': True}),
-     ({'n_coefs': 2, 'drop_sum': True, 'anova': True})]
+    [
+        ({}),
+        ({'n_coefs': 3}),
+        ({'n_bins': 2}),
+        ({'strategy': 'uniform'}),
+        ({'drop_sum': True}),
+        ({'anova': True}),
+        ({'norm_mean': True, 'drop_sum': True}),
+        ({'norm_std': True}),
+        ({'norm_mean': True, 'norm_std': True, 'drop_sum': True}),
+        ({'n_coefs': 2, 'drop_sum': True, 'anova': True}),
+    ],
 )
 def test_actual_results(params):
     """Test that the actual results are the expected ones."""
@@ -68,16 +82,18 @@ def test_actual_results(params):
 
 @pytest.mark.parametrize(
     'params',
-    [({}),
-     ({'n_coefs': 3}),
-     ({'n_bins': 2}),
-     ({'strategy': 'uniform'}),
-     ({'drop_sum': True}),
-     ({'anova': True}),
-     ({'norm_mean': True, 'drop_sum': True}),
-     ({'norm_std': True}),
-     ({'norm_mean': True, 'norm_std': True, 'drop_sum': True}),
-     ({'n_coefs': 2, 'drop_sum': True, 'anova': True})]
+    [
+        ({}),
+        ({'n_coefs': 3}),
+        ({'n_bins': 2}),
+        ({'strategy': 'uniform'}),
+        ({'drop_sum': True}),
+        ({'anova': True}),
+        ({'norm_mean': True, 'drop_sum': True}),
+        ({'norm_std': True}),
+        ({'norm_mean': True, 'norm_std': True, 'drop_sum': True}),
+        ({'n_coefs': 2, 'drop_sum': True, 'anova': True}),
+    ],
 )
 def test_fit_transform(params):
     """Test that fit and transform yield the same results as fit_transform."""
