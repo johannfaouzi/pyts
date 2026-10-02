@@ -128,7 +128,10 @@ class WindowFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
         end = rng.randint(
             start + min_window_size, n_timestamps + 1, size=n_windows
         )
-        self.indices_ = np.c_[start, end]
+        # 'randint' returns platform-dependent default integer arrays (e.g.
+        # int32 on Windows), but 'extract_features' is compiled ahead of
+        # time for int64 indices, so the dtype must be pinned explicitly.
+        self.indices_ = np.c_[start, end].astype(np.int64)
         return self
 
     def transform(self, X: npt.ArrayLike) -> npt.NDArray[np.float64]:
