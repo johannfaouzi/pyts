@@ -177,9 +177,7 @@ def _iter_targets(args):
         # The user gave explicit names: try them against whichever
         # archive(s) were requested, without filtering against the
         # official list (in case it is stale).
-        archives = (
-            ['ucr', 'uea'] if args.archive == 'both' else [args.archive]
-        )
+        archives = ['ucr', 'uea'] if args.archive == 'both' else [args.archive]
         for archive in archives:
             for name in args.datasets:
                 yield archive, name
@@ -244,16 +242,12 @@ def main(argv=None):
             if archive == 'ucr':
                 fetch = fetch_ucr_dataset
                 data_home = (
-                    None
-                    if data_home_root is None
-                    else str(data_home_root / 'UCR')
+                    None if data_home_root is None else str(data_home_root / 'UCR')
                 )
             else:
                 fetch = fetch_uea_dataset
                 data_home = (
-                    None
-                    if data_home_root is None
-                    else str(data_home_root / 'UEA')
+                    None if data_home_root is None else str(data_home_root / 'UEA')
                 )
 
             prefix = f"[{i}/{total}] {archive.upper():3s} {name}"
@@ -274,20 +268,22 @@ def main(argv=None):
                     elapsed = time.perf_counter() - start
                     train_shape = tuple(bunch.data_train.shape)
                     test_shape = tuple(bunch.data_test.shape)
-                    retry_note = (
-                        f", {attempt} attempts" if attempt > 1 else ""
+                    retry_note = f", {attempt} attempts" if attempt > 1 else ""
+                    print(
+                        f"OK ({elapsed:.1f}s, train={train_shape}, "
+                        f"test={test_shape}{retry_note})"
                     )
-                    print(f"OK ({elapsed:.1f}s, train={train_shape}, "
-                          f"test={test_shape}{retry_note})")
-                    results.append({
-                        'archive': archive,
-                        'dataset': name,
-                        'status': 'OK',
-                        'elapsed_seconds': f'{elapsed:.2f}',
-                        'train_shape': train_shape,
-                        'test_shape': test_shape,
-                        'error': '',
-                    })
+                    results.append(
+                        {
+                            'archive': archive,
+                            'dataset': name,
+                            'status': 'OK',
+                            'elapsed_seconds': f'{elapsed:.2f}',
+                            'train_shape': train_shape,
+                            'test_shape': test_shape,
+                            'error': '',
+                        }
+                    )
                     break
                 except Exception as exc:
                     error_text = f"{type(exc).__name__}: {exc}"
@@ -302,19 +298,18 @@ def main(argv=None):
                         backoff *= 2
                         continue
                     elapsed = time.perf_counter() - start
-                    print(f"FAILED ({elapsed:.1f}s, {attempt} attempts) "
-                          f"- {error_text}")
-                    results.append({
-                        'archive': archive,
-                        'dataset': name,
-                        'status': 'FAILED',
-                        'elapsed_seconds': f'{elapsed:.2f}',
-                        'train_shape': '',
-                        'test_shape': '',
-                        'error': (
-                            error_text + '\n' + traceback.format_exc()
-                        ),
-                    })
+                    print(f"FAILED ({elapsed:.1f}s, {attempt} attempts) - {error_text}")
+                    results.append(
+                        {
+                            'archive': archive,
+                            'dataset': name,
+                            'status': 'FAILED',
+                            'elapsed_seconds': f'{elapsed:.2f}',
+                            'train_shape': '',
+                            'test_shape': '',
+                            'error': (error_text + '\n' + traceback.format_exc()),
+                        }
+                    )
                     break
 
             if args.delay > 0 and i < total:
@@ -329,8 +324,13 @@ def main(argv=None):
         writer = csv.DictWriter(
             f,
             fieldnames=[
-                'archive', 'dataset', 'status', 'elapsed_seconds',
-                'train_shape', 'test_shape', 'error',
+                'archive',
+                'dataset',
+                'status',
+                'elapsed_seconds',
+                'train_shape',
+                'test_shape',
+                'error',
             ],
         )
         writer.writeheader()
@@ -349,8 +349,7 @@ def main(argv=None):
         for r in results:
             if r['status'] == 'FAILED':
                 first_line = r['error'].splitlines()[0]
-                print(f"  - {r['archive'].upper()} {r['dataset']}: "
-                      f"{first_line}")
+                print(f"  - {r['archive'].upper()} {r['dataset']}: {first_line}")
 
     return 1 if (n_failed > 0 or n_run < total) else 0
 

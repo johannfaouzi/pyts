@@ -63,8 +63,7 @@ def segmentation(
         raise TypeError("'ts_size' must be an integer.")
     if not ts_size >= 2:
         raise ValueError(
-            "'ts_size' must be an integer greater than or equal "
-            f"to 2 (got {ts_size})."
+            f"'ts_size' must be an integer greater than or equal to 2 (got {ts_size})."
         )
     if not isinstance(window_size, (int, np.integer)):
         raise TypeError("'window_size' must be an integer.")
@@ -105,9 +104,7 @@ def segmentation(
     else:
         n_overlapping = (n_segments * window_size) - ts_size
         n_overlaps = n_segments - 1
-        overlaps = np.linspace(0, n_overlapping, n_overlaps + 1).astype(
-            'int64'
-        )
+        overlaps = np.linspace(0, n_overlapping, n_overlaps + 1).astype('int64')
         bounds = np.arange(0, (n_segments + 1) * window_size, window_size)
         start = bounds[:-1] - overlaps
         end = bounds[1:] - overlaps
@@ -182,14 +179,10 @@ def windowed_view(
     if not isinstance(window_size, (int, np.integer)):
         raise TypeError("'window_size' must be an integer.")
     if not 1 <= window_size <= n_timestamps:
-        raise ValueError(
-            "'window_size' must be an integer between 1 and n_timestamps."
-        )
+        raise ValueError("'window_size' must be an integer between 1 and n_timestamps.")
     if not isinstance(window_step, (int, np.integer)):
         raise TypeError("'window_step' must be an integer.")
     if not 1 <= window_step <= n_timestamps:
-        raise ValueError(
-            "'window_step' must be an integer between 1 and n_timestamps."
-        )
+        raise ValueError("'window_step' must be an integer between 1 and n_timestamps.")
 
     return _windowed_view(X, n_samples, n_timestamps, window_size, window_step)

@@ -25,9 +25,7 @@ from pyts.transformation import ShapeletTransform
 X_train, _, y_train, _ = load_gunpoint(return_X_y=True)
 
 # Shapelet transformation
-st = ShapeletTransform(
-    window_sizes=[12, 24, 36, 48], random_state=42, sort=True
-)
+st = ShapeletTransform(window_sizes=[12, 24, 36, 48], random_state=42, sort=True)
 X_new = st.fit_transform(X_train, y_train)
 
 # Visualize the four most discriminative shapelets

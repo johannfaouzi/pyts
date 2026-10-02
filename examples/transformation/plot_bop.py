@@ -58,9 +58,7 @@ plt.xticks(
     np.vectorize(bop.vocabulary_.get)(np.arange(X_bop[0].size)),
     fontsize=12,
 )
-y_max = np.max(
-    np.concatenate([X_bop[y_train == 1][0], X_bop[y_train == 2][0]])
-)
+y_max = np.max(np.concatenate([X_bop[y_train == 1][0], X_bop[y_train == 2][0]]))
 plt.xlabel("Words", fontsize=14)
 plt.ylabel("Frequencies", fontsize=14)
 plt.title("Bag-of-patterns transformation", fontsize=16)

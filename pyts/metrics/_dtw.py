@@ -47,12 +47,8 @@ _COST_MATRIX_REGION_SIGNATURES = [
 ]
 
 _COST_MATRIX_NO_REGION_SIGNATURES = [
-    nb_types.float64[:, :](
-        nb_types.float64[:], nb_types.float64[:], _DIST_FUNC_TYPE
-    ),
-    nb_types.float64[:, :](
-        nb_types.int64[:], nb_types.int64[:], _DIST_FUNC_TYPE
-    ),
+    nb_types.float64[:, :](nb_types.float64[:], nb_types.float64[:], _DIST_FUNC_TYPE),
+    nb_types.float64[:, :](nb_types.int64[:], nb_types.int64[:], _DIST_FUNC_TYPE),
 ]
 
 
@@ -235,8 +231,7 @@ def cost_matrix(
         dist_ = _absolute
     elif isinstance(dist, str):
         raise ValueError(
-            "'dist' must be either 'square', 'absolute' or "
-            f"callable (got {dist})."
+            f"'dist' must be either 'square', 'absolute' or callable (got {dist})."
         )
     else:
         try:
@@ -270,12 +265,8 @@ def _accumulated_cost_matrix_region(
 ) -> npt.NDArray[np.float64]:
     n_timestamps_1, n_timestamps_2 = cost_matrix.shape
     acc_cost_mat = np.ones((n_timestamps_1, n_timestamps_2)) * np.inf
-    acc_cost_mat[0, 0 : region[1, 0]] = np.cumsum(
-        cost_matrix[0, 0 : region[1, 0]]
-    )
-    acc_cost_mat[0 : region[1, 0], 0] = np.cumsum(
-        cost_matrix[0 : region[1, 0], 0]
-    )
+    acc_cost_mat[0, 0 : region[1, 0]] = np.cumsum(cost_matrix[0, 0 : region[1, 0]])
+    acc_cost_mat[0 : region[1, 0], 0] = np.cumsum(cost_matrix[0 : region[1, 0], 0])
     region_ = np.copy(region)
     region_[0] = np.maximum(region_[0], 1)
     for i in range(1, n_timestamps_1):
@@ -442,8 +433,8 @@ def _dtw_classic(
            Speech, and Signal Processing, 26(1), 43-49 (1978).
 
     """
-    x, y, precomputed_cost, _n_timestamps_1, _n_timestamps_2 = (
-        _check_input_dtw(x, y, precomputed_cost, dist, method="classic")
+    x, y, precomputed_cost, _n_timestamps_1, _n_timestamps_2 = _check_input_dtw(
+        x, y, precomputed_cost, dist, method="classic"
     )
     cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=None)
     acc_cost_mat = accumulated_cost_matrix(cost_mat, region=None)
@@ -487,8 +478,8 @@ def _dtw_region(
         for each column.
 
     """
-    x, y, precomputed_cost, _n_timestamps_1, _n_timestamps_2 = (
-        _check_input_dtw(x, y, precomputed_cost, dist, method="region")
+    x, y, precomputed_cost, _n_timestamps_1, _n_timestamps_2 = _check_input_dtw(
+        x, y, precomputed_cost, dist, method="region"
     )
     cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat, region)
@@ -516,8 +507,7 @@ def _check_sakoe_chiba_params(
     else:
         if not n_timestamps_1 >= 2:
             raise ValueError(
-                "'n_timestamps_1' must be an integer greater than"
-                " or equal to 2."
+                "'n_timestamps_1' must be an integer greater than or equal to 2."
             )
     if not isinstance(window_size, (int, np.integer, float, np.floating)):
         raise TypeError("'window_size' must be an integer or a float.")
@@ -689,17 +679,14 @@ def _get_itakura_slopes(
     else:
         if not n_timestamps_1 >= 2:
             raise ValueError(
-                "'n_timestamps_1' must be an integer greater than"
-                " or equal to 2."
+                "'n_timestamps_1' must be an integer greater than or equal to 2."
             )
 
     if not isinstance(max_slope, (int, np.integer, float, np.floating)):
         raise TypeError("'max_slope' must be an integer or a float.")
     else:
         if not max_slope >= 1:
-            raise ValueError(
-                "'max_slope' must be a number greater than or equal to 1."
-            )
+            raise ValueError("'max_slope' must be a number greater than or equal to 1.")
 
     min_slope = 1 / max_slope
     scale_max = (n_timestamps_2 - 1) / (n_timestamps_1 - 2)
@@ -955,26 +942,18 @@ def _fast_region(
             remainder_2 = n_timestamps_2 % resolution
 
             if remainder_1 != 0:
-                x_padded = np.append(
-                    x, np.repeat(x[-1], resolution - remainder_1)
-                )
+                x_padded = np.append(x, np.repeat(x[-1], resolution - remainder_1))
                 x_padded = x_padded.reshape(-1, resolution).mean(axis=1)
             else:
                 x_padded = x.reshape(-1, resolution).mean(axis=1)
             if remainder_2 != 0:
-                y_padded = np.append(
-                    y, np.repeat(y[-1], resolution - remainder_2)
-                )
+                y_padded = np.append(y, np.repeat(y[-1], resolution - remainder_2))
                 y_padded = y_padded.reshape(-1, resolution).mean(axis=1)
             else:
                 y_padded = y.reshape(-1, resolution).mean(axis=1)
 
-            cost_mat_res = cost_matrix(
-                x_padded, y_padded, dist=dist, region=region
-            )
-            acc_cost_mat_res = accumulated_cost_matrix(
-                cost_mat_res, region=region
-            )
+            cost_mat_res = cost_matrix(x_padded, y_padded, dist=dist, region=region)
+            acc_cost_mat_res = accumulated_cost_matrix(cost_mat_res, region=region)
             path_res = _return_path(acc_cost_mat_res)
             n_timestamps_next_1 = ceil((2 * n_timestamps_1) / resolution)
             n_timestamps_next_2 = ceil((2 * n_timestamps_2) / resolution)
@@ -1008,9 +987,7 @@ def _compute_region(
     elif method == 'sakoechiba':
         region = sakoe_chiba_band(n_timestamps_1, n_timestamps_2, **options)
     elif method == 'itakura':
-        region = itakura_parallelogram(
-            n_timestamps_1, n_timestamps_2, **options
-        )
+        region = itakura_parallelogram(n_timestamps_1, n_timestamps_2, **options)
     elif method == 'multiscale':
         # 'multiscale' is incompatible with dist == 'precomputed', so
         # _check_input_dtw (called before this) always returns real x/y.
@@ -1065,18 +1042,14 @@ def _dtw_multiscale(
            Information Retrieval, 6(1), 192-197 (2006).
 
     """
-    x, y, _precomputed_cost, _n_timestamps_1, _n_timestamps_2 = (
-        _check_input_dtw(
-            x, y, precomputed_cost=None, dist=dist, method="multiscale"
-        )
+    x, y, _precomputed_cost, _n_timestamps_1, _n_timestamps_2 = _check_input_dtw(
+        x, y, precomputed_cost=None, dist=dist, method="multiscale"
     )
     # precomputed_cost=None guarantees dist != "precomputed" here (checked
     # above), so _check_input_dtw always returns real x/y arrays.
     assert x is not None and y is not None
 
-    region = _multiscale_region(
-        x, y, dist, resolution=resolution, radius=radius
-    )
+    region = _multiscale_region(x, y, dist, resolution=resolution, radius=radius)
     cost_mat = cost_matrix(x, y, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
     dtw_dist = acc_cost_mat[-1, -1]
@@ -1125,8 +1098,8 @@ def _dtw_fast(
            and Sequential Data, 70–80 (2004).
 
     """
-    x, y, _precomputed_cost, _n_timestamps_1, _n_timestamps_2 = (
-        _check_input_dtw(x, y, precomputed_cost=None, dist=dist, method="fast")
+    x, y, _precomputed_cost, _n_timestamps_1, _n_timestamps_2 = _check_input_dtw(
+        x, y, precomputed_cost=None, dist=dist, method="fast"
     )
     # precomputed_cost=None guarantees dist != "precomputed" here (checked
     # above), so _check_input_dtw always returns real x/y arrays.
@@ -1379,12 +1352,8 @@ def show_options(method: str | None = None, disp: bool = True) -> str | None:
         start = 'Options'
         end = 'References'
         str_lines = string.splitlines()
-        start_idx = next(
-            i for i, line in enumerate(str_lines) if line.strip() == start
-        )
-        end_idx = next(
-            i for i, line in enumerate(str_lines) if line.strip() == end
-        )
+        start_idx = next(i for i, line in enumerate(str_lines) if line.strip() == start)
+        end_idx = next(i for i, line in enumerate(str_lines) if line.strip() == end)
         doc = textwrap.dedent('\n'.join(str_lines[:start_idx])) + '\n'
         doc += textwrap.dedent('\n'.join(str_lines[start_idx:end_idx])) + '\n'
         return doc

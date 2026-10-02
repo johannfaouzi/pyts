@@ -156,9 +156,7 @@ class InterpolationImputer(BaseEstimator, UnivariateTransformerMixin):
         if self.missing_values is None:
             missing_values = np.nan
             ensure_all_finite = 'allow-nan'
-        elif isinstance(
-            self.missing_values, (int, np.integer, float, np.floating)
-        ):
+        elif isinstance(self.missing_values, (int, np.integer, float, np.floating)):
             if np.isinf(self.missing_values):
                 raise ValueError("'missing_values' cannot be infinity.")
             elif np.isnan(self.missing_values):

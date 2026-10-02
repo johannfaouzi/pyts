@@ -21,7 +21,7 @@ import numpy.typing as npt
 def parse_ts_file(
     path: str,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.str_], str]:
-    """Parse a ``.ts`` file into an array of time series, labels and description.
+    """Parse a ``.ts`` file into time series, labels and a description.
 
     Parameters
     ----------
@@ -76,14 +76,12 @@ def parse_ts_file(
 
     n_samples = len(samples)
     n_channels = len(samples[0])
-    max_length = max(
-        len(channel) for sample in samples for channel in sample
-    )
+    max_length = max(len(channel) for sample in samples for channel in sample)
 
     X = np.full((n_samples, n_channels, max_length), np.nan)
     for i, sample in enumerate(samples):
         for j, channel in enumerate(sample):
-            X[i, j, :len(channel)] = channel
+            X[i, j, : len(channel)] = channel
 
     y = np.asarray(labels)
 

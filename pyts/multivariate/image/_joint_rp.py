@@ -65,7 +65,7 @@ class JointRecurrencePlot(BaseEstimator, MultivariateTransformerMixin):
     >>> X_new.shape
     (40, 100, 100)
 
-    """  # noqa: E501
+    """
 
     def __init__(
         self,
@@ -151,9 +151,7 @@ class JointRecurrencePlot(BaseEstimator, MultivariateTransformerMixin):
         threshold: float | str | None,
         percentage: int | float,
     ) -> npt.NDArray[np.float64]:
-        recurrence_plot = RecurrencePlot(
-            dimension, time_delay, threshold, percentage
-        )
+        recurrence_plot = RecurrencePlot(dimension, time_delay, threshold, percentage)
         return recurrence_plot.transform(X)
 
     def _check_params(

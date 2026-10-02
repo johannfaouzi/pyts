@@ -79,9 +79,7 @@ def _ssa_fused(
             else:
                 buffer_t = buffer
             for j, k in indices:
-                X_new[i, g, j + k] = np.diag(
-                    buffer_t[:, ::-1], gap - j - k - 1
-                ).mean()
+                X_new[i, g, j + k] = np.diag(buffer_t[:, ::-1], gap - j - k - 1).mean()
     return X_new
 
 
@@ -246,28 +244,21 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             # axis (which ``np.asarray`` on a list of arrays would do).
             return np.concatenate(
                 Parallel(n_jobs=self.n_jobs)(
-                    delayed(self._transform)(X[i:j])
-                    for i, j in itertools.pairwise(idx)
+                    delayed(self._transform)(X[i:j]) for i, j in itertools.pairwise(idx)
                 ),
                 axis=0,
             )
 
-    def _transform(
-        self, X: npt.NDArray[np.float64]
-    ) -> npt.NDArray[np.float64]:
+    def _transform(self, X: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
         n_samples, n_timestamps = X.shape
         window_size, grouping_size = self._check_params(n_timestamps)
         n_windows = n_timestamps - window_size + 1
 
         X_window = np.transpose(
-            _windowed_view(
-                X, n_samples, n_timestamps, window_size, window_step=1
-            ),
+            _windowed_view(X, n_samples, n_timestamps, window_size, window_step=1),
             axes=(0, 2, 1),
         ).copy()
-        X_tranpose = np.matmul(
-            X_window, np.transpose(X_window, axes=(0, 2, 1))
-        )
+        X_tranpose = np.matmul(X_window, np.transpose(X_window, axes=(0, 2, 1)))
         w, v = np.linalg.eigh(X_tranpose)
         w, v = w[:, ::-1], v[:, :, ::-1]
 
@@ -351,9 +342,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
                 for j, arr in enumerate((trend, season, resid)):
                     membership[i, j] = arr[i]
         elif isinstance(self.groups, (int, np.integer)):
-            grouping = np.linspace(0, window_size, self.groups + 1).astype(
-                'int64'
-            )
+            grouping = np.linspace(0, window_size, self.groups + 1).astype('int64')
             membership = np.zeros((n_samples, grouping_size, window_size))
             for i, (j, k) in enumerate(itertools.pairwise(grouping)):
                 membership[:, i, j:k] = 1.0
@@ -364,9 +353,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
         return membership, grouping_size
 
     def _check_params(self, n_timestamps: int) -> tuple[int, int]:
-        if not isinstance(
-            self.window_size, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.window_size, (int, np.integer, float, np.floating)):
             raise TypeError("'window_size' must be an integer or a float.")
         if isinstance(self.window_size, (int, np.integer)):
             if not 2 <= self.window_size <= n_timestamps:
@@ -391,8 +378,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             or isinstance(self.groups, (int, list, tuple, np.ndarray))
         ):
             raise TypeError(
-                "'groups' must be either None, an integer, "
-                "'auto' or array-like."
+                "'groups' must be either None, an integer, 'auto' or array-like."
             )
         if self.groups is None:
             grouping_size = window_size
@@ -404,9 +390,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
                     "If 'groups' is an integer, it must be greater than or "
                     "equal to 1 and lower than or equal to 'window_size'."
                 )
-            grouping = np.linspace(0, window_size, self.groups + 1).astype(
-                'int64'
-            )
+            grouping = np.linspace(0, window_size, self.groups + 1).astype('int64')
             grouping_size = len(grouping) - 1
         else:
             # The TypeError check above guarantees 'groups' is None, 'auto',
@@ -430,13 +414,10 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
         else:
             if not 0 < self.lower_frequency_bound < 0.5:
                 raise ValueError(
-                    "'lower_frequency_bound' must be greater than 0 and "
-                    "lower than 0.5."
+                    "'lower_frequency_bound' must be greater than 0 and lower than 0.5."
                 )
 
-        if not isinstance(
-            self.lower_frequency_contribution, (float, np.floating)
-        ):
+        if not isinstance(self.lower_frequency_contribution, (float, np.floating)):
             raise TypeError("'lower_frequency_contribution' must be a float.")
         else:
             if not 0 < self.lower_frequency_contribution < 1:
@@ -446,14 +427,10 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
                 )
 
         if not (
-            self.chunksize is None
-            or isinstance(self.chunksize, (int, np.integer))
+            self.chunksize is None or isinstance(self.chunksize, (int, np.integer))
         ):
             raise TypeError("'chunksize' must be None or an integer.")
-        if (
-            isinstance(self.chunksize, (int, np.integer))
-            and self.chunksize < 1
-        ):
+        if isinstance(self.chunksize, (int, np.integer)) and self.chunksize < 1:
             raise ValueError(
                 "If 'chunksize' is an integer, it must be "
                 f"positive (got {self.chunksize})"
@@ -461,9 +438,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
 
         if not (
             self.n_jobs is None
-            or (
-                isinstance(self.n_jobs, (int, np.integer)) and self.n_jobs != 0
-            )
+            or (isinstance(self.n_jobs, (int, np.integer)) and self.n_jobs != 0)
         ):
             raise ValueError(
                 "'n_jobs' must be None or an integer not equal "

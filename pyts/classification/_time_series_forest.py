@@ -50,9 +50,7 @@ def extract_features(
             mean = np.mean(X[i, start:end])
             X_new[i, 3 * j] = mean
             X_new[i, 3 * j + 1] = np.std(X[i, start:end])
-            X_new[i, 3 * j + 2] = (
-                np.sum((X[i, start:end] - mean) * arange) / var_arange
-            )
+            X_new[i, 3 * j + 2] = np.sum((X[i, start:end] - mean) * arange) / var_arange
 
     return X_new
 
@@ -125,9 +123,7 @@ class WindowFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
 
         # Generate the start and end indices
         start = rng.randint(0, n_timestamps - min_window_size, size=n_windows)
-        end = rng.randint(
-            start + min_window_size, n_timestamps + 1, size=n_windows
-        )
+        end = rng.randint(start + min_window_size, n_timestamps + 1, size=n_windows)
         # 'randint' returns platform-dependent default integer arrays (e.g.
         # int32 on Windows), but 'extract_features' is compiled ahead of
         # time for int64 indices, so the dtype must be pinned explicitly.
@@ -164,9 +160,7 @@ class WindowFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
     ) -> tuple[int, int, np.random.RandomState]:
         _n_samples, n_timestamps = X.shape
 
-        if not isinstance(
-            self.n_windows, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.n_windows, (int, np.integer, float, np.floating)):
             raise TypeError("'n_windows' must be an integer or a float.")
         if isinstance(self.n_windows, (int, np.integer)):
             if self.n_windows < 1:
@@ -183,9 +177,7 @@ class WindowFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
                 )
             n_windows = ceil(self.n_windows * n_timestamps)
 
-        if not isinstance(
-            self.min_window_size, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.min_window_size, (int, np.integer, float, np.floating)):
             raise TypeError("'min_window_size' must be an integer or a float.")
         if isinstance(self.min_window_size, (int, np.integer)):
             if not 1 <= self.min_window_size <= n_timestamps:
@@ -412,7 +404,7 @@ class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
 
     .. [2] Leo Breiman, "Random Forests", Machine Learning, 45(1), 5-32, 2001.
 
-    """  # noqa: E501
+    """
 
     def __init__(
         self,
@@ -573,9 +565,7 @@ class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
         self.feature_importances_ = rfc.feature_importances_
         self.indices_ = feature_extractor.indices_
         self.n_features_in_ = rfc.n_features_in_
-        self.oob_decision_function_ = getattr(
-            rfc, 'oob_decision_function_', None
-        )
+        self.oob_decision_function_ = getattr(rfc, 'oob_decision_function_', None)
         self.oob_score_ = getattr(rfc, 'oob_score_', None)
 
         self._feature_extractor = feature_extractor
@@ -657,7 +647,7 @@ class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
         score : float
             Mean accuracy of self.predict(X) wrt. y.
 
-        """  # noqa: E501
+        """
         check_is_fitted(self)
         # sklearn's stub types Pipeline.score's return as possibly a
         # non-float floating type depending on the final estimator, but

@@ -114,9 +114,7 @@ class WEASELMUSE(BaseEstimator, MultivariateTransformerMixin):
         drop_sum: bool = True,
         norm_mean: bool = True,
         norm_std: bool = True,
-        strategy: Literal[
-            'uniform', 'quantile', 'normal', 'entropy'
-        ] = 'quantile',
+        strategy: Literal['uniform', 'quantile', 'normal', 'entropy'] = 'quantile',
         chi2_threshold: int | float = 2,
         sparse: bool = True,
         alphabet: str | npt.ArrayLike | None = None,
@@ -277,11 +275,7 @@ class WEASELMUSE(BaseEstimator, MultivariateTransformerMixin):
         old_length = len(self.vocabulary_)
         if original:
             for key, value in estimator.vocabulary_.items():
-                self.vocabulary_[old_length + key] = (
-                    "o " + feature_idx + " " + value
-                )
+                self.vocabulary_[old_length + key] = "o " + feature_idx + " " + value
         else:
             for key, value in estimator.vocabulary_.items():
-                self.vocabulary_[old_length + key] = (
-                    "d " + feature_idx + " " + value
-                )
+                self.vocabulary_[old_length + key] = "d " + feature_idx + " " + value

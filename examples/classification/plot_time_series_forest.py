@@ -26,9 +26,7 @@ X_train, X_test, y_train, y_test = load_gunpoint(return_X_y=True)
 clf = TimeSeriesForest(random_state=43)
 clf.fit(X_train, y_train)
 
-start_idxmax, end_idxmax = clf.indices_[
-    np.argmax(clf.feature_importances_) // 3
-]
+start_idxmax, end_idxmax = clf.indices_[np.argmax(clf.feature_importances_) // 3]
 
 plt.figure(figsize=(12, 5))
 plt.plot(X_train[y_train == 1][0], label='First sample in class 1')

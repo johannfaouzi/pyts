@@ -38,9 +38,7 @@ shapelets = np.asarray([clf.shapelets_[0, -9], clf.shapelets_[0, -12]])
 # Derive the distances between the time series and the shapelets
 shapelet_size = shapelets.shape[1]
 X_window = windowed_view(X, window_size=shapelet_size, window_step=1)
-X_dist = np.mean((X_window[:, :, None] - shapelets[None, :]) ** 2, axis=3).min(
-    axis=1
-)
+X_dist = np.mean((X_window[:, :, None] - shapelets[None, :]) ** 2, axis=3).min(axis=1)
 
 plt.figure(figsize=(14, 4))
 

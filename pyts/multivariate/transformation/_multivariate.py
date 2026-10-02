@@ -173,9 +173,7 @@ class MultivariateTransformer(BaseEstimator, MultivariateTransformerMixin):
         if isinstance(self.estimator, BaseEstimator) and hasattr(
             self.estimator, 'transform'
         ):
-            self.estimators_ = [
-                clone(self.estimator) for _ in range(n_features)
-            ]
+            self.estimators_ = [clone(self.estimator) for _ in range(n_features)]
 
         elif isinstance(self.estimator, list):
             if len(self.estimator) != n_features:

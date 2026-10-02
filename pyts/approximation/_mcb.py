@@ -35,9 +35,7 @@ def _uniform_bins(
 ) -> npt.NDArray[np.float64]:
     bin_edges = np.empty((n_timestamps, n_bins - 1))
     for i in prange(n_timestamps):
-        bin_edges[i] = np.linspace(
-            timestamp_min[i], timestamp_max[i], n_bins + 1
-        )[1:-1]
+        bin_edges[i] = np.linspace(timestamp_min[i], timestamp_max[i], n_bins + 1)[1:-1]
     return bin_edges
 
 
@@ -221,8 +219,7 @@ class MultipleCoefficientBinning(BaseEstimator, UnivariateTransformerMixin):
             alphabet = check_array(self.alphabet, ensure_2d=False, dtype=None)
             if alphabet.shape != (self.n_bins,):
                 raise ValueError(
-                    "If 'alphabet' is array-like, its shape "
-                    "must be equal to (n_bins,)."
+                    "If 'alphabet' is array-like, its shape must be equal to (n_bins,)."
                 )
         return alphabet
 
@@ -277,9 +274,7 @@ class MultipleCoefficientBinning(BaseEstimator, UnivariateTransformerMixin):
         n_bins: int,
     ) -> npt.NDArray[np.float64]:
         bins = np.empty((n_timestamps, n_bins - 1))
-        clf = DecisionTreeClassifier(
-            criterion='entropy', max_leaf_nodes=n_bins
-        )
+        clf = DecisionTreeClassifier(criterion='entropy', max_leaf_nodes=n_bins)
         for i in range(n_timestamps):
             clf.fit(X[:, i][:, None], y)
             # sklearn's Tree is a Cython extension type with no stub for

@@ -163,15 +163,11 @@ class BagOfPatterns(BaseEstimator, UnivariateTransformerMixin):
         # Learn the vocabulary
         vectorizer = CountVectorizer()
         vectorizer.fit(X_bow)
-        self.vocabulary_ = {
-            value: key for key, value in vectorizer.vocabulary_.items()
-        }
+        self.vocabulary_ = {value: key for key, value in vectorizer.vocabulary_.items()}
         self._vectorizer = vectorizer
         return self
 
-    def transform(
-        self, X: npt.ArrayLike
-    ) -> npt.NDArray[np.int64] | csr_matrix:
+    def transform(self, X: npt.ArrayLike) -> npt.NDArray[np.int64] | csr_matrix:
         """Derive word frequencies for each time series.
 
         Parameters
@@ -253,9 +249,7 @@ class BagOfPatterns(BaseEstimator, UnivariateTransformerMixin):
         # Derive frequencies of each word
         vectorizer = CountVectorizer()
         X_bop = vectorizer.fit_transform(X_bow)
-        self.vocabulary_ = {
-            value: key for key, value in vectorizer.vocabulary_.items()
-        }
+        self.vocabulary_ = {value: key for key, value in vectorizer.vocabulary_.items()}
         self._vectorizer = vectorizer
         if not self.sparse:
             # Same generic-`spmatrix`-inference issue as in transform()

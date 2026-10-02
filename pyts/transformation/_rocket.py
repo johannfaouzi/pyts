@@ -104,9 +104,7 @@ def generate_kernels(
     # Paddings
     paddings = np.zeros(n_kernels)
     padding_cond = np.random.randint(0, 2, n_kernels).astype(np.bool_)
-    paddings[padding_cond] = np.floor_divide((lengths - 1) * dilations, 2)[
-        padding_cond
-    ]
+    paddings[padding_cond] = np.floor_divide((lengths - 1) * dilations, 2)[padding_cond]
 
     return weights, lengths, biases, dilations, paddings
 
@@ -194,8 +192,7 @@ def apply_one_kernel_one_sample(
 
 
 @njit(
-    "float64[:,:](float64[:,:], float64[:,:], int64[:], float64[:], "
-    "int64[:], int64[:])"
+    "float64[:,:](float64[:,:], float64[:,:], int64[:], float64[:], int64[:], int64[:])"
 )
 def apply_all_kernels(
     X: npt.NDArray[np.float64],
@@ -364,9 +361,7 @@ class ROCKET(BaseEstimator, UnivariateTransformerMixin):
 
         """
         X = check_array(X, dtype=np.float64)
-        check_is_fitted(
-            self, ['weights_', 'length_', 'bias_', 'dilation_', 'padding_']
-        )
+        check_is_fitted(self, ['weights_', 'length_', 'bias_', 'dilation_', 'padding_'])
         X_new = apply_all_kernels(
             X,
             self.weights_,
@@ -377,13 +372,9 @@ class ROCKET(BaseEstimator, UnivariateTransformerMixin):
         )
         return X_new
 
-    def _check_params(
-        self, n_timestamps: int
-    ) -> tuple[npt.NDArray[np.int64], int]:
+    def _check_params(self, n_timestamps: int) -> tuple[npt.NDArray[np.int64], int]:
         if not isinstance(self.n_kernels, (int, np.integer)):
-            raise TypeError(
-                f"'n_kernels' must be an integer (got {self.n_kernels})."
-            )
+            raise TypeError(f"'n_kernels' must be an integer (got {self.n_kernels}).")
 
         if not isinstance(self.kernel_sizes, (list, tuple, np.ndarray)):
             raise TypeError(

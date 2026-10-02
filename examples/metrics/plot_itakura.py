@@ -19,9 +19,9 @@ parallelogram with different slopes and temporal dimensions.
 
 import matplotlib.pyplot as plt
 import numpy as np
+from pyts.metrics.dtw import _get_itakura_slopes
 
 from pyts.metrics import itakura_parallelogram
-from pyts.metrics.dtw import _get_itakura_slopes
 
 # #####################################################################
 # We write a function to visualize the itakura parallelogram for different

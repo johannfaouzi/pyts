@@ -58,9 +58,7 @@ plt.xticks(
     rotation=60,
     ha='right',
 )
-y_max = np.max(
-    np.concatenate([X_weasel[y_train == 0][0], X_weasel[y_train == 1][0]])
-)
+y_max = np.max(np.concatenate([X_weasel[y_train == 0][0], X_weasel[y_train == 1][0]]))
 plt.yticks(np.arange(y_max + 1), fontsize=12)
 plt.xlabel("Words", fontsize=14)
 plt.ylabel("Frequencies", fontsize=14)

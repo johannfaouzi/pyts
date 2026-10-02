@@ -158,9 +158,7 @@ def test_min_points_required(strategy, min_points):
         f"strategy={strategy!r} requires at least {min_points}."
     )
     with pytest.raises(ValueError, match=re.escape(err_msg)):
-        InterpolationImputer(strategy=strategy).transform(
-            [make_row(n_known)]
-        )
+        InterpolationImputer(strategy=strategy).transform([make_row(n_known)])
 
 
 def test_min_points_required_names_correct_sample():

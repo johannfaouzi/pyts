@@ -654,14 +654,12 @@ def test_histogram(params, arr_desired):
         (
             {'min_interval_size': 0.0},
             ValueError,
-            "If 'min_interval_size' is a float, it must be greater than 0 "
-            "(got 0.0).",
+            "If 'min_interval_size' is a float, it must be greater than 0 (got 0.0).",
         ),
         (
             {'min_interval_size': -1.0},
             ValueError,
-            "If 'min_interval_size' is a float, it must be greater than 0 "
-            "(got -1.0).",
+            "If 'min_interval_size' is a float, it must be greater than 0 (got -1.0).",
         ),
         (
             {'min_subsequence_size': 2, 'min_interval_size': 3},
@@ -710,14 +708,12 @@ def test_histogram(params, arr_desired):
         (
             {'n_subsequences': 0.0},
             ValueError,
-            "If 'n_subsequences' is a float, it must be greater than 0 "
-            "(got 0.0).",
+            "If 'n_subsequences' is a float, it must be greater than 0 (got 0.0).",
         ),
         (
             {'n_subsequences': -1.0},
             ValueError,
-            "If 'n_subsequences' is a float, it must be greater than 0 "
-            "(got -1.0).",
+            "If 'n_subsequences' is a float, it must be greater than 0 (got -1.0).",
         ),
     ],
 )
@@ -922,9 +918,7 @@ def test_attributes_tsbf(X, y, params):
     """Test the attributes of a fitted instance of TSBF."""
     n_samples = X.shape[0]
     n_classes = np.unique(y).size
-    n_estimators = params.get(
-        'n_estimators', TSBF().get_params()['n_estimators']
-    )
+    n_estimators = params.get('n_estimators', TSBF().get_params()['n_estimators'])
     bins = params.get('bins', TSBF().get_params()['bins'])
     n_bins = bins if isinstance(bins, (int, np.integer)) else len(bins) - 1
     n_features = (n_bins + 1) * n_classes
@@ -964,9 +958,7 @@ def test_methods_tsbf(X, y, params):
     """Test the supported methods of TSBF."""
     n_samples = X.shape[0]
     n_classes = np.unique(y).size
-    n_estimators = params.get(
-        'n_estimators', TSBF().get_params()['n_estimators']
-    )
+    n_estimators = params.get('n_estimators', TSBF().get_params()['n_estimators'])
     clf = TSBF(**params).fit(X, y)
     assert clf.apply(X).shape == (n_samples, n_estimators)
     assert clf.decision_path(X)[0].shape[0] == n_samples

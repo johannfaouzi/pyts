@@ -122,9 +122,8 @@ def test_reshape_with_nan(params, arr_desired):
         (
             {'strategy': 'whoops'},
             ValueError,
-            "'strategy' must be either 'uniform', 'quantile' or 'normal' (got {}).".format(
-                'whoops'
-            ),
+            "'strategy' must be either 'uniform', 'quantile' or 'normal' "
+            "(got {}).".format('whoops'),
         ),
     ],
 )
@@ -145,9 +144,7 @@ def test_warning_smaller_n_bins():
         "of bins or removing these samples."
     )
     with pytest.warns(UserWarning, match=re.escape(warning_msg)):
-        discretizer._compute_bins(
-            X_new, n_samples + 1, n_bins=5, strategy='quantile'
-        )
+        discretizer._compute_bins(X_new, n_samples + 1, n_bins=5, strategy='quantile')
 
 
 @pytest.mark.parametrize(

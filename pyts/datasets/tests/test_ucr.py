@@ -124,9 +124,7 @@ def test_correct_ucr_name_description(dataset, output):
 
 def test_fetch_cached_ucr_dataset():
     """Test that a cached dataset can be loaded using 'fetch_ucr_dataset'."""
-    res = fetch_ucr_dataset(
-        'GunPoint', use_cache=True, data_home=_BUNDLED_UCR_DIR
-    )
+    res = fetch_ucr_dataset('GunPoint', use_cache=True, data_home=_BUNDLED_UCR_DIR)
     assert res.data_train.shape == (50, 150)
     assert res.data_test.shape == (150, 150)
     assert res.target_train.shape == (50,)
@@ -147,15 +145,10 @@ def test_load_ucr_dataset_description_url(tmp_path):
     dataset_dir = tmp_path / download_name
     dataset_dir.mkdir()
     (dataset_dir / f'{download_name}.txt').write_text('fake description')
-    (dataset_dir / f'{download_name}_TRAIN.txt').write_text(
-        '0 1.0 2.0\n1 3.0 4.0\n'
-    )
-    (dataset_dir / f'{download_name}_TEST.txt').write_text(
-        '0 1.0 2.0\n1 3.0 4.0\n'
-    )
+    (dataset_dir / f'{download_name}_TRAIN.txt').write_text('0 1.0 2.0\n1 3.0 4.0\n')
+    (dataset_dir / f'{download_name}_TEST.txt').write_text('0 1.0 2.0\n1 3.0 4.0\n')
 
     res = _load_ucr_dataset(download_name, str(tmp_path))
     assert res.url == (
-        "https://timeseriesclassification.com/"
-        "description.php?Dataset=MixedShapes"
+        "https://timeseriesclassification.com/description.php?Dataset=MixedShapes"
     )

@@ -44,15 +44,11 @@ def test_generate_kernels(n_kernels, n_timestamps, kernel_sizes, seed):
     assert np.all(np.logical_and(-1 <= biases, biases <= 1))
     (n_timestamps - 1) // (min(kernel_sizes) - 1)
     upper_bound_dilation = (n_timestamps - 1) // (min(kernel_sizes) - 1)
-    assert np.all(
-        np.logical_and(1 <= dilations, dilations <= upper_bound_dilation)
-    )
+    assert np.all(np.logical_and(1 <= dilations, dilations <= upper_bound_dilation))
     upper_bound_padding = (
         (lengths - 1) * (n_timestamps - 1) // (min(kernel_sizes) - 1)
     ) // 2
-    assert np.all(
-        np.logical_and(0 <= paddings, paddings <= upper_bound_padding)
-    )
+    assert np.all(np.logical_and(0 <= paddings, paddings <= upper_bound_padding))
 
     # Check zero mean of weights
     np.testing.assert_allclose(weights.mean(axis=1), 0, rtol=0, atol=1e-5)

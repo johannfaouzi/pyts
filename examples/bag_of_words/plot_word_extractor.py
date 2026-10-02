@@ -38,9 +38,7 @@ different_words_idx = np.r_[True, words[1:] != words[:-1]]
 
 # Show the results
 plt.figure(figsize=(16, 7))
-plt.suptitle(
-    'Extracting words from a discretized time series', fontsize=20, y=0.9
-)
+plt.suptitle('Extracting words from a discretized time series', fontsize=20, y=0.9)
 
 plt.subplot(121)
 plt.plot(X_ordinal[0], 'o', scalex=0.2)
@@ -65,9 +63,7 @@ for i, (word, different_word) in enumerate(
     if different_word:
         plt.text(i, -0.4 - (i % 5) / 4, word, fontsize=17, color='C0')
     else:
-        plt.text(
-            i, -0.4 - (i % 5) / 4, word, fontsize=17, color='C0', alpha=0.2
-        )
+        plt.text(i, -0.4 - (i % 5) / 4, word, fontsize=17, color='C0', alpha=0.2)
 
 plt.tight_layout()
 plt.subplots_adjust(bottom=0.3, top=0.8)

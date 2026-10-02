@@ -176,9 +176,7 @@ def test_reshape_list_shapelets(shapelets, lengths, res_desired):
     res_actual = _reshape_list_shapelets(shapelets, lengths)
     assert len(res_actual) == len(res_desired)
     for arr_actual, arr_desired in zip(res_actual, res_desired, strict=False):
-        np.testing.assert_allclose(
-            arr_actual, arr_desired, atol=1e-5, rtol=0.0
-        )
+        np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.0)
 
 
 @pytest.mark.parametrize(
@@ -233,12 +231,8 @@ def test_reshape_array_shapelets_inverse(shapelets, lengths):
     shapelets_array = _reshape_array_shapelets(shapelets, lengths)
     shapelets_tuple = tuple(_reshape_list_shapelets(shapelets_array, lengths))
     assert len(shapelets) == len(shapelets_tuple)
-    for arr_actual, arr_desired in zip(
-        shapelets, shapelets_tuple, strict=False
-    ):
-        np.testing.assert_allclose(
-            arr_actual, arr_desired, atol=1e-5, rtol=0.0
-        )
+    for arr_actual, arr_desired in zip(shapelets, shapelets_tuple, strict=False):
+        np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.0)
 
 
 @pytest.mark.parametrize(
@@ -799,8 +793,7 @@ def test_shapes_cross_entropy(X, y, params, n_shapelets_desired):
         (
             {'multi_class': 'yolo'},
             ValueError,
-            "'multi_class' must be either 'multinomial', 'ovr' or 'ovo' "
-            "(got yolo).",
+            "'multi_class' must be either 'multinomial', 'ovr' or 'ovo' (got yolo).",
         ),
         (
             {'class_weight': {0: 2, 1: 3}, 'multi_class': 'ovr'},

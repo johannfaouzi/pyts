@@ -62,7 +62,7 @@ def _load_dataset(name: str, archive: str, return_X_y: bool) -> _LoadReturn:
 
     (data_train, data_test, target_train, target_test) : tuple if ``return_X_y`` is True
 
-    """  # noqa: E501
+    """
     module_path = os.path.dirname(__file__)
     folder = os.path.join(module_path, 'cached_datasets', archive, '')
     if archive == 'UCR':
@@ -139,7 +139,7 @@ def load_basic_motions(return_X_y: bool = False) -> _LoadReturn:
     >>> X_train.shape
     (40, 6, 100)
 
-    """  # noqa: E501
+    """
     return _load_dataset('BasicMotions', 'UEA', return_X_y)
 
 
@@ -208,7 +208,7 @@ def load_coffee(return_X_y: bool = False) -> _LoadReturn:
     >>> X_train.shape
     (28, 286)
 
-    """  # noqa: E501
+    """
     return _load_dataset('Coffee', 'UCR', return_X_y)
 
 
@@ -275,7 +275,7 @@ def load_gunpoint(return_X_y: bool = False) -> _LoadReturn:
     >>> X_train.shape
     (50, 150)
 
-    """  # noqa: E501
+    """
     return _load_dataset('GunPoint', 'UCR', return_X_y)
 
 
@@ -341,5 +341,5 @@ def load_pig_central_venous_pressure(return_X_y: bool = False) -> _LoadReturn:
     >>> X_train.shape
     (104, 2000)
 
-    """  # noqa: E501
+    """
     return _load_dataset('PigCVP', 'UCR', return_X_y)

@@ -182,9 +182,7 @@ class GramianAngularField(BaseEstimator, UnivariateTransformerMixin):
         return X_new
 
     def _check_params(self, n_timestamps: int) -> int:
-        if not isinstance(
-            self.image_size, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.image_size, (int, np.integer, float, np.floating)):
             raise TypeError("'image_size' must be an integer or a float.")
         if isinstance(self.image_size, (int, np.integer)):
             if self.image_size < 1 or self.image_size > n_timestamps:
@@ -201,16 +199,12 @@ class GramianAngularField(BaseEstimator, UnivariateTransformerMixin):
                     f"and lower than or equal to 1 (got {self.image_size})."
                 )
             image_size = ceil(self.image_size * n_timestamps)
-        if not (
-            (self.sample_range is None)
-            or (isinstance(self.sample_range, tuple))
-        ):
+        if not ((self.sample_range is None) or (isinstance(self.sample_range, tuple))):
             raise TypeError("'sample_range' must be None or a tuple.")
         if isinstance(self.sample_range, tuple):
             if len(self.sample_range) != 2:
                 raise ValueError(
-                    "If 'sample_range' is a tuple, its length "
-                    "must be equal to 2."
+                    "If 'sample_range' is a tuple, its length must be equal to 2."
                 )
             if not -1 <= self.sample_range[0] < self.sample_range[1] <= 1:
                 raise ValueError(
@@ -219,7 +213,6 @@ class GramianAngularField(BaseEstimator, UnivariateTransformerMixin):
                 )
         if self.method not in ['s', 'd', 'summation', 'difference']:
             raise ValueError(
-                "'method' must be either 'summation', 's', "
-                "'difference' or 'd'."
+                "'method' must be either 'summation', 's', 'difference' or 'd'."
             )
         return image_size

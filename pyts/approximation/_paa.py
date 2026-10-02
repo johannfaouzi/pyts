@@ -40,9 +40,7 @@ def _paa(
     return X_paa
 
 
-class PiecewiseAggregateApproximation(
-    BaseEstimator, UnivariateTransformerMixin
-):
+class PiecewiseAggregateApproximation(BaseEstimator, UnivariateTransformerMixin):
     """Piecewise Aggregate Approximation.
 
     Parameters
@@ -136,23 +134,16 @@ class PiecewiseAggregateApproximation(
             start, end, n_timestamps_new = segmentation(
                 n_timestamps, window_size, self.overlapping, output_size
             )
-            X_paa = _paa(
-                X, n_samples, n_timestamps, start, end, n_timestamps_new
-            )
+            X_paa = _paa(X, n_samples, n_timestamps, start, end, n_timestamps_new)
             return X_paa
 
     def _check_params(self, n_timestamps: int) -> tuple[int, int | None]:
         if self.window_size is None and self.output_size is None:
-            raise TypeError(
-                "'window_size' and 'output_size' cannot be both None."
-            )
+            raise TypeError("'window_size' and 'output_size' cannot be both None.")
         if self.window_size is not None:
-            if not isinstance(
-                self.window_size, (int, np.integer, float, np.floating)
-            ):
+            if not isinstance(self.window_size, (int, np.integer, float, np.floating)):
                 raise TypeError(
-                    "If specified, 'window_size' must be an "
-                    "integer or a float."
+                    "If specified, 'window_size' must be an integer or a float."
                 )
             if isinstance(self.window_size, (int, np.integer)):
                 if not 1 <= self.window_size <= n_timestamps:
@@ -172,12 +163,9 @@ class PiecewiseAggregateApproximation(
                 window_size = ceil(self.window_size * n_timestamps)
             output_size = None
         else:
-            if not isinstance(
-                self.output_size, (int, np.integer, float, np.floating)
-            ):
+            if not isinstance(self.output_size, (int, np.integer, float, np.floating)):
                 raise TypeError(
-                    "If specified, 'output_size' must be an "
-                    "integer or a float."
+                    "If specified, 'output_size' must be an integer or a float."
                 )
             if isinstance(self.output_size, (int, np.integer)):
                 if not 1 <= self.output_size <= n_timestamps:

@@ -30,20 +30,17 @@ from pyts.metrics._lower_bounds import (
         (
             [[1, 1]],
             [[1]],
-            "Found input variables with inconsistent numbers of "
-            "timestamps: [2, 1]",
+            "Found input variables with inconsistent numbers of timestamps: [2, 1]",
         ),
         (
             [[1]],
             [[1, 2]],
-            "Found input variables with inconsistent numbers of "
-            "timestamps: [1, 2]",
+            "Found input variables with inconsistent numbers of timestamps: [1, 2]",
         ),
         (
             [[3, 1, 1]],
             [[1]],
-            "Found input variables with inconsistent numbers of "
-            "timestamps: [3, 1]",
+            "Found input variables with inconsistent numbers of timestamps: [3, 1]",
         ),
     ],
 )
@@ -161,9 +158,7 @@ def test_parameter_check_warping_envelope(X, region, err_msg):
         ),
     ],
 )
-def test_actual_results_warping_envelope(
-    X, region, lower_desired, upper_desired
-):
+def test_actual_results_warping_envelope(X, region, lower_desired, upper_desired):
     """Test that the actual results are the expected ones."""
     lower_actual, upper_actual = _warping_envelope(X, region)
     np.testing.assert_array_equal(lower_actual, lower_desired)
@@ -244,9 +239,7 @@ def test_actual_results_lower_bound_keogh():
     # X_proj = [[0, 2, 3, 3], [1, 2.5, 3.5, 4]]
     # LB_Keogh = [[sqrt(0.25 + 0.25 + 9), sqrt(1 + 4)]]
     arr_desired_window = np.sqrt([[9.5, 5]])
-    np.testing.assert_allclose(
-        arr_actual_window, arr_desired_window, atol=1e-5, rtol=0
-    )
+    np.testing.assert_allclose(arr_actual_window, arr_desired_window, atol=1e-5, rtol=0)
 
 
 def test_actual_results_lower_bound_improved():
@@ -275,9 +268,7 @@ def test_actual_results_lower_bound_improved():
     # X_train_proj = [[0, 1, 2, 3], [1, 2, 3, 3.5]]
     # LB_Improved^2 = [[0, 0.25]]
     arr_desired_window = np.sqrt([[0.59 + 0, 1 + 0.25]])
-    np.testing.assert_allclose(
-        arr_actual_window, arr_desired_window, atol=1e-5, rtol=0
-    )
+    np.testing.assert_allclose(arr_actual_window, arr_desired_window, atol=1e-5, rtol=0)
 
 
 def test_lower_bounds_inequalities():

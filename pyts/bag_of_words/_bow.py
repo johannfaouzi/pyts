@@ -104,9 +104,7 @@ class WordExtractor(BaseEstimator, UnivariateTransformerMixin):
         window_size, window_step = self._check_params(n_timestamps)
         n_windows = (n_timestamps - window_size + window_step) // window_step
 
-        X_window = _windowed_view(
-            X, n_samples, n_timestamps, window_size, window_step
-        )
+        X_window = _windowed_view(X, n_samples, n_timestamps, window_size, window_step)
         X_word = np.asarray(
             [
                 [''.join(X_window[i, j]) for j in range(n_windows)]
@@ -115,9 +113,7 @@ class WordExtractor(BaseEstimator, UnivariateTransformerMixin):
         )
 
         if self.numerosity_reduction:
-            not_equal = np.c_[
-                X_word[:, 1:] != X_word[:, :-1], np.full(n_samples, True)
-            ]
+            not_equal = np.c_[X_word[:, 1:] != X_word[:, :-1], np.full(n_samples, True)]
             X_bow = np.asarray(
                 [' '.join(X_word[i, not_equal[i]]) for i in range(n_samples)]
             )
@@ -126,9 +122,7 @@ class WordExtractor(BaseEstimator, UnivariateTransformerMixin):
         return X_bow
 
     def _check_params(self, n_timestamps: int) -> tuple[int, int]:
-        if not isinstance(
-            self.window_size, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.window_size, (int, np.integer, float, np.floating)):
             raise TypeError("'window_size' must be an integer or a float.")
         if isinstance(self.window_size, (int, np.integer)):
             if not 1 <= self.window_size <= n_timestamps:
@@ -145,9 +139,7 @@ class WordExtractor(BaseEstimator, UnivariateTransformerMixin):
                     f"and lower than or equal to 1 (got {self.window_size})."
                 )
             window_size = ceil(self.window_size * n_timestamps)
-        if not isinstance(
-            self.window_step, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.window_step, (int, np.integer, float, np.floating)):
             raise TypeError("'window_step' must be an integer or a float.")
         if isinstance(self.window_step, (int, np.integer)):
             if not 1 <= self.window_step <= n_timestamps:
@@ -317,9 +309,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         """
         X = check_array(X, dtype=np.float64)
         n_samples, n_timestamps = X.shape
-        window_size, word_size, window_step, alphabet = self._check_params(
-            n_timestamps
-        )
+        window_size, word_size, window_step, alphabet = self._check_params(n_timestamps)
         n_windows = (n_timestamps - window_size + window_step) // window_step
 
         # Standardize time series if quantile from standard normal distribution
@@ -357,9 +347,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
 
                 # Tile the bin edges for subsequences from the same time series
                 if self.strategy != 'normal':
-                    count = np.bincount(
-                        np.floor_divide(np.nonzero(idx)[0], n_windows)
-                    )
+                    count = np.bincount(np.floor_divide(np.nonzero(idx)[0], n_windows))
                     bin_edges = np.vstack(
                         [
                             np.tile(bin_edges[i], (count[i], 1))
@@ -378,9 +366,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
             not np.all(idx)  # pyrefly: ignore[unbound-name]
         ):
             pipeline = make_pipeline(
-                StandardScaler(
-                    with_mean=self.norm_mean, with_std=self.norm_std
-                ),
+                StandardScaler(with_mean=self.norm_mean, with_std=self.norm_std),
                 PiecewiseAggregateApproximation(
                     window_size=None,
                     output_size=word_size,
@@ -406,9 +392,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         if self.threshold_std is not None:
             if np.any(idx):  # pyrefly: ignore[unbound-name]
                 if not np.all(idx):
-                    X_sax = np.empty(
-                        (n_samples * n_windows, word_size), dtype='<U1'
-                    )
+                    X_sax = np.empty((n_samples * n_windows, word_size), dtype='<U1')
                     X_sax[idx] = X_sax_below_thresh  # pyrefly: ignore[unbound-name]
                     X_sax[~idx] = X_sax_above_thresh  # pyrefly: ignore[unbound-name]
                 else:
@@ -421,17 +405,12 @@ class BagOfWords(BaseEstimator, TransformerMixin):
 
         # Join letters to make words
         X_word = np.asarray(
-            [
-                [''.join(X_sax[i, j]) for j in range(n_windows)]
-                for i in range(n_samples)
-            ]
+            [[''.join(X_sax[i, j]) for j in range(n_windows)] for i in range(n_samples)]
         )
 
         # Apply numerosity reduction
         if self.numerosity_reduction:
-            not_equal = np.c_[
-                X_word[:, 1:] != X_word[:, :-1], np.full(n_samples, True)
-            ]
+            not_equal = np.c_[X_word[:, 1:] != X_word[:, :-1], np.full(n_samples, True)]
             X_bow = np.asarray(
                 [' '.join(X_word[i, not_equal[i]]) for i in range(n_samples)]
             )
@@ -443,9 +422,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
     def _check_params(
         self, n_timestamps: int
     ) -> tuple[int, int, int, npt.NDArray[Any]]:
-        if not isinstance(
-            self.window_size, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.window_size, (int, np.integer, float, np.floating)):
             raise TypeError("'window_size' must be an integer or a float.")
         if isinstance(self.window_size, (int, np.integer)):
             if not 1 <= self.window_size <= n_timestamps:
@@ -464,9 +441,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
                 )
             window_size = ceil(self.window_size * n_timestamps)
 
-        if not isinstance(
-            self.word_size, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.word_size, (int, np.integer, float, np.floating)):
             raise TypeError("'word_size' must be an integer or a float.")
         if isinstance(self.word_size, (int, np.integer)):
             if not 1 <= self.word_size <= window_size:
@@ -499,9 +474,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
                 f"or 'normal' (got {self.strategy})"
             )
 
-        if not isinstance(
-            self.window_step, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.window_step, (int, np.integer, float, np.floating)):
             raise TypeError("'window_step' must be an integer or a float.")
         if isinstance(self.window_step, (int, np.integer)):
             if not 1 <= self.window_step <= n_timestamps:
@@ -522,9 +495,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         if self.threshold_std is not None and not isinstance(
             self.threshold_std, (int, np.integer, float, np.floating)
         ):
-            raise TypeError(
-                "'threshold_std' must be an integer, a float or None."
-            )
+            raise TypeError("'threshold_std' must be an integer, a float or None.")
         if self.threshold_std is not None and not self.threshold_std >= 0.0:
             raise ValueError(
                 "If 'threshold_std' is an integer or a float, it "
@@ -545,8 +516,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
             alphabet = check_array(self.alphabet, ensure_2d=False, dtype=None)
             if alphabet.shape != (self.n_bins,):
                 raise ValueError(
-                    "If 'alphabet' is array-like, its shape "
-                    "must be equal to (n_bins,)."
+                    "If 'alphabet' is array-like, its shape must be equal to (n_bins,)."
                 )
 
         return window_size, word_size, window_step, alphabet

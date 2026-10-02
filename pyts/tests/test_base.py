@@ -46,9 +46,7 @@ def test_univariate_transformer_mixin(estimator, X, y):
 def test_multivariate_transformer_mixin(estimator, X, y):
     jrp_1 = clone(estimator)
     jrp_2 = clone(estimator)
-    np.testing.assert_allclose(
-        jrp_1.fit_transform(X, y), jrp_2.fit(X, y).transform(X)
-    )
+    np.testing.assert_allclose(jrp_1.fit_transform(X, y), jrp_2.fit(X, y).transform(X))
 
 
 @pytest.mark.parametrize(
@@ -57,9 +55,7 @@ def test_multivariate_transformer_mixin(estimator, X, y):
 )
 def test_univariate_classifier_mixin(sample_weight):
     clf = SAXVSM().fit(X_uni, y_uni)
-    assert isinstance(
-        clf.score(X_uni, y_uni, sample_weight), (float, np.floating)
-    )
+    assert isinstance(clf.score(X_uni, y_uni, sample_weight), (float, np.floating))
 
 
 @pytest.mark.parametrize(
@@ -68,6 +64,4 @@ def test_univariate_classifier_mixin(sample_weight):
 )
 def test_multivariate_classifier_mixin(sample_weight):
     clf = MultivariateClassifier(SAXVSM()).fit(X_multi, y_multi)
-    assert isinstance(
-        clf.score(X_multi, y_multi, sample_weight), (float, np.floating)
-    )
+    assert isinstance(clf.score(X_multi, y_multi, sample_weight), (float, np.floating))

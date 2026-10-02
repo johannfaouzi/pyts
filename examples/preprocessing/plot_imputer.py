@@ -41,9 +41,7 @@ for i, strategy in enumerate(['linear', 'quadratic', 'cubic', 'nearest']):
     plt.title(f"{strategy.capitalize()} Interpolation", fontsize=16)
     plt.legend(loc='best', fontsize=14)
 
-plt.suptitle(
-    'Interpolating missing values with different strategies', fontsize=20
-)
+plt.suptitle('Interpolating missing values with different strategies', fontsize=20)
 plt.tight_layout()
 plt.subplots_adjust(top=0.9)
 plt.show()

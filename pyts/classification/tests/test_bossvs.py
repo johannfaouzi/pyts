@@ -131,18 +131,14 @@ def test_actual_results_no_numerosity_reduction():
     tfidf_desired = tfidf.fit_transform(X_class).toarray()
 
     # Vocabulary
-    vocabulary_desired = {
-        value: key for key, value in tfidf.vocabulary_.items()
-    }
+    vocabulary_desired = {value: key for key, value in tfidf.vocabulary_.items()}
 
     # Tf-idf
     tfidf_actual = bossvs.fit(X, y).tfidf_
 
     # Decision function
     decision_function_actual = bossvs.decision_function(X)
-    decision_function_desired = cosine_similarity(
-        tfidf.transform(X_bow), tfidf_desired
-    )
+    decision_function_desired = cosine_similarity(tfidf.transform(X_bow), tfidf_desired)
 
     # Predictions
     y_pred_actual = bossvs.predict(X)
@@ -154,9 +150,7 @@ def test_actual_results_no_numerosity_reduction():
     np.testing.assert_allclose(
         decision_function_actual, decision_function_desired, atol=1e-5, rtol=0
     )
-    np.testing.assert_allclose(
-        y_pred_actual, y_pred_desired, atol=1e-5, rtol=0
-    )
+    np.testing.assert_allclose(y_pred_actual, y_pred_desired, atol=1e-5, rtol=0)
 
 
 def test_actual_results_numerosity_reduction():
@@ -201,18 +195,14 @@ def test_actual_results_numerosity_reduction():
         norm=None, use_idf=False, smooth_idf=False, sublinear_tf=True
     )
     tfidf_desired = tfidf.fit_transform(X_class).toarray()
-    vocabulary_desired = {
-        value: key for key, value in tfidf.vocabulary_.items()
-    }
+    vocabulary_desired = {value: key for key, value in tfidf.vocabulary_.items()}
 
     # Tf-idf
     tfidf_actual = bossvs.fit(X, y).tfidf_
 
     # Decision function
     decision_function_actual = bossvs.decision_function(X)
-    decision_function_desired = cosine_similarity(
-        tfidf.transform(X_bow), tfidf_desired
-    )
+    decision_function_desired = cosine_similarity(tfidf.transform(X_bow), tfidf_desired)
 
     # Predictions
     y_pred_actual = bossvs.predict(X)
@@ -224,6 +214,4 @@ def test_actual_results_numerosity_reduction():
     np.testing.assert_allclose(
         decision_function_actual, decision_function_desired, atol=1e-5, rtol=0
     )
-    np.testing.assert_allclose(
-        y_pred_actual, y_pred_desired, atol=1e-5, rtol=0
-    )
+    np.testing.assert_allclose(y_pred_actual, y_pred_desired, atol=1e-5, rtol=0)

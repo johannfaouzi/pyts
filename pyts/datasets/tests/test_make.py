@@ -58,9 +58,7 @@ def test_parameter_check_make_cylinder_bell_funnel(params, error, err_msg):
         ({'n_samples': 10, 'weights': (0.8, 0.2)}, [8, 2]),
     ],
 )
-def test_class_balance_make_cylinder_bell_funnel(
-    params, class_balance_desired
-):
+def test_class_balance_make_cylinder_bell_funnel(params, class_balance_desired):
     """Test that the class balance is the expected one."""
     _X, y = make_cylinder_bell_funnel(**params)
     class_balance_actual = np.bincount(y)

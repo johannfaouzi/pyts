@@ -227,9 +227,7 @@ class RecurrencePlot(BaseEstimator, UnivariateTransformerMixin):
         else:
             X_traj = _trajectories(X, dimension, time_delay)
             n_trajectories = n_timestamps - (dimension - 1) * time_delay
-            X_dist = _recurrence_plot_dimn(
-                X_traj, n_samples, n_trajectories, dimension
-            )
+            X_dist = _recurrence_plot_dimn(X_traj, n_samples, n_trajectories, dimension)
         if self.threshold is None:
             X_rp = X_dist
         elif self.threshold == 'point':
@@ -251,9 +249,7 @@ class RecurrencePlot(BaseEstimator, UnivariateTransformerMixin):
         return X_rp.astype('float64')
 
     def _check_params(self, n_timestamps: int) -> tuple[int, int]:
-        if not isinstance(
-            self.dimension, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.dimension, (int, np.integer, float, np.floating)):
             raise TypeError("'dimension' must be an integer or a float.")
         if isinstance(self.dimension, (int, np.integer)):
             if not 1 <= self.dimension <= n_timestamps:
@@ -272,9 +268,7 @@ class RecurrencePlot(BaseEstimator, UnivariateTransformerMixin):
                 )
             dimension = ceil(self.dimension * n_timestamps)
 
-        if not isinstance(
-            self.time_delay, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.time_delay, (int, np.integer, float, np.floating)):
             raise TypeError("'time_delay' must be an integer or a float.")
         if isinstance(self.time_delay, (int, np.integer)):
             if not 1 <= self.time_delay <= n_timestamps:
@@ -303,9 +297,7 @@ class RecurrencePlot(BaseEstimator, UnivariateTransformerMixin):
         if (
             self.threshold is not None
             and self.threshold not in ['point', 'distance']
-            and not isinstance(
-                self.threshold, (int, np.integer, float, np.floating)
-            )
+            and not isinstance(self.threshold, (int, np.integer, float, np.floating))
         ):
             raise TypeError(
                 "'threshold' must be either None, 'point', "
@@ -320,9 +312,7 @@ class RecurrencePlot(BaseEstimator, UnivariateTransformerMixin):
                 "it must be greater than or equal to 0."
             )
 
-        if not isinstance(
-            self.percentage, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.percentage, (int, np.integer, float, np.floating)):
             raise TypeError("'percentage' must be a float or an integer.")
         if not 0 <= self.percentage <= 100:
             raise ValueError("'percentage' must be between 0 and 100.")

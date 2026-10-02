@@ -68,17 +68,13 @@ def plot_dendrogram(model, **kwargs):
     ).astype(float)
 
     # Plot the corresponding dendrogram
-    dendrogram(
-        linkage_matrix, color_threshold=sorted(model.distances_)[-2], **kwargs
-    )
+    dendrogram(linkage_matrix, color_threshold=sorted(model.distances_)[-2], **kwargs)
 
 
 n_samples = 14
 fig, axes = plt.subplots(1, 3, figsize=(16, 8))
 
-X, y = make_cylinder_bell_funnel(
-    n_samples=n_samples, random_state=42, shuffle=False
-)
+X, y = make_cylinder_bell_funnel(n_samples=n_samples, random_state=42, shuffle=False)
 for k_axis, metric in enumerate(["Euclidean", "DTW", "BOSS"]):
     if metric == "DTW":
         dist_mat = create_dist_matrix(X, dtw)

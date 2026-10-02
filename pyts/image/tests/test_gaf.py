@@ -109,8 +109,7 @@ def test_actual_results_gadf(X_cos, X_sin, arr_desired):
         (
             {'sample_range': None},
             ValueError,
-            "If 'sample_range' is None, all the values of X must be between "
-            "-1 and 1.",
+            "If 'sample_range' is None, all the values of X must be between -1 and 1.",
         ),
     ],
 )

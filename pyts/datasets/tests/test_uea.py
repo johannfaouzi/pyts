@@ -110,9 +110,7 @@ def test_correct_uea_name_download(dataset, output):
 
 def test_fetch_cached_uea_dataset():
     """Test that a cached dataset can be loaded using 'fetch_uea_dataset'."""
-    res = fetch_uea_dataset(
-        'BasicMotions', use_cache=True, data_home=_BUNDLED_UEA_DIR
-    )
+    res = fetch_uea_dataset('BasicMotions', use_cache=True, data_home=_BUNDLED_UEA_DIR)
     assert res.data_train.shape == (40, 6, 100)
     assert res.data_test.shape == (40, 6, 100)
     assert res.target_train.shape == (40,)

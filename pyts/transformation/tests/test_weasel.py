@@ -127,9 +127,7 @@ def test_parameter_check(params, error, err_msg):
         weasel.fit(X, y)
 
 
-@pytest.mark.parametrize(
-    'sparse, instance', [(True, csr_matrix), (False, np.ndarray)]
-)
+@pytest.mark.parametrize('sparse, instance', [(True, csr_matrix), (False, np.ndarray)])
 def test_sparse_dense(sparse, instance):
     """Test that the expected type is returned."""
     weasel = WEASEL(strategy='quantile', sparse=sparse)
@@ -196,9 +194,7 @@ def test_accurate_results():
         )
         y_repeated = np.repeat(y, n_windows)
         X_sfa = sfa.fit_transform(X_windowed, y_repeated)
-        X_word = np.asarray(
-            [''.join(X_sfa[i]) for i in range(n_samples * n_windows)]
-        )
+        X_word = np.asarray([''.join(X_sfa[i]) for i in range(n_samples * n_windows)])
         X_word = X_word.reshape(n_samples, n_windows)
         X_bow = np.asarray([' '.join(X_word[i]) for i in range(n_samples)])
 
@@ -209,13 +205,9 @@ def test_accurate_results():
         X_features = hstack([X_features, X_counts[:, relevant_features]])
 
         old_length_vocab = len(vocabulary_)
-        vocabulary = {
-            value: key for (key, value) in vectorizer.vocabulary_.items()
-        }
+        vocabulary = {value: key for (key, value) in vectorizer.vocabulary_.items()}
         for i, idx in enumerate(relevant_features):
-            vocabulary_[i + old_length_vocab] = (
-                str(window_size) + " " + vocabulary[idx]
-            )
+            vocabulary_[i + old_length_vocab] = str(window_size) + " " + vocabulary[idx]
 
     arr_desired = X_features.toarray()
 

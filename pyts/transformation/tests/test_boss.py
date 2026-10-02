@@ -113,9 +113,7 @@ def test_parameter_check(params, error, err_msg):
         boss.fit(X, y)
 
 
-@pytest.mark.parametrize(
-    'sparse, instance', [(True, csr_matrix), (False, np.ndarray)]
-)
+@pytest.mark.parametrize('sparse, instance', [(True, csr_matrix), (False, np.ndarray)])
 def test_sparse_dense(sparse, instance):
     """Test that the expected type is returned."""
     weasel = BOSS(sparse=sparse)
@@ -158,9 +156,7 @@ def test_accurate_results_without_numerosity_reduction():
 
     vectorizer = CountVectorizer()
     arr_desired = vectorizer.fit_transform(X_bow).toarray()
-    vocabulary_desired = {
-        value: key for key, value in vectorizer.vocabulary_.items()
-    }
+    vocabulary_desired = {value: key for key, value in vectorizer.vocabulary_.items()}
 
     arr_actual = boss.fit_transform(X, y).toarray()
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0)
@@ -207,9 +203,7 @@ def test_accurate_results_floats():
 
     vectorizer = CountVectorizer()
     arr_desired = vectorizer.fit_transform(X_bow).toarray()
-    vocabulary_desired = {
-        value: key for key, value in vectorizer.vocabulary_.items()
-    }
+    vocabulary_desired = {value: key for key, value in vectorizer.vocabulary_.items()}
 
     arr_actual_1 = boss.fit_transform(X, None).toarray()
     np.testing.assert_allclose(arr_actual_1, arr_desired, atol=1e-5, rtol=0)

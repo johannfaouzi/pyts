@@ -41,9 +41,7 @@ def test_markov_transition_matrix(X_binned, n_bins, arr_desired):
     """Test that the actual results are the expected ones."""
     X_binned = np.asarray(X_binned)
     n_samples, n_timestamps = X_binned.shape
-    arr_actual = _markov_transition_matrix(
-        X_binned, n_samples, n_timestamps, n_bins
-    )
+    arr_actual = _markov_transition_matrix(X_binned, n_samples, n_timestamps, n_bins)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.0)
 
 
@@ -131,9 +129,7 @@ def test_markov_transition_field(X_binned, X_mtm, n_bins, arr_desired):
         ),
     ],
 )
-def test_aggregated_markov_transition_field(
-    image_size, start, end, X_mtf, arr_desired
-):
+def test_aggregated_markov_transition_field(image_size, start, end, X_mtf, arr_desired):
     """Test that the actual results are the expected ones."""
     X_mtf = np.asarray(X_mtf)
     start = np.asarray(start)

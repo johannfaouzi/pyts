@@ -38,9 +38,7 @@ def test_uniform_bins(timestamp_min, timestamp_max, n_bins, arr_desired):
     timestamp_min = np.asarray(timestamp_min)
     timestamp_max = np.asarray(timestamp_max)
     n_timestamps = timestamp_min.size
-    arr_actual = _uniform_bins(
-        timestamp_min, timestamp_max, n_timestamps, n_bins
-    )
+    arr_actual = _uniform_bins(timestamp_min, timestamp_max, n_timestamps, n_bins)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.0)
 
 
@@ -179,17 +177,13 @@ def test_high_n_bins_entropy():
             {},
             X,
             None,
-            np.asarray(
-                [['a', 'a', 'a', 'b', 'b', 'c', 'c', 'd', 'd', 'd']] * 3
-            ).T,
+            np.asarray([['a', 'a', 'a', 'b', 'b', 'c', 'c', 'd', 'd', 'd']] * 3).T,
         ),
         (
             {'strategy': 'uniform'},
             X,
             None,
-            np.asarray(
-                [['a', 'a', 'a', 'b', 'b', 'c', 'c', 'd', 'd', 'd']] * 3
-            ).T,
+            np.asarray([['a', 'a', 'a', 'b', 'b', 'c', 'c', 'd', 'd', 'd']] * 3).T,
         ),
         (
             {'alphabet': 'ordinal'},
@@ -231,9 +225,7 @@ def test_high_n_bins_entropy():
             {'n_bins': 6, 'strategy': 'entropy'},
             X,
             y,
-            np.asarray(
-                [['a', 'a', 'a', 'b', 'b', 'c', 'd', 'e', 'e', 'f']] * 3
-            ).T,
+            np.asarray([['a', 'a', 'a', 'b', 'b', 'c', 'd', 'e', 'e', 'f']] * 3).T,
         ),
         (
             {'n_bins': 6, 'strategy': 'entropy', 'alphabet': 'ordinal'},

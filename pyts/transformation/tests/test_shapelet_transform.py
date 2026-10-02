@@ -194,8 +194,7 @@ def test_remove_similar_shapelets(params, arr_desired):
         (
             {'n_shapelets': -2},
             ValueError,
-            "If 'n_shapelets' is an integer, it must be a positive integer "
-            "(got -2).",
+            "If 'n_shapelets' is an integer, it must be a positive integer (got -2).",
         ),
         (
             {'criterion': 'mse'},
@@ -410,8 +409,7 @@ def test_attributes_shape(params, X, y, fewer_shapelets, attr_expected):
 
     # Check 'window_range_'
     window_sizes_auto = (
-        isinstance(shapelet.window_sizes, str)
-        and shapelet.window_sizes == 'auto'
+        isinstance(shapelet.window_sizes, str) and shapelet.window_sizes == 'auto'
     )
     if window_sizes_auto:
         assert isinstance(shapelet.window_range_, tuple)

@@ -197,9 +197,7 @@ class SAXVSM(BaseEstimator, UnivariateClassifierMixin):
         )
         X_bow = bow.fit_transform(X)
 
-        X_class = [
-            ' '.join(X_bow[y_ind == classe]) for classe in range(n_classes)
-        ]
+        X_class = [' '.join(X_bow[y_ind == classe]) for classe in range(n_classes)]
 
         tfidf = TfidfVectorizer(
             norm=None,
@@ -212,9 +210,7 @@ class SAXVSM(BaseEstimator, UnivariateClassifierMixin):
         # base, which lacks `toarray` statically even though every
         # concrete sparse matrix (what is actually returned) has it.
         self.tfidf_ = tfidf.fit_transform(X_class).toarray()  # pyrefly: ignore[missing-attribute]
-        self.vocabulary_ = {
-            value: key for key, value in tfidf.vocabulary_.items()
-        }
+        self.vocabulary_ = {value: key for key, value in tfidf.vocabulary_.items()}
         if self.use_idf:
             self.idf_ = tfidf.idf_
         else:
@@ -237,9 +233,7 @@ class SAXVSM(BaseEstimator, UnivariateClassifierMixin):
             osine similarity between the document-term matrix and X.
 
         """
-        check_is_fitted(
-            self, ['vocabulary_', 'tfidf_', 'idf_', '_tfidf', 'classes_']
-        )
+        check_is_fitted(self, ['vocabulary_', 'tfidf_', 'idf_', '_tfidf', 'classes_'])
         X = check_array(X)
         X_bow = self._bow.transform(X)
         vectorizer = CountVectorizer(vocabulary=self._tfidf.vocabulary_)

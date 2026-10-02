@@ -198,24 +198,18 @@ class BOSSVS(BaseEstimator, UnivariateClassifierMixin):
         y_repeated = np.repeat(y, n_windows)
         X_sfa = sfa.fit_transform(X_windowed, y_repeated)
 
-        X_word = np.asarray(
-            [''.join(X_sfa[i]) for i in range(n_samples * n_windows)]
-        )
+        X_word = np.asarray([''.join(X_sfa[i]) for i in range(n_samples * n_windows)])
         X_word = X_word.reshape(n_samples, n_windows)
 
         if self.numerosity_reduction:
-            not_equal = np.c_[
-                X_word[:, 1:] != X_word[:, :-1], np.full(n_samples, True)
-            ]
+            not_equal = np.c_[X_word[:, 1:] != X_word[:, :-1], np.full(n_samples, True)]
             X_bow = np.asarray(
                 [' '.join(X_word[i, not_equal[i]]) for i in range(n_samples)]
             )
         else:
             X_bow = np.asarray([' '.join(X_word[i]) for i in range(n_samples)])
 
-        X_class = np.array(
-            [' '.join(X_bow[y_ind == i]) for i in range(n_classes)]
-        )
+        X_class = np.array([' '.join(X_bow[y_ind == i]) for i in range(n_classes)])
 
         tfidf = TfidfVectorizer(
             norm=None,
@@ -228,9 +222,7 @@ class BOSSVS(BaseEstimator, UnivariateClassifierMixin):
         # base, which lacks `toarray` statically even though every
         # concrete sparse matrix (what is actually returned) has it.
         self.tfidf_ = tfidf.fit_transform(X_class).toarray()  # pyrefly: ignore[missing-attribute]
-        self.vocabulary_ = {
-            value: key for key, value in tfidf.vocabulary_.items()
-        }
+        self.vocabulary_ = {value: key for key, value in tfidf.vocabulary_.items()}
         if self.use_idf:
             self.idf_ = tfidf.idf_
         else:
@@ -271,9 +263,7 @@ class BOSSVS(BaseEstimator, UnivariateClassifierMixin):
         X_word = X_word.reshape(n_samples, self._n_windows)
 
         if self.numerosity_reduction:
-            not_equal = np.c_[
-                X_word[:, 1:] != X_word[:, :-1], np.full(n_samples, True)
-            ]
+            not_equal = np.c_[X_word[:, 1:] != X_word[:, :-1], np.full(n_samples, True)]
             X_bow = np.asarray(
                 [' '.join(X_word[i, not_equal[i]]) for i in range(n_samples)]
             )
@@ -313,9 +303,7 @@ class BOSSVS(BaseEstimator, UnivariateClassifierMixin):
         if not self.word_size >= 1:
             raise ValueError("'word_size' must be a positive integer.")
 
-        if not isinstance(
-            self.window_size, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.window_size, (int, np.integer, float, np.floating)):
             raise TypeError("'window_size' must be an integer or a float.")
         if isinstance(self.window_size, (int, np.integer)):
             if self.drop_sum:
@@ -341,9 +329,7 @@ class BOSSVS(BaseEstimator, UnivariateClassifierMixin):
                 )
             window_size = ceil(self.window_size * n_timestamps)
 
-        if not isinstance(
-            self.window_step, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.window_step, (int, np.integer, float, np.floating)):
             raise TypeError("'window_step' must be an integer or a float.")
         if isinstance(self.window_step, (int, np.integer)):
             if not 1 <= self.window_step <= n_timestamps:

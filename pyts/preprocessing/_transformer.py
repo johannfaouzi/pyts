@@ -165,8 +165,8 @@ class QuantileTransformer(BaseEstimator, UnivariateTransformerMixin):
     >>> from pyts.preprocessing import QuantileTransformer
     >>> X, _, _, _  = load_gunpoint(return_X_y=True)
     >>> qt = QuantileTransformer(n_quantiles=10)
-    >>> qt.transform(X)
-    array([...], shape=(50, 150))
+    >>> qt.transform(X).shape
+    (50, 150)
 
     """
 

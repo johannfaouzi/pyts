@@ -23,9 +23,7 @@ def test_actual_results_power_transformer_box_cox():
         arr_desired = [boxcox(X[i])[0] for i in range(3)]
         if standardize:
             arr_desired = StandardScaler().transform(arr_desired)
-        np.testing.assert_allclose(
-            arr_actual, arr_desired, atol=1e-5, rtol=0.0
-        )
+        np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.0)
 
 
 def test_actual_results_power_transformer_yeo_johnson():
@@ -36,9 +34,12 @@ def test_actual_results_power_transformer_yeo_johnson():
         arr_desired = [yeojohnson(X[i].astype('float64'))[0] for i in range(3)]
         if standardize:
             arr_desired = StandardScaler().transform(arr_desired)
-        np.testing.assert_allclose(
-            arr_actual, arr_desired, atol=1e-5, rtol=0.0
-        )
+        # scikit-learn and SciPy fit the Yeo-Johnson lambda with their own,
+        # independent MLE optimizers, so the two can converge to marginally
+        # different optima depending on the exact SciPy version; atol=1e-5
+        # is occasionally too tight for that (e.g. a max diff of ~1.01e-5
+        # with SciPy 1.15.0), so a slightly looser tolerance is used here.
+        np.testing.assert_allclose(arr_actual, arr_desired, atol=2e-5, rtol=0.0)
 
 
 def test_actual_results_quantile_transformer_uniform():
@@ -57,9 +58,7 @@ def test_actual_results_quantile_transformer_normal():
     for value, weight in zip(X_ppf, weights, strict=False):
         X += [value] * weight
     X = np.asarray(X).reshape(1, -1)
-    transformer = QuantileTransformer(
-        n_quantiles=11, output_distribution='normal'
-    )
+    transformer = QuantileTransformer(n_quantiles=11, output_distribution='normal')
     arr_actual = transformer.fit_transform(X)
     arr_desired = X
     atol = 0.01 * X.shape[1]

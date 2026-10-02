@@ -46,9 +46,7 @@ def _lower_bound_yi_x_y(
             sum2 = np.sum(np.square(x[x < y_min] - y_min))
             return sqrt(sum1 + sum2)
         elif x_min > y_max:
-            return sqrt(
-                max(np.sum(np.square(x - y_max)), np.sum(np.square(y - x_min)))
-            )
+            return sqrt(max(np.sum(np.square(x - y_max)), np.sum(np.square(y - x_min))))
         else:
             sum1 = np.sum(np.square(x[x > y_max] - y_max))
             sum2 = np.sum(np.square(y[y < x_min] - x_min))
@@ -59,9 +57,7 @@ def _lower_bound_yi_x_y(
             sum2 = np.sum(np.square(y[y < x_min] - x_min))
             return sqrt(sum1 + sum2)
         elif y_min > x_max:
-            return sqrt(
-                max(np.sum(np.square(y - x_max)), np.sum(np.square(x - y_min)))
-            )
+            return sqrt(max(np.sum(np.square(y - x_max)), np.sum(np.square(x - y_min))))
         else:
             sum1 = np.sum(np.square(y[y > x_max] - x_max))
             sum2 = np.sum(np.square(x[x < y_min] - y_min))
@@ -74,8 +70,7 @@ def _lower_bound_yi_x_y(
         "float64[:], float64[:])",
         # Same rationale as ``_lower_bound_yi_x_y`` above: the direct unit
         # tests pass plain integer arrays.
-        "float64[:,:](int64[:,:], int64[:], int64[:], int64[:,:], "
-        "int64[:], int64[:])",
+        "float64[:,:](int64[:,:], int64[:], int64[:], int64[:,:], int64[:], int64[:])",
     ]
 )
 def _lower_bound_yi_X_Y(
@@ -181,12 +176,8 @@ def lower_bound_kim(
     _check_consistent_lengths(X_train, X_test)
     first = np.abs(X_test[:, 0, None] - X_train[None, :, 0])
     last = np.abs(X_test[:, -1, None] - X_train[None, :, -1])
-    max_ = np.abs(
-        np.max(X_test, axis=1)[:, None] - np.max(X_train, axis=1)[None, :]
-    )
-    min_ = np.abs(
-        np.min(X_test, axis=1)[:, None] - np.min(X_train, axis=1)[None, :]
-    )
+    max_ = np.abs(np.max(X_test, axis=1)[:, None] - np.max(X_train, axis=1)[None, :])
+    min_ = np.abs(np.min(X_test, axis=1)[:, None] - np.min(X_train, axis=1)[None, :])
     lb_kim = np.max(np.asarray([first, last, max_, min_]), axis=0)
     return lb_kim
 
@@ -222,11 +213,9 @@ def _warping_envelope_2d(
 
 @njit(
     [
-        "UniTuple(float64[:,:,:], 2)(float64[:,:,:], int64, int64, int64, "
-        "int64[:,:])",
+        "UniTuple(float64[:,:,:], 2)(float64[:,:,:], int64, int64, int64, int64[:,:])",
         # Same rationale as ``_warping_envelope_2d`` above.
-        "UniTuple(float64[:,:,:], 2)(int64[:,:,:], int64, int64, int64, "
-        "int64[:,:])",
+        "UniTuple(float64[:,:,:], 2)(int64[:,:,:], int64, int64, int64, int64[:,:])",
     ]
 )
 def _warping_envelope_3d(
@@ -288,8 +277,7 @@ def _warping_envelope(
 
 
 _CLIP_2D_SIGNATURES = [
-    "float64[:,:,:](float64[:,:], float64[:,:], float64[:,:], int64, "
-    "int64, int64)",
+    "float64[:,:,:](float64[:,:], float64[:,:], float64[:,:], int64, int64, int64)",
     # The direct unit tests for this private helper (via the ``_clip``
     # wrapper) pass plain integer arrays for X, lower and upper together,
     # so that combination is compiled eagerly too. Its output (built with
@@ -299,8 +287,7 @@ _CLIP_2D_SIGNATURES = [
     # float64 output) onto an X that ``check_array`` left as int64, so X
     # and (lower, upper) can genuinely have different dtypes in
     # production, not just matching pairs.
-    "float64[:,:,:](int64[:,:], float64[:,:], float64[:,:], int64, "
-    "int64, int64)",
+    "float64[:,:,:](int64[:,:], float64[:,:], float64[:,:], int64, int64, int64)",
 ]
 
 
@@ -324,8 +311,7 @@ def _clip_2d(
         "float64[:,:,:](float64[:,:], float64[:,:,:], float64[:,:,:], "
         "int64, int64, int64)",
         # Same rationale as ``_clip_2d`` above.
-        "float64[:,:,:](int64[:,:], int64[:,:,:], int64[:,:,:], int64, "
-        "int64, int64)",
+        "float64[:,:,:](int64[:,:], int64[:,:,:], int64[:,:,:], int64, int64, int64)",
         # ``lower_bound_improved`` chains ``_warping_envelope`` (always
         # float64 output) onto an X that ``check_array`` left as int64
         # (see ``_clip_2d`` above for the identical, actually-exercised
@@ -389,14 +375,10 @@ def _clip(
     if n_dims == 2:
         n_samples_X, n_timestamps = X.shape
         n_samples_clip, _ = lower.shape
-        X_clipped = _clip_2d(
-            X, lower, upper, n_samples_X, n_samples_clip, n_timestamps
-        )
+        X_clipped = _clip_2d(X, lower, upper, n_samples_X, n_samples_clip, n_timestamps)
     else:
         n_samples_X, n_samples_Y, n_timestamps = lower.shape
-        X_clipped = _clip_3d(
-            X, lower, upper, n_samples_Y, n_samples_X, n_timestamps
-        )
+        X_clipped = _clip_3d(X, lower, upper, n_samples_Y, n_samples_X, n_timestamps)
     return X_clipped
 
 
@@ -406,10 +388,8 @@ def _clip(
 # (``check_array`` in ``lower_bound_keogh``/``lower_bound_improved`` does not
 # force float64), so only that parameter needs a second variant.
 _SQUARED_LB_KEOGH_SIGNATURES = [
-    "float64[:,:](float64[:,:], float64[:,:], float64[:,:], int64, int64, "
-    "int64)",
-    "float64[:,:](int64[:,:], float64[:,:], float64[:,:], int64, int64, "
-    "int64)",
+    "float64[:,:](float64[:,:], float64[:,:], float64[:,:], int64, int64, int64)",
+    "float64[:,:](int64[:,:], float64[:,:], float64[:,:], int64, int64, int64)",
 ]
 
 

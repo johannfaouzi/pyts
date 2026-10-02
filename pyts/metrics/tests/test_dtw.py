@@ -124,8 +124,7 @@ def test_check_input_dtw(params, err_msg):
         ),
         (
             {'region': [[1, 1]]},
-            "The shape of 'region' must be equal to (2, n_timestamps_1) "
-            "(got (1, 2)).",
+            "The shape of 'region' must be equal to (2, n_timestamps_1) (got (1, 2)).",
         ),
     ],
 )
@@ -277,15 +276,13 @@ def test_actual_results_return_results(params, res_desired):
 )
 def test_actual_results_dtw_classic(params, res_desired):
     """Test that the actual results are the expected ones."""
-    (dtw_actual, cost_mat_actual, acc_cost_mat_actual, path_actual) = (
-        _dtw_classic(x, y, **params_return, **params)
+    (dtw_actual, cost_mat_actual, acc_cost_mat_actual, path_actual) = _dtw_classic(
+        x, y, **params_return, **params
     )
     np.testing.assert_allclose(cost_mat_actual, res_desired['cost_mat'])
     np.testing.assert_allclose(dtw_actual, res_desired['dtw'])
     np.testing.assert_allclose(path_actual, res_desired['path'])
-    np.testing.assert_allclose(
-        acc_cost_mat_actual, res_desired['acc_cost_mat']
-    )
+    np.testing.assert_allclose(acc_cost_mat_actual, res_desired['acc_cost_mat'])
 
 
 @pytest.mark.parametrize(
@@ -346,15 +343,13 @@ def test_parameter_check_dtw_region(params, err_msg):
 )
 def test_actual_results_dtw_region(params, res_desired):
     """Test that the actual results are the expected ones."""
-    (dtw_actual, cost_mat_actual, acc_cost_mat_actual, path_actual) = (
-        _dtw_region(x, y, **params_return, **params)
+    (dtw_actual, cost_mat_actual, acc_cost_mat_actual, path_actual) = _dtw_region(
+        x, y, **params_return, **params
     )
     np.testing.assert_allclose(cost_mat_actual, res_desired['cost_mat'])
     np.testing.assert_allclose(dtw_actual, res_desired['dtw'])
     np.testing.assert_allclose(path_actual, res_desired['path'])
-    np.testing.assert_allclose(
-        acc_cost_mat_actual, res_desired['acc_cost_mat']
-    )
+    np.testing.assert_allclose(acc_cost_mat_actual, res_desired['acc_cost_mat'])
 
 
 @pytest.mark.parametrize(
@@ -503,15 +498,13 @@ def test_actual_results_sakoe_chiba_band(params, arr_desired):
 )
 def test_actual_results_dtw_sakoechiba(params, res_desired):
     """Test that the actual results are the expected ones."""
-    (dtw_actual, cost_mat_actual, acc_cost_mat_actual, path_actual) = (
-        _dtw_sakoechiba(x, y, **params_return, **params)
+    (dtw_actual, cost_mat_actual, acc_cost_mat_actual, path_actual) = _dtw_sakoechiba(
+        x, y, **params_return, **params
     )
     np.testing.assert_allclose(cost_mat_actual, res_desired['cost_mat'])
     np.testing.assert_allclose(dtw_actual, res_desired['dtw'])
     np.testing.assert_allclose(path_actual, res_desired['path'])
-    np.testing.assert_allclose(
-        acc_cost_mat_actual, res_desired['acc_cost_mat']
-    )
+    np.testing.assert_allclose(acc_cost_mat_actual, res_desired['acc_cost_mat'])
 
 
 @pytest.mark.parametrize(
@@ -651,15 +644,13 @@ def test_actual_results_itakura_parallelogram(params, arr_desired):
 )
 def test_actual_results_dtw_itakura(params, res_desired):
     """Test that the actual results are the expected ones."""
-    (dtw_actual, cost_mat_actual, acc_cost_mat_actual, path_actual) = (
-        _dtw_itakura(x, y, **params_return, **params)
+    (dtw_actual, cost_mat_actual, acc_cost_mat_actual, path_actual) = _dtw_itakura(
+        x, y, **params_return, **params
     )
     np.testing.assert_allclose(cost_mat_actual, res_desired['cost_mat'])
     np.testing.assert_allclose(dtw_actual, res_desired['dtw'])
     np.testing.assert_allclose(path_actual, res_desired['path'])
-    np.testing.assert_allclose(
-        acc_cost_mat_actual, res_desired['acc_cost_mat']
-    )
+    np.testing.assert_allclose(acc_cost_mat_actual, res_desired['acc_cost_mat'])
 
 
 @pytest.mark.parametrize(
@@ -799,15 +790,13 @@ def test_actual_results_dtw_multiscale(params, res_desired):
     x = np.arange(4)
     y = np.arange(1, 5)
 
-    (dtw_actual, cost_mat_actual, acc_cost_mat_actual, path_actual) = (
-        _dtw_multiscale(x, y, **params_return, **params)
+    (dtw_actual, cost_mat_actual, acc_cost_mat_actual, path_actual) = _dtw_multiscale(
+        x, y, **params_return, **params
     )
     np.testing.assert_allclose(cost_mat_actual, res_desired['cost_mat'])
     np.testing.assert_allclose(dtw_actual, res_desired['dtw'])
     np.testing.assert_allclose(path_actual, res_desired['path'])
-    np.testing.assert_allclose(
-        acc_cost_mat_actual, res_desired['acc_cost_mat']
-    )
+    np.testing.assert_allclose(acc_cost_mat_actual, res_desired['acc_cost_mat'])
 
 
 @pytest.mark.parametrize(
@@ -894,15 +883,13 @@ def test_actual_results_dtw_fast(params, res_desired):
     x = np.arange(4)
     y = np.arange(1, 5)
 
-    (dtw_actual, cost_mat_actual, acc_cost_mat_actual, path_actual) = (
-        _dtw_fast(x, y, **params_return, **params)
+    (dtw_actual, cost_mat_actual, acc_cost_mat_actual, path_actual) = _dtw_fast(
+        x, y, **params_return, **params
     )
     np.testing.assert_allclose(cost_mat_actual, res_desired['cost_mat'])
     np.testing.assert_allclose(dtw_actual, res_desired['dtw'])
     np.testing.assert_allclose(path_actual, res_desired['path'])
-    np.testing.assert_allclose(
-        acc_cost_mat_actual, res_desired['acc_cost_mat']
-    )
+    np.testing.assert_allclose(acc_cost_mat_actual, res_desired['acc_cost_mat'])
 
 
 @pytest.mark.parametrize(

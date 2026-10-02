@@ -35,9 +35,7 @@ def _uniform_bins(
 ) -> npt.NDArray[np.float64]:
     bin_edges = np.empty((n_bins - 1, n_samples))
     for i in prange(n_samples):
-        bin_edges[:, i] = np.linspace(
-            sample_min[i], sample_max[i], n_bins + 1
-        )[1:-1]
+        bin_edges[:, i] = np.linspace(sample_min[i], sample_max[i], n_bins + 1)[1:-1]
     return bin_edges
 
 
@@ -177,9 +175,7 @@ class KBinsDiscretizer(BaseEstimator, UnivariateTransformerMixin):
         n_samples, n_timestamps = X.shape
         self._check_params(n_timestamps)
 
-        bin_edges = self._compute_bins(
-            X, n_samples, self.n_bins, self.strategy
-        )
+        bin_edges = self._compute_bins(X, n_samples, self.n_bins, self.strategy)
         X_new = _digitize(X, bin_edges)
         return X_new
 
@@ -188,8 +184,7 @@ class KBinsDiscretizer(BaseEstimator, UnivariateTransformerMixin):
             raise TypeError("'n_bins' must be an integer.")
         if not 2 <= self.n_bins:
             raise ValueError(
-                "'n_bins' must be greater than or equal to 2 "
-                f"(got {self.n_bins})."
+                f"'n_bins' must be greater than or equal to 2 (got {self.n_bins})."
             )
         if self.strategy not in ['uniform', 'quantile', 'normal']:
             raise ValueError(
@@ -208,9 +203,7 @@ class KBinsDiscretizer(BaseEstimator, UnivariateTransformerMixin):
             bin_edges = norm.ppf(np.linspace(0, 1, self.n_bins + 1)[1:-1])
         elif strategy == 'uniform':
             sample_min, sample_max = np.min(X, axis=1), np.max(X, axis=1)
-            bin_edges = _uniform_bins(
-                sample_min, sample_max, n_samples, n_bins
-            ).T
+            bin_edges = _uniform_bins(sample_min, sample_max, n_samples, n_bins).T
         else:
             bin_edges = np.percentile(
                 X, np.linspace(0, 100, self.n_bins + 1)[1:-1], axis=1

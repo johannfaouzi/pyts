@@ -48,9 +48,7 @@ plt.xticks(
     np.vectorize(boss.vocabulary_.get)(np.arange(X_boss[0].size)),
     fontsize=12,
 )
-y_max = np.max(
-    np.concatenate([X_boss[y_train == 1][0], X_boss[y_train == 2][0]])
-)
+y_max = np.max(np.concatenate([X_boss[y_train == 1][0], X_boss[y_train == 2][0]]))
 plt.yticks(np.arange(y_max + 1), fontsize=12)
 plt.xlabel("Words", fontsize=14)
 plt.ylabel("Frequencies", fontsize=14)

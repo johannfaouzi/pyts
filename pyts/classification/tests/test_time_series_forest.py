@@ -115,9 +115,7 @@ def test_indices_window_feature_extractor(params):
 
     np.testing.assert_array_less(-1, indices[:, 0])
     np.testing.assert_array_less(indices[:, 1], n_timestamps + 1)
-    np.testing.assert_array_less(
-        min_window_size, indices[:, 1] - indices[:, 0] + 1
-    )
+    np.testing.assert_array_less(min_window_size, indices[:, 1] - indices[:, 0] + 1)
 
 
 @pytest.mark.parametrize(

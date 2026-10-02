@@ -210,7 +210,7 @@ def fetch_ucr_dataset(
     .. [2] A. Bagnall et al, "The UEA & UCR Time Series Classification
            Repository", timeseriesclassification.com.
 
-    """  # noqa: E501
+    """
     if dataset not in ucr_dataset_list():
         raise ValueError(
             f"{dataset} is not a valid name. The list of available names "
@@ -228,10 +228,7 @@ def fetch_ucr_dataset(
         # aeon-toolkit endpoint, which packages datasets as ``.ts`` files
         # rather than the plain-text files served by the historical (now
         # defunct) ``ClassificationDownloads`` endpoint.
-        url = (
-            "https://timeseriesclassification.com/"
-            f"aeon-toolkit/{correct_dataset}.zip"
-        )
+        url = f"https://timeseriesclassification.com/aeon-toolkit/{correct_dataset}.zip"
         filename = f'temp_{correct_dataset}'
         _ = urlretrieve(url, os.path.join(path, filename))
         zipfile.ZipFile(os.path.join(path, filename)).extractall(
@@ -293,9 +290,7 @@ def _load_ucr_dataset(dataset: str, path: str) -> Bunch:
         X_train, y_train, description = parse_ts_file(
             os.path.join(new_path, f'{dataset}_TRAIN.ts')
         )
-        X_test, y_test, _ = parse_ts_file(
-            os.path.join(new_path, f'{dataset}_TEST.ts')
-        )
+        X_test, y_test, _ = parse_ts_file(os.path.join(new_path, f'{dataset}_TEST.ts'))
         # The UCR archive is univariate: drop the (size-1) channel axis to
         # keep the historical 2-D ``(n_samples, n_timestamps)`` shape.
         X_train, X_test = X_train[:, 0, :], X_test[:, 0, :]
@@ -304,9 +299,7 @@ def _load_ucr_dataset(dataset: str, path: str) -> Bunch:
         # ``ClassificationDownloads`` endpoint: a plain-text description
         # file plus either whitespace-separated or ARFF-formatted splits.
         try:
-            with open(
-                os.path.join(new_path, f'{dataset}.txt'), encoding='utf-8'
-            ) as f:
+            with open(os.path.join(new_path, f'{dataset}.txt'), encoding='utf-8') as f:
                 description = f.read()
         except UnicodeDecodeError:
             with open(
@@ -315,12 +308,8 @@ def _load_ucr_dataset(dataset: str, path: str) -> Bunch:
             ) as f:
                 description = f.read()
         try:
-            data_train = np.genfromtxt(
-                os.path.join(new_path, f'{dataset}_TRAIN.txt')
-            )
-            data_test = np.genfromtxt(
-                os.path.join(new_path, f'{dataset}_TEST.txt')
-            )
+            data_train = np.genfromtxt(os.path.join(new_path, f'{dataset}_TRAIN.txt'))
+            data_test = np.genfromtxt(os.path.join(new_path, f'{dataset}_TEST.txt'))
 
             X_train, y_train = data_train[:, 1:], data_train[:, 0]
             X_test, y_test = data_test[:, 1:], data_test[:, 0]
@@ -329,15 +318,11 @@ def _load_ucr_dataset(dataset: str, path: str) -> Bunch:
             train = loadarff(os.path.join(new_path, f'{dataset}_TRAIN.txt'))
             test = loadarff(os.path.join(new_path, f'{dataset}_TEST.txt'))
 
-            data_train = np.asarray(
-                [train[0][name] for name in train[1].names()]
-            )
+            data_train = np.asarray([train[0][name] for name in train[1].names()])
             X_train = data_train[:-1].T.astype('float64')
             y_train = data_train[-1]
 
-            data_test = np.asarray(
-                [test[0][name] for name in test[1].names()]
-            )
+            data_test = np.asarray([test[0][name] for name in test[1].names()])
             X_test = data_test[:-1].T.astype('float64')
             y_test = data_test[-1]
 

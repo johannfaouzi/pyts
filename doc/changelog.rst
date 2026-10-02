@@ -13,7 +13,9 @@ Version 0.14.0
 - Update the minimal versions required of the dependencies to support
   current releases of the scientific Python stack:
   * NumPy (>= 1.24.0)
-  * SciPy (>= 1.10.0)
+  * SciPy (>= 1.15.0, for ``scipy.interpolate.make_interp_spline`` to build
+    an even-degree spline from exactly the minimum number of points without
+    explicit knots)
   * Scikit-Learn (>= 1.6.0)
   * Joblib (>= 1.3.0)
   * Numba (>= 0.60.0, for NumPy 2 support)
@@ -32,8 +34,10 @@ Version 0.14.0
     whitespace produced by the Python 3.13+ compiler.
 
   + Update the :class:`pyts.preprocessing.QuantileTransformer` doctest
-    example to match NumPy 2's array ``repr`` (which appends a
-    ``shape=(...)`` suffix to large truncated arrays).
+    example to check the output's ``shape`` instead of printing the array
+    itself, since NumPy's ``repr`` of large truncated arrays (and in
+    particular whether it appends a ``shape=(...)`` suffix) is not stable
+    across the supported NumPy version range.
 
   + Remove a ``distutils`` import from the Sphinx configuration
     (``doc/conf.py``); ``distutils`` was removed from the standard library

@@ -43,16 +43,13 @@ grid = ImageGrid(
     cbar_mode='single',
 )
 for i, ax in enumerate(grid):
-    im = ax.imshow(
-        X_mtf[i], cmap='rainbow', origin='lower', vmin=0.0, vmax=1.0
-    )
+    im = ax.imshow(X_mtf[i], cmap='rainbow', origin='lower', vmin=0.0, vmax=1.0)
 grid[0].get_yaxis().set_ticks([])
 grid[0].get_xaxis().set_ticks([])
 plt.colorbar(im, cax=grid.cbar_axes[0])
 
 fig.suptitle(
-    "Markov transition fields for the 50 time series in the "
-    "'GunPoint' dataset",
+    "Markov transition fields for the 50 time series in the 'GunPoint' dataset",
     y=0.92,
 )
 

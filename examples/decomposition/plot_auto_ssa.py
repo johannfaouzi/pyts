@@ -24,9 +24,7 @@ from pyts.decomposition import SingularSpectrumAnalysis
 # Parameters
 n_samples, n_timestamps = 3, 128
 
-X_cbf, y = make_cylinder_bell_funnel(
-    n_samples=10, random_state=42, shuffle=False
-)
+X_cbf, y = make_cylinder_bell_funnel(n_samples=10, random_state=42, shuffle=False)
 X_period = 3 * np.sin(np.arange(n_timestamps))
 
 X = X_cbf[:, :n_timestamps] + X_period

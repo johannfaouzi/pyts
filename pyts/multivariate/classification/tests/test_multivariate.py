@@ -85,14 +85,10 @@ def test_actual_results_without_weights(params):
     predictions = []
     if isinstance(params['estimator'], list):
         for i in range(n_features):
-            predictions.append(
-                params['estimator'][i].fit(X[:, i], y).predict(X[:, i])
-            )
+            predictions.append(params['estimator'][i].fit(X[:, i], y).predict(X[:, i]))
     else:
         for i in range(n_features):
-            predictions.append(
-                params['estimator'].fit(X[:, i], y).predict(X[:, i])
-            )
+            predictions.append(params['estimator'].fit(X[:, i], y).predict(X[:, i]))
     predictions = np.asarray(predictions)
     arr_desired = []
     for i in range(n_samples):
@@ -120,18 +116,12 @@ def test_actual_results_with_weights(params):
     predictions = []
     if isinstance(params['estimator'], list):
         for i in range(n_features):
-            predictions.append(
-                params['estimator'][i].fit(X[:, i], y).predict(X[:, i])
-            )
+            predictions.append(params['estimator'][i].fit(X[:, i], y).predict(X[:, i]))
     else:
         for i in range(n_features):
-            predictions.append(
-                params['estimator'].fit(X[:, i], y).predict(X[:, i])
-            )
+            predictions.append(params['estimator'].fit(X[:, i], y).predict(X[:, i]))
     predictions = np.asarray(predictions)
     arr_desired = []
     for i in range(n_samples):
-        arr_desired.append(
-            np.argmax(np.bincount(predictions[:, i], params['weights']))
-        )
+        arr_desired.append(np.argmax(np.bincount(predictions[:, i], params['weights'])))
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.0)

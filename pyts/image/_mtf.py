@@ -89,10 +89,7 @@ def _aggregated_markov_transition_field(
 # signature suffices -- unlike ``_aggregated_markov_transition_field``
 # above, this one is not directly unit-tested with other dtype
 # combinations.
-@njit(
-    "float64[:,:,:](int64[:,:], float64[:,:,:], int64, int64, int64[:], "
-    "int64[:])"
-)
+@njit("float64[:,:,:](int64[:,:], float64[:,:,:], int64, int64, int64[:], int64[:])")
 def _aggregated_markov_transition_field_fused(
     X_binned: npt.NDArray[np.int64],
     X_mtm: npt.NDArray[np.float64],
@@ -223,9 +220,7 @@ class MarkovTransitionField(BaseEstimator, UnivariateTransformerMixin):
         n_samples, n_timestamps = X.shape
         image_size = self._check_params(n_timestamps)
 
-        discretizer = KBinsDiscretizer(
-            n_bins=self.n_bins, strategy=self.strategy
-        )
+        discretizer = KBinsDiscretizer(n_bins=self.n_bins, strategy=self.strategy)
         X_binned = discretizer.fit_transform(X)
 
         X_mtm = _markov_transition_matrix(
@@ -262,9 +257,7 @@ class MarkovTransitionField(BaseEstimator, UnivariateTransformerMixin):
         return X_amtf
 
     def _check_params(self, n_timestamps: int) -> int:
-        if not isinstance(
-            self.image_size, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.image_size, (int, np.integer, float, np.floating)):
             raise TypeError("'image_size' must be an integer or a float.")
         if isinstance(self.image_size, (int, np.integer)):
             if self.image_size < 1 or self.image_size > n_timestamps:
@@ -286,7 +279,5 @@ class MarkovTransitionField(BaseEstimator, UnivariateTransformerMixin):
         if not self.n_bins >= 2:
             raise ValueError("'n_bins' must be greater than or equal to 2.")
         if self.strategy not in ['uniform', 'quantile', 'normal']:
-            raise ValueError(
-                "'strategy' must be 'uniform', 'quantile' or 'normal'."
-            )
+            raise ValueError("'strategy' must be 'uniform', 'quantile' or 'normal'.")
         return image_size

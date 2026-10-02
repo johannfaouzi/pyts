@@ -191,9 +191,7 @@ class IntervalFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
         n_intervals = int(min_subsequence_size / min_interval_size)
         min_subseries_size = min_interval_size * n_intervals
         if n_subsequences == 'auto':
-            n_subseries = max(
-                1, n_timestamps // min_interval_size - n_intervals
-            )
+            n_subseries = max(1, n_timestamps // min_interval_size - n_intervals)
         else:
             n_subseries = n_subsequences
 
@@ -256,9 +254,7 @@ class IntervalFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
         if not isinstance(
             self.min_subsequence_size, (int, np.integer, float, np.floating)
         ):
-            raise TypeError(
-                "'min_subsequence_size' must be an integer or a float."
-            )
+            raise TypeError("'min_subsequence_size' must be an integer or a float.")
         if isinstance(self.min_subsequence_size, (int, np.integer)):
             if not 1 <= self.min_subsequence_size <= n_timestamps:
                 raise ValueError(
@@ -274,16 +270,12 @@ class IntervalFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
                     "greater than 0 and lower than or equal to 1 "
                     f"(got {self.min_subsequence_size})."
                 )
-            min_subsequence_size = ceil(
-                self.min_subsequence_size * n_timestamps
-            )
+            min_subsequence_size = ceil(self.min_subsequence_size * n_timestamps)
 
         if not isinstance(
             self.min_interval_size, (int, np.integer, float, np.floating)
         ):
-            raise TypeError(
-                "'min_interval_size' must be an integer or a float."
-            )
+            raise TypeError("'min_interval_size' must be an integer or a float.")
         if isinstance(self.min_interval_size, (int, np.integer)):
             if self.min_interval_size < 1:
                 raise ValueError(
@@ -307,22 +299,14 @@ class IntervalFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
             )
 
         n_subsequences_auto = (
-            isinstance(self.n_subsequences, str)
-            and self.n_subsequences == 'auto'
+            isinstance(self.n_subsequences, str) and self.n_subsequences == 'auto'
         )
         if not (
             n_subsequences_auto
-            or isinstance(
-                self.n_subsequences, (int, np.integer, float, np.floating)
-            )
+            or isinstance(self.n_subsequences, (int, np.integer, float, np.floating))
         ):
-            raise TypeError(
-                "'n_subsequences' must be 'auto', an integer or a float."
-            )
-        if (
-            isinstance(self.n_subsequences, str)
-            and self.n_subsequences == 'auto'
-        ):
+            raise TypeError("'n_subsequences' must be 'auto', an integer or a float.")
+        if isinstance(self.n_subsequences, str) and self.n_subsequences == 'auto':
             n_subsequences: Literal['auto'] | int = 'auto'
         elif isinstance(self.n_subsequences, (int, np.integer)):
             if self.n_subsequences < 1:
@@ -555,7 +539,7 @@ class TSBF(BaseEstimator, UnivariateClassifierMixin):
 
     .. [2] Leo Breiman, "Random Forests", Machine Learning, 45(1), 5-32, 2001.
 
-    """  # noqa: E501
+    """
 
     def __init__(
         self,
@@ -743,8 +727,7 @@ class TSBF(BaseEstimator, UnivariateClassifierMixin):
 
         # Check for subsequences without OOB scores
         no_oob_scores = (
-            np.isnan(X_oob_proba).any()
-            or np.all(X_oob_proba == 0.0, axis=2).any()
+            np.isnan(X_oob_proba).any() or np.all(X_oob_proba == 0.0, axis=2).any()
         )
         if no_oob_scores:
             raise ValueError(
@@ -770,9 +753,7 @@ class TSBF(BaseEstimator, UnivariateClassifierMixin):
         self.interval_indices_ = feature_extractor.interval_indices_
         self.min_subsequence_size_ = feature_extractor.min_subsequence_size_
         self.n_features_in_ = clf.n_features_in_
-        self.oob_decision_function_ = getattr(
-            clf, 'oob_decision_function_', None
-        )
+        self.oob_decision_function_ = getattr(clf, 'oob_decision_function_', None)
         self.oob_score_ = getattr(clf, 'oob_score_', None)
 
         self._feature_extractor = feature_extractor
@@ -828,9 +809,7 @@ class TSBF(BaseEstimator, UnivariateClassifierMixin):
         return self._clf.predict_proba(X_binned)
 
     def _check_params(self) -> int | np.integer | npt.NDArray[Any]:
-        if not isinstance(
-            self.bins, (int, np.integer, list, tuple, np.ndarray)
-        ):
+        if not isinstance(self.bins, (int, np.integer, list, tuple, np.ndarray)):
             raise TypeError("'bins' must be an integer or array-like.")
         if isinstance(self.bins, (int, np.integer)):
             bins = self.bins

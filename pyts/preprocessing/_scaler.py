@@ -79,9 +79,7 @@ class StandardScaler(BaseEstimator, UnivariateTransformerMixin):
 
         """
         X = check_array(X, dtype=np.float64)
-        scaler = SklearnStandardScaler(
-            with_mean=self.with_mean, with_std=self.with_std
-        )
+        scaler = SklearnStandardScaler(with_mean=self.with_mean, with_std=self.with_std)
         X_new = scaler.fit_transform(X.T).T
         return X_new
 

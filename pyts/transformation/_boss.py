@@ -178,15 +178,11 @@ class BOSS(BaseEstimator, UnivariateTransformerMixin):
             y_repeated = np.repeat(y, n_windows)
         X_sfa = sfa.fit_transform(X_windowed, y_repeated)
 
-        X_word = np.asarray(
-            [''.join(X_sfa[i]) for i in range(n_samples * n_windows)]
-        )
+        X_word = np.asarray([''.join(X_sfa[i]) for i in range(n_samples * n_windows)])
         X_word = X_word.reshape(n_samples, n_windows)
 
         if self.numerosity_reduction:
-            not_equal = np.c_[
-                X_word[:, 1:] != X_word[:, :-1], np.full(n_samples, True)
-            ]
+            not_equal = np.c_[X_word[:, 1:] != X_word[:, :-1], np.full(n_samples, True)]
             X_bow = np.asarray(
                 [' '.join(X_word[i, not_equal[i]]) for i in range(n_samples)]
             )
@@ -195,9 +191,7 @@ class BOSS(BaseEstimator, UnivariateTransformerMixin):
 
         vectorizer = CountVectorizer()
         vectorizer.fit(X_bow)
-        self.vocabulary_ = {
-            value: key for key, value in vectorizer.vocabulary_.items()
-        }
+        self.vocabulary_ = {value: key for key, value in vectorizer.vocabulary_.items()}
         self._window_size = window_size
         self._window_step = window_step
         self._n_windows = n_windows
@@ -205,9 +199,7 @@ class BOSS(BaseEstimator, UnivariateTransformerMixin):
         self._vectorizer = vectorizer
         return self
 
-    def transform(
-        self, X: npt.ArrayLike
-    ) -> npt.NDArray[np.int64] | csr_matrix:
+    def transform(self, X: npt.ArrayLike) -> npt.NDArray[np.int64] | csr_matrix:
         """Transform the provided data.
 
         Parameters
@@ -235,9 +227,7 @@ class BOSS(BaseEstimator, UnivariateTransformerMixin):
         X_word = X_word.reshape(n_samples, self._n_windows)
 
         if self.numerosity_reduction:
-            not_equal = np.c_[
-                X_word[:, 1:] != X_word[:, :-1], np.full(n_samples, True)
-            ]
+            not_equal = np.c_[X_word[:, 1:] != X_word[:, :-1], np.full(n_samples, True)]
             X_bow = np.asarray(
                 [' '.join(X_word[i, not_equal[i]]) for i in range(n_samples)]
             )
@@ -304,15 +294,11 @@ class BOSS(BaseEstimator, UnivariateTransformerMixin):
             y_repeated = np.repeat(y, n_windows)
         X_sfa = sfa.fit_transform(X_windowed, y_repeated)
 
-        X_word = np.asarray(
-            [''.join(X_sfa[i]) for i in range(n_samples * n_windows)]
-        )
+        X_word = np.asarray([''.join(X_sfa[i]) for i in range(n_samples * n_windows)])
         X_word = X_word.reshape(n_samples, n_windows)
 
         if self.numerosity_reduction:
-            not_equal = np.c_[
-                X_word[:, 1:] != X_word[:, :-1], np.full(n_samples, True)
-            ]
+            not_equal = np.c_[X_word[:, 1:] != X_word[:, :-1], np.full(n_samples, True)]
             X_bow = np.asarray(
                 [' '.join(X_word[i, not_equal[i]]) for i in range(n_samples)]
             )
@@ -321,9 +307,7 @@ class BOSS(BaseEstimator, UnivariateTransformerMixin):
 
         vectorizer = CountVectorizer()
         X_boss = vectorizer.fit_transform(X_bow)
-        self.vocabulary_ = {
-            value: key for key, value in vectorizer.vocabulary_.items()
-        }
+        self.vocabulary_ = {value: key for key, value in vectorizer.vocabulary_.items()}
         self._window_size = window_size
         self._window_step = window_step
         self._n_windows = n_windows
@@ -342,9 +326,7 @@ class BOSS(BaseEstimator, UnivariateTransformerMixin):
         if not self.word_size >= 1:
             raise ValueError("'word_size' must be a positive integer.")
 
-        if not isinstance(
-            self.window_size, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.window_size, (int, np.integer, float, np.floating)):
             raise TypeError("'window_size' must be an integer or a float.")
         if isinstance(self.window_size, (int, np.integer)):
             if self.drop_sum:
@@ -370,9 +352,7 @@ class BOSS(BaseEstimator, UnivariateTransformerMixin):
                 )
             window_size = ceil(self.window_size * n_timestamps)
 
-        if not isinstance(
-            self.window_step, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.window_step, (int, np.integer, float, np.floating)):
             raise TypeError("'window_step' must be an integer or a float.")
         if isinstance(self.window_step, (int, np.integer)):
             if not 1 <= self.window_step <= n_timestamps:

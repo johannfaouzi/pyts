@@ -151,7 +151,7 @@ class UnivariateClassifierMixin:
         score : float
             Mean accuracy of ``self.predict(X)`` with regards to `y`.
 
-        """  # noqa: E501
+        """
         return accuracy_score(y, self.predict(X), sample_weight=sample_weight)
 
 
@@ -185,5 +185,5 @@ class MultivariateClassifierMixin:
         score : float
             Mean accuracy of ``self.predict(X)`` with regards to `y`.
 
-        """  # noqa: E501
+        """
         return accuracy_score(y, self.predict(X), sample_weight=sample_weight)

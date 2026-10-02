@@ -160,12 +160,8 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
         self._relevant_features_list = []
         self.vocabulary_ = {}
 
-        for window_size, window_step in zip(
-            window_sizes, window_steps, strict=False
-        ):
-            n_windows = (
-                n_timestamps - window_size + window_step
-            ) // window_step
+        for window_size, window_step in zip(window_sizes, window_steps, strict=False):
+            n_windows = (n_timestamps - window_size + window_step) // window_step
             X_windowed = _windowed_view(
                 X, n_samples, n_timestamps, window_size, window_step
             )
@@ -193,14 +189,10 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
             vectorizer = CountVectorizer(ngram_range=(1, 2))
             X_counts = vectorizer.fit_transform(X_bow)
             chi2_statistics, _ = chi2(X_counts, y)
-            relevant_features = np.where(
-                chi2_statistics > self.chi2_threshold
-            )[0]
+            relevant_features = np.where(chi2_statistics > self.chi2_threshold)[0]
 
             old_length_vocab = len(self.vocabulary_)
-            vocabulary = {
-                value: key for (key, value) in vectorizer.vocabulary_.items()
-            }
+            vocabulary = {value: key for (key, value) in vectorizer.vocabulary_.items()}
             for i, idx in enumerate(relevant_features):
                 self.vocabulary_[i + old_length_vocab] = (
                     str(window_size) + " " + vocabulary[idx]
@@ -212,9 +204,7 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
 
         return self
 
-    def transform(
-        self, X: npt.ArrayLike
-    ) -> npt.NDArray[np.int64] | csr_matrix:
+    def transform(self, X: npt.ArrayLike) -> npt.NDArray[np.int64] | csr_matrix:
         """Transform the provided data.
 
         Parameters
@@ -257,9 +247,7 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
             self._relevant_features_list,
             strict=False,
         ):
-            n_windows = (
-                n_timestamps - window_size + window_step
-            ) // window_step
+            n_windows = (n_timestamps - window_size + window_step) // window_step
             X_windowed = _windowed_view(
                 X, n_samples, n_timestamps, window_size, window_step
             )
@@ -315,12 +303,8 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
 
         X_features = coo_matrix((n_samples, 0), dtype=np.int64)
 
-        for window_size, window_step in zip(
-            window_sizes, window_steps, strict=False
-        ):
-            n_windows = (
-                n_timestamps - window_size + window_step
-            ) // window_step
+        for window_size, window_step in zip(window_sizes, window_steps, strict=False):
+            n_windows = (n_timestamps - window_size + window_step) // window_step
             X_windowed = _windowed_view(
                 X, n_samples, n_timestamps, window_size, window_step
             )
@@ -348,9 +332,7 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
             vectorizer = CountVectorizer(ngram_range=(1, 2))
             X_counts = vectorizer.fit_transform(X_bow)
             chi2_statistics, _ = chi2(X_counts, y)
-            relevant_features = np.where(
-                chi2_statistics > self.chi2_threshold
-            )[0]
+            relevant_features = np.where(chi2_statistics > self.chi2_threshold)[0]
             X_features = hstack(
                 [
                     X_features,
@@ -364,9 +346,7 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
             )
 
             old_length_vocab = len(self.vocabulary_)
-            vocabulary = {
-                value: key for (key, value) in vectorizer.vocabulary_.items()
-            }
+            vocabulary = {value: key for (key, value) in vectorizer.vocabulary_.items()}
             for i, idx in enumerate(relevant_features):
                 self.vocabulary_[i + old_length_vocab] = (
                     str(window_size) + " " + vocabulary[idx]
@@ -390,9 +370,7 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
 
         if not isinstance(self.window_sizes, (list, tuple, np.ndarray)):
             raise TypeError("'window_sizes' must be array-like.")
-        window_sizes = check_array(
-            self.window_sizes, ensure_2d=False, dtype=None
-        )
+        window_sizes = check_array(self.window_sizes, ensure_2d=False, dtype=None)
         if window_sizes.ndim != 1:
             raise ValueError("'window_sizes' must be one-dimensional.")
         if not issubclass(window_sizes.dtype.type, (np.integer, np.floating)):
@@ -431,9 +409,7 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
         if self.window_steps is None:
             window_steps = window_sizes
         else:
-            window_steps = check_array(
-                self.window_steps, ensure_2d=False, dtype=None
-            )
+            window_steps = check_array(self.window_steps, ensure_2d=False, dtype=None)
             if window_steps.ndim != 1:
                 raise ValueError("'window_steps' must be one-dimensional.")
             if window_steps.size != window_sizes.size:
@@ -441,28 +417,21 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
                     "If 'window_steps' is not None, it must have "
                     "the same size as 'window_sizes'."
                 )
-            if not issubclass(
-                window_steps.dtype.type, (np.integer, np.floating)
-            ):
+            if not issubclass(window_steps.dtype.type, (np.integer, np.floating)):
                 raise ValueError(
                     "If 'window_steps' is not None, the elements of "
                     "'window_steps' must be integers or floats."
                 )
             if issubclass(window_steps.dtype.type, np.floating):
-                if not (
-                    np.min(window_steps) > 0 and np.max(window_steps) <= 1
-                ):
+                if not (np.min(window_steps) > 0 and np.max(window_steps) <= 1):
                     raise ValueError(
                         "If the elements of 'window_steps' are floats, they "
                         "all must be greater than 0 and lower than or equal "
                         "to 1."
                     )
-                window_steps = np.ceil(window_steps * n_timestamps).astype(
-                    'int64'
-                )
+                window_steps = np.ceil(window_steps * n_timestamps).astype('int64')
             if not (
-                (np.min(window_steps) >= 1)
-                and (np.max(window_steps) <= n_timestamps)
+                (np.min(window_steps) >= 1) and (np.max(window_steps) <= n_timestamps)
             ):
                 raise ValueError(
                     "All the elements in 'window_steps' must be "
@@ -470,9 +439,7 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
                     "or equal to n_timestamps."
                 )
 
-        if not isinstance(
-            self.chi2_threshold, (int, np.integer, float, np.floating)
-        ):
+        if not isinstance(self.chi2_threshold, (int, np.integer, float, np.floating)):
             raise TypeError("'chi2_threshold' must be a float or an integer.")
         if not self.chi2_threshold > 0:
             raise ValueError("'chi2_threshold' must be positive.")

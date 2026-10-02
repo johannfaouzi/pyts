@@ -31,9 +31,7 @@ from pyts.utils._utils import _windowed_view
 # 'window_sizes'/'window_steps' as plain tuples of arity 1 and 2 (standing
 # in for what production always passes as arrays), so those extra variants
 # are covered too.
-_EXTRACT_ALL_SHAPELETS_LENGTHS_T = nb_types.ListType(
-    nb_types.List(nb_types.int64)
-)
+_EXTRACT_ALL_SHAPELETS_LENGTHS_T = nb_types.ListType(nb_types.List(nb_types.int64))
 _EXTRACT_ALL_SHAPELETS_IDX_T = nb_types.ListType(nb_types.int64[::1])
 _EXTRACT_ALL_SHAPELETS_RET_FLOAT64 = nb_types.Tuple(
     (
@@ -106,9 +104,7 @@ def _extract_all_shapelets(
         # Add shapelets, lengths, start indices and end indices
         shapelets.append(x_strided)
         lengths.append([x_strided.shape[1]] * x_strided.shape[0])
-        start_idx.append(
-            np.arange(0, n_timestamps - window_size + 1, window_step)
-        )
+        start_idx.append(np.arange(0, n_timestamps - window_size + 1, window_step))
         end_idx.append(np.arange(window_size, n_timestamps + 1, window_step))
 
     return shapelets, lengths, start_idx, end_idx
@@ -470,8 +466,8 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
 
         """
         X, y = check_X_y(X, y, dtype=np.float64)
-        (n_shapelets, window_sizes, window_steps, n_jobs, rng) = (
-            self._check_params(X, y)
+        (n_shapelets, window_sizes, window_steps, n_jobs, rng) = self._check_params(
+            X, y
         )
 
         _X_new, scores, shapelets, indices = self._fit(
@@ -545,8 +541,8 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
 
         """
         X, y = check_X_y(X, y, dtype=np.float64)
-        (n_shapelets, window_sizes, window_steps, n_jobs, rng) = (
-            self._check_params(X, y)
+        (n_shapelets, window_sizes, window_steps, n_jobs, rng) = self._check_params(
+            X, y
         )
 
         X_new, scores, shapelets, indices = self._fit(
@@ -589,10 +585,7 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
             or isinstance(self.n_shapelets, (int, np.integer))
         ):
             raise TypeError("'n_shapelets' must be 'auto' or an integer.")
-        if (
-            isinstance(self.n_shapelets, (int, np.integer))
-            and not self.n_shapelets > 0
-        ):
+        if isinstance(self.n_shapelets, (int, np.integer)) and not self.n_shapelets > 0:
             raise ValueError(
                 "If 'n_shapelets' is an integer, it must be a "
                 f"positive integer (got {self.n_shapelets})."
@@ -610,13 +603,10 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
         window_sizes_auto = (
             isinstance(self.window_sizes, str) and self.window_sizes == 'auto'
         )
-        window_sizes_array = isinstance(
-            self.window_sizes, (list, tuple, np.ndarray)
-        )
+        window_sizes_array = isinstance(self.window_sizes, (list, tuple, np.ndarray))
         if not (window_sizes_auto or window_sizes_array):
             raise TypeError(
-                "'window_sizes' must be 'auto', a list, a tuple "
-                "or a numpy.ndarray."
+                "'window_sizes' must be 'auto', a list, a tuple or a numpy.ndarray."
             )
 
         # Checking for 'window_steps' (type only; values are validated and
@@ -627,14 +617,10 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
         ):
             raise TypeError("'window_steps' must be None or array-like.")
         if self.window_steps is not None and window_sizes_auto:
-            raise ValueError(
-                "'window_steps' must be None if window_sizes='auto'."
-            )
+            raise ValueError("'window_steps' must be None if window_sizes='auto'.")
 
         # Checking for 'verbose'
-        if not (
-            isinstance(self.verbose, (int, np.integer)) and self.verbose >= 0
-        ):
+        if not (isinstance(self.verbose, (int, np.integer)) and self.verbose >= 0):
             raise ValueError(
                 f"'verbose' must be a positive integer (got {self.verbose})."
             )
@@ -660,29 +646,21 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
             window_sizes = np.asarray(self.window_sizes)
             if window_sizes.ndim != 1:
                 raise ValueError("'window_sizes' must be one-dimensional.")
-            if not issubclass(
-                window_sizes.dtype.type, (np.integer, np.floating)
-            ):
+            if not issubclass(window_sizes.dtype.type, (np.integer, np.floating)):
                 raise ValueError(
-                    "The elements of 'window_sizes' must be "
-                    "integers or floats."
+                    "The elements of 'window_sizes' must be integers or floats."
                 )
             if issubclass(window_sizes.dtype.type, np.floating):
-                if not (
-                    np.min(window_sizes) > 0 and np.max(window_sizes) <= 1
-                ):
+                if not (np.min(window_sizes) > 0 and np.max(window_sizes) <= 1):
                     raise ValueError(
                         "If the elements of 'window_sizes' are floats, they "
                         "all must be greater than 0 and lower than or equal "
                         "to 1."
                     )
-                window_sizes = np.ceil(window_sizes * n_timestamps).astype(
-                    'int64'
-                )
+                window_sizes = np.ceil(window_sizes * n_timestamps).astype('int64')
             else:
                 if not (
-                    np.min(window_sizes) > 0
-                    and np.max(window_sizes) <= n_timestamps
+                    np.min(window_sizes) > 0 and np.max(window_sizes) <= n_timestamps
                 ):
                     raise ValueError(
                         "If the elements of 'window_sizes' are integers, they "
@@ -706,25 +684,19 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
                     "If 'window_steps' is not None, it must have "
                     "the same size as 'window_sizes'."
                 )
-            if not issubclass(
-                window_steps.dtype.type, (np.integer, np.floating)
-            ):
+            if not issubclass(window_steps.dtype.type, (np.integer, np.floating)):
                 raise ValueError(
                     "If 'window_steps' is not None, the elements of "
                     "'window_steps' must be integers or floats."
                 )
             if issubclass(window_steps.dtype.type, np.floating):
-                if not (
-                    np.min(window_steps) > 0 and np.max(window_steps) <= 1
-                ):
+                if not (np.min(window_steps) > 0 and np.max(window_steps) <= 1):
                     raise ValueError(
                         "If the elements of 'window_steps' are floats, they "
                         "all must be greater than 0 and lower than or equal "
                         "to 1."
                     )
-                window_steps = np.ceil(window_steps * n_timestamps).astype(
-                    'int64'
-                )
+                window_steps = np.ceil(window_steps * n_timestamps).astype('int64')
             else:
                 if not (
                     (np.min(window_steps) > 0)
@@ -765,9 +737,7 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
         )
 
         # Derive distances between shapelets and time series
-        X_dist = _derive_all_distances(
-            X, window_sizes, shapelets, lengths, fit=True
-        )
+        X_dist = _derive_all_distances(X, window_sizes, shapelets, lengths, fit=True)
 
         if self.criterion == 'mutual_info':
             scores = mutual_info_classif(
@@ -778,9 +748,7 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
 
         # Flatten the list of 2D arrays into an array of 1D arrays
         shapelets = [list(shapelet) for shapelet in shapelets]
-        shapelets = np.asarray(
-            list(chain.from_iterable(shapelets)), dtype='object'
-        )
+        shapelets = np.asarray(list(chain.from_iterable(shapelets)), dtype='object')
 
         # Concatenate the list/tuple of 1D arrays into one 1D array
         start_idx = np.concatenate(start_idx)
@@ -797,9 +765,7 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
 
         # Keep at most 'n_shapelets'
         if scores.size > n_shapelets - 1:
-            idx = np.argpartition(scores, scores.size - n_shapelets)[
-                -n_shapelets:
-            ]
+            idx = np.argpartition(scores, scores.size - n_shapelets)[-n_shapelets:]
             scores = scores[idx]
             shapelets = shapelets[idx]
             start_idx = start_idx[idx]
@@ -860,9 +826,7 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
 
         # Keep at most 'n_shapelets'
         if scores.size > n_shapelets - 1:
-            idx = np.argpartition(scores, scores.size - n_shapelets)[
-                -n_shapelets:
-            ]
+            idx = np.argpartition(scores, scores.size - n_shapelets)[-n_shapelets:]
             X_dist = X_dist[:, idx]
             scores = scores[idx]
             shapelets = shapelets[idx]
@@ -878,9 +842,7 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
 
         return X_dist, scores, shapelets, indices
 
-    def _transform(
-        self, X: npt.NDArray[np.float64]
-    ) -> npt.NDArray[np.float64]:
+    def _transform(self, X: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
         lengths = self.indices_[:, 2] - self.indices_[:, 1]
         window_sizes = np.unique(lengths)
 
@@ -921,9 +883,7 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
                     n_jobs,
                     rng,
                 )
-                shapelet_lengths.extend(
-                    [len(shapelet) for shapelet in shapelets]
-                )
+                shapelet_lengths.extend([len(shapelet) for shapelet in shapelets])
 
             window_range = np.percentile(
                 shapelet_lengths, [25, 75], method='lower'

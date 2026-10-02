@@ -96,9 +96,9 @@ def test_actual_results_lists(params):
         zip(params['threshold'], params['percentage'], strict=False)
     ):
         arr_desired.append(
-            RecurrencePlot(
-                threshold=threshold, percentage=percentage
-            ).transform(X[:, i])
+            RecurrencePlot(threshold=threshold, percentage=percentage).transform(
+                X[:, i]
+            )
         )
     arr_desired = np.prod(arr_desired, axis=0)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.0)

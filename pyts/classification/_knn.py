@@ -171,9 +171,7 @@ class KNeighborsClassifier(BaseEstimator, UnivariateClassifierMixin):
                     window_size = 0.1
                 else:
                     window_size = self.metric_params['window_size']
-                region = sakoe_chiba_band(
-                    n_timestamps, window_size=window_size
-                )
+                region = sakoe_chiba_band(n_timestamps, window_size=window_size)
             self._clf = SklearnKNN(
                 n_neighbors=self.n_neighbors,
                 weights=self.weights,
@@ -193,9 +191,7 @@ class KNeighborsClassifier(BaseEstimator, UnivariateClassifierMixin):
                     max_slope = 2.0
                 else:
                     max_slope = self.metric_params['max_slope']
-                region = itakura_parallelogram(
-                    n_timestamps, max_slope=max_slope
-                )
+                region = itakura_parallelogram(n_timestamps, max_slope=max_slope)
             self._clf = SklearnKNN(
                 n_neighbors=self.n_neighbors,
                 weights=self.weights,

@@ -275,9 +275,7 @@ def _loss(
     else:
         proba = _softmax(distances @ weights, n_samples, n_classes)
         proba = np.clip(proba, 1e-8, 1 - 1e-8)
-        loss_value = -np.mean(
-            sample_weight * np.sum(y * np.log(proba), axis=1)
-        )
+        loss_value = -np.mean(sample_weight * np.sum(y * np.log(proba), axis=1))
 
     # Add regularization
     if penalty == 'l2':
@@ -319,9 +317,7 @@ def _grad_weights(
     if weights.ndim == 1:
         proba = _expit(distances @ weights)
         proba = np.clip(proba, 1e-8, 1 - 1e-8)
-        gradients = ((proba - y)[:, None] * distances * sample_weight).mean(
-            axis=0
-        )
+        gradients = ((proba - y)[:, None] * distances * sample_weight).mean(axis=0)
     else:
         proba = _softmax(distances @ weights, n_samples, n_classes)
         proba = np.clip(proba, 1e-8, 1 - 1e-8)
@@ -420,35 +416,25 @@ def _compute_shapelet_grad(
                     for k in range(n_samples):
                         row_sum = 0.0
                         for m in range(n_windows):
-                            diff_value = (
-                                shapelet[d] - X_window[k, m, d]
-                            ) * scale
+                            diff_value = (shapelet[d] - X_window[k, m, d]) * scale
                             row_sum += diff_value * softmin_gradient[k, m]
-                        total += (
-                            row_sum * proba_minus_y[k, 0] * sample_weight[k, 0]
-                        )
+                        total += row_sum * proba_minus_y[k, 0] * sample_weight[k, 0]
                     grad[d] = (total / n_samples) * weights[weight_idx]
             else:
                 class_combined = np.empty(n_samples)
                 for k in range(n_samples):
                     class_total = 0.0
                     for c in range(weights.shape[1]):
-                        class_total += (
-                            weights[weight_idx, c] * proba_minus_y[k, c]
-                        )
+                        class_total += weights[weight_idx, c] * proba_minus_y[k, c]
                     class_combined[k] = class_total
                 for d in prange(size):
                     total = 0.0
                     for k in range(n_samples):
                         row_sum = 0.0
                         for m in range(n_windows):
-                            diff_value = (
-                                shapelet[d] - X_window[k, m, d]
-                            ) * scale
+                            diff_value = (shapelet[d] - X_window[k, m, d]) * scale
                             row_sum += diff_value * softmin_gradient[k, m]
-                        total += (
-                            row_sum * class_combined[k] * sample_weight[k, 0]
-                        )
+                        total += row_sum * class_combined[k] * sample_weight[k, 0]
                     grad[d] = total / n_samples
             gradients.append(grad)
 
@@ -674,7 +660,7 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
         -------
         self : object
 
-        """  # noqa: E501
+        """
         X, y = check_X_y(X, y)
         n_samples, n_timestamps = X.shape
         check_classification_targets(y)
@@ -798,9 +784,7 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
             )
             shapelets_array = _reshape_array_shapelets(shapelets, lengths)
             shapelets_array -= learning_rate * gradient_shapelets
-            shapelets = tuple(
-                _reshape_list_shapelets(shapelets_array, lengths)
-            )
+            shapelets = tuple(_reshape_list_shapelets(shapelets_array, lengths))
 
             # Compute current loss
             loss_iteration = _loss(
@@ -823,13 +807,9 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
                 while losses[-1] < loss_iteration:
                     # Go back to previous state
                     weights += learning_rate * gradient_weights
-                    shapelets_array = _reshape_array_shapelets(
-                        shapelets, lengths
-                    )
+                    shapelets_array = _reshape_array_shapelets(shapelets, lengths)
                     shapelets_array += learning_rate * gradient_shapelets
-                    shapelets = tuple(
-                        _reshape_list_shapelets(shapelets_array, lengths)
-                    )
+                    shapelets = tuple(_reshape_list_shapelets(shapelets_array, lengths))
 
                     # Update learning  rate
                     learning_rate /= 5
@@ -850,13 +830,9 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
                         self.intercept_scaling,
                         sample_weight,
                     )
-                    shapelets_array = _reshape_array_shapelets(
-                        shapelets, lengths
-                    )
+                    shapelets_array = _reshape_array_shapelets(shapelets, lengths)
                     shapelets_array -= learning_rate * gradient_shapelets
-                    shapelets = tuple(
-                        _reshape_list_shapelets(shapelets_array, lengths)
-                    )
+                    shapelets = tuple(_reshape_list_shapelets(shapelets_array, lengths))
 
                     loss_iteration = _loss(
                         X,
@@ -947,9 +923,7 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
 
         # Add intercept
         if self.fit_intercept:
-            distances = np.c_[
-                np.ones(n_samples) * self.intercept_scaling, distances
-            ]
+            distances = np.c_[np.ones(n_samples) * self.intercept_scaling, distances]
 
         # Derive decision function
         if self.fit_intercept:
@@ -1040,9 +1014,7 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
                     "greater than 0 and lower than or equal to 1 "
                     f"(got {self.n_shapelets_per_size})."
                 )
-            n_shapelets_per_size = ceil(
-                self.n_shapelets_per_size * n_timestamps
-            )
+            n_shapelets_per_size = ceil(self.n_shapelets_per_size * n_timestamps)
 
         if not isinstance(
             self.min_shapelet_length, (int, np.integer, float, np.floating)
@@ -1090,57 +1062,43 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
             )
 
         if not (
-            isinstance(self.C, (int, np.integer, float, np.floating))
-            and self.C > 0
+            isinstance(self.C, (int, np.integer, float, np.floating)) and self.C > 0
         ):
             raise ValueError(f"'C' must be a positive float (got {self.C}).")
 
         if not (
-            isinstance(self.tol, (int, np.integer, float, np.floating))
-            and self.tol > 0
+            isinstance(self.tol, (int, np.integer, float, np.floating)) and self.tol > 0
         ):
-            raise ValueError(
-                f"'tol' must be a positive float (got {self.tol})."
-            )
+            raise ValueError(f"'tol' must be a positive float (got {self.tol}).")
 
         if not (
-            isinstance(
-                self.learning_rate, (int, np.integer, float, np.floating)
-            )
+            isinstance(self.learning_rate, (int, np.integer, float, np.floating))
             and self.learning_rate > 0
         ):
             raise ValueError(
-                "'learning_rate' must be a positive float "
-                f"(got {self.learning_rate})."
+                f"'learning_rate' must be a positive float (got {self.learning_rate})."
             )
 
-        if not (
-            isinstance(self.max_iter, (int, np.integer)) and self.max_iter >= 0
-        ):
+        if not (isinstance(self.max_iter, (int, np.integer)) and self.max_iter >= 0):
             raise ValueError(
-                "'max_iter' must be a non-negative integer "
-                f"(got {self.max_iter})."
+                f"'max_iter' must be a non-negative integer (got {self.max_iter})."
             )
 
         if not (
             isinstance(self.alpha, (int, np.integer, float, np.floating))
             and self.alpha < 0
         ):
-            raise ValueError(
-                f"'alpha' must be a negative float (got {self.alpha})."
-            )
+            raise ValueError(f"'alpha' must be a negative float (got {self.alpha}).")
 
         if not isinstance(
             self.intercept_scaling, (int, np.integer, float, np.floating)
         ):
             raise ValueError(
-                "'intercept_scaling' must be a float "
-                f"(got {self.intercept_scaling})."
+                f"'intercept_scaling' must be a float (got {self.intercept_scaling})."
             )
 
         class_weight_balanced = (
-            isinstance(self.class_weight, str)
-            and self.class_weight == 'balanced'
+            isinstance(self.class_weight, str) and self.class_weight == 'balanced'
         )
         if not (
             self.class_weight is None
@@ -1151,24 +1109,17 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
                 "'class_weight' must be None, a dictionary "
                 f" or 'balanced' (got {self.class_weight})."
             )
-        class_weight = compute_class_weight(
-            self.class_weight, classes=classes, y=y
-        )
+        class_weight = compute_class_weight(self.class_weight, classes=classes, y=y)
 
-        sample_weight = _check_sample_weight(
-            sample_weight, X, dtype=np.float64
-        )
+        sample_weight = _check_sample_weight(sample_weight, X, dtype=np.float64)
         sample_weight *= class_weight[y_ind]
         sample_weight = sample_weight.reshape(-1, 1)
 
         rng = check_random_state(self.random_state)
 
-        if not (
-            isinstance(self.verbose, (int, np.integer)) and self.verbose >= 0
-        ):
+        if not (isinstance(self.verbose, (int, np.integer)) and self.verbose >= 0):
             raise ValueError(
-                "'verbose' must be a non-negative integer "
-                f"(got {self.verbose})."
+                f"'verbose' must be a non-negative integer (got {self.verbose})."
             )
 
         return n_shapelets_per_size, min_shapelet_length, sample_weight, rng
@@ -1373,7 +1324,7 @@ class LearningShapelets(BaseEstimator, UnivariateClassifierMixin):
         -------
         self : object
 
-        """  # noqa: E501
+        """
         X, y = check_X_y(X, y)
         n_classes = len(LabelEncoder().fit(y).classes_)
         multi_class = self._check_params(n_classes)
@@ -1404,9 +1355,7 @@ class LearningShapelets(BaseEstimator, UnivariateClassifierMixin):
             )
             self._estimators = estimators
             self.shapelets_ = np.array([est.shapelets_ for est in estimators])
-            self.coef_ = np.squeeze(
-                np.asarray([est.coef_ for est in estimators])
-            )
+            self.coef_ = np.squeeze(np.asarray([est.coef_ for est in estimators]))
             self.intercept_ = np.squeeze(
                 np.array([est.intercept_ for est in estimators])
             )
@@ -1445,15 +1394,11 @@ class LearningShapelets(BaseEstimator, UnivariateClassifierMixin):
             for i, estimator in enumerate(self._estimators):
                 X_new[:, i] = estimator.decision_function(X)
         elif self._multi_class == 'ovo':
-            predictions = np.vstack(
-                [est.predict(X) for est in self._estimators]
-            ).T
+            predictions = np.vstack([est.predict(X) for est in self._estimators]).T
             confidences = np.vstack(
                 [est.decision_function(X) for est in self._estimators]
             ).T
-            X_new = _ovr_decision_function(
-                predictions, confidences, len(self.classes_)
-            )
+            X_new = _ovr_decision_function(predictions, confidences, len(self.classes_))
         else:
             X_new = self._clf.decision_function(X)
 
@@ -1525,9 +1470,7 @@ class LearningShapelets(BaseEstimator, UnivariateClassifierMixin):
                 "'multi_class' is either 'ovr' or 'ovo'."
             )
 
-        n_jobs_int = (
-            isinstance(self.n_jobs, (int, np.integer)) and self.n_jobs != 0
-        )
+        n_jobs_int = isinstance(self.n_jobs, (int, np.integer)) and self.n_jobs != 0
         if not (self.n_jobs is None or n_jobs_int):
             raise ValueError(
                 "'n_jobs' must be None or an integer not equal "

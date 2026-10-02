@@ -215,10 +215,7 @@ def fetch_uea_dataset(
         # aeon-toolkit endpoint, which packages datasets as ``.ts`` files
         # rather than the ARFF files served by the historical (now defunct)
         # ``ClassificationDownloads`` endpoint.
-        url = (
-            "https://timeseriesclassification.com/"
-            f"aeon-toolkit/{correct_dataset}.zip"
-        )
+        url = f"https://timeseriesclassification.com/aeon-toolkit/{correct_dataset}.zip"
         filename = f'temp_{correct_dataset}'
         _ = urlretrieve(url, os.path.join(path, filename))
         zipfile.ZipFile(os.path.join(path, filename)).extractall(
@@ -281,9 +278,7 @@ def _load_uea_dataset(dataset: str, path: str) -> Bunch:
         X_train, y_train, description = parse_ts_file(
             os.path.join(new_path, f'{dataset}_TRAIN.ts')
         )
-        X_test, y_test, _ = parse_ts_file(
-            os.path.join(new_path, f'{dataset}_TEST.ts')
-        )
+        X_test, y_test, _ = parse_ts_file(os.path.join(new_path, f'{dataset}_TEST.ts'))
     else:
         # Historical format served by the (now defunct) UEA
         # ``ClassificationDownloads`` endpoint: a plain-text description
@@ -332,10 +327,7 @@ def _load_uea_dataset(dataset: str, path: str) -> Bunch:
         data_test=X_test,
         target_test=y_test,
         DESCR=description,
-        url=(
-            "https://timeseriesclassification.com/"
-            f"description.php?Dataset={dataset}"
-        ),
+        url=(f"https://timeseriesclassification.com/description.php?Dataset={dataset}"),
     )
 
     return bunch
@@ -350,9 +342,7 @@ def _parse_relational_arff(
 
     if X_data[0][0].dtype.names is None:
         for i in range(n_samples):
-            X_sample = np.asarray(
-                [X_data[i][name] for name in X_data[i].dtype.names]
-            )
+            X_sample = np.asarray([X_data[i][name] for name in X_data[i].dtype.names])
             X.append(X_sample.T)
             y.append(X_data[i][1])
     else:

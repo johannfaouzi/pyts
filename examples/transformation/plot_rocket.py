@@ -44,8 +44,7 @@ for idx in indices:
     )
 plt.legend(loc='best')
 plt.title(
-    'Weights of the four most discriminative kernels \n'
-    '(criterion: mutual information)',
+    'Weights of the four most discriminative kernels \n(criterion: mutual information)',
     fontsize=14,
 )
 plt.xticks([])
