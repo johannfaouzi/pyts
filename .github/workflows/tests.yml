@@ -108,7 +108,16 @@ jobs:
           python-version: "3.13"
       - run: |
           python -m pip install --upgrade pip
-          pip install ".[tests]"
+          # Editable install: with a regular install, this job's working
+          # directory (the repo root) still has a local pyts/ source tree
+          # next to the site-packages copy. `--pyargs pyts` then resolves
+          # the import to the local tree while coverage.py's `--cov=pyts`
+          # instrumentation gets confused by the two candidate locations,
+          # silently recording zero coverage (tests still pass either way,
+          # since the code is identical, which is why this went unnoticed).
+          # An editable install makes both the same files, removing the
+          # ambiguity, and reports paths that are already repo-relative.
+          pip install -e ".[tests]"
       - name: Run test suite with coverage (JIT disabled)
         env:
           NUMBA_DISABLE_JIT: "1"
