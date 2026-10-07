@@ -873,3 +873,28 @@ def test_shapes(X, y, params, n_shapelets_desired, n_tasks):
         assert X_new.shape == (n_samples, n_classes)
         assert y_proba.shape == (n_samples, n_classes)
     assert y_pred.shape == (n_samples,)
+
+
+@pytest.mark.filterwarnings("ignore:Maximum number of iterations")
+@pytest.mark.parametrize('X, y', [(X_bin, y_bin), (X_multi, y_multi)])
+@pytest.mark.parametrize(
+    'params', [{}, {'fit_intercept': False}, {'multi_class': 'ovr'}]
+)
+def test_single_sample(X, y, params):
+    """Predicting a single sample gives the same row as predicting a batch."""
+    clf = LearningShapelets(max_iter=5, random_state=0, **params).fit(X, y)
+    n_classes = len(clf.classes_)
+
+    X_new = clf.decision_function(X[:1])
+    y_proba = clf.predict_proba(X[:1])
+    y_pred = clf.predict(X[:1])
+    if n_classes == 2:
+        assert X_new.shape == (1,)
+    else:
+        assert X_new.shape == (1, n_classes)
+    assert y_proba.shape == (1, n_classes)
+    assert y_pred.shape == (1,)
+
+    np.testing.assert_allclose(X_new, clf.decision_function(X)[:1])
+    np.testing.assert_allclose(y_proba, clf.predict_proba(X)[:1])
+    np.testing.assert_array_equal(y_pred, clf.predict(X)[:1])

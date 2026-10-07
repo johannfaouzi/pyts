@@ -933,7 +933,10 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
                 weights = np.r_[self.intercept_.reshape(1, -1), self.coef_.T]
         else:
             weights = self.coef_.T
-        X_new = np.squeeze(distances @ weights)
+        X_new = distances @ weights
+        if len(self.classes_) == 2:
+            # Only drop the class axis; keep the sample axis for a single sample
+            X_new = X_new.reshape(n_samples)
 
         return X_new
 
