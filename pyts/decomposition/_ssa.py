@@ -97,7 +97,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
     groups : None, int, 'auto', or array-like (default = None)
         The way the elementary matrices are grouped. If None, no grouping is
         performed. If an integer, it represents the number of groups and the
-        bounds of the groups are computed as
+        bounds of the groups are computed using the resolved window size as
         ``np.linspace(0, window_size, groups + 1).astype('int64')``.
         If 'auto', then three groups are determined, containing trend,
         seasonal, and residual. If array-like, each element must be array-like
@@ -385,7 +385,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
         elif isinstance(self.groups, str) and self.groups == "auto":
             grouping_size = 3
         elif isinstance(self.groups, (int, np.integer)):
-            if not 1 <= self.groups <= self.window_size:
+            if not 1 <= self.groups <= window_size:
                 raise ValueError(
                     "If 'groups' is an integer, it must be greater than or "
                     "equal to 1 and lower than or equal to 'window_size'."
@@ -398,7 +398,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             # three are handled above, so this is the array-like case.
             assert isinstance(self.groups, (list, tuple, np.ndarray))
             idx = np.concatenate(self.groups)
-            diff = np.setdiff1d(idx, np.arange(self.window_size))
+            diff = np.setdiff1d(idx, np.arange(window_size))
             flat_list = [item for group in self.groups for item in group]
             if (diff.size > 0) or not (
                 all(isinstance(x, (int, np.integer)) for x in flat_list)
