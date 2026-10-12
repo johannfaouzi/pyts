@@ -164,40 +164,38 @@ class KNeighborsClassifier(BaseEstimator, UnivariateClassifierMixin):
 
         elif self.metric == 'dtw_sakoechiba':
             n_timestamps = X.shape[1]
-            if self.metric_params is None:
-                region = sakoe_chiba_band(n_timestamps)
-            else:
-                if 'window_size' not in self.metric_params.keys():
-                    window_size = 0.1
-                else:
-                    window_size = self.metric_params['window_size']
-                region = sakoe_chiba_band(n_timestamps, window_size=window_size)
+            metric_params: dict[str, Any] = (
+                {} if self.metric_params is None else self.metric_params.copy()
+            )
+            window_size = metric_params.pop('window_size', 0.1)
+            metric_params['region'] = sakoe_chiba_band(
+                n_timestamps, window_size=window_size
+            )
             self._clf = SklearnKNN(
                 n_neighbors=self.n_neighbors,
                 weights=self.weights,
                 algorithm='brute',
                 metric=_dtw_region,
-                metric_params={'region': region},
+                metric_params=metric_params,
                 n_jobs=self.n_jobs,
                 **self.kwargs,
             )
 
         elif self.metric == 'dtw_itakura':
             n_timestamps = X.shape[1]
-            if self.metric_params is None:
-                region = itakura_parallelogram(n_timestamps)
-            else:
-                if 'max_slope' not in self.metric_params.keys():
-                    max_slope = 2.0
-                else:
-                    max_slope = self.metric_params['max_slope']
-                region = itakura_parallelogram(n_timestamps, max_slope=max_slope)
+            metric_params = (
+                {} if self.metric_params is None else self.metric_params.copy()
+            )
+            max_slope = metric_params.pop('max_slope', 2.0)
+            metric_params['region'] = itakura_parallelogram(
+                n_timestamps, max_slope=max_slope
+            )
             self._clf = SklearnKNN(
                 n_neighbors=self.n_neighbors,
                 weights=self.weights,
                 algorithm='brute',
                 metric=_dtw_region,
-                metric_params={'region': region},
+                metric_params=metric_params,
                 n_jobs=self.n_jobs,
                 **self.kwargs,
             )
