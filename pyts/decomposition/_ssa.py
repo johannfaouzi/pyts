@@ -204,35 +204,30 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
         window_size, grouping_size = self._check_params(n_timestamps)
         n_windows = n_timestamps - window_size + 1
 
-        try:
-            # Get a rough estimation of the required memory. ``_transform``
-            # never materializes the (n_samples, window_size, window_size,
-            # n_windows) stack of elementary matrices (see ``_ssa_fused``),
-            # so the dominant arrays are now the windowed view / eigenvector
-            # workspace (n_samples, window_size, window_size or n_windows)
-            # and the (n_samples, grouping_size, n_timestamps) output.
-            max_array = np.zeros(
-                (
-                    n_samples + 1,
-                    window_size,
-                    max(window_size, n_windows) + grouping_size,
+        if self.chunksize is None:
+            try:
+                # Get a rough estimation of the required memory. ``_transform``
+                # never materializes the (n_samples, window_size, window_size,
+                # n_windows) stack of elementary matrices (see ``_ssa_fused``),
+                # so the dominant arrays are now the windowed view / eigenvector
+                # workspace (n_samples, window_size, window_size or n_windows)
+                # and the (n_samples, grouping_size, n_timestamps) output.
+                max_array = np.zeros(
+                    (
+                        n_samples + 1,
+                        window_size,
+                        max(window_size, n_windows) + grouping_size,
+                    )
                 )
-            )
-            del max_array
-        except MemoryError as err:
-            msg = "The required memory is greater than the available memory. "
-            if self.chunksize is None:
-                msg += (
+                del max_array
+            except MemoryError as err:
+                msg = (
+                    "The required memory is greater than the available memory. "
                     "Set the `chunksize` parameter to an integer to perform "
                     "the transformation using chunks (batches) to decrease "
                     "the required memory."
                 )
-            else:
-                msg += (
-                    "Decrease the value of the `chunksize` parameter to "
-                    "to decrease the required memory."
-                )
-            raise MemoryError(msg) from err
+                raise MemoryError(msg) from err
 
         if self.chunksize is None:
             return self._transform(X)
