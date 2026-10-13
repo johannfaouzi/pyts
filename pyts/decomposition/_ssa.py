@@ -320,7 +320,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             # Every component is its own group: membership is the
             # (window_size, window_size) identity, broadcast per sample.
             membership = np.tile(np.eye(window_size), (n_samples, 1, 1))
-        elif self.groups == "auto":
+        elif isinstance(self.groups, str) and self.groups == "auto":
             f = np.arange(0, 1 + window_size // 2) / window_size
             Pxx = np.abs(np.fft.rfft(v, axis=1, norm='ortho')) ** 2
             if Pxx.shape[-1] % 2 == 0:
