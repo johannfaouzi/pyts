@@ -165,3 +165,19 @@ def test_fractional_window_rejects_out_of_range_groups(fraction, group_kind):
     groups = window_size + 1 if group_kind == 'count' else [[window_size]]
     with pytest.raises(ValueError, match="If 'groups'"):
         SingularSpectrumAnalysis(window_size=fraction, groups=groups).transform(X)
+
+
+def test_chunksize_avoids_full_dataset_memory_precheck(monkeypatch):
+    X = np.random.RandomState(0).normal(size=(4, 6))
+    original_zeros = np.zeros
+
+    def constrained_zeros(shape, *args, **kwargs):
+        if tuple(shape) == (5, 3, 6):
+            raise MemoryError("simulated allocation limit")
+        return original_zeros(shape, *args, **kwargs)
+
+    monkeypatch.setattr(np, 'zeros', constrained_zeros)
+    actual = SingularSpectrumAnalysis(
+        window_size=3, groups=2, chunksize=2, n_jobs=1
+    ).fit_transform(X)
+    np.testing.assert_allclose(actual.sum(axis=1), X, atol=1e-5, rtol=0.0)
