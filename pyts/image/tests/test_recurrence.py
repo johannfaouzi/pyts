@@ -243,3 +243,72 @@ def test_flatten():
     arr_false = RecurrencePlot().transform(X).reshape(2, -1)
     arr_true = RecurrencePlot(flatten=True).transform(X)
     np.testing.assert_allclose(arr_false, arr_true, atol=1e-5, rtol=0.0)
+
+
+@pytest.mark.parametrize(
+    'dtype',
+    [
+        np.float16,
+        np.float32,
+        np.float64,
+        np.int8,
+        np.int16,
+        np.int32,
+        np.int64,
+        np.uint8,
+        np.uint16,
+        np.uint32,
+        np.bool_,
+    ],
+)
+@pytest.mark.parametrize('dimension', [1, 3])
+def test_numeric_dtypes(dtype, dimension):
+    """Safely convertible numeric inputs produce Euclidean distances."""
+    X_typed = X.astype(dtype)
+    trajectories = np.asarray(
+        [
+            [row[i : i + dimension] for i in range(X.shape[1] - dimension + 1)]
+            for row in X_typed.astype(np.float64)
+        ]
+    )
+    expected = np.linalg.norm(
+        trajectories[:, :, None] - trajectories[:, None, :], axis=-1
+    )
+
+    actual = RecurrencePlot(dimension=dimension).transform(X_typed)
+
+    assert actual.dtype == np.float64
+    np.testing.assert_allclose(actual, expected, rtol=0, atol=1e-5)
+
+
+@pytest.mark.parametrize('dimension', [1, 2])
+def test_large_int64_precision(dimension):
+    """Keep small differences between integers above float64 precision."""
+    X_large = np.asarray([[2**53, 2**53 + 1, 2**53 + 3]], dtype=np.int64)
+    if dimension == 1:
+        expected = [[[0, 1, 3], [1, 0, 2], [3, 2, 0]]]
+    else:
+        expected = [[[0, np.sqrt(5)], [np.sqrt(5), 0]]]
+
+    actual = RecurrencePlot(dimension=dimension).transform(X_large)
+
+    np.testing.assert_allclose(actual, expected, rtol=0, atol=1e-5)
+
+
+@pytest.mark.parametrize('dtype', [np.int32, np.uint32])
+@pytest.mark.parametrize('dimension', [1, 2, 3])
+def test_integer_dtype_full_range(dtype, dimension):
+    """Embedded distances do not overflow for newly accepted integer dtypes."""
+    bounds = np.iinfo(dtype)
+    X_range = np.asarray(
+        [[bounds.min, bounds.max, bounds.min, bounds.max]], dtype=dtype
+    )
+    # Alternating trajectories are either identical or differ by the full
+    # integer span in every component; Python integer subtraction is exact.
+    span = int(bounds.max) - int(bounds.min)
+    phases = np.arange(5 - dimension) % 2
+    expected = (phases[:, None] != phases[None, :]) * (span * np.sqrt(dimension))
+
+    actual = RecurrencePlot(dimension=dimension).transform(X_range)
+
+    np.testing.assert_allclose(actual[0], expected, rtol=1e-15, atol=0)

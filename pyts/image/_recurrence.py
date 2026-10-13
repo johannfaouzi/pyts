@@ -219,6 +219,15 @@ class RecurrencePlot(BaseEstimator, UnivariateTransformerMixin):
 
         """
         X = check_array(X)
+        if X.dtype.kind == 'f' and np.can_cast(X.dtype, np.float64, casting='safe'):
+            X = X.astype(np.float64, copy=False)
+        elif np.can_cast(X.dtype, np.int64, casting='safe'):
+            # Smaller integers are exactly representable in float64; floating
+            # arithmetic avoids overflow when squaring their differences.
+            if X.dtype.itemsize < np.dtype(np.int64).itemsize:
+                X = X.astype(np.float64, copy=False)
+            else:
+                X = X.astype(np.int64, copy=False)
         n_samples, n_timestamps = X.shape
         dimension, time_delay = self._check_params(n_timestamps)
 
