@@ -8,7 +8,7 @@ import re
 import numpy as np
 import pytest
 
-from pyts.approximation import MultipleCoefficientBinning
+from pyts.approximation import MultipleCoefficientBinning, SymbolicFourierApproximation
 from pyts.approximation._mcb import _digitize, _uniform_bins
 
 X = np.arange(30).reshape(10, 3)
@@ -148,6 +148,59 @@ def test_identical_bin_edges():
     mcb = MultipleCoefficientBinning(n_bins=6, strategy='quantile')
     with pytest.raises(ValueError, match=msg_error):
         mcb.fit(np.r_[np.zeros((4, 2)), np.ones((4, 2))])
+
+
+@pytest.mark.parametrize('n_bins', [2, 3, 4])
+@pytest.mark.parametrize(
+    'X',
+    [
+        np.tile(np.arange(8), (2, 1)).T,
+        np.column_stack((np.arange(8), np.arange(8)[::-1])),
+        np.column_stack((np.arange(8), 2 * np.arange(8) - 3.5)),
+        np.column_stack((np.arange(8), np.arange(8) + 10)),
+        np.arange(8)[:, None],
+    ],
+)
+def test_quantiles_are_checked_within_timestamps(X, n_bins):
+    """Equal bin edges across timestamps do not create empty bins."""
+    expected_edges = np.percentile(X, np.linspace(0, 100, n_bins + 1)[1:-1], axis=0).T
+    expected = np.column_stack(
+        [np.digitize(X[:, i], expected_edges[i], right=True) for i in range(X.shape[1])]
+    )
+    mcb = MultipleCoefficientBinning(n_bins=n_bins, alphabet='ordinal')
+    actual = mcb.fit_transform(X)
+    np.testing.assert_array_equal(mcb.bin_edges_, expected_edges)
+    np.testing.assert_array_equal(actual, expected)
+
+
+@pytest.mark.parametrize('n_bins', [3, 4])
+@pytest.mark.parametrize(
+    'X',
+    [
+        np.array([0, 0, 0, 0, 0, 0, 1, 2])[:, None],
+        np.column_stack(([0, 0, 0, 0, 0, 0, 1, 2], np.arange(8) + 10)),
+        np.column_stack((np.arange(8) + 10, [0, 0, 0, 0, 0, 0, 1, 2])),
+        np.tile([0, 0, 0, 0, 0, 0, 1, 2], (2, 1)).T,
+    ],
+)
+def test_repeated_quantiles_in_each_timestamp(X, n_bins):
+    """Reject an empty bin even in a single or non-first timestamp."""
+    mcb = MultipleCoefficientBinning(n_bins=n_bins)
+    with pytest.raises(
+        ValueError, match='At least two consecutive quantiles are equal'
+    ):
+        mcb.fit(X)
+
+
+@pytest.mark.parametrize('n_bins', [2, 4])
+def test_sfa_with_equal_quantile_distributions(n_bins):
+    """Distinct Fourier coefficients may share a non-degenerate distribution."""
+    X = np.column_stack((np.arange(8), np.zeros(8)))
+    sfa = SymbolicFourierApproximation(
+        n_coefs=2, n_bins=n_bins, strategy='quantile', alphabet='ordinal'
+    )
+    expected = np.tile(np.repeat(np.arange(n_bins), 8 // n_bins), (2, 1)).T
+    np.testing.assert_array_equal(sfa.fit_transform(X), expected)
 
 
 def test_y_none_entropy():

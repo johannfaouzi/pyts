@@ -254,7 +254,7 @@ class MultipleCoefficientBinning(BaseEstimator, UnivariateTransformerMixin):
             bins_edges = np.percentile(
                 X, np.linspace(0, 100, self.n_bins + 1)[1:-1], axis=0
             ).T
-            if np.any(np.diff(bins_edges, axis=0) == 0):
+            if np.any(np.diff(bins_edges, axis=1) == 0):
                 raise ValueError(
                     "At least two consecutive quantiles are equal. "
                     "Consider trying with a smaller number of bins or "

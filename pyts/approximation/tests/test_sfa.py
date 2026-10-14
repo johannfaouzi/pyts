@@ -31,7 +31,7 @@ def _compute_expected_results(
     alphabet=None,
 ):
     """Compute the expected results."""
-    X = np.asarray(X)
+    X = np.array(X, copy=True)
     if norm_mean:
         X -= X.mean(axis=1)[:, None]
     if norm_std:
