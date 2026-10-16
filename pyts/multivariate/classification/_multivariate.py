@@ -120,7 +120,7 @@ class MultivariateClassifier(BaseEstimator, MultivariateClassifierMixin):
         if self.weights is None:
             self._weights = None
         else:
-            self._weights = np.asarray(self.weights)
+            self._weights = np.asarray(self.weights, dtype=np.float64)
 
         self._le = LabelEncoder().fit(y)
         self.classes_ = self._le.classes_
