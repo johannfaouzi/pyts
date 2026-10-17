@@ -4,13 +4,16 @@
 Change Log
 ==========
 
-Version 0.14.0
+Version 0.14.1
 --------------
 
 - Accept float32 and narrow integer inputs in
   :class:`pyts.approximation.PiecewiseAggregateApproximation` and
   :class:`pyts.image.GramianAngularField` by converting them before compiled
   numerical computations.
+
+Version 0.14.0
+--------------
 
 - Add support for Python 3.12, 3.13 and 3.14, and drop support for Python
   3.8, 3.9 and 3.10 (all past end-of-life).
