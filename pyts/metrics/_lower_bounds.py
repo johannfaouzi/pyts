@@ -127,8 +127,8 @@ def lower_bound_yi(
     array([[3.        , 0.        , 2.44...]])
 
     """
-    X_train = check_array(X_train)
-    X_test = check_array(X_test)
+    X_train = check_array(X_train, dtype=np.float64)
+    X_test = check_array(X_test, dtype=np.float64)
     _check_consistent_lengths(X_train, X_test)
     X_train_min = np.min(X_train, axis=1)
     X_train_max = np.max(X_train, axis=1)
@@ -169,13 +169,13 @@ def lower_bound_kim(
     >>> X_train = [[2, 1, 8, 4, 5], [1, 2, 3, 4, 5]]
     >>> X_test = [[5, 4, 3, 2, 1], [1, 8, 4, 3, 2], [6, 3, 5, 4, 7]]
     >>> lower_bound_kim(X_train, X_test)
-    array([[4, 4],
-           [3, 3],
-           [4, 5]])
+    array([[4., 4.],
+           [3., 3.],
+           [4., 5.]])
 
     """
-    X_train = check_array(X_train)
-    X_test = check_array(X_test)
+    X_train = check_array(X_train, dtype=np.float64)
+    X_test = check_array(X_test, dtype=np.float64)
     _check_consistent_lengths(X_train, X_test)
     first = np.abs(X_test[:, 0, None] - X_train[None, :, 0])
     last = np.abs(X_test[:, -1, None] - X_train[None, :, -1])
@@ -187,12 +187,8 @@ def lower_bound_kim(
 
 _WARPING_ENVELOPE_2D_SIGNATURES = [
     "UniTuple(float64[:,:], 2)(float64[:,:], int64, int64, int64[:,:])",
-    # ``_warping_envelope`` (the public caller) validates X with a plain
-    # ``check_array`` that does not force float64, and both this file's
-    # own doctest (``lower_bound_keogh``) and its unit tests exercise it
-    # with an integer-valued X, so that is compiled eagerly too. Its
-    # output (built with ``np.empty``, no dtype argument) is always
-    # float64 regardless of X's dtype.
+    # Direct private-helper tests pass integer arrays. The output, built
+    # with ``np.empty`` and no dtype argument, is always float64.
     "UniTuple(float64[:,:], 2)(int64[:,:], int64, int64, int64[:,:])",
 ]
 
@@ -391,9 +387,8 @@ def _clip(
 
 # ``lower_train``/``upper_train`` are always float64 (``_warping_envelope``'s
 # output, built with ``np.empty`` and no dtype argument, regardless of
-# ``X_train``'s own dtype). Only ``X_test`` genuinely varies in dtype
-# (``check_array`` in ``lower_bound_keogh``/``lower_bound_improved`` does not
-# force float64), so only that parameter needs a second variant.
+# ``X_train``'s own dtype). Private-helper callers can also pass int64
+# X_test, so only that parameter needs a second variant.
 _SQUARED_LB_KEOGH_SIGNATURES = [
     "float64[:,:](float64[:,:], float64[:,:], float64[:,:], int64, int64, int64)",
     "float64[:,:](int64[:,:], float64[:,:], float64[:,:], int64, int64, int64)",
@@ -435,8 +430,7 @@ def _squared_lb_keogh(
     return squared_lb
 
 
-# X_test and X_train can each independently be float64 or int64 (neither
-# ``lower_bound_improved`` nor its ``check_array`` calls force a dtype), so
+# Private-helper callers can pass float64 or int64 X_test and X_train, so
 # all four combinations are compiled eagerly. ``lower_train``/``upper_train``
 # are always float64, as in ``_squared_lb_keogh`` above. ``region`` is always
 # int64, matching ``_warping_envelope_2d``'s own signature.
@@ -575,8 +569,8 @@ def lower_bound_keogh(
     array([[3.08...  , 2.23...]])
 
     """
-    X_train = check_array(X_train)
-    X_test = check_array(X_test)
+    X_train = check_array(X_train, dtype=np.float64)
+    X_test = check_array(X_test, dtype=np.float64)
     _check_consistent_lengths(X_train, X_test)
     n_samples_test, n_timestamps = X_test.shape
     n_samples_train, _ = X_train.shape
@@ -637,8 +631,8 @@ def lower_bound_improved(
     array([[0.76..., 1.11...]])
 
     """
-    X_train = check_array(X_train)
-    X_test = check_array(X_test)
+    X_train = check_array(X_train, dtype=np.float64)
+    X_test = check_array(X_test, dtype=np.float64)
     _check_consistent_lengths(X_train, X_test)
     n_samples_test, n_timestamps = X_test.shape
     n_samples_train, _ = X_train.shape
