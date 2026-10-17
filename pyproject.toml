@@ -48,7 +48,7 @@ Download = "https://github.com/johannfaouzi/pyts"
 
 [project.optional-dependencies]
 linting = ["ruff>=0.14"]
-typing = ["pyrefly>=0.1"]
+typing = ["pyrefly==1.4.0"]
 tests = ["pytest", "pytest-cov"]
 docs = [
     "docutils",

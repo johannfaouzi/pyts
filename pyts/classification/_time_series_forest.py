@@ -4,7 +4,7 @@
 # License: BSD-3-Clause
 
 from math import ceil
-from typing import Any, Self
+from typing import Any, Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -117,7 +117,7 @@ class WindowFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
 
         """
         # Check
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         n_timestamps = X.shape[1]
         n_windows, min_window_size, rng = self._check_params(X)
 
@@ -147,7 +147,7 @@ class WindowFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
             Extracted features.
 
         """
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         check_is_fitted(self)
 
         # Extract the features from each window
@@ -464,7 +464,7 @@ class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
 
         """
         check_is_fitted(self)
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         X_new = self._feature_extractor.transform(X)
         return self._rfc.apply(X_new)
 
@@ -490,7 +490,7 @@ class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
 
         """
         check_is_fitted(self)
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         X_new = self._feature_extractor.transform(X)
         indicator, n_nodes_ptr = self._rfc.decision_path(X_new)
         # RandomForestClassifier.decision_path always returns a csr_matrix
@@ -552,7 +552,10 @@ class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
             warm_start=False,
         )
         self._pipeline = Pipeline([('fe', feature_extractor), ('rfc', rfc)])
-        self._pipeline.fit(X, y)
+        # 'fe' (the feature extractor) validates and converts X itself;
+        # sklearn's Pipeline.fit stub still wants its own narrower,
+        # already-ndarray type for the raw arguments passed in here.
+        self._pipeline.fit(X, y)  # pyrefly: ignore[bad-argument-type]
 
         # Get attributes. `feature_extractor` and `rfc` are fitted in place
         # by `Pipeline.fit` (it does not clone its steps), so they can be
@@ -597,7 +600,8 @@ class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
         # (ndarray, ndarray) tuple to cover regressors with return_std or
         # return_cov, but RandomForestClassifier.predict always returns a
         # single ndarray.
-        return self._pipeline.predict(X)  # pyrefly: ignore[bad-return]
+        # pyrefly: ignore[bad-return, bad-argument-type]
+        return self._pipeline.predict(X)
 
     def predict_proba(self, X: npt.ArrayLike) -> npt.NDArray[np.float64]:
         """Predict class probabilities for X.
@@ -621,7 +625,7 @@ class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
 
         """
         check_is_fitted(self)
-        return self._pipeline.predict_proba(X)
+        return self._pipeline.predict_proba(X)  # pyrefly: ignore[bad-argument-type]
 
     def score(
         self,
@@ -652,6 +656,5 @@ class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
         # sklearn's stub types Pipeline.score's return as possibly a
         # non-float floating type depending on the final estimator, but
         # RandomForestClassifier.score always returns a plain float.
-        return self._pipeline.score(  # pyrefly: ignore[bad-return]
-            X, y, sample_weight=sample_weight
-        )
+        # pyrefly: ignore[bad-return, bad-argument-type]
+        return self._pipeline.score(X, y, sample_weight=sample_weight)

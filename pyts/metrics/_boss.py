@@ -4,6 +4,7 @@
 # License: BSD-3-Clause
 
 from math import sqrt
+from typing import cast
 
 import numpy as np
 import numpy.typing as npt
@@ -56,8 +57,8 @@ def boss(x: npt.ArrayLike, y: npt.ArrayLike) -> float:
     5.0
 
     """
-    x = check_array(x, ensure_2d=False, dtype=np.float64)
-    y = check_array(y, ensure_2d=False, dtype=np.float64)
+    x = cast(npt.NDArray[np.float64], check_array(x, ensure_2d=False, dtype=np.float64))
+    y = cast(npt.NDArray[np.float64], check_array(y, ensure_2d=False, dtype=np.float64))
     if x.ndim != 1:
         raise ValueError("'x' must a one-dimensional array.")
     if y.ndim != 1:

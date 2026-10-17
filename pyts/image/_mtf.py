@@ -4,7 +4,7 @@
 # License: BSD-3-Clause
 
 from math import ceil
-from typing import Self
+from typing import Any, Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -216,7 +216,7 @@ class MarkovTransitionField(BaseEstimator, UnivariateTransformerMixin):
             `(n_samples, image_size * image_size)`.
 
         """
-        X = check_array(X)
+        X = cast(npt.NDArray[Any], check_array(X))
         n_samples, n_timestamps = X.shape
         image_size = self._check_params(n_timestamps)
 

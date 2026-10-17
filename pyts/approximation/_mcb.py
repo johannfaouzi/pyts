@@ -3,7 +3,7 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-from typing import Any, Self
+from typing import Any, Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -154,9 +154,12 @@ class MultipleCoefficientBinning(BaseEstimator, UnivariateTransformerMixin):
             if y is None:
                 raise ValueError("y cannot be None if strategy='entropy'.")
             X, y = check_X_y(X, y, dtype=np.float64)
+            X = cast(npt.NDArray[np.float64], X)
+            y = cast(npt.NDArray[Any], y)
             check_classification_targets(y)
         else:
-            X = check_array(X, dtype=np.float64)
+            X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
+            y = cast(npt.NDArray[Any] | None, y)
         n_samples, n_timestamps = X.shape
         self._n_timestamps_fit = n_timestamps
         self._alphabet = self._check_params(n_samples)
@@ -181,7 +184,7 @@ class MultipleCoefficientBinning(BaseEstimator, UnivariateTransformerMixin):
 
         """
         check_is_fitted(self, 'bin_edges_')
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         self._check_consistent_lengths(X)
         indices = _digitize(X, self.bin_edges_)
         if isinstance(self._alphabet, str):

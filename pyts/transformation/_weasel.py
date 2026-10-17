@@ -3,7 +3,7 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-from typing import Self
+from typing import Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -228,7 +228,7 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
             ],
         )
 
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         n_samples, n_timestamps = X.shape
 
         X_features = coo_matrix((n_samples, 0), dtype=np.int64)

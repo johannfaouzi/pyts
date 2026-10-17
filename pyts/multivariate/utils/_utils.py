@@ -3,6 +3,8 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
+from typing import cast
+
 import numpy as np
 import numpy.typing as npt
 from sklearn.utils import check_array
@@ -22,7 +24,7 @@ def check_3d_array(X: npt.ArrayLike) -> npt.NDArray[np.float64]:
         Input data as an array.
 
     """
-    X = check_array(X, ensure_2d=False, allow_nd=True)
+    X = cast(npt.NDArray[np.float64], check_array(X, ensure_2d=False, allow_nd=True))
     if X.ndim != 3:
         raise ValueError(f"X must be 3-dimensional (got {X.ndim}).")
     return X

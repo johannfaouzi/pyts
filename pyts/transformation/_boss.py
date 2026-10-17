@@ -4,7 +4,7 @@
 # License: BSD-3-Clause
 
 from math import ceil
-from typing import Self
+from typing import Any, Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -149,7 +149,7 @@ class BOSS(BaseEstimator, UnivariateTransformerMixin):
         self : object
 
         """
-        X = check_array(X)
+        X = cast(npt.NDArray[Any], check_array(X))
         n_samples, n_timestamps = X.shape
         if y is not None:
             check_classification_targets(y)
@@ -214,7 +214,7 @@ class BOSS(BaseEstimator, UnivariateTransformerMixin):
 
         """
         check_is_fitted(self, ['_sfa', '_vectorizer', 'vocabulary_'])
-        X = check_array(X)
+        X = cast(npt.NDArray[Any], check_array(X))
         n_samples, n_timestamps = X.shape
 
         X_windowed = _windowed_view(
@@ -265,7 +265,7 @@ class BOSS(BaseEstimator, UnivariateTransformerMixin):
             Document-term matrix.
 
         """
-        X = check_array(X)
+        X = cast(npt.NDArray[Any], check_array(X))
         n_samples, n_timestamps = X.shape
         if y is not None:
             check_classification_targets(y)

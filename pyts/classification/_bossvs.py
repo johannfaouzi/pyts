@@ -4,7 +4,7 @@
 # License: BSD-3-Clause
 
 from math import ceil
-from typing import Any, Self
+from typing import Any, Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -250,7 +250,7 @@ class BOSSVS(BaseEstimator, UnivariateClassifierMixin):
 
         """
         check_is_fitted(self, ['vocabulary_', 'tfidf_', 'idf_', '_tfidf'])
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         n_samples, n_timestamps = X.shape
 
         X_windowed = _windowed_view(

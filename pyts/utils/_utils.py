@@ -3,7 +3,7 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -173,7 +173,7 @@ def windowed_view(
             [4, 5]]])
 
     """
-    X = check_array(X, dtype=None)
+    X = cast(npt.NDArray[Any], check_array(X, dtype=None))
     n_samples, n_timestamps = X.shape
 
     if not isinstance(window_size, (int, np.integer)):

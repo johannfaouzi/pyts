@@ -3,7 +3,7 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-from typing import Self
+from typing import Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -78,7 +78,7 @@ class StandardScaler(BaseEstimator, UnivariateTransformerMixin):
             Scaled data.
 
         """
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         scaler = SklearnStandardScaler(with_mean=self.with_mean, with_std=self.with_std)
         X_new = scaler.fit_transform(X.T).T
         return X_new
@@ -141,7 +141,7 @@ class MinMaxScaler(BaseEstimator, TransformerMixin):
             Scaled data.
 
         """
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         # sklearn's stub narrows feature_range to tuple[int, int], but
         # MinMaxScaler accepts float bounds fine at runtime.
         scaler = SklearnMinMaxScaler(
@@ -203,7 +203,7 @@ class MaxAbsScaler(BaseEstimator, TransformerMixin):
             Scaled data.
 
         """
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         scaler = SklearnMaxAbsScaler()
         X_new = scaler.fit_transform(X.T).T
         return X_new
@@ -296,7 +296,7 @@ class RobustScaler(BaseEstimator, TransformerMixin):
             Scaled data.
 
         """
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         scaler = SklearnRobustScaler(
             with_centering=self.with_centering,
             with_scaling=self.with_scaling,

@@ -3,7 +3,7 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-from typing import Self
+from typing import Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -187,8 +187,13 @@ def apply_one_kernel_one_sample(
             x_conv[i] += weight[j] * x_pad[i + (j * dilation)]
     x_conv += bias
 
-    # Return the features: maximum and proportion of positive values
-    return np.max(x_conv), np.mean(x_conv > 0)
+    # Return the features: maximum and proportion of positive values. The
+    # njit signatures above compile this to a (float64, float64) tuple, but
+    # ``np.mean`` is typed to return a generic ``np.floating`` rather than
+    # the specific ``np.float64`` subtype. ``typing.cast`` cannot be used
+    # here (this function is numba-compiled in nopython mode, which cannot
+    # resolve the ``cast`` global), so the mismatch is suppressed instead.
+    return np.max(x_conv), np.mean(x_conv > 0)  # pyrefly: ignore[bad-return]
 
 
 @njit(
@@ -328,7 +333,7 @@ class ROCKET(BaseEstimator, UnivariateTransformerMixin):
         self : object
 
         """
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         _n_samples, n_timestamps = X.shape
 
         kernel_sizes, seed = self._check_params(n_timestamps)

@@ -3,7 +3,7 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-from typing import Any, Self
+from typing import Any, Self, cast
 from warnings import warn
 
 import numpy as np
@@ -171,7 +171,7 @@ class KBinsDiscretizer(BaseEstimator, UnivariateTransformerMixin):
             Binned data.
 
         """
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         n_samples, n_timestamps = X.shape
         self._check_params(n_timestamps)
 

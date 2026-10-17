@@ -3,7 +3,7 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-from typing import Literal, Self
+from typing import Literal, Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -114,10 +114,13 @@ class PowerTransformer(BaseEstimator, UnivariateTransformerMixin):
             Transformed data.
 
         """
-        X = check_array(
-            X,
-            dtype=np.float64,
-            ensure_all_finite='allow-nan',  # pyrefly: ignore[unexpected-keyword]
+        X = cast(
+            npt.NDArray[np.float64],
+            check_array(
+                X,
+                dtype=np.float64,
+                ensure_all_finite='allow-nan',  # pyrefly: ignore[unexpected-keyword]
+            ),
         )
         transformer = SklearnPowerTransformer(
             method=self.method, standardize=self.standardize
@@ -216,7 +219,7 @@ class QuantileTransformer(BaseEstimator, UnivariateTransformerMixin):
             Transformed data.
 
         """
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         transformer = SklearnQuantileTransformer(
             n_quantiles=self.n_quantiles,
             output_distribution=self.output_distribution,

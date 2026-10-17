@@ -3,7 +3,7 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-from typing import Any, Self
+from typing import Any, Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -98,7 +98,7 @@ class SymbolicAggregateApproximation(BaseEstimator, UnivariateTransformerMixin):
             Binned data.
 
         """
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         n_timestamps = X.shape[1]
         alphabet = self._check_params(n_timestamps)
         discretizer = KBinsDiscretizer(

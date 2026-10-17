@@ -5,7 +5,7 @@
 
 from collections.abc import Callable
 from math import ceil, log2, sqrt
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -126,19 +126,31 @@ def _check_input_dtw(
             "'itakura'"
         )
     if dist == "precomputed":
-        cost = check_array(
-            precomputed_cost,
-            ensure_min_samples=2,
-            ensure_min_features=2,
-            ensure_2d=True,
-            ensure_all_finite=False,  # pyrefly: ignore[unexpected-keyword]
-            dtype=np.float64,
+        cost = cast(
+            npt.NDArray[np.float64],
+            check_array(
+                precomputed_cost,
+                ensure_min_samples=2,
+                ensure_min_features=2,
+                ensure_2d=True,
+                ensure_all_finite=False,  # pyrefly: ignore[unexpected-keyword]
+                dtype=np.float64,
+            ),
         )
-        n_timestamps_1, n_timestamps_2 = precomputed_cost.shape
+        n_timestamps_1, n_timestamps_2 = cost.shape
+        # Only ``precomputed_cost`` carries information in this branch;
+        # ``x``/``y`` are not used, so return them as the ``None`` the
+        # declared return type promises rather than their raw input type.
+        x = None
+        y = None
     else:
         cost = None
-        x = check_array(x, ensure_2d=False, dtype=np.float64)
-        y = check_array(y, ensure_2d=False, dtype=np.float64)
+        x = cast(
+            npt.NDArray[np.float64], check_array(x, ensure_2d=False, dtype=np.float64)
+        )
+        y = cast(
+            npt.NDArray[np.float64], check_array(y, ensure_2d=False, dtype=np.float64)
+        )
         if x.ndim != 1:
             raise ValueError("'x' must be a one-dimensional array.")
         if y.ndim != 1:
@@ -166,6 +178,10 @@ def _input_to_cost(
         else:
             cost_mat = precomputed_cost.copy()
     else:
+        # _check_input_dtw always validates and returns non-None x/y
+        # when dist != "precomputed".
+        assert x is not None
+        assert y is not None
         cost_mat = cost_matrix(x, y, dist=dist, region=region)
     cost_mat = check_array(
         cost_mat,
@@ -225,6 +241,8 @@ def cost_matrix(
         Cost matrix.
 
     """
+    x = cast(npt.NDArray[np.float64], check_array(x, ensure_2d=False, dtype=np.float64))
+    y = cast(npt.NDArray[np.float64], check_array(y, ensure_2d=False, dtype=np.float64))
     if dist == 'square':
         dist_ = _square
     elif dist == 'absolute':
@@ -245,7 +263,7 @@ def cost_matrix(
                 )
         dist_ = dist
     if region is not None:
-        region = check_array(region)
+        region = cast(npt.NDArray[np.float64], check_array(region))
         region_shape = region.shape
         if region_shape != (2, x.size):
             raise ValueError(
@@ -319,20 +337,23 @@ def accumulated_cost_matrix(
         Accumulated cost matrix.
 
     """
-    cost_mat = check_array(
-        cost_mat,
-        ensure_min_samples=2,
-        ensure_min_features=2,
-        ensure_2d=True,
-        ensure_all_finite=False,  # pyrefly: ignore[unexpected-keyword]
-        dtype=np.float64,
+    cost_mat = cast(
+        npt.NDArray[np.float64],
+        check_array(
+            cost_mat,
+            ensure_min_samples=2,
+            ensure_min_features=2,
+            ensure_2d=True,
+            ensure_all_finite=False,  # pyrefly: ignore[unexpected-keyword]
+            dtype=np.float64,
+        ),
     )
     cost_mat_shape = cost_mat.shape
 
     if region is None:
         acc_cost_mat = _accumulated_cost_matrix_no_region(cost_mat)
     else:
-        region = check_array(region, dtype=np.int64)
+        region = cast(npt.NDArray[np.int64], check_array(region, dtype=np.int64))
         region_shape = region.shape
         if region_shape != (2, cost_mat_shape[0]):
             raise ValueError(
@@ -480,6 +501,11 @@ def _dtw_region(
     """
     x, y, precomputed_cost, _n_timestamps_1, _n_timestamps_2 = _check_input_dtw(
         x, y, precomputed_cost, dist, method="region"
+    )
+    region = (
+        cast(npt.NDArray[np.int64], check_array(region, dtype=np.int64))
+        if region is not None
+        else None
     )
     cost_mat = _input_to_cost(x, y, dist, precomputed_cost, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat, region)
@@ -1042,15 +1068,17 @@ def _dtw_multiscale(
            Information Retrieval, 6(1), 192-197 (2006).
 
     """
-    x, y, _precomputed_cost, _n_timestamps_1, _n_timestamps_2 = _check_input_dtw(
-        x, y, precomputed_cost=None, dist=dist, method="multiscale"
+    x_arr, y_arr, _precomputed_cost, _n_timestamps_1, _n_timestamps_2 = (
+        _check_input_dtw(x, y, precomputed_cost=None, dist=dist, method="multiscale")
     )
     # precomputed_cost=None guarantees dist != "precomputed" here (checked
     # above), so _check_input_dtw always returns real x/y arrays.
-    assert x is not None and y is not None
+    assert x_arr is not None and y_arr is not None
 
-    region = _multiscale_region(x, y, dist, resolution=resolution, radius=radius)
-    cost_mat = cost_matrix(x, y, dist=dist, region=region)
+    region = _multiscale_region(
+        x_arr, y_arr, dist, resolution=resolution, radius=radius
+    )
+    cost_mat = cost_matrix(x_arr, y_arr, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
     dtw_dist = acc_cost_mat[-1, -1]
     if dist == 'square':
@@ -1098,14 +1126,14 @@ def _dtw_fast(
            and Sequential Data, 70–80 (2004).
 
     """
-    x, y, _precomputed_cost, _n_timestamps_1, _n_timestamps_2 = _check_input_dtw(
-        x, y, precomputed_cost=None, dist=dist, method="fast"
+    x_arr, y_arr, _precomputed_cost, _n_timestamps_1, _n_timestamps_2 = (
+        _check_input_dtw(x, y, precomputed_cost=None, dist=dist, method="fast")
     )
     # precomputed_cost=None guarantees dist != "precomputed" here (checked
     # above), so _check_input_dtw always returns real x/y arrays.
-    assert x is not None and y is not None
-    region = _fast_region(x, y, dist, radius=radius)
-    cost_mat = cost_matrix(x, y, dist=dist, region=region)
+    assert x_arr is not None and y_arr is not None
+    region = _fast_region(x_arr, y_arr, dist, radius=radius)
+    cost_mat = cost_matrix(x_arr, y_arr, dist=dist, region=region)
     acc_cost_mat = accumulated_cost_matrix(cost_mat, region=region)
     dtw_dist = acc_cost_mat[-1, -1]
     if dist == 'square':

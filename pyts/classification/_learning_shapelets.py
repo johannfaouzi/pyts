@@ -907,7 +907,7 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
         """
         check_is_fitted(self, ['shapelets_', 'coef_', 'intercept_', 'n_iter_'])
 
-        X = check_array(X)
+        X = cast(npt.NDArray[Any], check_array(X))
         n_samples, n_timestamps = X.shape
 
         # Derive distances between shapelets and time series
@@ -1114,7 +1114,10 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
             )
         class_weight = compute_class_weight(self.class_weight, classes=classes, y=y)
 
-        sample_weight = _check_sample_weight(sample_weight, X, dtype=np.float64)
+        sample_weight = cast(
+            npt.NDArray[np.float64],
+            _check_sample_weight(sample_weight, X, dtype=np.float64),
+        )
         sample_weight *= class_weight[y_ind]
         sample_weight = sample_weight.reshape(-1, 1)
 
@@ -1390,7 +1393,7 @@ class LearningShapelets(BaseEstimator, UnivariateClassifierMixin):
             model, where classes are ordered as they are in ``self.classes_``.
 
         """
-        X = check_array(X)
+        X = cast(npt.NDArray[Any], check_array(X))
 
         if self._multi_class == 'ovr':
             X_new = np.empty((X.shape[0], self.classes_.size))

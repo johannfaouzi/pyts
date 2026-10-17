@@ -4,7 +4,7 @@
 # License: BSD-3-Clause
 
 from math import ceil
-from typing import Any, Self
+from typing import Any, Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -99,7 +99,7 @@ class WordExtractor(BaseEstimator, UnivariateTransformerMixin):
             separated by a whitespace.
 
         """
-        X = check_array(X, dtype=None)
+        X = cast(npt.NDArray[Any], check_array(X, dtype=None))
         n_samples, n_timestamps = X.shape
         window_size, window_step = self._check_params(n_timestamps)
         n_windows = (n_timestamps - window_size + window_step) // window_step
@@ -307,7 +307,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
             Bags of words.
 
         """
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         n_samples, n_timestamps = X.shape
         window_size, word_size, window_step, alphabet = self._check_params(n_timestamps)
         n_windows = (n_timestamps - window_size + window_step) // window_step

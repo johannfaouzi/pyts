@@ -4,7 +4,7 @@
 # License: BSD-3-Clause
 
 from math import ceil
-from typing import Self
+from typing import Any, Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -17,8 +17,8 @@ from pyts._base import UnivariateTransformerMixin
 
 
 def _trajectories(
-    X: npt.NDArray[np.float64], dimension: int, time_delay: int
-) -> npt.NDArray[np.float64]:
+    X: npt.NDArray[np.float64 | np.int64], dimension: int, time_delay: int
+) -> npt.NDArray[np.float64 | np.int64]:
     n_samples, n_timestamps = X.shape
     shape_new = (
         n_samples,
@@ -218,7 +218,7 @@ class RecurrencePlot(BaseEstimator, UnivariateTransformerMixin):
             `(n_samples, image_size * image_size)`.
 
         """
-        X = check_array(X)
+        X = cast(npt.NDArray[Any], check_array(X))
         if X.dtype.kind == 'f' and np.can_cast(X.dtype, np.float64, casting='safe'):
             X = X.astype(np.float64, copy=False)
         elif np.can_cast(X.dtype, np.int64, casting='safe'):

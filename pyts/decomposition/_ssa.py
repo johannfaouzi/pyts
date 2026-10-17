@@ -5,7 +5,7 @@
 
 import itertools
 from math import ceil
-from typing import Self
+from typing import Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -199,7 +199,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             and its shape is (n_samples, n_timestamps).
 
         """
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         n_samples, n_timestamps = X.shape
         window_size, grouping_size = self._check_params(n_timestamps)
         n_windows = n_timestamps - window_size + 1
@@ -342,9 +342,14 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             for i, (j, k) in enumerate(itertools.pairwise(grouping)):
                 membership[:, i, j:k] = 1.0
         else:
+            # The branches above handle None, 'auto' and int; the only
+            # remaining possibility per '__init__' is array-like (list,
+            # tuple or np.ndarray) of groups.
+            assert isinstance(self.groups, (list, tuple, np.ndarray))
+            groups = self.groups
             membership = np.zeros((n_samples, grouping_size, window_size))
-            for i, group in enumerate(self.groups):
-                membership[:, i, group] = 1.0
+            for i, group in enumerate(groups):
+                membership[:, i, np.asarray(group, dtype=np.int64)] = 1.0
         return membership, grouping_size
 
     def _check_params(self, n_timestamps: int) -> tuple[int, int]:
@@ -392,9 +397,12 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             # an integer, or array-like (list, tuple, np.ndarray); the first
             # three are handled above, so this is the array-like case.
             assert isinstance(self.groups, (list, tuple, np.ndarray))
-            idx = np.concatenate(self.groups)
+            groups = self.groups
+            idx = np.concatenate([np.asarray(group) for group in groups])
             diff = np.setdiff1d(idx, np.arange(window_size))
-            flat_list = [item for group in self.groups for item in group]
+            flat_list = [
+                item for group in groups for item in np.asarray(group).tolist()
+            ]
             if (diff.size > 0) or not (
                 all(isinstance(x, (int, np.integer)) for x in flat_list)
             ):
@@ -402,7 +410,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
                     "If 'groups' is array-like, all the values in 'groups' "
                     "must be integers between 0 and ('window_size' - 1)."
                 )
-            grouping_size = len(self.groups)
+            grouping_size = len(groups)
 
         if not isinstance(self.lower_frequency_bound, (float, np.floating)):
             raise TypeError("'lower_frequency_bound' must be a float.")

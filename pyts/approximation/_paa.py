@@ -4,7 +4,7 @@
 # License: BSD-3-Clause
 
 from math import ceil
-from typing import Self
+from typing import Any, Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -124,7 +124,7 @@ class PiecewiseAggregateApproximation(BaseEstimator, UnivariateTransformerMixin)
         X_new : array, shape = (n_samples, n_timestamps_new)
 
         """
-        X = check_array(X)
+        X = cast(npt.NDArray[Any], check_array(X))
         n_samples, n_timestamps = X.shape
 
         window_size, output_size = self._check_params(n_timestamps)

@@ -1,7 +1,7 @@
 """Code for Shapelet transform algorithm."""
 
 from itertools import chain
-from typing import Any, Self
+from typing import Any, Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -511,7 +511,7 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
 
         """
         check_is_fitted(self, ['shapelets_', 'indices_', 'scores_'])
-        X = check_array(X, dtype=np.float64)
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         return self._transform(X)
 
     # This overrides UnivariateTransformerMixin.fit_transform with a fully

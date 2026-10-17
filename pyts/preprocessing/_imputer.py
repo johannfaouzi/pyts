@@ -3,7 +3,7 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-from typing import Self
+from typing import Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -114,10 +114,13 @@ class InterpolationImputer(BaseEstimator, UnivariateTransformerMixin):
         # check_array is wrapped by sklearn's @validate_params decorator,
         # which hides its real keyword-only parameters (including
         # ensure_all_finite) from pyrefly's source-based inference.
-        X = check_array(
-            X,
-            dtype=np.float64,
-            ensure_all_finite=ensure_all_finite,  # pyrefly: ignore[unexpected-keyword]
+        X = cast(
+            npt.NDArray[np.float64],
+            check_array(
+                X,
+                dtype=np.float64,
+                ensure_all_finite=ensure_all_finite,  # pyrefly: ignore[unexpected-keyword]
+            ),
         )
         n_samples, n_timestamps = X.shape
 

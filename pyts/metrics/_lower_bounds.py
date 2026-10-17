@@ -4,6 +4,7 @@
 # License: BSD-3-Clause
 
 from math import sqrt
+from typing import cast
 
 import numpy as np
 import numpy.typing as npt
@@ -127,8 +128,8 @@ def lower_bound_yi(
     array([[3.        , 0.        , 2.44...]])
 
     """
-    X_train = check_array(X_train, dtype=np.float64)
-    X_test = check_array(X_test, dtype=np.float64)
+    X_train = cast(npt.NDArray[np.float64], check_array(X_train, dtype=np.float64))
+    X_test = cast(npt.NDArray[np.float64], check_array(X_test, dtype=np.float64))
     _check_consistent_lengths(X_train, X_test)
     X_train_min = np.min(X_train, axis=1)
     X_train_max = np.max(X_train, axis=1)
@@ -174,8 +175,8 @@ def lower_bound_kim(
            [4., 5.]])
 
     """
-    X_train = check_array(X_train, dtype=np.float64)
-    X_test = check_array(X_test, dtype=np.float64)
+    X_train = cast(npt.NDArray[np.float64], check_array(X_train, dtype=np.float64))
+    X_test = cast(npt.NDArray[np.float64], check_array(X_test, dtype=np.float64))
     _check_consistent_lengths(X_train, X_test)
     first = np.abs(X_test[:, 0, None] - X_train[None, :, 0])
     last = np.abs(X_test[:, -1, None] - X_train[None, :, -1])
@@ -365,8 +366,12 @@ def _clip(
 
     """
     X = check_array(X)
-    lower = check_array(lower, ensure_2d=False, allow_nd=True)
-    upper = check_array(upper, ensure_2d=False, allow_nd=True)
+    lower = cast(
+        npt.NDArray[np.float64], check_array(lower, ensure_2d=False, allow_nd=True)
+    )
+    upper = cast(
+        npt.NDArray[np.float64], check_array(upper, ensure_2d=False, allow_nd=True)
+    )
     n_dims = lower.ndim
     if n_dims not in (2, 3):
         raise ValueError("'lower' must be two- or three-dimensional.")
@@ -569,8 +574,8 @@ def lower_bound_keogh(
     array([[3.08...  , 2.23...]])
 
     """
-    X_train = check_array(X_train, dtype=np.float64)
-    X_test = check_array(X_test, dtype=np.float64)
+    X_train = cast(npt.NDArray[np.float64], check_array(X_train, dtype=np.float64))
+    X_test = cast(npt.NDArray[np.float64], check_array(X_test, dtype=np.float64))
     _check_consistent_lengths(X_train, X_test)
     n_samples_test, n_timestamps = X_test.shape
     n_samples_train, _ = X_train.shape
@@ -631,8 +636,8 @@ def lower_bound_improved(
     array([[0.76..., 1.11...]])
 
     """
-    X_train = check_array(X_train, dtype=np.float64)
-    X_test = check_array(X_test, dtype=np.float64)
+    X_train = cast(npt.NDArray[np.float64], check_array(X_train, dtype=np.float64))
+    X_test = cast(npt.NDArray[np.float64], check_array(X_test, dtype=np.float64))
     _check_consistent_lengths(X_train, X_test)
     n_samples_test, n_timestamps = X_test.shape
     n_samples_train, _ = X_train.shape
@@ -640,7 +645,10 @@ def lower_bound_improved(
     # ``_warping_envelope`` re-validates ``region`` itself (and is still
     # used standalone elsewhere), but the fused kernel below needs its own
     # int64-typed copy to call directly.
-    region_arr = check_array(region, ensure_min_samples=2, dtype=np.int64)
+    region_arr = cast(
+        npt.NDArray[np.int64],
+        check_array(region, ensure_min_samples=2, dtype=np.int64),
+    )
 
     lower_train, upper_train = _warping_envelope(X_train, region)
     squared_lb_keogh, squared_lb_improved = _squared_lb_keogh_and_improved(

@@ -137,7 +137,7 @@ class SymbolicFourierApproximation(BaseEstimator, UnivariateTransformerMixin):
             n_bins=self.n_bins, strategy=self.strategy, alphabet=self.alphabet
         )
         self._pipeline = Pipeline([('dft', dft), ('mcb', mcb)])
-        self._pipeline.fit(X, y)
+        self._pipeline.fit(X, y)  # pyrefly: ignore[bad-argument-type]
         self.support_ = self._pipeline.named_steps['dft'].support_
         self.bin_edges_ = self._pipeline.named_steps['mcb'].bin_edges_
         return self
@@ -157,6 +157,7 @@ class SymbolicFourierApproximation(BaseEstimator, UnivariateTransformerMixin):
 
         """
         check_is_fitted(self, ['support_', 'bin_edges_'])
+        # pyrefly: ignore[bad-return, bad-argument-type]
         return self._pipeline.transform(X)
 
     # This overrides UnivariateTransformerMixin.fit_transform with a fully
@@ -193,6 +194,7 @@ class SymbolicFourierApproximation(BaseEstimator, UnivariateTransformerMixin):
             n_bins=self.n_bins, strategy=self.strategy, alphabet=self.alphabet
         )
         self._pipeline = Pipeline([('dft', dft), ('mcb', mcb)])
+        # pyrefly: ignore[bad-argument-type]
         X_sfa = self._pipeline.fit_transform(X, y)
         self.support_ = self._pipeline.named_steps['dft'].support_
         self.bin_edges_ = self._pipeline.named_steps['mcb'].bin_edges_
