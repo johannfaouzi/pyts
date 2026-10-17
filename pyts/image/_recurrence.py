@@ -228,6 +228,12 @@ class RecurrencePlot(BaseEstimator, UnivariateTransformerMixin):
                 X = X.astype(np.float64, copy=False)
             else:
                 X = X.astype(np.int64, copy=False)
+        else:
+            # Remaining numeric dtypes (e.g. uint64, whose range exceeds
+            # int64, or extended-precision floats) have no compiled kernel
+            # and are not safely castable to either supported dtype, so fall
+            # back to float64 rather than failing inside numba.
+            X = X.astype(np.float64)
         n_samples, n_timestamps = X.shape
         dimension, time_delay = self._check_params(n_timestamps)
 

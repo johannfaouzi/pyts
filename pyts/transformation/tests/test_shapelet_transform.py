@@ -427,3 +427,21 @@ def test_attributes_shape(params, X, y, fewer_shapelets, attr_expected):
         assert n_shapelets_actual == attr_expected['n_shapelets']
         assert shapelet.indices_.shape == attr_expected['indices_shape']
         assert shapelet.scores_.size == attr_expected['scores_size']
+
+
+@pytest.mark.parametrize('dtype', [np.int16, np.int32, np.uint32, np.int64])
+@pytest.mark.parametrize('with_steps', [False, True])
+def test_integer_window_dtypes(dtype, with_steps):
+    """Integer window sizes and steps of any dtype match plain lists."""
+    sizes, steps = [3, 5], [1, 2]
+    params = {'random_state': 42, 'sort': True}
+    reference = ShapeletTransform(
+        window_sizes=sizes, window_steps=steps if with_steps else None, **params
+    ).fit(X, y)
+    shapelet = ShapeletTransform(
+        window_sizes=np.array(sizes, dtype=dtype),
+        window_steps=np.array(steps, dtype=dtype) if with_steps else None,
+        **params,
+    ).fit(X, y)
+    np.testing.assert_allclose(shapelet.transform(X), reference.transform(X))
+    np.testing.assert_array_equal(shapelet.indices_, reference.indices_)

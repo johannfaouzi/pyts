@@ -263,7 +263,7 @@ def cost_matrix(
                 )
         dist_ = dist
     if region is not None:
-        region = cast(npt.NDArray[np.float64], check_array(region))
+        region = cast(npt.NDArray[np.int64], check_array(region, dtype=np.int64))
         region_shape = region.shape
         if region_shape != (2, x.size):
             raise ValueError(

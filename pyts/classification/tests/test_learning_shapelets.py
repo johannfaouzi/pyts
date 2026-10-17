@@ -898,3 +898,26 @@ def test_single_sample(X, y, params):
     np.testing.assert_allclose(X_new, clf.decision_function(X)[:1])
     np.testing.assert_allclose(y_proba, clf.predict_proba(X)[:1])
     np.testing.assert_array_equal(y_pred, clf.predict(X)[:1])
+
+
+@pytest.mark.filterwarnings("ignore:Maximum number of iterations")
+@pytest.mark.parametrize('dtype', ['float16', 'float32', 'int16', 'int32', 'int64'])
+@pytest.mark.parametrize('X, y', [(X_bin, y_bin), (X_multi, y_multi)])
+def test_numeric_dtypes(dtype, X, y):
+    """Numeric inputs are converted before reaching the compiled kernels.
+
+    The inputs are integer-valued, so every conversion is exact and the
+    results must match the float64 reference.
+    """
+    params = {'max_iter': 5, 'random_state': 42}
+    reference = LearningShapelets(**params).fit(X, y)
+
+    clf = LearningShapelets(**params).fit(X.astype(dtype), y)
+    np.testing.assert_allclose(
+        clf.decision_function(X.astype(dtype)), reference.decision_function(X)
+    )
+    np.testing.assert_array_equal(clf.predict(X.astype(dtype)), reference.predict(X))
+    # A model fitted on float64 data also accepts other dtypes at predict time.
+    np.testing.assert_allclose(
+        reference.decision_function(X.astype(dtype)), reference.decision_function(X)
+    )

@@ -34,3 +34,15 @@ def test_yi_promotes_before_integer_square():
     train = np.zeros((1, 4), dtype=np.int64)
     test = np.full((1, 4), 2_000_000_000, dtype=np.int64)
     np.testing.assert_allclose(lower_bound_yi(train, test), [[4_000_000_000]])
+
+
+@pytest.mark.parametrize('bound', [lower_bound_keogh, lower_bound_improved])
+@pytest.mark.parametrize('region_dtype', [np.int16, np.int32, np.uint32, np.float64])
+def test_lower_bounds_region_dtypes(bound, region_dtype):
+    """Integer-valued regions of any numeric dtype match the int64 result."""
+    train = [[0, 1, 2, 3], [1, 2, 3, 4]]
+    test = [[0, 2.5, 3.5, 6]]
+    region = np.array([[0, 0, 1, 2], [2, 3, 4, 4]])
+    expected = bound(train, test, region.astype(np.int64))
+    actual = bound(train, test, region.astype(region_dtype))
+    np.testing.assert_allclose(actual, expected)

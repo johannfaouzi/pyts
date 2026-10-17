@@ -708,6 +708,12 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
                         "to n_timestamps."
                     )
 
+        # ``_extract_all_shapelets`` is only compiled for int64 window sizes
+        # and steps. Integer inputs keep their original dtype above (e.g.
+        # an int32 array, or a plain list on platforms whose default integer
+        # is 32-bit), so they are converted here.
+        window_sizes = window_sizes.astype(np.int64, copy=False)
+        window_steps = window_steps.astype(np.int64, copy=False)
         return n_shapelets, window_sizes, window_steps, n_jobs, rng
 
     def _fit_one_time_series(

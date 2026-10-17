@@ -47,6 +47,20 @@ Version 0.14.0
   ``pyproject.toml``, and replace the Azure Pipelines CI configuration
   with GitHub Actions.
 
+- Convert numeric inputs to the dtypes supported by the compiled (numba)
+  kernels instead of failing with a ``TypeError`` or ``TypingError``:
+
+  + float32, float16 and narrow integer inputs in
+    :class:`pyts.classification.LearningShapelets`;
+  + integer-valued array-like ``bins`` in
+    :class:`pyts.classification.TSBF`;
+  + non-int64 ``region`` arrays in :func:`pyts.metrics.lower_bound_keogh`
+    and :func:`pyts.metrics.lower_bound_improved`;
+  + non-int64 integer ``window_sizes`` and ``window_steps`` in
+    :class:`pyts.transformation.ShapeletTransform`;
+  + uint64 and extended-precision float inputs in
+    :class:`pyts.image.RecurrencePlot`.
+
 Version 0.13.0
 --------------
 

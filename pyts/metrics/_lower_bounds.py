@@ -261,7 +261,9 @@ def _warping_envelope(
 
     """
     X = check_array(X, ensure_2d=False, allow_nd=True)
-    region = check_array(region, ensure_min_samples=2)
+    # The compiled envelope kernels only accept an int64 region, so
+    # int32 or float region arrays must be converted first.
+    region = check_array(region, ensure_min_samples=2, dtype=np.int64)
     n_dims = X.ndim
     if n_dims not in (2, 3):
         raise ValueError("X must be a two- or three-dimensional.")
@@ -642,15 +644,14 @@ def lower_bound_improved(
     n_samples_test, n_timestamps = X_test.shape
     n_samples_train, _ = X_train.shape
 
-    # ``_warping_envelope`` re-validates ``region`` itself (and is still
-    # used standalone elsewhere), but the fused kernel below needs its own
-    # int64-typed copy to call directly.
+    # The fused kernel below needs an int64-typed region to call directly
+    # (``_warping_envelope`` performs the same conversion internally).
     region_arr = cast(
         npt.NDArray[np.int64],
         check_array(region, ensure_min_samples=2, dtype=np.int64),
     )
 
-    lower_train, upper_train = _warping_envelope(X_train, region)
+    lower_train, upper_train = _warping_envelope(X_train, region_arr)
     squared_lb_keogh, squared_lb_improved = _squared_lb_keogh_and_improved(
         X_test,
         X_train,

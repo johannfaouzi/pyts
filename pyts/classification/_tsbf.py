@@ -814,7 +814,9 @@ class TSBF(BaseEstimator, UnivariateClassifierMixin):
         if isinstance(self.bins, (int, np.integer)):
             bins = self.bins
         else:
-            bins = np.asarray(self.bins)
+            # ``histogram`` is only compiled for float64 bin edges, so
+            # integer-valued edges (e.g. ``[0, 1]``) must be converted.
+            bins = np.asarray(self.bins, dtype=np.float64)
             if (np.diff(bins) < 0).any():
                 raise ValueError(
                     "If 'bins' is array-like, the bin edges "
