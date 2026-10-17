@@ -150,7 +150,7 @@ class GramianAngularField(BaseEstimator, UnivariateTransformerMixin):
             `(n_samples, image_size * image_size)`.
 
         """
-        X = cast(npt.NDArray[Any], check_array(X))
+        X = cast(npt.NDArray[Any], check_array(X, dtype=(np.float64, np.int64)))
         n_samples, n_timestamps = X.shape
         image_size = self._check_params(n_timestamps)
 

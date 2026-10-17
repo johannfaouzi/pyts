@@ -15,6 +15,29 @@ X = [np.arange(6), [0, 5, 1, 2, 4, 3]]
 
 
 @pytest.mark.parametrize(
+    'dtype', ['float16', 'float32', 'float64', 'int16', 'int32', 'int64', 'uint16']
+)
+@pytest.mark.parametrize('overlapping', [False, True])
+def test_numeric_dtypes(dtype, overlapping):
+    """Numeric inputs reach the compiled averaging kernel after conversion."""
+    X = np.array([[0, 3, 6, 9, 12], [15, 12, 9, 6, 3]], dtype=dtype)
+    transformer = PiecewiseAggregateApproximation(
+        window_size=None, output_size=2, overlapping=overlapping
+    )
+    expected = [[3, 9], [12, 6]] if overlapping else [[1.5, 9], [13.5, 6]]
+    np.testing.assert_allclose(transformer.transform(X), expected)
+
+
+@pytest.mark.parametrize('dtype', ['float32', 'int16', 'int64'])
+def test_identity_dtype(dtype):
+    """The window-size-one fast path keeps the original data and dtype."""
+    X = np.arange(6, dtype=dtype).reshape(2, 3)
+    result = PiecewiseAggregateApproximation(window_size=1).transform(X)
+    assert result is X
+    assert result.dtype == X.dtype
+
+
+@pytest.mark.parametrize(
     'X, start, end, arr_desired',
     [
         (
