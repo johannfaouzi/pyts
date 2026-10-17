@@ -16,6 +16,30 @@ pi_6 = np.cos(np.pi / 6).item()
 
 
 @pytest.mark.parametrize(
+    'dtype', ['float16', 'float32', 'float64', 'int16', 'int32', 'int64']
+)
+@pytest.mark.parametrize('method', ['summation', 'difference'])
+@pytest.mark.parametrize('image_size', [1.0, 3])
+def test_numeric_dtypes(dtype, method, image_size):
+    """Both direct and aggregated images accept supported numeric inputs."""
+    X = np.array([[-1, 0, 1, 0, -1], [1, 0, -1, 0, 1]], dtype=dtype)
+    means = (
+        X.astype('float64')
+        if image_size == 1.0
+        else np.array([[-1, 0.5, -0.5], [1, -0.5, 0.5]])
+    )
+    angles = np.arccos(means)
+    if method == 'summation':
+        expected = np.cos(angles[:, :, None] + angles[:, None, :])
+    else:
+        expected = np.sin(angles[:, :, None] - angles[:, None, :])
+    transformer = GramianAngularField(
+        image_size=image_size, sample_range=None, method=method
+    )
+    np.testing.assert_allclose(transformer.transform(X), expected, atol=1e-15)
+
+
+@pytest.mark.parametrize(
     'X_cos, X_sin, arr_desired',
     [
         ([[-1, 0, 1]], [[-1, 0, 1]], [[[0, 0, 0], [0, 0, 0], [0, 0, 0]]]),

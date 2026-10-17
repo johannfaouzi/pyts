@@ -131,6 +131,7 @@ class PiecewiseAggregateApproximation(BaseEstimator, UnivariateTransformerMixin)
         if window_size == 1:
             return X
         else:
+            X = X.astype(np.float64, copy=False)
             start, end, n_timestamps_new = segmentation(
                 n_timestamps, window_size, self.overlapping, output_size
             )
