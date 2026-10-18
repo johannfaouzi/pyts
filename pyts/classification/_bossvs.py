@@ -20,7 +20,7 @@ from pyts.approximation import SymbolicFourierApproximation
 from pyts.utils._utils import _windowed_view
 
 
-class BOSSVS(BaseEstimator, UnivariateClassifierMixin):
+class BOSSVS(UnivariateClassifierMixin, BaseEstimator):
     """Bag-of-SFA Symbols in Vector Space.
 
     Each time series is transformed into an histogram using the

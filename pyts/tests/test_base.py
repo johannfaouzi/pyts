@@ -5,10 +5,19 @@
 
 import numpy as np
 import pytest
-from sklearn.base import clone
+from sklearn.base import clone, is_classifier
+from sklearn.model_selection import StratifiedKFold, check_cv
+from sklearn.utils import get_tags
 
 from pyts.approximation import SymbolicFourierApproximation
-from pyts.classification import SAXVSM
+from pyts.classification import (
+    BOSSVS,
+    SAXVSM,
+    TSBF,
+    KNeighborsClassifier,
+    LearningShapelets,
+    TimeSeriesForest,
+)
 from pyts.datasets import load_basic_motions, load_gunpoint
 from pyts.multivariate.classification import MultivariateClassifier
 from pyts.multivariate.image import JointRecurrencePlot
@@ -65,3 +74,29 @@ def test_univariate_classifier_mixin(sample_weight):
 def test_multivariate_classifier_mixin(sample_weight):
     clf = MultivariateClassifier(SAXVSM()).fit(X_multi, y_multi)
     assert isinstance(clf.score(X_multi, y_multi, sample_weight), (float, np.floating))
+
+
+@pytest.mark.parametrize(
+    'estimator',
+    [
+        KNeighborsClassifier(),
+        BOSSVS(),
+        SAXVSM(),
+        LearningShapelets(),
+        TSBF(),
+        TimeSeriesForest(),
+        MultivariateClassifier(KNeighborsClassifier()),
+    ],
+    ids=lambda estimator: type(estimator).__name__,
+)
+def test_classifier_tags(estimator):
+    """scikit-learn recognizes pyts classifiers as classifiers.
+
+    This is what makes, for instance, ``cross_val_score`` and ``GridSearchCV``
+    use stratified folds when ``cv`` is an integer.
+    """
+    assert is_classifier(estimator)
+    assert get_tags(estimator).estimator_type == 'classifier'
+    assert isinstance(
+        check_cv(3, [0, 1] * 6, classifier=is_classifier(estimator)), StratifiedKFold
+    )

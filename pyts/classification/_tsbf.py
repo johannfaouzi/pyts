@@ -329,7 +329,7 @@ class IntervalFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
         return (min_subsequence_size, min_interval_size, n_subsequences, rng)
 
 
-class TSBF(BaseEstimator, UnivariateClassifierMixin):
+class TSBF(UnivariateClassifierMixin, BaseEstimator):
     """Time Series Bag-of-Features algorithm.
 
     Parameters
