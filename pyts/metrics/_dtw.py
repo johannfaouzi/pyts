@@ -282,18 +282,23 @@ def _accumulated_cost_matrix_region(
     cost_matrix: npt.NDArray[np.float64], region: npt.NDArray[np.int64]
 ) -> npt.NDArray[np.float64]:
     n_timestamps_1, n_timestamps_2 = cost_matrix.shape
-    acc_cost_mat = np.ones((n_timestamps_1, n_timestamps_2)) * np.inf
-    acc_cost_mat[0, 0 : region[1, 0]] = np.cumsum(cost_matrix[0, 0 : region[1, 0]])
-    acc_cost_mat[0 : region[1, 0], 0] = np.cumsum(cost_matrix[0 : region[1, 0], 0])
-    region_ = np.copy(region)
-    region_[0] = np.maximum(region_[0], 1)
-    for i in range(1, n_timestamps_1):
-        for j in range(region_[0, i], region_[1, i]):
-            acc_cost_mat[i, j] = cost_matrix[i, j] + min(
-                acc_cost_mat[i - 1][j - 1],
-                acc_cost_mat[i - 1][j],
-                acc_cost_mat[i][j - 1],
-            )
+    acc_cost_mat = np.full((n_timestamps_1, n_timestamps_2), np.inf)
+    # Every cell, including those of the first row and the first column, is
+    # only computed if it lies within the region, and only from neighbours
+    # that exist. Cells outside the region keep an infinite cost.
+    for i in range(n_timestamps_1):
+        for j in range(region[0, i], region[1, i]):
+            if i == 0 and j == 0:
+                acc_cost_mat[i, j] = cost_matrix[i, j]
+                continue
+            best = np.inf
+            if i > 0:
+                best = min(best, acc_cost_mat[i - 1, j])
+                if j > 0:
+                    best = min(best, acc_cost_mat[i - 1, j - 1])
+            if j > 0:
+                best = min(best, acc_cost_mat[i, j - 1])
+            acc_cost_mat[i, j] = cost_matrix[i, j] + best
     return acc_cost_mat
 
 
