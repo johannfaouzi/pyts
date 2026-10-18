@@ -7,10 +7,44 @@ Change Log
 Version 0.14.1
 --------------
 
-- Accept float32 and narrow integer inputs in
-  :class:`pyts.approximation.PiecewiseAggregateApproximation` and
-  :class:`pyts.image.GramianAngularField` by converting them before compiled
-  numerical computations.
+- Fix :meth:`pyts.classification.LearningShapelets.decision_function`, which
+  dropped the sample axis for a single sample in binary classification
+  (by Raashish Aggarwal).
+
+- Fix :class:`pyts.decomposition.SingularSpectrumAnalysis`:
+
+  + validate ``groups`` against the resolved window size when
+    ``window_size`` is a float (by Anton Soloviev);
+  + accept ``groups`` given as a NumPy array (by Anton Soloviev);
+  + skip the memory check when ``chunksize`` is set, which raised a
+    ``MemoryError`` even when the chunked transformation would fit
+    (by sean0407).
+
+- Fix :class:`pyts.classification.KNeighborsClassifier` with
+  ``metric='dtw_sakoechiba'`` or ``metric='dtw_itakura'``, which ignored the
+  other entries of ``metric_params`` (by Anton Soloviev).
+
+- Fix :class:`pyts.approximation.MultipleCoefficientBinning` with
+  ``strategy='quantile'``, which checked for equal consecutive quantiles
+  across timestamps instead of within each timestamp (by LI).
+
+- Convert numeric inputs (e.g. float32, float16, narrow or unsigned integers)
+  to the dtypes supported by the compiled numba kernels, instead of raising an
+  error:
+
+  + :class:`pyts.image.RecurrencePlot` (by LI);
+  + the lower bounds in :mod:`pyts.metrics` (by Anton Soloviev);
+  + integer ``weights`` in
+    :class:`pyts.multivariate.classification.MultivariateClassifier`
+    (by Anton Soloviev);
+  + :class:`pyts.approximation.PiecewiseAggregateApproximation` and
+    :class:`pyts.image.GramianAngularField` (by Anton Soloviev);
+  + :class:`pyts.classification.LearningShapelets`, array-like ``bins`` in
+    :class:`pyts.classification.TSBF`, ``region`` in
+    :func:`pyts.metrics.lower_bound_keogh` and
+    :func:`pyts.metrics.lower_bound_improved`, ``window_sizes`` and
+    ``window_steps`` in :class:`pyts.transformation.ShapeletTransform`, and
+    uint64 inputs in :class:`pyts.image.RecurrencePlot`.
 
 Version 0.14.0
 --------------
@@ -20,6 +54,7 @@ Version 0.14.0
 
 - Update the minimal versions required of the dependencies to support
   current releases of the scientific Python stack:
+
   * NumPy (>= 1.24.0)
   * SciPy (>= 1.15.0, for ``scipy.interpolate.make_interp_spline`` to build
     an even-degree spline from exactly the minimum number of points without
@@ -54,20 +89,6 @@ Version 0.14.0
 - Migrate packaging from ``setup.py``/``setup.cfg`` to a PEP 621
   ``pyproject.toml``, and replace the Azure Pipelines CI configuration
   with GitHub Actions.
-
-- Convert numeric inputs to the dtypes supported by the compiled (numba)
-  kernels instead of failing with a ``TypeError`` or ``TypingError``:
-
-  + float32, float16 and narrow integer inputs in
-    :class:`pyts.classification.LearningShapelets`;
-  + integer-valued array-like ``bins`` in
-    :class:`pyts.classification.TSBF`;
-  + non-int64 ``region`` arrays in :func:`pyts.metrics.lower_bound_keogh`
-    and :func:`pyts.metrics.lower_bound_improved`;
-  + non-int64 integer ``window_sizes`` and ``window_steps`` in
-    :class:`pyts.transformation.ShapeletTransform`;
-  + uint64 and extended-precision float inputs in
-    :class:`pyts.image.RecurrencePlot`.
 
 Version 0.13.0
 --------------
