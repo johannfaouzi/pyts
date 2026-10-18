@@ -181,3 +181,21 @@ def test_actual_results_with_flatten():
         )
     arr_desired = np.concatenate(arr_desired, axis=1)
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.0)
+
+
+def test_shared_estimator_instance_is_cloned():
+    """The same instance listed for every feature is fitted per feature."""
+    from sklearn.exceptions import NotFittedError
+    from sklearn.utils.validation import check_is_fitted
+
+    boss = BOSS(word_size=2, n_bins=2, window_size=10, sparse=False)
+    X_shared = MultivariateTransformer([boss] * n_features).fit_transform(X)
+    X_separate = MultivariateTransformer(
+        [
+            BOSS(word_size=2, n_bins=2, window_size=10, sparse=False)
+            for _ in range(n_features)
+        ]
+    ).fit_transform(X)
+    np.testing.assert_array_equal(X_shared, X_separate)
+    with pytest.raises(NotFittedError):
+        check_is_fitted(boss)

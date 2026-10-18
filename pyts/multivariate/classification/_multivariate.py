@@ -174,7 +174,10 @@ class MultivariateClassifier(BaseEstimator, MultivariateClassifierMixin):
                     and hasattr(estimator, 'predict')
                 ):
                     raise ValueError(f"Estimator {i} must be a classifier.")
-            self.estimators_ = self.estimator
+            # Clone each estimator so that the same instance listed several
+            # times is fitted independently on each feature, and so that the
+            # estimators passed by the user are left unfitted.
+            self.estimators_ = [clone(estimator) for estimator in self.estimator]
 
         else:
             raise TypeError(
