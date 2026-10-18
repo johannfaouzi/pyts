@@ -4,6 +4,14 @@
 Change Log
 ==========
 
+Version 0.14.1
+--------------
+
+- Accept float32 and narrow integer inputs in
+  :class:`pyts.approximation.PiecewiseAggregateApproximation` and
+  :class:`pyts.image.GramianAngularField` by converting them before compiled
+  numerical computations.
+
 Version 0.14.0
 --------------
 
