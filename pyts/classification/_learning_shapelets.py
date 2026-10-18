@@ -11,6 +11,7 @@ from typing import Any, Literal, Self, cast
 import numpy as np
 import numpy.typing as npt
 from numba import njit, prange
+from sklearn import config_context
 from sklearn.base import BaseEstimator
 from sklearn.cluster import KMeans
 from sklearn.exceptions import ConvergenceWarning
@@ -1118,8 +1119,11 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
             npt.NDArray[np.float64],
             _check_sample_weight(sample_weight, X, dtype=np.float64),
         )
-        sample_weight *= class_weight[y_ind]
-        sample_weight = sample_weight.reshape(-1, 1)
+        # Not an in-place product: ``_check_sample_weight`` returns the
+        # caller's own array when it is already float64, and multiplying it
+        # in place would change the user's weights (and compound them on
+        # every refit).
+        sample_weight = (sample_weight * class_weight[y_ind]).reshape(-1, 1)
 
         rng = check_random_state(self.random_state)
 
@@ -1340,6 +1344,11 @@ class LearningShapelets(BaseEstimator, UnivariateClassifierMixin):
 
         self._multi_class = multi_class
 
+        if sample_weight is not None:
+            # Validate the weights here so that a wrong length is reported
+            # before any estimator is built.
+            sample_weight = _check_sample_weight(sample_weight, X, dtype=np.float64)
+
         if multi_class in ('ovr', 'ovo'):
             base_clf = CrossEntropyLearningShapelets(**params)
             multi_clf: OneVsRestClassifier | OneVsOneClassifier
@@ -1347,7 +1356,22 @@ class LearningShapelets(BaseEstimator, UnivariateClassifierMixin):
                 multi_clf = OneVsRestClassifier(base_clf, n_jobs=self.n_jobs)
             else:
                 multi_clf = OneVsOneClassifier(base_clf, n_jobs=self.n_jobs)
-            multi_clf.fit(X, y)
+            if sample_weight is None:
+                multi_clf.fit(X, y)
+            else:
+                # scikit-learn's one-vs-rest and one-vs-one meta-estimators
+                # only forward ``sample_weight`` to their sub-estimators
+                # through metadata routing (one-vs-one also subsets it for
+                # each pair of classes), so enable it for this call only.
+                with config_context(enable_metadata_routing=True):
+                    base_clf.set_fit_request(sample_weight=True)
+                    # ``fit`` accepts ``**fit_params``, which sklearn's
+                    # ``@_fit_context`` decorator hides from pyrefly.
+                    multi_clf.fit(
+                        X,
+                        y,
+                        sample_weight=sample_weight,  # pyrefly: ignore[unexpected-keyword]
+                    )
 
             self.classes_ = multi_clf.classes_
             # ``estimators_`` is typed by pyrefly's source inference as a
@@ -1368,7 +1392,7 @@ class LearningShapelets(BaseEstimator, UnivariateClassifierMixin):
             self.n_iter_ = np.array([est.n_iter_ for est in estimators])
         else:
             clf = CrossEntropyLearningShapelets(**params)
-            clf.fit(X, y)
+            clf.fit(X, y, sample_weight=sample_weight)
 
             self.classes_ = clf.classes_
             self._clf = clf
