@@ -182,16 +182,18 @@ class MultivariateTransformer(BaseEstimator, MultivariateTransformerMixin):
                     "be equal to the number of features "
                     f"({len(self.estimator)} != {n_features})"
                 )
+            # Clone each estimator so that the same instance listed several
+            # times is fitted independently on each feature, and so that the
+            # estimators passed by the user are left unfitted.
+            estimators = []
             for i, estimator in enumerate(self.estimator):
                 if not (
                     isinstance(estimator, BaseEstimator)
                     and hasattr(estimator, 'transform')
                 ):
                     raise ValueError(f"Estimator {i} must be a transformer.")
-            # Clone each estimator so that the same instance listed several
-            # times is fitted independently on each feature, and so that the
-            # estimators passed by the user are left unfitted.
-            self.estimators_ = [clone(estimator) for estimator in self.estimator]
+                estimators.append(clone(estimator))
+            self.estimators_ = estimators
 
         else:
             raise TypeError(
