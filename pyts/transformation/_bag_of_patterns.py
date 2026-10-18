@@ -14,6 +14,7 @@ from sklearn.utils.validation import check_array, check_is_fitted
 
 from pyts._base import UnivariateTransformerMixin
 from pyts.bag_of_words import BagOfWords
+from pyts.utils._utils import _WORD_VECTORIZER_PARAMS
 
 
 class BagOfPatterns(BaseEstimator, UnivariateTransformerMixin):
@@ -161,7 +162,7 @@ class BagOfPatterns(BaseEstimator, UnivariateTransformerMixin):
         X_bow = bow.transform(X)
 
         # Learn the vocabulary
-        vectorizer = CountVectorizer()
+        vectorizer = CountVectorizer(**_WORD_VECTORIZER_PARAMS)
         vectorizer.fit(X_bow)
         self.vocabulary_ = {value: key for key, value in vectorizer.vocabulary_.items()}
         self._vectorizer = vectorizer
@@ -247,7 +248,7 @@ class BagOfPatterns(BaseEstimator, UnivariateTransformerMixin):
         X_bow = bow.transform(X)
 
         # Derive frequencies of each word
-        vectorizer = CountVectorizer()
+        vectorizer = CountVectorizer(**_WORD_VECTORIZER_PARAMS)
         X_bop = vectorizer.fit_transform(X_bow)
         self.vocabulary_ = {value: key for key, value in vectorizer.vocabulary_.items()}
         self._vectorizer = vectorizer

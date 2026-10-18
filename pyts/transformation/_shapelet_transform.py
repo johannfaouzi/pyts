@@ -1,5 +1,6 @@
 """Code for Shapelet transform algorithm."""
 
+import warnings
 from itertools import chain
 from typing import Any, Self, cast
 
@@ -750,7 +751,15 @@ class ShapeletTransform(BaseEstimator, UnivariateTransformerMixin):
                 X_dist, y, discrete_features=False, random_state=rng
             )
         else:
-            scores, _ = f_classif(X_dist, y)
+            # A shapelet whose distance is the same for every sample gets an
+            # undefined (NaN) F-score, which the selection below would sort
+            # above every real score. Such a shapelet carries no information
+            # about the classes, so it is given the lowest possible score.
+            with warnings.catch_warnings():
+                warnings.filterwarnings('ignore', 'Features .* are constant')
+                warnings.filterwarnings('ignore', 'invalid value', RuntimeWarning)
+                scores, _ = f_classif(X_dist, y)
+            scores = np.nan_to_num(scores, nan=0.0)
 
         # Flatten the list of 2D arrays into an array of 1D arrays
         shapelets = [list(shapelet) for shapelet in shapelets]
