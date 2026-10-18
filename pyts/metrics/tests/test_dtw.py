@@ -1086,3 +1086,12 @@ def test_actual_results_show_options(params):
         assert isinstance(res_actual, str)
     else:
         assert res_actual is None
+
+
+@pytest.mark.parametrize('region_dtype', [np.int16, np.int32, np.uint32, np.float64])
+def test_cost_matrix_region_dtypes(region_dtype):
+    """Integer-valued regions of any numeric dtype match the int64 result."""
+    region = np.array([[0, 0, 1], [2, 3, 3]])
+    expected = cost_matrix(x, y, region=region.astype(np.int64))
+    actual = cost_matrix(x, y, region=region.astype(region_dtype))
+    np.testing.assert_array_equal(actual, expected)

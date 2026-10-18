@@ -312,3 +312,13 @@ def test_integer_dtype_full_range(dtype, dimension):
     actual = RecurrencePlot(dimension=dimension).transform(X_range)
 
     np.testing.assert_allclose(actual[0], expected, rtol=1e-15, atol=0)
+
+
+@pytest.mark.parametrize('dtype', [np.uint64, np.longdouble])
+@pytest.mark.parametrize('dimension', [1, 3])
+def test_fallback_numeric_dtypes(dtype, dimension):
+    """Dtypes not safely castable to int64 or float64 fall back to float64."""
+    expected = RecurrencePlot(dimension=dimension).transform(X.astype(np.float64))
+    actual = RecurrencePlot(dimension=dimension).transform(X.astype(dtype))
+    assert actual.dtype == np.float64
+    np.testing.assert_allclose(actual, expected)

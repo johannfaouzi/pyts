@@ -661,7 +661,7 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
         self : object
 
         """
-        X, y = check_X_y(X, y)
+        X, y = check_X_y(X, y, dtype=np.float64)
         n_samples, n_timestamps = X.shape
         check_classification_targets(y)
         le = LabelEncoder().fit(y)
@@ -907,7 +907,7 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
         """
         check_is_fitted(self, ['shapelets_', 'coef_', 'intercept_', 'n_iter_'])
 
-        X = cast(npt.NDArray[Any], check_array(X))
+        X = cast(npt.NDArray[np.float64], check_array(X, dtype=np.float64))
         n_samples, n_timestamps = X.shape
 
         # Derive distances between shapelets and time series

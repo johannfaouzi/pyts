@@ -966,3 +966,23 @@ def test_methods_tsbf(X, y, params):
     assert clf.predict(X).shape == (n_samples,)
     assert clf.predict_proba(X).shape == (n_samples, n_classes)
     assert isinstance(clf.score(X, y), (float, np.floating))
+
+
+@pytest.mark.parametrize(
+    'bins',
+    [
+        [0, 1],
+        (0, 1),
+        np.array([0, 1], dtype=np.int32),
+        np.array([0, 1], dtype=np.int64),
+    ],
+)
+def test_integer_bin_edges(bins):
+    """Integer-valued bin edges behave like the equivalent float edges."""
+    params = {'n_estimators': 10, 'random_state': 42}
+    reference = TSBF(bins=[0.0, 1.0], **params).fit(X_arange, y)
+    clf = TSBF(bins=bins, **params).fit(X_arange, y)
+    np.testing.assert_allclose(
+        clf.predict_proba(X_arange), reference.predict_proba(X_arange)
+    )
+    np.testing.assert_array_equal(clf.predict(X_arange), reference.predict(X_arange))
