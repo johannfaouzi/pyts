@@ -11,17 +11,17 @@ from numba import njit
 from numpy.lib.stride_tricks import as_strided
 from sklearn.utils import check_array
 
-#: Keyword arguments for the scikit-learn text vectorizers that count the
-#: words built by pyts. Words are separated by single spaces and use any
-#: alphabet, but scikit-learn's defaults lowercase the text (merging symbols
-#: that only differ by case, such as ``'a'`` and ``'A'``) and only keep
-#: tokens of at least two word characters (dropping one-symbol words and
-#: symbols such as ``'+'`` or ``'-'``). Every whitespace-separated word is
-#: kept as is instead.
-_WORD_VECTORIZER_PARAMS: dict[str, Any] = {
-    'lowercase': False,
-    'token_pattern': r'\S+',
-}
+
+def _word_vectorizer_params() -> dict[str, Any]:
+    """Keyword arguments for the vectorizers that count the words of pyts.
+
+    Words are separated by single spaces and use any alphabet, but
+    scikit-learn's defaults lowercase the text (merging symbols that only
+    differ by case, such as ``'a'`` and ``'A'``) and only keep tokens of at
+    least two word characters (dropping one-symbol words and symbols such as
+    ``'+'`` or ``'-'``). Every whitespace-separated word is kept as is instead.
+    """
+    return {'lowercase': False, 'token_pattern': r'\S+'}
 
 
 def segmentation(

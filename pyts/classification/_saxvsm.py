@@ -16,7 +16,7 @@ from sklearn.utils.validation import check_array, check_is_fitted, check_X_y
 
 from pyts._base import UnivariateClassifierMixin
 from pyts.bag_of_words import BagOfWords
-from pyts.utils._utils import _WORD_VECTORIZER_PARAMS
+from pyts.utils._utils import _word_vectorizer_params
 
 
 class SAXVSM(BaseEstimator, UnivariateClassifierMixin):
@@ -205,7 +205,7 @@ class SAXVSM(BaseEstimator, UnivariateClassifierMixin):
             use_idf=self.use_idf,
             smooth_idf=self.smooth_idf,
             sublinear_tf=self.sublinear_tf,
-            **_WORD_VECTORIZER_PARAMS,
+            **_word_vectorizer_params(),
         )
         # sklearn has no py.typed stubs, so TfidfVectorizer.fit_transform's
         # return type is inferred from source as the generic `spmatrix`
@@ -239,7 +239,7 @@ class SAXVSM(BaseEstimator, UnivariateClassifierMixin):
         X = check_array(X)
         X_bow = self._bow.transform(X)
         vectorizer = CountVectorizer(
-            vocabulary=self._tfidf.vocabulary_, **_WORD_VECTORIZER_PARAMS
+            vocabulary=self._tfidf.vocabulary_, **_word_vectorizer_params()
         )
         # Kept sparse rather than densified with ``.toarray()``: shape is
         # (n_samples, n_words), and n_words can be large while each
