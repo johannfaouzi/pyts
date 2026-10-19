@@ -16,7 +16,7 @@ from sklearn.utils.validation import check_array, check_is_fitted, check_X_y
 
 from pyts._base import UnivariateTransformerMixin
 from pyts.approximation import SymbolicFourierApproximation
-from pyts.utils._utils import _windowed_view
+from pyts.utils._utils import _windowed_view, _word_vectorizer_params
 
 
 class WEASEL(BaseEstimator, UnivariateTransformerMixin):
@@ -186,7 +186,9 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
             X_word = X_word.reshape(n_samples, n_windows)
 
             X_bow = np.asarray([' '.join(X_word[i]) for i in range(n_samples)])
-            vectorizer = CountVectorizer(ngram_range=(1, 2))
+            vectorizer = CountVectorizer(
+                ngram_range=(1, 2), **_word_vectorizer_params()
+            )
             X_counts = vectorizer.fit_transform(X_bow)
             chi2_statistics, _ = chi2(X_counts, y)
             relevant_features = np.where(chi2_statistics > self.chi2_threshold)[0]
@@ -329,7 +331,9 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
             X_word = X_word.reshape(n_samples, n_windows)
 
             X_bow = np.asarray([' '.join(X_word[i]) for i in range(n_samples)])
-            vectorizer = CountVectorizer(ngram_range=(1, 2))
+            vectorizer = CountVectorizer(
+                ngram_range=(1, 2), **_word_vectorizer_params()
+            )
             X_counts = vectorizer.fit_transform(X_bow)
             chi2_statistics, _ = chi2(X_counts, y)
             relevant_features = np.where(chi2_statistics > self.chi2_threshold)[0]
