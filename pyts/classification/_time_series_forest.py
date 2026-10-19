@@ -203,7 +203,7 @@ class WindowFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
         return n_windows, min_window_size, rng
 
 
-class TimeSeriesForest(BaseEstimator, UnivariateClassifierMixin):
+class TimeSeriesForest(UnivariateClassifierMixin, BaseEstimator):
     """A random forest classifier for time series.
 
     A random forest is a meta estimator that fits a number of decision tree

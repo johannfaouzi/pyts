@@ -7,6 +7,7 @@ from typing import Any, Protocol, Self
 
 import numpy as np
 import numpy.typing as npt
+from sklearn.base import ClassifierMixin
 from sklearn.metrics import accuracy_score
 
 
@@ -126,8 +127,15 @@ class MultivariateTransformerMixin:
             return self.fit(X, y, **fit_params).transform(X)
 
 
-class UnivariateClassifierMixin:
-    """Mixin class for all univariate classifiers in pyts."""
+class UnivariateClassifierMixin(ClassifierMixin):
+    """Mixin class for all univariate classifiers in pyts.
+
+    It inherits from scikit-learn's ``ClassifierMixin`` so that pyts
+    classifiers carry the classifier estimator tags (used by
+    ``sklearn.base.is_classifier`` and, for instance, to choose stratified
+    cross-validation splits). It must be placed before ``BaseEstimator``
+    in the base classes.
+    """
 
     _estimator_type = "classifier"
 
@@ -160,8 +168,12 @@ class UnivariateClassifierMixin:
         return accuracy_score(y, self.predict(X), sample_weight=sample_weight)
 
 
-class MultivariateClassifierMixin:
-    """Mixin class for all multivariate classifiers in pyts."""
+class MultivariateClassifierMixin(ClassifierMixin):
+    """Mixin class for all multivariate classifiers in pyts.
+
+    See :class:`UnivariateClassifierMixin` for why it inherits from
+    scikit-learn's ``ClassifierMixin``.
+    """
 
     _estimator_type = "classifier"
 

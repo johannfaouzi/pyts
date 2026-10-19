@@ -507,7 +507,7 @@ def _grad_shapelets(
     return gradients
 
 
-class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
+class CrossEntropyLearningShapelets(UnivariateClassifierMixin, BaseEstimator):
     """Learning Shapelets algorithm with cross-entropy loss.
 
     Parameters
@@ -1135,7 +1135,7 @@ class CrossEntropyLearningShapelets(BaseEstimator, UnivariateClassifierMixin):
         return n_shapelets_per_size, min_shapelet_length, sample_weight, rng
 
 
-class LearningShapelets(BaseEstimator, UnivariateClassifierMixin):
+class LearningShapelets(UnivariateClassifierMixin, BaseEstimator):
     """Learning Shapelets algorithm.
 
     This estimator consists of two steps: computing the distances between the

@@ -23,7 +23,7 @@ from pyts.metrics._dtw import (
 )
 
 
-class KNeighborsClassifier(BaseEstimator, UnivariateClassifierMixin):
+class KNeighborsClassifier(UnivariateClassifierMixin, BaseEstimator):
     """k-nearest neighbors classifier.
 
     Parameters

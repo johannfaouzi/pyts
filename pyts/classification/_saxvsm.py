@@ -19,7 +19,7 @@ from pyts.bag_of_words import BagOfWords
 from pyts.utils._utils import _word_vectorizer_params
 
 
-class SAXVSM(BaseEstimator, UnivariateClassifierMixin):
+class SAXVSM(UnivariateClassifierMixin, BaseEstimator):
     """Classifier based on SAX-VSM representation and tf-idf statistics.
 
     Time series are first transformed into bag of words using Symbolic

@@ -49,7 +49,7 @@ def _hard_vote(
     return maj
 
 
-class MultivariateClassifier(BaseEstimator, MultivariateClassifierMixin):
+class MultivariateClassifier(MultivariateClassifierMixin, BaseEstimator):
     """Classifier for multivariate time series.
 
     It provides a convenient class to classify multivariate time series with
