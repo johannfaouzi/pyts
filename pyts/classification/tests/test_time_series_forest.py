@@ -212,3 +212,23 @@ def test_methods_time_series_forest():
     assert clf.predict(X_arange).shape == (n_samples,)
     assert clf.predict_proba(X_arange).shape == (n_samples, 3)
     assert isinstance(clf.score(X_arange, y), (float, np.floating))
+
+
+@pytest.mark.parametrize('min_window_size', [8, 1.0])
+def test_min_window_size_equal_to_n_timestamps(min_window_size):
+    """A window as long as the series is valid and covers the whole series."""
+    rng = np.random.RandomState(0)
+    X, y = rng.randn(10, 8), [0, 1] * 5
+    fe = WindowFeatureExtractor(min_window_size=min_window_size).fit(X)
+    np.testing.assert_array_equal(fe.indices_, np.tile([0, 8], (len(fe.indices_), 1)))
+    TimeSeriesForest(min_window_size=min_window_size, random_state=0).fit(X, y)
+
+
+def test_window_starts_cover_every_valid_position():
+    """Every valid window start, including the last one, can be drawn."""
+    X = np.random.RandomState(0).randn(4, 8)
+    fe = WindowFeatureExtractor(n_windows=2000, min_window_size=3, random_state=0)
+    indices = fe.fit(X).indices_
+    np.testing.assert_array_equal(np.unique(indices[:, 0]), np.arange(6))
+    assert np.all(indices[:, 1] - indices[:, 0] >= 3)
+    assert np.all(indices[:, 1] <= 8)

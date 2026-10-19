@@ -122,7 +122,9 @@ class WindowFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
         n_windows, min_window_size, rng = self._check_params(X)
 
         # Generate the start and end indices
-        start = rng.randint(0, n_timestamps - min_window_size, size=n_windows)
+        # The upper bound of 'randint' is exclusive: the last valid start is
+        # 'n_timestamps - min_window_size', so the bound is one past it.
+        start = rng.randint(0, n_timestamps - min_window_size + 1, size=n_windows)
         end = rng.randint(start + min_window_size, n_timestamps + 1, size=n_windows)
         # 'randint' returns platform-dependent default integer arrays (e.g.
         # int32 on Windows), but 'extract_features' is compiled ahead of
