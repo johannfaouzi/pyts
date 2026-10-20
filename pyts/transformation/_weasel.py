@@ -30,12 +30,13 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
     n_bins : int (default = 4)
         The number of bins to produce. It must be between 2 and 26.
 
-    window_sizes : array-like (default = [0.1, 0.3, 0.5, 0.7, 0.9])
+    window_sizes : None or array-like (default = None)
         Size of the sliding windows. All the elements must be either integers
         or floats. In the latter case, each element represents the percentage
         of the size of each time series and must be between 0 and 1; the size
         of the sliding windows will be computed as
-        ``np.ceil(window_sizes * n_timestamps)``.
+        ``np.ceil(window_sizes * n_timestamps)``. If None,
+        ``[0.1, 0.3, 0.5, 0.7, 0.9]`` is used.
 
     window_steps : None or array-like (default = None)
         Step of the sliding windows. If None, each ``window_step`` is equal to
@@ -74,7 +75,7 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
     sparse : bool (default = True)
         Return a sparse matrix if True, else return an array.
 
-    alphabet : None, 'ordinal' or array-like, shape = (n_bins,)
+    alphabet : None or array-like, shape = (n_bins,)
         Alphabet to use. If None, the first `n_bins` letters of the Latin
         alphabet are used.
 
@@ -117,8 +118,6 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
         sparse: bool = True,
         alphabet: npt.ArrayLike | None = None,
     ) -> None:
-        if window_sizes is None:
-            window_sizes = [0.1, 0.3, 0.5, 0.7, 0.9]
         self.word_size = word_size
         self.n_bins = n_bins
         self.window_sizes = window_sizes
@@ -367,14 +366,34 @@ class WEASEL(BaseEstimator, UnivariateTransformerMixin):
     def _check_params(
         self, n_timestamps: int
     ) -> tuple[npt.NDArray[np.int64], npt.NDArray[np.int64]]:
+        # Words are built by joining symbols into space-separated tokens, so
+        # the integer symbols of ``alphabet='ordinal'`` cannot be supported:
+        # once there are more than 10 bins, joined integers are ambiguous
+        # (``'1' + '11'`` and ``'11' + '1'`` give the same word). It is
+        # rejected here with a clear error, as in SAXVSM and BagOfWords.
+        if not (
+            self.alphabet is None
+            or isinstance(self.alphabet, (list, tuple, np.ndarray))
+        ):
+            raise TypeError(
+                "'alphabet' must be None or array-like "
+                f"with shape (n_bins,) (got {self.alphabet})."
+            )
         if not isinstance(self.word_size, (int, np.integer)):
             raise TypeError("'word_size' must be an integer.")
         if not self.word_size >= 1:
             raise ValueError("'word_size' must be a positive integer.")
 
-        if not isinstance(self.window_sizes, (list, tuple, np.ndarray)):
+        # The default is resolved here rather than in ``__init__``, which must
+        # store the parameters unchanged (scikit-learn estimator contract).
+        window_sizes_param = (
+            [0.1, 0.3, 0.5, 0.7, 0.9]
+            if self.window_sizes is None
+            else self.window_sizes
+        )
+        if not isinstance(window_sizes_param, (list, tuple, np.ndarray)):
             raise TypeError("'window_sizes' must be array-like.")
-        window_sizes = check_array(self.window_sizes, ensure_2d=False, dtype=None)
+        window_sizes = check_array(window_sizes_param, ensure_2d=False, dtype=None)
         if window_sizes.ndim != 1:
             raise ValueError("'window_sizes' must be one-dimensional.")
         if not issubclass(window_sizes.dtype.type, (np.integer, np.floating)):

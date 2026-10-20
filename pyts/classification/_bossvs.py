@@ -69,7 +69,7 @@ class BOSSVS(UnivariateClassifierMixin, BaseEstimator):
         - 'normal': Bin edges are quantiles from a standard normal distribution
         - 'entropy': Bin edges are computed using information gain
 
-    alphabet : None, 'ordinal' or array-like, shape = (n_bins,)
+    alphabet : None or array-like, shape = (n_bins,)
         Alphabet to use. If None, the first `n_bins` letters of the Latin
         alphabet are used.
 
@@ -299,6 +299,19 @@ class BOSSVS(UnivariateClassifierMixin, BaseEstimator):
         return self.classes_[self.decision_function(X).argmax(axis=1)]
 
     def _check_params(self, n_timestamps: int) -> tuple[int, int]:
+        # Words are built by joining symbols into space-separated tokens, so
+        # the integer symbols of ``alphabet='ordinal'`` cannot be supported:
+        # once there are more than 10 bins, joined integers are ambiguous
+        # (``'1' + '11'`` and ``'11' + '1'`` give the same word). It is
+        # rejected here with a clear error, as in SAXVSM and BagOfWords.
+        if not (
+            self.alphabet is None
+            or isinstance(self.alphabet, (list, tuple, np.ndarray))
+        ):
+            raise TypeError(
+                "'alphabet' must be None or array-like "
+                f"with shape (n_bins,) (got {self.alphabet})."
+            )
         if not isinstance(self.word_size, (int, np.integer)):
             raise TypeError("'word_size' must be an integer.")
         if not self.word_size >= 1:
