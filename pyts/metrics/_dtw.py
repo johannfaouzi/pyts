@@ -130,8 +130,6 @@ def _check_input_dtw(
             npt.NDArray[np.float64],
             check_array(
                 precomputed_cost,
-                ensure_min_samples=2,
-                ensure_min_features=2,
                 ensure_2d=True,
                 ensure_all_finite=False,  # pyrefly: ignore[unexpected-keyword]
                 dtype=np.float64,
@@ -185,8 +183,6 @@ def _input_to_cost(
         cost_mat = cost_matrix(x, y, dist=dist, region=region)
     cost_mat = check_array(
         cost_mat,
-        ensure_min_samples=2,
-        ensure_min_features=2,
         ensure_2d=True,
         ensure_all_finite=False,  # pyrefly: ignore[unexpected-keyword]
         dtype=np.float64,
@@ -346,8 +342,6 @@ def accumulated_cost_matrix(
         npt.NDArray[np.float64],
         check_array(
             cost_mat,
-            ensure_min_samples=2,
-            ensure_min_features=2,
             ensure_2d=True,
             ensure_all_finite=False,  # pyrefly: ignore[unexpected-keyword]
             dtype=np.float64,
@@ -540,6 +534,13 @@ def _check_sakoe_chiba_params(
             raise ValueError(
                 "'n_timestamps_1' must be an integer greater than or equal to 2."
             )
+    if not isinstance(n_timestamps_2, (int, np.integer)):
+        raise TypeError("'n_timestamps_2' must be an integer.")
+    else:
+        if not n_timestamps_2 >= 2:
+            raise ValueError(
+                "'n_timestamps_2' must be an integer greater than or equal to 2."
+            )
     if not isinstance(window_size, (int, np.integer, float, np.floating)):
         raise TypeError("'window_size' must be an integer or a float.")
     n_timestamps = max(n_timestamps_1, n_timestamps_2)
@@ -731,6 +732,50 @@ def _get_itakura_slopes(
     return min_slope, max_slope
 
 
+def _check_itakura_params(
+    n_timestamps_1: int, n_timestamps_2: int, max_slope: int | float
+) -> None:
+    """Check the parameters of the Itakura parallelogram."""
+    if not isinstance(n_timestamps_1, (int, np.integer)):
+        raise TypeError("'n_timestamps_1' must be an integer.")
+    if not n_timestamps_1 >= 2:
+        raise ValueError(
+            "'n_timestamps_1' must be an integer greater than or equal to 2."
+        )
+    if not isinstance(n_timestamps_2, (int, np.integer)):
+        raise TypeError("'n_timestamps_2' must be an integer.")
+    if not n_timestamps_2 >= 1:
+        raise ValueError(
+            "'n_timestamps_2' must be an integer greater than or equal to 1."
+        )
+    if not isinstance(max_slope, (int, np.integer, float, np.floating)):
+        raise TypeError("'max_slope' must be an integer or a float.")
+    if not max_slope >= 1:
+        raise ValueError("'max_slope' must be a number greater than or equal to 1.")
+
+
+def _itakura_parallelogram_two_rows(
+    n_timestamps_2: int, max_slope: int | float
+) -> npt.NDArray[np.int64]:
+    """Compute the Itakura parallelogram when the first series has 2 points.
+
+    The slopes of the parallelogram are scaled by ``n_timestamps_1 - 2``,
+    which is zero here. The first and last rows of the parallelogram only
+    contain their corner cell, so with at most two columns the region is the
+    two corners. Otherwise, the parallelogram is symmetric with respect to
+    swapping both time series, so it is computed with the axes swapped (where
+    the first series has ``n_timestamps_2 >= 3`` points) and transposed.
+    """
+    if n_timestamps_2 <= 2:
+        return np.array([[0, n_timestamps_2 - 1], [1, n_timestamps_2]], dtype=np.int64)
+    region_swapped = itakura_parallelogram(n_timestamps_2, 2, max_slope)
+    region = np.empty((2, 2), dtype=np.int64)
+    for i in range(2):
+        rows = np.flatnonzero((region_swapped[0] <= i) & (i < region_swapped[1]))
+        region[0, i], region[1, i] = rows[0], rows[-1] + 1
+    return region
+
+
 def itakura_parallelogram(
     n_timestamps_1: int,
     n_timestamps_2: int | None = None,
@@ -772,6 +817,9 @@ def itakura_parallelogram(
     """
     if n_timestamps_2 is None:
         n_timestamps_2 = n_timestamps_1
+    _check_itakura_params(n_timestamps_1, n_timestamps_2, max_slope)
+    if n_timestamps_1 == 2:
+        return _itakura_parallelogram_two_rows(n_timestamps_2, max_slope)
     min_slope_, max_slope_ = _get_itakura_slopes(
         n_timestamps_1, n_timestamps_2, max_slope
     )
@@ -1002,6 +1050,25 @@ def _fast_region(
     return region
 
 
+def _check_dtw_region(
+    n_timestamps_1: int, region: npt.ArrayLike | None = None
+) -> npt.NDArray[np.int64] | None:
+    """Check the constraint region provided with ``method='region'``.
+
+    It is validated as in ``_dtw_region``: if None, no constraint region is
+    used (classic DTW).
+    """
+    if region is None:
+        return None
+    region = cast(npt.NDArray[np.int64], check_array(region, dtype=np.int64))
+    if region.shape != (2, n_timestamps_1):
+        raise ValueError(
+            "The shape of 'region' must be equal to (2, n_timestamps_1) "
+            f"(got {region.shape})."
+        )
+    return region
+
+
 def _compute_region(
     n_timestamps_1: int,
     n_timestamps_2: int,
@@ -1019,6 +1086,8 @@ def _compute_region(
         region = sakoe_chiba_band(n_timestamps_1, n_timestamps_2, **options)
     elif method == 'itakura':
         region = itakura_parallelogram(n_timestamps_1, n_timestamps_2, **options)
+    elif method == 'region':
+        region = _check_dtw_region(n_timestamps_1, **options)
     elif method == 'multiscale':
         # 'multiscale' is incompatible with dist == 'precomputed', so
         # _check_input_dtw (called before this) always returns real x/y.
@@ -1031,7 +1100,7 @@ def _compute_region(
     else:
         raise ValueError(
             "'method' must be either 'classic', 'sakoechiba', "
-            "'itakura', 'multiscale' or 'fast'."
+            "'itakura', 'region', 'multiscale' or 'fast'."
         )
 
     return region
@@ -1391,7 +1460,11 @@ def show_options(method: str | None = None, disp: bool = True) -> str | None:
         end = 'References'
         str_lines = string.splitlines()
         start_idx = next(i for i, line in enumerate(str_lines) if line.strip() == start)
-        end_idx = next(i for i, line in enumerate(str_lines) if line.strip() == end)
+        # Docstrings without a References section end with their options.
+        end_idx = next(
+            (i for i, line in enumerate(str_lines) if line.strip() == end),
+            len(str_lines),
+        )
         doc = textwrap.dedent('\n'.join(str_lines[:start_idx])) + '\n'
         doc += textwrap.dedent('\n'.join(str_lines[start_idx:end_idx])) + '\n'
         return doc
@@ -1421,8 +1494,8 @@ def show_options(method: str | None = None, disp: bool = True) -> str | None:
         text += "itakura\n=======\n\n"
         text += get_options(_dtw_itakura.__doc__)
     elif method == 'region':
-        text += "region\n=======\n\n"
-        text += get_options(_dtw_itakura.__doc__)
+        text += "region\n======\n\n"
+        text += get_options(_dtw_region.__doc__)
     elif method == 'multiscale':
         text += "multiscale\n==========\n\n"
         text += get_options(_dtw_multiscale.__doc__)

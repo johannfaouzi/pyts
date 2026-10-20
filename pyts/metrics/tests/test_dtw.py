@@ -900,7 +900,7 @@ def test_actual_results_dtw_fast(params, res_desired):
         (
             {'method': 'loop'},
             "'method' must be either 'classic', 'sakoechiba', 'itakura', "
-            "'multiscale' or 'fast'.",
+            "'region', 'multiscale' or 'fast'.",
         )
     ],
 )
