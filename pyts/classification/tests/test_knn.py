@@ -100,8 +100,11 @@ def test_unknown_parameter_is_rejected_at_construction():
     They used to be accepted, then rejected by scikit-learn's own classifier
     when fitting, and silently dropped by ``clone`` and ``get_params``.
     """
+    # Passed by unpacking a dict on purpose: an unknown keyword is exactly
+    # what is tested, and static analyzers would flag ``foo=1`` written out.
+    unknown_params = {'foo': 1}
     with pytest.raises(TypeError, match="unexpected keyword argument 'foo'"):
-        KNeighborsClassifier(foo=1)
+        KNeighborsClassifier(**unknown_params)
 
 
 def test_parameters_match_scikit_learn():
