@@ -91,6 +91,8 @@ class WordExtractor(BaseEstimator, UnivariateTransformerMixin):
         Parameters
         ----------
         X : array-like, shape = (n_samples, n_timestamps)
+            Discretized time series. The symbols must be strings, since the
+            words are built by concatenating them.
 
         Returns
         -------
@@ -100,6 +102,19 @@ class WordExtractor(BaseEstimator, UnivariateTransformerMixin):
 
         """
         X = cast(npt.NDArray[Any], check_array(X, dtype=None))
+        # Words are built by concatenating the symbols, which is only
+        # unambiguous for strings: integer codes such as those produced with
+        # ``alphabet='ordinal'`` would merge (e.g. 1 and 12 vs 11 and 2).
+        if X.dtype.kind == 'O' and all(isinstance(x, str) for x in X.flat):
+            # The compiled windowing helper needs a fixed-width string array.
+            X = X.astype(str)
+        if X.dtype.kind != 'U':
+            raise TypeError(
+                "The symbols of 'X' must be strings (got an array with dtype "
+                f"{X.dtype}). Discretize the time series with an alphabet of "
+                "strings (e.g. the default alphabet) rather than "
+                "alphabet='ordinal'."
+            )
         n_samples, n_timestamps = X.shape
         window_size, window_step = self._check_params(n_timestamps)
         n_windows = (n_timestamps - window_size + window_step) // window_step
@@ -393,7 +408,12 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         if self.threshold_std is not None:
             if np.any(idx):  # pyrefly: ignore[unbound-name]
                 if not np.all(idx):
-                    X_sax = np.empty((n_samples * n_windows, word_size), dtype='<U1')
+                    # Use the alphabet's own dtype: its symbols can be longer
+                    # than one character, and a narrower buffer would
+                    # silently truncate them.
+                    X_sax = np.empty(
+                        (n_samples * n_windows, word_size), dtype=alphabet.dtype
+                    )
                     X_sax[idx] = X_sax_below_thresh  # pyrefly: ignore[unbound-name]
                     X_sax[~idx] = X_sax_above_thresh  # pyrefly: ignore[unbound-name]
                 else:

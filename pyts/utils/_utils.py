@@ -92,10 +92,13 @@ def segmentation(
     if not (n_segments is None or isinstance(n_segments, (int, np.integer))):
         raise TypeError("'n_segments' must be None or an integer.")
     if isinstance(n_segments, (int, np.integer)):
-        if not n_segments >= 2:
+        # A single segment (the whole series) is valid: it is what PAA,
+        # GramianAngularField and the bag-of-words estimators need for an
+        # output or word size of 1.
+        if not n_segments >= 1:
             raise ValueError(
                 "If 'n_segments' is an integer, it must be greater than or "
-                f"equal to 2 (got {n_segments})."
+                f"equal to 1 (got {n_segments})."
             )
         if not n_segments <= ts_size:
             raise ValueError(
