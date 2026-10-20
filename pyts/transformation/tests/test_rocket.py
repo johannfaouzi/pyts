@@ -258,23 +258,23 @@ def test_apply_all_kernels(params, arr_desired):
         (
             {'kernel_sizes': np.arange(1)},
             ValueError,
-            "All the values in 'kernel_sizes' must be greater than or equal to 1 "
-            "(0 < 1).",
+            "All the values in 'kernel_sizes' must be greater than or equal to 2 "
+            "(0 < 2).",
         ),
         (
             {'kernel_sizes': np.arange(3)},
             ValueError,
-            "All the values in 'kernel_sizes' must be greater than or equal to 1 "
-            "(0 < 1).",
+            "All the values in 'kernel_sizes' must be greater than or equal to 2 "
+            "(0 < 2).",
         ),
         (
-            {'kernel_sizes': np.arange(1, 9)},
+            {'kernel_sizes': np.arange(2, 9)},
             ValueError,
             "All the values in 'kernel_sizes' must be lower than or equal to "
             "'n_timestamps' (8 > 7).",
         ),
         (
-            {'kernel_sizes': np.arange(1, 14)},
+            {'kernel_sizes': np.arange(2, 14)},
             ValueError,
             "All the values in 'kernel_sizes' must be lower than or equal to "
             "'n_timestamps' (13 > 7).",
