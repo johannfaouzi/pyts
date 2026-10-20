@@ -3,9 +3,12 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
+import inspect
+
 import numpy as np
 import pytest
 from numba import njit
+from sklearn.base import clone
 from sklearn.neighbors import KNeighborsClassifier as SklearnKNN
 
 from pyts.classification import KNeighborsClassifier
@@ -89,3 +92,24 @@ def test_constrained_pointwise_distance(method, options, dist):
         classifier.predict(X_test), reference.predict(test_distances)
     )
     assert params == dict(options, dist=dist)
+
+
+def test_unknown_parameter_is_rejected_at_construction():
+    """Unknown parameters fail immediately instead of at fit time.
+
+    They used to be accepted, then rejected by scikit-learn's own classifier
+    when fitting, and silently dropped by ``clone`` and ``get_params``.
+    """
+    # Passed by unpacking a dict on purpose: an unknown keyword is exactly
+    # what is tested, and static analyzers would flag ``foo=1`` written out.
+    unknown_params = {'foo': 1}
+    with pytest.raises(TypeError, match="unexpected keyword argument 'foo'"):
+        KNeighborsClassifier(**unknown_params)
+
+
+def test_parameters_match_scikit_learn():
+    """Every scikit-learn parameter is exposed and survives ``clone``."""
+    sklearn_params = set(inspect.signature(SklearnKNN.__init__).parameters) - {'self'}
+    clf = KNeighborsClassifier(n_neighbors=3, leaf_size=10, p=1, n_jobs=2)
+    assert sklearn_params <= set(clf.get_params())
+    assert clone(clf).get_params() == clf.get_params()
