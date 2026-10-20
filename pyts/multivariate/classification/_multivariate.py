@@ -14,6 +14,7 @@ from sklearn.utils.validation import check_is_fitted
 
 from pyts._base import MultivariateClassifierMixin
 from pyts.multivariate.utils import check_3d_array
+from pyts.multivariate.utils._utils import _check_n_features
 
 
 class _SupportsFitPredict(Protocol):
@@ -75,6 +76,10 @@ class MultivariateClassifier(BaseEstimator, MultivariateClassifierMixin):
     estimators_ : list of estimator objects
         The collection of fitted classifiers.
 
+    n_features_in_ : int
+        Number of features seen during ``fit``. ``predict`` requires the
+        same number of features.
+
     Examples
     --------
     >>> from pyts.classification import BOSSVS
@@ -121,6 +126,13 @@ class MultivariateClassifier(BaseEstimator, MultivariateClassifierMixin):
             self._weights = None
         else:
             self._weights = np.asarray(self.weights, dtype=np.float64)
+            if self._weights.shape != (n_features,):
+                raise ValueError(
+                    "'weights' must be None or array-like with shape "
+                    f"(n_features,) = ({n_features},) "
+                    f"(got shape {self._weights.shape})."
+                )
+        self.n_features_in_ = n_features
 
         self._le = LabelEncoder().fit(y)
         self.classes_ = self._le.classes_
@@ -145,6 +157,7 @@ class MultivariateClassifier(BaseEstimator, MultivariateClassifierMixin):
         """
         X = check_3d_array(X)
         check_is_fitted(self, 'estimators_')
+        _check_n_features(X, self.n_features_in_)
         n_samples, n_features, _ = X.shape
 
         y_pred = np.empty((n_samples, n_features))

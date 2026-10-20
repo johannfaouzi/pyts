@@ -3,7 +3,7 @@
 # Author: Johann Faouzi <johann.faouzi@gmail.com>
 # License: BSD-3-Clause
 
-from typing import cast
+from typing import Any, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -28,3 +28,18 @@ def check_3d_array(X: npt.ArrayLike) -> npt.NDArray[np.float64]:
     if X.ndim != 3:
         raise ValueError(f"X must be 3-dimensional (got {X.ndim}).")
     return X
+
+
+def _check_n_features(X: npt.NDArray[Any], n_features_in: int) -> None:
+    """Check that X has as many features as the data seen in ``fit``.
+
+    Each feature is handled by its own fitted estimator, so a different
+    number of features would otherwise either be silently ignored (extra
+    features) or fail with an opaque ``IndexError`` (missing features).
+    """
+    n_features = X.shape[1]
+    if n_features != n_features_in:
+        raise ValueError(
+            f"X has {n_features} features, but this estimator was fitted "
+            f"with {n_features_in} features."
+        )
