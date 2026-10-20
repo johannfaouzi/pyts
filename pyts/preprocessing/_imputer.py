@@ -247,8 +247,11 @@ def _step_interpolate(
     following the ``numpy.searchsorted``-based recipe from scipy's own
     "1-D interpolation" tutorial (the documented replacement for
     ``interp1d``, which is considered legacy). Points before the first (or
-    after the last) known index extrapolate by holding the boundary value,
-    matching ``interp1d``'s behavior for these strategies.
+    after the last) known index extrapolate by holding the boundary value.
+    For 'nearest' this matches ``interp1d``; for 'previous' (before the
+    first known index) and 'next' (after the last one), ``interp1d``
+    returns NaN instead, which would leave missing values in the output, so
+    the boundary value is deliberately used.
     """
     last = len(idx) - 1
     if strategy == 'previous':

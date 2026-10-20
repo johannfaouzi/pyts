@@ -16,9 +16,10 @@ from sklearn.utils.validation import check_array, check_is_fitted, check_X_y
 
 from pyts._base import UnivariateClassifierMixin
 from pyts.bag_of_words import BagOfWords
+from pyts.utils._utils import _word_vectorizer_params
 
 
-class SAXVSM(BaseEstimator, UnivariateClassifierMixin):
+class SAXVSM(UnivariateClassifierMixin, BaseEstimator):
     """Classifier based on SAX-VSM representation and tf-idf statistics.
 
     Time series are first transformed into bag of words using Symbolic
@@ -204,6 +205,7 @@ class SAXVSM(BaseEstimator, UnivariateClassifierMixin):
             use_idf=self.use_idf,
             smooth_idf=self.smooth_idf,
             sublinear_tf=self.sublinear_tf,
+            **_word_vectorizer_params(),
         )
         # sklearn has no py.typed stubs, so TfidfVectorizer.fit_transform's
         # return type is inferred from source as the generic `spmatrix`
@@ -236,7 +238,9 @@ class SAXVSM(BaseEstimator, UnivariateClassifierMixin):
         check_is_fitted(self, ['vocabulary_', 'tfidf_', 'idf_', '_tfidf', 'classes_'])
         X = check_array(X)
         X_bow = self._bow.transform(X)
-        vectorizer = CountVectorizer(vocabulary=self._tfidf.vocabulary_)
+        vectorizer = CountVectorizer(
+            vocabulary=self._tfidf.vocabulary_, **_word_vectorizer_params()
+        )
         # Kept sparse rather than densified with ``.toarray()``: shape is
         # (n_samples, n_words), and n_words can be large while each
         # document only uses a handful of distinct words, so densifying

@@ -17,10 +17,10 @@ from sklearn.utils.validation import check_array, check_is_fitted, check_X_y
 
 from pyts._base import UnivariateClassifierMixin
 from pyts.approximation import SymbolicFourierApproximation
-from pyts.utils._utils import _windowed_view
+from pyts.utils._utils import _windowed_view, _word_vectorizer_params
 
 
-class BOSSVS(BaseEstimator, UnivariateClassifierMixin):
+class BOSSVS(UnivariateClassifierMixin, BaseEstimator):
     """Bag-of-SFA Symbols in Vector Space.
 
     Each time series is transformed into an histogram using the
@@ -216,6 +216,7 @@ class BOSSVS(BaseEstimator, UnivariateClassifierMixin):
             use_idf=self.use_idf,
             smooth_idf=self.smooth_idf,
             sublinear_tf=self.sublinear_tf,
+            **_word_vectorizer_params(),
         )
         # sklearn has no py.typed stubs, so TfidfVectorizer.fit_transform's
         # return type is inferred from source as the generic `spmatrix`

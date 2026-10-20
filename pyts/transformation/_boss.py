@@ -16,7 +16,7 @@ from sklearn.utils.validation import check_array, check_is_fitted
 
 from pyts._base import UnivariateTransformerMixin
 from pyts.approximation import SymbolicFourierApproximation
-from pyts.utils._utils import _windowed_view
+from pyts.utils._utils import _windowed_view, _word_vectorizer_params
 
 
 class BOSS(BaseEstimator, UnivariateTransformerMixin):
@@ -189,7 +189,7 @@ class BOSS(BaseEstimator, UnivariateTransformerMixin):
         else:
             X_bow = np.asarray([' '.join(X_word[i]) for i in range(n_samples)])
 
-        vectorizer = CountVectorizer()
+        vectorizer = CountVectorizer(**_word_vectorizer_params())
         vectorizer.fit(X_bow)
         self.vocabulary_ = {value: key for key, value in vectorizer.vocabulary_.items()}
         self._window_size = window_size
@@ -305,7 +305,7 @@ class BOSS(BaseEstimator, UnivariateTransformerMixin):
         else:
             X_bow = np.asarray([' '.join(X_word[i]) for i in range(n_samples)])
 
-        vectorizer = CountVectorizer()
+        vectorizer = CountVectorizer(**_word_vectorizer_params())
         X_boss = vectorizer.fit_transform(X_bow)
         self.vocabulary_ = {value: key for key, value in vectorizer.vocabulary_.items()}
         self._window_size = window_size

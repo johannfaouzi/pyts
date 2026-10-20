@@ -8,6 +8,7 @@ import pytest
 from sklearn.feature_selection import f_classif
 
 from pyts.approximation import (
+    DiscreteFourierTransform,
     MultipleCoefficientBinning,
     SymbolicFourierApproximation,
 )
@@ -100,3 +101,32 @@ def test_fit_transform(params):
     arr_1 = SymbolicFourierApproximation(**params).fit(X, y).transform(X)
     arr_2 = SymbolicFourierApproximation(**params).fit_transform(X, y)
     np.testing.assert_array_equal(arr_1, arr_2)
+
+
+@pytest.mark.parametrize('drop_sum', [False, True])
+def test_norm_mean_drops_first_coefficient(drop_sum):
+    """With ``norm_mean=True`` and ``anova=False``, the sum is dropped.
+
+    Once each series is centered, the first coefficient is zero up to
+    rounding errors, so it must not be binned.
+    """
+    rng = np.random.RandomState(0)
+    X_int = rng.randint(0, 10, (20, 16)).astype('float64')
+    sfa = SymbolicFourierApproximation(n_coefs=4, norm_mean=True, drop_sum=drop_sum)
+    X_new = sfa.fit_transform(X_int)
+    assert X_new.shape == (20, 4)
+    expected = SymbolicFourierApproximation(n_coefs=4, norm_mean=True, drop_sum=True)
+    np.testing.assert_array_equal(X_new, expected.fit_transform(X_int))
+    # No bin edge is built from a zero-variance (rounding noise) coefficient.
+    assert np.all(np.ptp(sfa.bin_edges_, axis=1) > 1e-6)
+
+
+def test_norm_mean_with_anova_keeps_selection():
+    """ANOVA already discards the constant first coefficient."""
+    rng = np.random.RandomState(0)
+    X_rand, y_rand = rng.randn(20, 16), np.repeat([0, 1], 10)
+    sfa = SymbolicFourierApproximation(n_coefs=4, norm_mean=True, anova=True)
+    sfa.fit(X_rand, y_rand)
+    dft = DiscreteFourierTransform(n_coefs=4, norm_mean=True, anova=True)
+    dft.fit(X_rand, y_rand)
+    np.testing.assert_array_equal(sfa.support_, dft.support_)

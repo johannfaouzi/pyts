@@ -106,16 +106,17 @@ class RecurrencePlot(BaseEstimator, UnivariateTransformerMixin):
     ----------
     dimension : int or float (default = 1)
         Dimension of the trajectory. If float, it represents a
-        percentage of the size of each time series and must be between
-        0 and 1.
+        percentage of the size of each time series and must be greater
+        than 0 and lower than or equal to 1.
 
     time_delay : int or float (default = 1)
         Time gap between two back-to-back points of the trajectory. If
         float, it represents a percentage of the size of each time
-        series and must be between 0 and 1.
+        series and must be greater than 0 and lower than or equal to 1.
 
     threshold : float, 'point', 'distance' or None (default = None)
-        Threshold for the minimum distance. If None, the recurrence plots
+        Threshold for the minimum distance. If a float or an integer, it
+        must be greater than 0. If None, the recurrence plots
         are not binarized. If 'point', the threshold is computed such as
         `percentage` percents of the points are smaller than the threshold.
         If 'distance', the threshold is computed as the `percentage` of the
@@ -275,7 +276,7 @@ class RecurrencePlot(BaseEstimator, UnivariateTransformerMixin):
                 )
             dimension = self.dimension
         else:
-            if not 0 < self.dimension < 1.0:
+            if not 0 < self.dimension <= 1.0:
                 raise ValueError(
                     "If 'dimension' is a float, it must be greater "
                     "than 0 and lower than or equal to 1 "
@@ -294,7 +295,7 @@ class RecurrencePlot(BaseEstimator, UnivariateTransformerMixin):
                 )
             time_delay = self.time_delay
         else:
-            if not 0 < self.time_delay < 1.0:
+            if not 0 < self.time_delay <= 1.0:
                 raise ValueError(
                     "If 'time_delay' is a float, it must be greater "
                     "than 0 and lower than or equal to 1 "
@@ -323,8 +324,7 @@ class RecurrencePlot(BaseEstimator, UnivariateTransformerMixin):
             and self.threshold <= 0
         ):
             raise ValueError(
-                "If 'threshold' is a float or an integer, "
-                "it must be greater than or equal to 0."
+                "If 'threshold' is a float or an integer, it must be greater than 0."
             )
 
         if not isinstance(self.percentage, (int, np.integer, float, np.floating)):

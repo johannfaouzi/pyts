@@ -125,3 +125,29 @@ def test_actual_results_with_weights(params):
     for i in range(n_samples):
         arr_desired.append(np.argmax(np.bincount(predictions[:, i], params['weights'])))
     np.testing.assert_allclose(arr_actual, arr_desired, atol=1e-5, rtol=0.0)
+
+
+def test_shared_estimator_instance_is_cloned():
+    """The same instance listed for every feature is fitted per feature."""
+    from sklearn.exceptions import NotFittedError
+    from sklearn.utils.validation import check_is_fitted
+
+    from pyts.classification import KNeighborsClassifier
+
+    rng = np.random.RandomState(0)
+    X_sep = rng.randn(30, 3, 20)
+    y_sep = np.repeat([0, 1], 15)
+    # Only the first two features separate the classes; the third is noise.
+    X_sep[y_sep == 1, :2] += 2
+    knn = KNeighborsClassifier(n_neighbors=1)
+
+    shared = MultivariateClassifier([knn] * 3).fit(X_sep, y_sep)
+    separate = MultivariateClassifier(
+        [KNeighborsClassifier(n_neighbors=1) for _ in range(3)]
+    ).fit(X_sep, y_sep)
+
+    np.testing.assert_array_equal(shared.predict(X_sep), separate.predict(X_sep))
+    assert len({id(estimator) for estimator in shared.estimators_}) == 3
+    # The estimator passed by the user is left unfitted.
+    with pytest.raises(NotFittedError):
+        check_is_fitted(knn)

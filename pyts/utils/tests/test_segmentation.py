@@ -45,10 +45,10 @@ from pyts.utils import segmentation
             "'window_size' must be lower than or equal to 'ts_size' (15 > 10).",
         ),
         (
-            {'ts_size': 10, 'window_size': 3, 'n_segments': 1},
+            {'ts_size': 10, 'window_size': 3, 'n_segments': 0},
             ValueError,
-            "If 'n_segments' is an integer, it must be greater than or equal to 2 "
-            "(got 1).",
+            "If 'n_segments' is an integer, it must be greater than or equal to 1 "
+            "(got 0).",
         ),
         (
             {'ts_size': 10, 'window_size': 3, 'n_segments': 12},

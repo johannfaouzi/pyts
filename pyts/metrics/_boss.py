@@ -34,7 +34,7 @@ def boss(x: npt.ArrayLike, y: npt.ArrayLike) -> float:
 
     .. math::
 
-        BOSS(x, y) = \sum_{\substack{i=1\\ x_i > 0}}^n (x_i - y_i)^2
+        BOSS(x, y) = \sqrt{\sum_{\substack{i=1\\ x_i > 0}}^n (x_i - y_i)^2}
 
     where :math:`x` and :math:`y` are vectors of non-negative integers.
     The BOSS distance is not a distance metric as it neither satisfies the

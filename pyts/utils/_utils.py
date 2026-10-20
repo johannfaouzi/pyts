@@ -12,6 +12,18 @@ from numpy.lib.stride_tricks import as_strided
 from sklearn.utils import check_array
 
 
+def _word_vectorizer_params() -> dict[str, Any]:
+    """Keyword arguments for the vectorizers that count the words of pyts.
+
+    Words are separated by single spaces and use any alphabet, but
+    scikit-learn's defaults lowercase the text (merging symbols that only
+    differ by case, such as ``'a'`` and ``'A'``) and only keep tokens of at
+    least two word characters (dropping one-symbol words and symbols such as
+    ``'+'`` or ``'-'``). Every whitespace-separated word is kept as is instead.
+    """
+    return {'lowercase': False, 'token_pattern': r'\S+'}
+
+
 def segmentation(
     ts_size: int,
     window_size: int,
@@ -80,10 +92,13 @@ def segmentation(
     if not (n_segments is None or isinstance(n_segments, (int, np.integer))):
         raise TypeError("'n_segments' must be None or an integer.")
     if isinstance(n_segments, (int, np.integer)):
-        if not n_segments >= 2:
+        # A single segment (the whole series) is valid: it is what PAA,
+        # GramianAngularField and the bag-of-words estimators need for an
+        # output or word size of 1.
+        if not n_segments >= 1:
             raise ValueError(
                 "If 'n_segments' is an integer, it must be greater than or "
-                f"equal to 2 (got {n_segments})."
+                f"equal to 1 (got {n_segments})."
             )
         if not n_segments <= ts_size:
             raise ValueError(

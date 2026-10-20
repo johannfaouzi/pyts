@@ -921,3 +921,47 @@ def test_numeric_dtypes(dtype, X, y):
     np.testing.assert_allclose(
         reference.decision_function(X.astype(dtype)), reference.decision_function(X)
     )
+
+
+_rng_sw = np.random.RandomState(0)
+X_sw_bin, y_sw_bin = _rng_sw.randn(8, 10), np.repeat([0, 1], 4)
+X_sw_multi, y_sw_multi = _rng_sw.randn(9, 10), np.repeat([0, 1, 2], 3)
+
+
+@pytest.mark.filterwarnings("ignore:Maximum number of iterations")
+@pytest.mark.parametrize(
+    'X, y, multi_class',
+    [
+        (X_sw_bin, y_sw_bin, 'multinomial'),
+        (X_sw_multi, y_sw_multi, 'multinomial'),
+        (X_sw_multi, y_sw_multi, 'ovr'),
+        (X_sw_multi, y_sw_multi, 'ovo'),
+    ],
+)
+def test_sample_weight_is_used(X, y, multi_class):
+    """``sample_weight`` reaches the underlying estimators in every mode."""
+    params = {'max_iter': 20, 'random_state': 0, 'multi_class': multi_class}
+    unweighted = LearningShapelets(**params).fit(X, y)
+
+    ones = np.ones(len(y))
+    unit = LearningShapelets(**params).fit(X, y, sample_weight=ones)
+    np.testing.assert_allclose(unit.coef_, unweighted.coef_)
+
+    sample_weight = np.where(np.arange(len(y)) % 2 == 0, 100.0, 1e-3)
+    sample_weight_copy = sample_weight.copy()
+    weighted = LearningShapelets(**params).fit(X, y, sample_weight=sample_weight)
+    assert not np.allclose(weighted.coef_, unweighted.coef_)
+    # The caller's arrays are left unchanged.
+    np.testing.assert_array_equal(sample_weight, sample_weight_copy)
+    np.testing.assert_array_equal(ones, np.ones(len(y)))
+
+
+@pytest.mark.filterwarnings("ignore:Maximum number of iterations")
+def test_sample_weight_not_modified_in_place():
+    """Class weights are not multiplied into the caller's sample weights."""
+    sample_weight = np.ones(6)
+    clf = CrossEntropyLearningShapelets(
+        max_iter=2, random_state=0, class_weight='balanced'
+    )
+    clf.fit(X_sw_bin[:6], [0, 0, 0, 0, 1, 1], sample_weight=sample_weight)
+    np.testing.assert_array_equal(sample_weight, np.ones(6))

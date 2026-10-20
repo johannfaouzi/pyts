@@ -27,6 +27,8 @@ from pyts.metrics._dtw import (
     _dtw_multiscale,
     _dtw_region,
     _dtw_sakoechiba,
+    _fast_region,
+    _multiscale_region,
     _return_path,
     _return_results,
     _square,
@@ -898,7 +900,7 @@ def test_actual_results_dtw_fast(params, res_desired):
         (
             {'method': 'loop'},
             "'method' must be either 'classic', 'sakoechiba', 'itakura', "
-            "'multiscale' or 'fast'.",
+            "'region', 'multiscale' or 'fast'.",
         )
     ],
 )
@@ -1095,3 +1097,68 @@ def test_cost_matrix_region_dtypes(region_dtype):
     expected = cost_matrix(x, y, region=region.astype(np.int64))
     actual = cost_matrix(x, y, region=region.astype(region_dtype))
     np.testing.assert_array_equal(actual, expected)
+
+
+def _reference_region_dtw(x, y, region):
+    """Brute-force DTW restricted to a region, for comparison."""
+    n_timestamps_1, n_timestamps_2 = len(x), len(y)
+    acc = np.full((n_timestamps_1, n_timestamps_2), np.inf)
+    for i in range(n_timestamps_1):
+        for j in range(region[0, i], region[1, i]):
+            cost = (x[i] - y[j]) ** 2
+            if i == 0 and j == 0:
+                acc[i, j] = cost
+                continue
+            previous = [acc[i - 1, j]] if i > 0 else []
+            previous += [acc[i, j - 1]] if j > 0 else []
+            previous += [acc[i - 1, j - 1]] if i > 0 and j > 0 else []
+            acc[i, j] = cost + min(previous)
+    return sqrt(acc[-1, -1])
+
+
+@pytest.mark.parametrize('seed', range(15))
+@pytest.mark.parametrize('method', ['sakoechiba', 'itakura', 'multiscale', 'fast'])
+def test_constrained_dtw_matches_reference(method, seed):
+    """Constrained DTW equals a brute-force DP over the same region.
+
+    The first series is longer than the second, which is where the first
+    column of the accumulated cost matrix used to be filled incorrectly.
+    """
+    rng = np.random.RandomState(seed)
+    n_timestamps_1 = rng.randint(12, 25)
+    n_timestamps_2 = rng.randint(4, n_timestamps_1 // 2)
+    x, y = rng.randn(n_timestamps_1), rng.randn(n_timestamps_2)
+    if method == 'sakoechiba':
+        region = sakoe_chiba_band(n_timestamps_1, n_timestamps_2, window_size=0.2)
+        options = {'window_size': 0.2}
+    elif method == 'itakura':
+        region = itakura_parallelogram(n_timestamps_1, n_timestamps_2)
+        options = {}
+    elif method == 'multiscale':
+        region = _multiscale_region(x, y, 'square')
+        options = {}
+    else:
+        region = _fast_region(x, y, 'square')
+        options = {}
+    expected = _reference_region_dtw(x, y, region)
+    assert np.isfinite(expected)
+    np.testing.assert_allclose(dtw(x, y, method=method, options=options), expected)
+
+
+def test_constrained_dtw_long_first_series():
+    """The first column of the region is not limited by the first row."""
+    x, y = np.arange(10.0), np.array([0.0, 4.5, 9.0])
+    options = {'window_size': 0.2}
+    np.testing.assert_allclose(
+        dtw(x, y, method='sakoechiba', options=options),
+        dtw(y, x, method='sakoechiba', options=options),
+    )
+    assert np.isfinite(dtw(x, y, method='sakoechiba', options=options))
+
+
+def test_accumulated_cost_matrix_ignores_cells_outside_region():
+    """Cells outside the region stay infinite even if the cost is finite."""
+    region = np.array([[0, 1, 1], [2, 3, 3]])
+    acc = accumulated_cost_matrix(cost_matrix(x, y), region=region)
+    assert np.isinf(acc[1, 0]) and np.isinf(acc[2, 0])
+    np.testing.assert_allclose(sqrt(acc[-1, -1]), _reference_region_dtw(x, y, region))

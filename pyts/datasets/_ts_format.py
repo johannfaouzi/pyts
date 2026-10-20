@@ -86,3 +86,36 @@ def parse_ts_file(
     y = np.asarray(labels)
 
     return X, y, description
+
+
+def pad_to_common_length(
+    X_train: npt.NDArray[np.float64], X_test: npt.NDArray[np.float64]
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+    """Pad the training and test sets to the same number of timestamps.
+
+    Each ``.ts`` file is padded (with NaN's) to the length of its own longest
+    series, so the two splits of a variable-length dataset would otherwise
+    have a different number of timestamps.
+
+    Parameters
+    ----------
+    X_train, X_test : array, shape = (n_samples, n_channels, n_timestamps)
+        The time series of each split, as returned by :func:`parse_ts_file`.
+
+    Returns
+    -------
+    X_train, X_test : array, shape = (n_samples, n_channels, n_timestamps)
+        The time series of each split, padded with NaN's to the length of
+        the longest series in either split. A split that is already long
+        enough is returned unchanged.
+
+    """
+    n_timestamps = max(X_train.shape[-1], X_test.shape[-1])
+
+    def _pad(X: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
+        if X.shape[-1] == n_timestamps:
+            return X
+        pad_width = [(0, 0)] * (X.ndim - 1) + [(0, n_timestamps - X.shape[-1])]
+        return np.pad(X, pad_width, constant_values=np.nan)
+
+    return _pad(X_train), _pad(X_test)

@@ -207,7 +207,7 @@ class MultipleCoefficientBinning(BaseEstimator, UnivariateTransformerMixin):
             )
         if not (
             (self.alphabet is None)
-            or (self.alphabet == 'ordinal')
+            or (isinstance(self.alphabet, str) and self.alphabet == 'ordinal')
             or (isinstance(self.alphabet, (list, tuple, np.ndarray)))
         ):
             raise TypeError(
@@ -216,7 +216,7 @@ class MultipleCoefficientBinning(BaseEstimator, UnivariateTransformerMixin):
             )
         if self.alphabet is None:
             alphabet = np.array([chr(i) for i in range(97, 97 + self.n_bins)])
-        elif self.alphabet == 'ordinal':
+        elif isinstance(self.alphabet, str) and self.alphabet == 'ordinal':
             alphabet = 'ordinal'
         else:
             alphabet = check_array(self.alphabet, ensure_2d=False, dtype=None)
