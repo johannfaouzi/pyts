@@ -122,8 +122,7 @@ def test_actual_results_trajectories(params, arr_desired):
         (
             {'threshold': -1},
             ValueError,
-            "If 'threshold' is a float or an integer, it must be greater than or "
-            "equal to 0.",
+            "If 'threshold' is a float or an integer, it must be greater than 0.",
         ),
         (
             {'percentage': 200, 'threshold': 'point'},
