@@ -18,7 +18,7 @@ from scipy.io.arff import loadarff
 from sklearn.utils import Bunch
 
 from pyts.datasets._cache import _default_data_home
-from pyts.datasets._ts_format import parse_ts_file
+from pyts.datasets._ts_format import pad_to_common_length, parse_ts_file
 
 #: Per-dataset metadata, as stored in ``info/ucr.pickle``.
 _DatasetInfo = dict[str, Any]
@@ -298,6 +298,10 @@ def _load_ucr_dataset(dataset: str, path: str) -> Bunch:
             os.path.join(new_path, f'{dataset}_TRAIN.ts')
         )
         X_test, y_test, _ = parse_ts_file(os.path.join(new_path, f'{dataset}_TEST.ts'))
+        # Each split is only padded to its own longest series: pad both to
+        # the same length so that variable-length datasets keep consistent
+        # shapes between the training and test sets.
+        X_train, X_test = pad_to_common_length(X_train, X_test)
         # The UCR archive is univariate: drop the (size-1) channel axis to
         # keep the historical 2-D ``(n_samples, n_timestamps)`` shape.
         X_train, X_test = X_train[:, 0, :], X_test[:, 0, :]

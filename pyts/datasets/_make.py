@@ -164,10 +164,12 @@ def make_cylinder_bell_funnel(
     X = epsilon + additional_term
 
     if shuffle:
+        # The parameters are shuffled with the same permutation as X and y,
+        # so that they stay aligned with the samples they generated.
         # sklearn.utils.shuffle has no type stubs; pyrefly infers an
         # overly broad/incorrect signature from its unannotated source.
-        X, y = utils_shuffle(  # pyrefly: ignore[not-iterable]
-            X, y, random_state=rng
+        X, y, a, b, eta, epsilon = utils_shuffle(  # pyrefly: ignore[not-iterable]
+            X, y, a, b, eta, epsilon, random_state=rng
         )
 
     if return_params:
