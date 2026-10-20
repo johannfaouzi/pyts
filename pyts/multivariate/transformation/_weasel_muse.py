@@ -150,7 +150,7 @@ class WEASELMUSE(BaseEstimator, MultivariateTransformerMixin):
         self : object
 
         """
-        X = check_3d_array(X)
+        X = check_3d_array(X).astype(np.float64, copy=False)
         _, n_features, _n_timestamps = X.shape
 
         X_diff = np.abs(np.diff(X))
@@ -199,7 +199,7 @@ class WEASELMUSE(BaseEstimator, MultivariateTransformerMixin):
 
         """
         check_is_fitted(self, 'vocabulary_')
-        X = check_3d_array(X)
+        X = check_3d_array(X).astype(np.float64, copy=False)
         _n_samples, _, _ = X.shape
         X_diff = np.abs(np.diff(X))
 
@@ -232,7 +232,7 @@ class WEASELMUSE(BaseEstimator, MultivariateTransformerMixin):
             Document-term matrix with relevant features only.
 
         """
-        X = check_3d_array(X)
+        X = check_3d_array(X).astype(np.float64, copy=False)
         _n_samples, n_features, _n_timestamps = X.shape
 
         X_diff = np.abs(np.diff(X))

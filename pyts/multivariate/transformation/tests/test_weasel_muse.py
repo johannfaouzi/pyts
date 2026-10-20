@@ -51,3 +51,38 @@ def test_fit_transform(params):
         assert (arr_1 != arr_2).nnz == 0
     else:
         np.testing.assert_array_equal(arr_1, arr_2)
+
+
+@pytest.mark.parametrize('dtype', [np.uint8, np.int8])
+@pytest.mark.parametrize('sparse', [False, True])
+@pytest.mark.parametrize('method', ['fit', 'transform', 'fit_transform'])
+def test_integer_differences(dtype, sparse, method):
+    """Convert integers before differencing in each public entry point."""
+    rng = np.random.RandomState(42)
+    X_integer = rng.randint(0, 256, size=(12, 2, 12)).astype(dtype)
+    X_original = X_integer.copy()
+    X_float = X_integer.astype(np.float64)
+    y = np.arange(12) % 2
+    params = {
+        'word_size': 2,
+        'n_bins': 2,
+        'window_sizes': [4],
+        'strategy': 'uniform',
+        'chi2_threshold': 0.1,
+        'sparse': sparse,
+    }
+    reference = WEASELMUSE(**params)
+    expected = reference.fit_transform(X_float, y)
+    transformer = WEASELMUSE(**params)
+    if method == 'fit':
+        actual = transformer.fit(X_integer, y).transform(X_float)
+    elif method == 'transform':
+        actual = transformer.fit(X_float, y).transform(X_integer)
+    else:
+        actual = transformer.fit_transform(X_integer, y)
+
+    assert transformer.vocabulary_ == reference.vocabulary_
+    if sparse:
+        actual, expected = actual.toarray(), expected.toarray()
+    np.testing.assert_array_equal(actual, expected)
+    np.testing.assert_array_equal(X_integer, X_original)
