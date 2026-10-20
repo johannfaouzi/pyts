@@ -56,12 +56,13 @@ def test_dtw_region_method(region):
     np.testing.assert_allclose(
         _reference_dtw(x, y, np.asarray(region)), expected, rtol=1e-12
     )
+    # A precomputed cost is summed along the path, without a square root.
     cost = np.subtract.outer(x, y) ** 2
     np.testing.assert_allclose(
         dtw(
             dist='precomputed', precomputed_cost=cost, method='region', options=options
         ),
-        expected,
+        expected**2,
     )
 
 
