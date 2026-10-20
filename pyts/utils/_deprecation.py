@@ -72,6 +72,7 @@ class deprecated:
         cls.__init__ = wrapped
 
         wrapped.__name__ = "__init__"
+        cls.__doc__ = self._update_doc(cls.__doc__)
         # `deprecated_original` is a custom attribute this decorator adds
         # to the wrapper at runtime; ordinary function objects don't have
         # one, so the type checker cannot know about it statically.
@@ -94,15 +95,24 @@ class deprecated:
         # Add a reference to the wrapped function so that we can introspect
         # on function arguments in Python 2 (already works in Python 3)
         wrapped.__wrapped__ = fun  # pyrefly: ignore[missing-attribute]
+        wrapped.__doc__ = self._update_doc(wrapped.__doc__)
 
         return wrapped  # type: ignore[return-value]
 
     def _decorate_property(self, prop: property) -> property:
         msg = self.extra
 
-        @property
-        def wrapped(*args: Any, **kwargs: Any) -> Any:
+        def fget(*args: Any, **kwargs: Any) -> Any:
             warnings.warn(msg, stacklevel=2, category=DeprecationWarning)
             return prop.fget(*args, **kwargs)  # type: ignore[misc]
 
-        return wrapped  # pyrefly: ignore[bad-return]
+        return property(fget, doc=self._update_doc(prop.__doc__))
+
+    def _update_doc(self, olddoc: str | None) -> str:
+        """Prepend the deprecation notice to a docstring."""
+        newdoc = "DEPRECATED"
+        if self.extra:
+            newdoc = f"{newdoc}: {self.extra}"
+        if olddoc:
+            newdoc = f"{newdoc}\n\n{olddoc}"
+        return newdoc
