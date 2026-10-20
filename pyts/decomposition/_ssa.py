@@ -105,7 +105,10 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
 
     lower_frequency_bound : float (default = 0.075)
         The boundary of the periodogram to characterize trend, seasonal and
-        residual components. It must be between 0 and 0.5.
+        residual components. It must be between 0 and 0.5. A component that
+        meets both the trend and the residual criteria (only possible when
+        this bound is above roughly 0.25, the exact value depending on the
+        window size) is assigned to the trend.
         Ignored if ``groups`` is not set to 'auto'.
 
     lower_frequency_contribution : float (default = 0.85)
@@ -330,6 +333,16 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
             c = self.lower_frequency_contribution
             trend = Pxx_cumsum[:, idx_trend, :] / Pxx_cumsum[:, -1, :] > c
             resid = Pxx_cumsum[:, idx_resid, :] / Pxx_cumsum[:, -1, :] < c
+            # The residual criterion uses a fixed frequency (the middle of
+            # the periodogram, roughly 0.25), while the trend criterion uses
+            # 'lower_frequency_bound'. The cumulative periodogram is
+            # non-decreasing, so both criteria can only hold for the same
+            # component when that bound is above the fixed frequency (this
+            # is a no-op otherwise, including for the default bound). Such
+            # a component is kept in the trend, which honors the
+            # user-provided bound, so that the groups partition the
+            # components and still sum back to the input.
+            resid = np.logical_and(resid, ~trend)
             season = np.logical_and(~trend, ~resid)
 
             membership = np.zeros((n_samples, grouping_size, window_size))
@@ -375,7 +388,7 @@ class SingularSpectrumAnalysis(BaseEstimator, UnivariateTransformerMixin):
         if not (
             self.groups is None
             or (isinstance(self.groups, str) and self.groups == "auto")
-            or isinstance(self.groups, (int, list, tuple, np.ndarray))
+            or isinstance(self.groups, (int, np.integer, list, tuple, np.ndarray))
         ):
             raise TypeError(
                 "'groups' must be either None, an integer, 'auto' or array-like."

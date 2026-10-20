@@ -131,7 +131,7 @@ class MarkovTransitionField(BaseEstimator, UnivariateTransformerMixin):
         of the size of each time series and must be between 0 and 1. Output
         images are square, thus providing the size of one dimension is enough.
 
-    n_bins : int (default = 5)
+    n_bins : int (default = 8)
         Number of bins (also known as the size of the alphabet)
 
     strategy : 'uniform', 'quantile' or 'normal' (default = 'quantile')
@@ -268,7 +268,7 @@ class MarkovTransitionField(BaseEstimator, UnivariateTransformerMixin):
                 )
             image_size = self.image_size
         else:
-            if self.image_size < 0.0 or self.image_size > 1.0:
+            if self.image_size <= 0.0 or self.image_size > 1.0:
                 raise ValueError(
                     "If 'image_size' is a float, it must be greater than 0 "
                     f"and lower than or equal to 1 (got {self.image_size})."
