@@ -18,7 +18,7 @@ from scipy.io.arff import loadarff
 from sklearn.utils import Bunch
 
 from pyts.datasets._cache import _default_data_home
-from pyts.datasets._ts_format import parse_ts_file
+from pyts.datasets._ts_format import pad_to_common_length, parse_ts_file
 
 #: Per-dataset metadata, as stored in ``info/uea.pickle``.
 _DatasetInfo = dict[str, Any]
@@ -286,18 +286,24 @@ def _load_uea_dataset(dataset: str, path: str) -> Bunch:
             os.path.join(new_path, f'{dataset}_TRAIN.ts')
         )
         X_test, y_test, _ = parse_ts_file(os.path.join(new_path, f'{dataset}_TEST.ts'))
+        # Each split is only padded to its own longest series: pad both to
+        # the same length so that variable-length datasets keep consistent
+        # shapes between the training and test sets.
+        X_train, X_test = pad_to_common_length(X_train, X_test)
     else:
         # Historical format served by the (now defunct) UEA
         # ``ClassificationDownloads`` endpoint: a plain-text description
         # file plus ARFF-formatted splits.
-        try:
-            description_file = next(
+        # ``next`` raises StopIteration (not IndexError) when nothing
+        # matches, so use its default value when there is no description.
+        description_file = next(
+            (
                 file
                 for file in os.listdir(new_path)
                 if ('Description.txt' in file or f'{dataset}.txt' in file)
-            )
-        except IndexError:
-            description_file = None
+            ),
+            None,
+        )
 
         if description_file is not None:
             try:
