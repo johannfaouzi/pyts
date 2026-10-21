@@ -46,6 +46,69 @@ Version 0.14.1
     ``window_steps`` in :class:`pyts.transformation.ShapeletTransform`, and
     uint64 inputs in :class:`pyts.image.RecurrencePlot`.
 
+- Fix wrong results:
+
+  + constrained DTW (``'sakoechiba'``, ``'itakura'``, ``'multiscale'`` and
+    ``'fast'`` methods of :func:`pyts.metrics.dtw`) when the first time
+    series is longer than the second, which often gave infinite distances;
+  + ``sample_weight``, which was ignored by
+    :class:`pyts.classification.LearningShapelets`;
+  + the windows of :class:`pyts.classification.TimeSeriesForest`, which never
+    started at the last valid position and failed when ``min_window_size``
+    is the length of the time series (results change for a given
+    ``random_state``);
+  + estimators listed in
+    :class:`pyts.multivariate.classification.MultivariateClassifier` and
+    :class:`pyts.multivariate.transformation.MultivariateTransformer`, which
+    were not cloned, so that the same instance listed several times was only
+    fitted on the last feature;
+  + words in :class:`pyts.transformation.BOSS`,
+    :class:`pyts.transformation.WEASEL`,
+    :class:`pyts.transformation.BagOfPatterns`,
+    :class:`pyts.classification.BOSSVS` and
+    :class:`pyts.classification.SAXVSM`, where one-symbol words, symbols
+    that only differ by case and symbols such as ``'+'`` were dropped or
+    merged;
+  + shapelets with an undefined F-score, which were preferred by
+    :class:`pyts.transformation.ShapeletTransform` with
+    ``criterion='anova'``;
+  + the first Fourier coefficient, which is now dropped by
+    :class:`pyts.approximation.SymbolicFourierApproximation` (and BOSS) when
+    ``norm_mean=True`` and ``anova=False``, as documented;
+  + integer inputs of :class:`pyts.multivariate.transformation.WEASELMUSE`,
+    whose derivatives overflowed for small or unsigned integers
+    (by Anton Soloviev);
+  + the automatic groups of
+    :class:`pyts.decomposition.SingularSpectrumAnalysis`, which could share
+    a component when ``lower_frequency_bound`` is large;
+  + multi-character symbols, which were truncated by
+    :class:`pyts.bag_of_words.BagOfWords` when ``threshold_std`` is set;
+  + the parameters returned by :func:`pyts.datasets.make_cylinder_bell_funnel`
+    with ``return_params=True``, which were not shuffled with the samples.
+
+- Make scikit-learn recognize the classifiers of pyts as classifiers, so that
+  for instance cross-validation uses stratified folds by default.
+
+- Support inputs that used to fail: ``method='region'`` in
+  :func:`pyts.metrics.dtw`, time series of length 1 (and of length 2 with
+  the Itakura parallelogram), a single segment in
+  :class:`pyts.approximation.PiecewiseAggregateApproximation` and
+  :class:`pyts.image.GramianAngularField`, alphabets given as NumPy arrays,
+  small-scale data with ``anova=True`` in
+  :class:`pyts.approximation.DiscreteFourierTransform`, NumPy integer
+  ``groups`` in :class:`pyts.decomposition.SingularSpectrumAnalysis`,
+  variable-length datasets (whose training and test sets now have the same
+  length) and legacy UEA datasets without a description file.
+
+- Raise clear errors for invalid inputs: a different number of features (or
+  of timestamps) than during ``fit``, ``weights`` of the wrong shape,
+  ``alphabet='ordinal'`` in the estimators that build words, unknown
+  parameters of :class:`pyts.classification.KNeighborsClassifier`, kernel
+  sizes of 1, a non-positive number of kernels or too short time series in
+  :class:`pyts.transformation.ROCKET`, and boundary values of several
+  parameters. :class:`pyts.transformation.WEASEL` and WEASELMUSE also no
+  longer modify ``window_sizes`` when they are created.
+
 Version 0.14.0
 --------------
 

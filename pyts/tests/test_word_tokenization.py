@@ -52,9 +52,6 @@ def test_alphabet_symbols_do_not_change_the_result(estimator, alphabet):
 @pytest.mark.parametrize('estimator', ESTIMATORS, ids=IDS)
 def test_single_symbol_words(estimator):
     """Words of a single symbol are kept rather than silently dropped."""
-    if isinstance(estimator, (BagOfPatterns, SAXVSM)):
-        # These use PAA, which does not support a single segment yet.
-        pytest.skip("PiecewiseAggregateApproximation needs at least 2 segments.")
     X_new = _output(estimator, word_size=1)
     assert X_new.shape[0] == X_test.shape[0]
     assert X_new.shape[1] > 0
