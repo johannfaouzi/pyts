@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyts"
-version = "0.14.0"
+version = "0.14.1"
 description = "A python package for time series classification"
 readme = { file = "README.md", content-type = "text/markdown" }
 license = "BSD-3-Clause"

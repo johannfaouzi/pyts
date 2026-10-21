@@ -7,7 +7,7 @@ algorithms. Most of these algorithms transform time series, thus pyts provides
 several tools to perform these transformations.
 """
 
-__version__ = '0.14.0'
+__version__ = '0.14.1'
 
 __all__ = [
     'approximation',
