@@ -13,6 +13,7 @@ from sklearn.utils.validation import check_is_fitted
 
 from pyts._base import MultivariateTransformerMixin
 from pyts.multivariate.utils import check_3d_array
+from pyts.multivariate.utils._utils import _check_n_features
 from pyts.transformation import WEASEL
 
 
@@ -88,6 +89,9 @@ class WEASELMUSE(BaseEstimator, MultivariateTransformerMixin):
             - int : window size
             - str : word
 
+    n_features_in_ : int
+        Number of features seen during ``fit``. ``transform`` requires the
+        same number of features.
 
     References
     ----------
@@ -172,6 +176,7 @@ class WEASELMUSE(BaseEstimator, MultivariateTransformerMixin):
         self._estimators_diff = [clone(estimator) for _ in range(n_features)]
 
         self.vocabulary_ = {}
+        self.n_features_in_ = n_features
 
         for i, transformer in enumerate(self._estimators):
             transformer.fit(X[:, i, :], y)
@@ -199,6 +204,7 @@ class WEASELMUSE(BaseEstimator, MultivariateTransformerMixin):
         """
         check_is_fitted(self, 'vocabulary_')
         X = check_3d_array(X).astype(np.float64, copy=False)
+        _check_n_features(X, self.n_features_in_)
         _n_samples, _, _ = X.shape
         X_diff = np.abs(np.diff(X))
 
@@ -254,6 +260,7 @@ class WEASELMUSE(BaseEstimator, MultivariateTransformerMixin):
         self._estimators_diff = [clone(estimator) for _ in range(n_features)]
 
         self.vocabulary_ = {}
+        self.n_features_in_ = n_features
 
         X_new = []
         for i, transformer in enumerate(self._estimators):
