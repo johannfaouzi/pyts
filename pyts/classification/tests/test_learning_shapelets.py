@@ -95,6 +95,59 @@ def test_softmin_grad(arr, alpha, grad_desired):
     np.testing.assert_allclose(grad_actual, grad_desired, atol=1e-5, rtol=0)
 
 
+@pytest.mark.parametrize('value', [1e20, 1e25, 1e30, 1e100])
+def test_softmin_large_equal_distances(value):
+    """A common distance offset cannot change the soft-min gradient."""
+    arr = np.full(6, value)
+    assert _softmin(arr, -100) == value
+    np.testing.assert_allclose(_softmin_grad(arr, -100), np.full(6, 1 / 6))
+
+
+def test_softmin_large_distances_from_shapelet_fit():
+    """A rejected training step in issue86 produces finite distances this large."""
+    arr = np.array(
+        [
+            4.201372415681393e25,
+            4.201372415681393e25,
+            4.201372415681069e25,
+            4.201372415680097e25,
+            4.201372415680097e25,
+            4.201372415680097e25,
+        ]
+    )
+    assert _softmin(arr, -100) == arr.min()
+    np.testing.assert_allclose(_softmin_grad(arr, -100), [0, 0, 0, 1 / 3, 1 / 3, 1 / 3])
+
+
+@pytest.mark.parametrize('alpha', [-100, 100])
+def test_softmin_integer_extrema(alpha):
+    """Subtract the anchor in floating point even for the integer signature."""
+    arr = np.array([np.iinfo(np.int64).min, np.iinfo(np.int64).max])
+    index = int(alpha > 0)
+    assert _softmin(arr, alpha) == float(arr[index])
+    expected = np.zeros(2)
+    expected[index] = 1
+    np.testing.assert_array_equal(_softmin_grad(arr, alpha), expected)
+
+
+@pytest.mark.filterwarnings('ignore:Maximum number of iterations')
+def test_large_distance_training_step():
+    """Finite but large rejected steps still allow backtracking to proceed."""
+    X = 1000 * np.arange(20, dtype='float64').reshape(4, 5)
+    clf = LearningShapelets(
+        n_shapelets_per_size=1,
+        min_shapelet_length=1,
+        shapelet_scale=1,
+        random_state=0,
+        max_iter=2,
+    ).fit(X, np.arange(4))
+    assert np.isfinite(clf.coef_).all()
+    assert np.isfinite(clf.intercept_).all()
+    probabilities = clf.predict_proba(X)
+    assert np.isfinite(probabilities).all()
+    np.testing.assert_allclose(probabilities.sum(axis=1), 1)
+
+
 @pytest.mark.parametrize(
     'arr, min_desired',
     [
