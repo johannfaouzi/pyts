@@ -83,11 +83,14 @@ def _xlogy(
 )
 def _softmin(arr: npt.NDArray[np.float64], alpha: float) -> np.float64:
     """Derive the soft-minimum of an array."""
-    maximum = np.max(alpha * arr)
-    exp = np.exp(alpha * arr - maximum)
-    num = np.sum(arr * exp)
+    # Subtract before scaling: fastmath can fuse alpha * arr - maximum,
+    # leaving a large rounding residual even at the maximizing element.
+    anchor = float(np.min(arr)) if alpha <= 0 else float(np.max(arr))
+    shifted = arr - anchor
+    exp = np.exp(alpha * shifted)
+    num = np.sum(shifted * exp)
     den = np.sum(exp)
-    return num / den
+    return anchor + num / den
 
 
 @njit(
@@ -101,11 +104,14 @@ def _softmin_grad(
     arr: npt.NDArray[np.float64], alpha: float
 ) -> npt.NDArray[np.float64]:
     """Derive the gradient of the softmin function."""
-    minimum = _softmin(arr, alpha)
-    maximum = np.max(alpha * arr)
-    exp = np.exp(alpha * arr - maximum)
-    num = exp * (1 + alpha * (arr - minimum))
+    anchor = float(np.min(arr)) if alpha <= 0 else float(np.max(arr))
+    shifted = arr - anchor
+    exp = np.exp(alpha * shifted)
     den = np.sum(exp)
+    # Keep the weighted mean centered here too, so a large common offset
+    # cannot change the derivative of equal or nearly equal distances.
+    minimum = np.sum(shifted * exp) / den
+    num = exp * (1 + alpha * (shifted - minimum))
     return num / den
 
 

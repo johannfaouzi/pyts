@@ -4,6 +4,13 @@
 Change Log
 ==========
 
+Version 0.14.2
+--------------
+
+- Stabilize the soft-minimum and its gradient in
+  :class:`pyts.classification.LearningShapelets` for large squared distances,
+  which could raise ``ZeroDivisionError`` during training (by Anton Soloviev).
+
 Version 0.14.1
 --------------
 
