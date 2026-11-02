@@ -7,6 +7,11 @@ Change Log
 Version 0.14.2
 --------------
 
+- Add a ``voting`` parameter to
+  :class:`pyts.multivariate.classification.MultivariateClassifier`: with
+  ``voting='soft'``, the class probabilities of the classifiers are averaged
+  and ``predict_proba`` is available.
+
 - Stabilize the soft-minimum and its gradient in
   :class:`pyts.classification.LearningShapelets` for large squared distances,
   which could raise ``ZeroDivisionError`` during training (by Anton Soloviev).

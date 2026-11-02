@@ -8,7 +8,7 @@ import re
 import numpy as np
 import pytest
 
-from pyts.classification import BOSSVS, SAXVSM
+from pyts.classification import BOSSVS, SAXVSM, KNeighborsClassifier, TimeSeriesForest
 from pyts.multivariate.classification import MultivariateClassifier
 from pyts.transformation import BOSS
 
@@ -37,6 +37,17 @@ y = rng.randint(n_classes, size=n_samples)
             TypeError,
             "'estimator' must be a classifier that inherits from "
             "sklearn.base.BaseEstimator or a list thereof.",
+        ),
+        (
+            {'estimator': SAXVSM(), 'voting': 'mean'},
+            ValueError,
+            "'voting' must be either 'hard' or 'soft' (got 'mean').",
+        ),
+        (
+            {'estimator': SAXVSM(), 'voting': 'soft'},
+            ValueError,
+            "voting='soft' requires every classifier to implement "
+            "predict_proba (classifier 0 does not).",
         ),
     ],
 )
@@ -151,3 +162,40 @@ def test_shared_estimator_instance_is_cloned():
     # The estimator passed by the user is left unfitted.
     with pytest.raises(NotFittedError):
         check_is_fitted(knn)
+
+
+def test_predict_proba_not_available_with_hard_voting():
+    """``predict_proba`` only exists with soft voting."""
+    clf = MultivariateClassifier(KNeighborsClassifier()).fit(X, y)
+    assert not hasattr(clf, 'predict_proba')
+    with pytest.raises(AttributeError) as exc_info:
+        clf.predict_proba(X)
+    msg = "predict_proba is not available when voting='hard'."
+    assert msg in str(exc_info.value) + str(exc_info.value.__cause__)
+
+
+@pytest.mark.parametrize('weights', [None, [0.1, 0.7, 0.2]])
+@pytest.mark.parametrize('y_labels', [y, np.array(['b', 'a'])[y]])
+def test_soft_voting(weights, y_labels):
+    """Soft voting averages the class probabilities for each feature."""
+    estimators = [
+        KNeighborsClassifier(n_neighbors=5),
+        TimeSeriesForest(n_estimators=20, random_state=0),
+        KNeighborsClassifier(n_neighbors=3),
+    ]
+    clf = MultivariateClassifier(estimators, weights=weights, voting='soft')
+    clf.fit(X, y_labels)
+    y_proba = clf.predict_proba(X)
+
+    y_ind = np.searchsorted(np.unique(y_labels), y_labels)
+    probas = [
+        estimators[i].fit(X[:, i], y_ind).predict_proba(X[:, i])
+        for i in range(n_features)
+    ]
+    y_proba_desired = np.average(probas, axis=0, weights=weights)
+    np.testing.assert_allclose(y_proba, y_proba_desired)
+    np.testing.assert_allclose(y_proba.sum(axis=1), 1)
+    assert y_proba.shape == (n_samples, n_classes)
+    np.testing.assert_array_equal(
+        clf.predict(X), clf.classes_[np.argmax(y_proba_desired, axis=1)]
+    )

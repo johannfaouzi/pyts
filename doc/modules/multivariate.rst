@@ -19,7 +19,9 @@ Classification
 :class:`MultivariateClassifier` extends any classifier for univariate time series
 to multivariate time series using majority voting: a classifier is fitted
 for each feature of the multivariate time series, then a majority vote is
-performed at prediction time.
+performed at prediction time. With ``voting='soft'``, the class probabilities
+predicted for each feature are averaged instead, which also provides
+``predict_proba``.
 
 .. code-block:: python
 
