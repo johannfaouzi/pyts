@@ -4,6 +4,8 @@
 # License: BSD-3-Clause
 
 import re
+import sys
+import warnings
 
 import numpy as np
 import pytest
@@ -797,6 +799,42 @@ def test_convergence_warning(X, y, max_iter):
     )
     with pytest.warns(ConvergenceWarning, match=msg):
         clf.fit(X, y)
+
+
+@pytest.mark.parametrize('X, y', [(X_bin, y_bin), (X_multi, y_multi)])
+def test_no_infinite_loop_when_loss_cannot_decrease(X, y, monkeypatch):
+    """The learning rate reductions stop when no step decreases the loss.
+
+    Regression test for #160: if every step increased the loss (as it can
+    near a minimum because of rounding errors), the learning rate was divided
+    by 5 forever. The loss is patched so that every step increases it.
+    """
+    module = sys.modules[CrossEntropyLearningShapelets.__module__]
+    n_calls = 0
+
+    def increasing_loss(*args):
+        nonlocal n_calls
+        n_calls += 1
+        if n_calls > 1000:
+            raise RuntimeError("The learning rate reductions did not stop.")
+        return _loss(*args) + (n_calls > 1)
+
+    monkeypatch.setattr(module, '_loss', increasing_loss)
+    clf = CrossEntropyLearningShapelets(random_state=42, max_iter=100)
+    with warnings.catch_warnings():
+        warnings.simplefilter('error', ConvergenceWarning)
+        clf.fit(X, y)
+    # The initial state is kept and the optimization stops at once.
+    assert clf.n_iter_ == 1
+    initial = CrossEntropyLearningShapelets(random_state=42, max_iter=0)
+    with pytest.warns(ConvergenceWarning):
+        initial.fit(X, y)
+    np.testing.assert_array_equal(clf.coef_, initial.coef_)
+    np.testing.assert_array_equal(clf.intercept_, initial.intercept_)
+    for shapelet, shapelet_initial in zip(
+        clf.shapelets_, initial.shapelets_, strict=True
+    ):
+        np.testing.assert_array_equal(shapelet, shapelet_initial)
 
 
 @pytest.mark.filterwarnings("ignore:Maximum number of iterations")

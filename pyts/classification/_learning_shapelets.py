@@ -43,6 +43,10 @@ _Shapelets = tuple[npt.NDArray[np.float64], ...]
 # One 1D array of the (repeated) shapelet length per shapelet length/scale,
 # aligned with ``_Shapelets``.
 _Lengths = tuple[npt.NDArray[np.int64], ...]
+# Maximum number of times the learning rate is divided by 5 within an
+# iteration of the gradient descent when the loss increases (5 ** -50 is
+# about 1e-35, so the step is then negligible).
+_MAX_BACKTRACKS = 50
 
 
 @njit(
@@ -756,7 +760,14 @@ class CrossEntropyLearningShapelets(UnivariateClassifierMixin, BaseEstimator):
         if self.verbose:
             print(f'Iteration {0}: loss = {loss_iteration:0.6f}')
         losses.append(loss_iteration)
+        converged = False
         for iteration in range(1, self.max_iter + 1):
+            # Keep the current state to go back to it if the loss increases.
+            # ``weights`` is updated in place below; ``shapelets`` is always
+            # rebuilt from a new array, so the tuple itself is never mutated.
+            weights_previous = weights.copy()
+            shapelets_previous = shapelets
+
             # Update weights
             gradient_weights = _grad_weights(
                 X,
@@ -809,61 +820,65 @@ class CrossEntropyLearningShapelets(UnivariateClassifierMixin, BaseEstimator):
                 sample_weight[:, 0],
             )
 
-            # If loss is increasing, decrease the learning rate
+            # If loss is increasing, decrease the learning rate. The step is
+            # always taken from the previous state (instead of undoing it
+            # with the opposite step, which does not exactly restore it in
+            # floating point), and the number of reductions is bounded: once
+            # no step decreases the loss, the previous state is kept and the
+            # optimization stops instead of looping forever (see #160).
+            n_backtracks = 0
+            while losses[-1] < loss_iteration and n_backtracks < _MAX_BACKTRACKS:
+                n_backtracks += 1
+                learning_rate /= 5
+
+                weights = weights_previous - learning_rate * gradient_weights
+                gradient_shapelets = _grad_shapelets(
+                    X,
+                    y_ind,
+                    n_classes,
+                    weights,
+                    shapelets_previous,
+                    lengths,
+                    self.alpha,
+                    self.penalty,
+                    self.C,
+                    self.fit_intercept,
+                    self.intercept_scaling,
+                    sample_weight,
+                )
+                shapelets_array = _reshape_array_shapelets(shapelets_previous, lengths)
+                shapelets_array -= learning_rate * gradient_shapelets
+                shapelets = tuple(_reshape_list_shapelets(shapelets_array, lengths))
+
+                loss_iteration = _loss(
+                    X,
+                    y_ind,
+                    n_classes,
+                    weights,
+                    shapelets,
+                    lengths,
+                    self.alpha,
+                    self.penalty,
+                    self.C,
+                    self.fit_intercept,
+                    self.intercept_scaling,
+                    sample_weight[:, 0],
+                )
             if losses[-1] < loss_iteration:
-                while losses[-1] < loss_iteration:
-                    # Go back to previous state
-                    weights += learning_rate * gradient_weights
-                    shapelets_array = _reshape_array_shapelets(shapelets, lengths)
-                    shapelets_array += learning_rate * gradient_shapelets
-                    shapelets = tuple(_reshape_list_shapelets(shapelets_array, lengths))
-
-                    # Update learning  rate
-                    learning_rate /= 5
-
-                    # Recompute shapelet gradient
-                    weights -= learning_rate * gradient_weights
-                    gradient_shapelets = _grad_shapelets(
-                        X,
-                        y_ind,
-                        n_classes,
-                        weights,
-                        shapelets,
-                        lengths,
-                        self.alpha,
-                        self.penalty,
-                        self.C,
-                        self.fit_intercept,
-                        self.intercept_scaling,
-                        sample_weight,
-                    )
-                    shapelets_array = _reshape_array_shapelets(shapelets, lengths)
-                    shapelets_array -= learning_rate * gradient_shapelets
-                    shapelets = tuple(_reshape_list_shapelets(shapelets_array, lengths))
-
-                    loss_iteration = _loss(
-                        X,
-                        y_ind,
-                        n_classes,
-                        weights,
-                        shapelets,
-                        lengths,
-                        self.alpha,
-                        self.penalty,
-                        self.C,
-                        self.fit_intercept,
-                        self.intercept_scaling,
-                        sample_weight[:, 0],
-                    )
+                weights = weights_previous
+                shapelets = shapelets_previous
+                loss_iteration = losses[-1]
+                converged = True
             if self.verbose:
                 print(f'Iteration {iteration}: loss = {loss_iteration:0.6f}')
             losses.append(loss_iteration)
 
             # Stopping criterion
-            if abs(losses[-2] - losses[-1]) < self.tol * losses[-1]:
+            if converged or abs(losses[-2] - losses[-1]) < self.tol * losses[-1]:
+                converged = True
                 break
 
-        if iteration == self.max_iter:
+        if not converged:
             warnings.warn(
                 'Maximum number of iterations reached without '
                 'converging. Increase the maximum number of '
