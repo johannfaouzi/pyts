@@ -13,6 +13,7 @@ from sklearn.exceptions import ConvergenceWarning
 
 from pyts.classification import LearningShapelets
 from pyts.classification._learning_shapelets import (
+    _MAX_BACKTRACKS,
     CrossEntropyLearningShapelets,
     _derive_all_squared_distances,
     _derive_shapelet_distances,
@@ -807,7 +808,9 @@ def test_no_infinite_loop_when_loss_cannot_decrease(X, y, monkeypatch):
 
     Regression test for #160: if every step increased the loss (as it can
     near a minimum because of rounding errors), the learning rate was divided
-    by 5 forever. The loss is patched so that every step increases it.
+    by 5 forever. The loss is patched so that every step increases it (after
+    1000 calls, the loss becomes -inf so that a regression fails instead of
+    hanging).
     """
     module = sys.modules[CrossEntropyLearningShapelets.__module__]
     n_calls = 0
@@ -815,16 +818,17 @@ def test_no_infinite_loop_when_loss_cannot_decrease(X, y, monkeypatch):
     def increasing_loss(*args):
         nonlocal n_calls
         n_calls += 1
-        if n_calls > 1000:
-            raise RuntimeError("The learning rate reductions did not stop.")
-        return _loss(*args) + (n_calls > 1)
+        increase = 0.0 if n_calls == 1 else 1.0 if n_calls <= 1000 else -np.inf
+        return _loss(*args) + increase
 
     monkeypatch.setattr(module, '_loss', increasing_loss)
     clf = CrossEntropyLearningShapelets(random_state=42, max_iter=100)
     with warnings.catch_warnings():
         warnings.simplefilter('error', ConvergenceWarning)
         clf.fit(X, y)
-    # The initial state is kept and the optimization stops at once.
+    # The initial state is kept and the optimization stops at once: the loss
+    # is computed for the initial state, the first step and each reduction.
+    assert n_calls == 2 + _MAX_BACKTRACKS
     assert clf.n_iter_ == 1
     initial = CrossEntropyLearningShapelets(random_state=42, max_iter=0)
     with pytest.warns(ConvergenceWarning):
