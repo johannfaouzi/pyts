@@ -11,6 +11,9 @@ Version 0.14.2
   :class:`pyts.classification.LearningShapelets` for large squared distances,
   which could raise ``ZeroDivisionError`` during training (by Anton Soloviev).
 
+- Fix :class:`pyts.classification.LearningShapelets`, whose training could
+  loop forever when no step decreased the loss.
+
 Version 0.14.1
 --------------
 
