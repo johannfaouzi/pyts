@@ -61,10 +61,10 @@ class SAXVSM(UnivariateClassifierMixin, BaseEstimator):
         sliding window will be computed as
         ``ceil(window_step * n_timestamps)``.
 
-    threshold_std: float (default = 0.01)
+    threshold_std : int, float or None (default = 0.01)
         Threshold used to determine whether a subsequence is standardized.
         Subsequences whose standard deviations are lower than this threshold
-        are not standardized.
+        are not standardized. If None, all the subsequences are standardized.
 
     norm_mean : bool (default = True)
         If True, center each subseries before scaling.
