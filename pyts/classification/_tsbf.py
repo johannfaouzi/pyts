@@ -126,12 +126,6 @@ class IntervalFeatureExtractor(BaseEstimator, UnivariateTransformerMixin):
         parameters. If float, it represents a percentage of the size of each
         time series.
 
-    bins : int or array-like (default = 10)
-        If bins is an int, it defines the number of equal-width bins in range
-        [0, 1]. If bins is array-like, it defines a monotonically increasing
-        array of bin edges, including the rightmost edge, allowing for
-        non-uniform bin widths.
-
     random_state : None, int or RandomState instance (default = None)
         The seed of the pseudo random number generator to use when shuffling
         the data. If int, random_state is the seed used by the random number
