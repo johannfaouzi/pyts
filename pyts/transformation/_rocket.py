@@ -95,7 +95,7 @@ def generate_kernels(
     biases = np.random.uniform(-1, 1, size=n_kernels)
 
     # Dilations
-    upper_bounds = np.log2(np.floor_divide(n_timestamps - 1, lengths - 1))
+    upper_bounds = np.log2((n_timestamps - 1) / (lengths - 1))
     powers = np.empty(n_kernels)
     for i in prange(n_kernels):
         powers[i] = np.random.uniform(0, upper_bounds[i])

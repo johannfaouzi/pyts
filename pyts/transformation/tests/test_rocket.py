@@ -54,6 +54,25 @@ def test_generate_kernels(n_kernels, n_timestamps, kernel_sizes, seed):
     np.testing.assert_allclose(weights.mean(axis=1), 0, rtol=0, atol=1e-5)
 
 
+def test_generate_kernels_samples_max_valid_dilation():
+    """Test that dilation sampling uses exact float division for the upper bound."""
+    kernel_sizes = np.asarray([9], dtype=np.int64)
+    n_timestamps = 20
+    # (20 - 1) / (9 - 1) = 2.375 -> max valid dilation is 2, sampled with
+    # probability (log2(2.375) - 1) / log2(2.375) ~= 0.20.
+    _, lengths, _, dilations, _ = generate_kernels(
+        n_kernels=200, n_timestamps=n_timestamps, kernel_sizes=kernel_sizes, seed=0
+    )
+    assert np.all(lengths == 9)
+    assert np.all((1 <= dilations) & (dilations <= 2))
+    assert np.any(dilations == 2)
+
+    X_short = np.arange(40, dtype=np.float64).reshape(2, n_timestamps)
+    rocket = ROCKET(n_kernels=200, kernel_sizes=(9,), random_state=0).fit(X_short)
+    assert np.any(rocket.dilation_ == 2)
+    assert rocket.transform(X_short).shape == (2, 400)
+
+
 @pytest.mark.parametrize(
     'params, arr_desired',
     [
